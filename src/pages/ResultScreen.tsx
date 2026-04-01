@@ -140,7 +140,7 @@ const ResultScreen = () => {
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">Focus</span>Flow AI
+          <span className="text-primary">FocusFlow</span> AI
         </div>
         <MobileNav />
       </div>
