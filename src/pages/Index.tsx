@@ -47,14 +47,14 @@ const Index = () => {
             "@context": "https://schema.org",
             "@type": "Organization",
             name: "FocusFlow AI",
-            url: "https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app",
+            url: typeof window !== "undefined" ? window.location.origin : "",
             description: "AI-powered clarity coaching by Coach Kay",
           },
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "FocusFlow AI",
-            url: "https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app",
+            url: typeof window !== "undefined" ? window.location.origin : "",
           },
         ]}
       />

@@ -149,7 +149,7 @@ const Dashboard = () => {
               ) : (
                 <div className="grid md:grid-cols-2 gap-4">
                   {moduleEnrollments.map((enrollment) => {
-                    const mod = coachingModules.find((m) => m.id === enrollment.moduleId);
+                    const mod = coachingModules.find((m) => m.id === enrollment.moduleId) || programs.find((p) => p.id === enrollment.moduleId || p.slug === enrollment.moduleId);
                     return (
                       <button
                         key={enrollment.id}
