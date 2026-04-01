@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowRight, BookOpen, Trophy, Sparkles, LogOut, Plus } from "lucide-react";
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
+import MobileNav from "@/components/MobileNav";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
