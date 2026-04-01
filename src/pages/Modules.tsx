@@ -8,6 +8,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MobileNav from "@/components/MobileNav";
 
 const iconMap: Record<string, typeof Eye> = {
   eye: Eye,
