@@ -185,10 +185,30 @@ const ProgramDetail = () => {
             <div className="flex flex-col gap-2">
               {!hasAccess ? (
                 <>
-                  <Button onClick={() => navigate(user ? "/modules" : "/auth")} className="gap-2">
-                    <Lock className="h-4 w-4" />
-                    {user ? "Upgrade to Unlock" : "Sign In to Access"}
-                  </Button>
+                  {user ? (
+                    <Button
+                      onClick={async () => {
+                        const tierConfig = STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS];
+                        if (tierConfig) {
+                          try {
+                            await startCheckout(tierConfig.price_id);
+                          } catch (e) {
+                            toast.error("Could not start checkout. Please try again.");
+                          }
+                        } else {
+                          navigate("/modules");
+                        }
+                      }}
+                      className="gap-2"
+                    >
+                      <CreditCard className="h-4 w-4" />
+                      Subscribe — ${STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS]?.price ?? ""}/mo
+                    </Button>
+                  ) : (
+                    <Button onClick={() => navigate("/auth")} className="gap-2">
+                      <Lock className="h-4 w-4" /> Sign In to Access
+                    </Button>
+                  )}
                   <p className="text-xs text-muted-foreground text-center">Requires {TIER_LABELS[program.accessTier]} access</p>
                 </>
               ) : program.isGated && program.cohortCode ? (
