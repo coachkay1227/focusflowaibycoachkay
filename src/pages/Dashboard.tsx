@@ -95,6 +95,16 @@ const Dashboard = () => {
           <div className="text-center py-20 text-muted-foreground">Loading your journey...</div>
         ) : (
           <div className="space-y-12">
+            {/* Clarity Score */}
+            <AnimatedSection delay={50}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading text-2xl font-light flex items-center gap-3">
+                  <Sparkles className="h-5 w-5 text-primary" /> Clarity Score
+                </h2>
+              </div>
+              <ClarityScoreCard />
+            </AnimatedSection>
+
             {/* My Modules */}
             <AnimatedSection delay={100}>
               <div className="flex items-center justify-between mb-6">
