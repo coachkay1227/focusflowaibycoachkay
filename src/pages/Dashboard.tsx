@@ -15,6 +15,7 @@ import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import { useAccessLevel } from "@/hooks/use-access-level";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
