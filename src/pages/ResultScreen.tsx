@@ -137,7 +137,7 @@ const ResultScreen = () => {
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">Focus</span> Flow
+          <span className="text-primary">Focus</span>Flow AI
         </div>
         <div />
       </div>

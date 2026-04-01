@@ -91,7 +91,7 @@ const Auth = () => {
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <h1 className="font-heading text-3xl md:text-4xl font-light" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}>
-            {mode === "forgot" ? "Reset Password" : mode === "signin" ? "Welcome Back" : "Join Focus Flow"}
+            {mode === "forgot" ? "Reset Password" : mode === "signin" ? "Welcome Back" : "Join FocusFlow AI"}
           </h1>
           <p className="text-muted-foreground mt-3 text-sm">
             {mode === "forgot"
