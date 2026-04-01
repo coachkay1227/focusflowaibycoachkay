@@ -44,6 +44,7 @@ const App = () => (
             <Route path="/challenges" element={<Challenges />} />
             <Route path="/challenges/:type" element={<MirrorChallenge />} />
             <Route path="/modules" element={<Modules />} />
+            <Route path="/programs/:slug" element={<ProgramDetail />} />
             <Route path="/coach" element={<CoachChat />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
