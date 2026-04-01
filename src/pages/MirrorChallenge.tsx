@@ -107,16 +107,25 @@ const MirrorChallenge = () => {
   const totalDays = prompts.length;
   const challengeTitle = `${totalDays}-Day ${challengeType === "7-day" ? "Mirror Challenge" : challengeType === "3-day" ? "Spark" : challengeType === "4-day" ? "Shift" : challengeType === "8-day" ? "Alignment" : challengeType === "14-day" ? "Transformation" : "Evolution"}`;
 
-  const [data, setData] = useState<ChallengeData>(() => loadData(challengeType));
-  const [selectedDay, setSelectedDay] = useState(data.currentDay > totalDays ? totalDays : data.currentDay);
-  const [journalText, setJournalText] = useState(data.entries[data.currentDay > totalDays ? totalDays : data.currentDay] || "");
+  const [data, setData] = useState<ChallengeData>({ entries: {}, currentDay: 1, startedAt: Date.now() });
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(1);
+  const [journalText, setJournalText] = useState("");
   const [showCelebration, setShowCelebration] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const isCompleted = data.currentDay > totalDays;
-  const prompt = prompts[selectedDay - 1];
-  const isDayUnlocked = selectedDay <= data.currentDay;
-  const isDayCompleted = !!data.entries[selectedDay];
+  // Load data from cloud on mount
+  useEffect(() => {
+    getChallengeDataCloud(challengeType).then((loaded) => {
+      if (loaded) {
+        setData(loaded);
+        const day = loaded.currentDay > totalDays ? totalDays : loaded.currentDay;
+        setSelectedDay(day);
+        setJournalText(loaded.entries[day] || "");
+      }
+      setDataLoaded(true);
+    });
+  }, [challengeType, totalDays]);
 
   useEffect(() => {
     const el = containerRef.current;
