@@ -46,8 +46,8 @@ const App = () => (
             <Route path="/mirror-challenge" element={<MirrorChallenge />} />
             <Route path="/challenges" element={<Challenges />} />
             <Route path="/challenges/:type" element={<MirrorChallenge />} />
-            <Route path="/modules" element={<Modules />} />
-            <Route path="/programs/:slug" element={<ProgramDetail />} />
+            <Route path="/modules" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Modules /></Suspense>} />
+            <Route path="/programs/:slug" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ProgramDetail /></Suspense>} />
             <Route path="/coach" element={<CoachChat />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
