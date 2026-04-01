@@ -61,13 +61,13 @@ const Index = () => {
           userSelect: "none",
         }}
       >
-        FOCUS FLOW
+        FOCUSFLOW AI
       </div>
 
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
         <div className="font-heading text-xl md:text-2xl font-light tracking-wide text-foreground">
-          <span className="text-primary">Focus</span> Flow
+          <span className="text-primary">Focus</span>Flow AI
         </div>
         <div className="flex items-center gap-6">
           {user && (
@@ -370,7 +370,7 @@ const Index = () => {
       <footer className="relative z-10 py-12 px-6 border-t border-border/30">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="font-heading text-lg font-light">
-            <span className="text-primary">Focus</span> Flow AI <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
+            <span className="text-primary">Focus</span>Flow AI <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
           </div>
           <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">
             <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">Clarity Session</button>
