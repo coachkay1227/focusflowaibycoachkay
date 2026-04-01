@@ -73,9 +73,10 @@ const Dashboard = () => {
               {(user?.email?.[0] || "U").toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <button onClick={signOut} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={signOut} className="text-muted-foreground hover:text-foreground transition-colors hidden md:block">
             <LogOut className="h-4 w-4" />
           </button>
+          <MobileNav />
         </div>
       </nav>
 
