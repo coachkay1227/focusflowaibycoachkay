@@ -9,6 +9,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MobileNav from "@/components/MobileNav";
 
 interface InsightResult {
   truth: string;
