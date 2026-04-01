@@ -22,6 +22,7 @@ const ProgramDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { tier } = useAccessLevel();
+  const { startCheckout } = useSubscription();
   const [enrolling, setEnrolling] = useState(false);
 
   const program = slug ? getProgramBySlug(slug) : undefined;
