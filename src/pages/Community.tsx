@@ -4,6 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Sparkles } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 const posts = [
   {
