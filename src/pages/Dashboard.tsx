@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getModuleEnrollments, getChallengeEnrollments, type ModuleEnrollment, type ChallengeEnrollment } from "@/lib/enrollment-store";
 import { getRecentSessionsCloud, type SessionRecord } from "@/lib/session-store";
 import { coachingModules } from "@/lib/modules";
+import { programs } from "@/data/programs";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
@@ -148,7 +149,7 @@ const Dashboard = () => {
               ) : (
                 <div className="grid md:grid-cols-2 gap-4">
                   {moduleEnrollments.map((enrollment) => {
-                    const mod = coachingModules.find((m) => m.id === enrollment.moduleId);
+                    const mod = coachingModules.find((m) => m.id === enrollment.moduleId) || programs.find((p) => p.id === enrollment.moduleId || p.slug === enrollment.moduleId);
                     return (
                       <button
                         key={enrollment.id}
@@ -159,7 +160,7 @@ const Dashboard = () => {
                           <h3 className="font-heading text-lg font-light">{mod?.title || enrollment.moduleId}</h3>
                           <Badge className={statusColors[enrollment.status]}>{enrollment.status.replace("_", " ")}</Badge>
                         </div>
-                        <p className="text-muted-foreground text-sm mb-3">{mod?.subtitle}</p>
+                        <p className="text-muted-foreground text-sm mb-3">{"subtitle" in (mod || {}) ? (mod as any).subtitle : (mod as any)?.tagline}</p>
                         <div className="flex items-center justify-between">
                           <span className="font-mono-label text-muted-foreground/60">{enrollment.sessionsCount} sessions</span>
                           <span className="text-sm text-primary/60 group-hover:text-primary transition-colors flex items-center gap-1">

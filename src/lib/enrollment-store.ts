@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 async function getAuthUserId(): Promise<string | null> {
   const { data: { user } } = await supabase.auth.getUser();
@@ -25,9 +26,12 @@ export async function getModuleEnrollments(): Promise<ModuleEnrollment[]> {
     .select("*")
     .order("enrolled_at", { ascending: false });
 
-  if (error || !data) return [];
+  if (error) {
+    console.error("Failed to fetch module enrollments:", error);
+    return [];
+  }
 
-  return data.map((row: any) => ({
+  return (data ?? []).map((row: any) => ({
     id: row.id,
     moduleId: row.module_id,
     status: row.status,
@@ -39,29 +43,47 @@ export async function getModuleEnrollments(): Promise<ModuleEnrollment[]> {
 
 export async function enrollInModule(moduleId: string): Promise<void> {
   const userId = await getAuthUserId();
-  if (!userId) return;
+  if (!userId) {
+    toast({ title: "Sign in required", description: "Please sign in to enroll.", variant: "destructive" });
+    throw new Error("Not authenticated");
+  }
 
-  await supabase.from("module_enrollments").upsert(
+  const { error } = await supabase.from("module_enrollments").upsert(
     { user_id: userId, module_id: moduleId, status: "enrolled" },
     { onConflict: "user_id,module_id" }
   );
+
+  if (error) {
+    console.error("Failed to enroll in module:", error);
+    toast({ title: "Enrollment failed", description: "Could not enroll. Please try again.", variant: "destructive" });
+    throw error;
+  }
 }
 
 export async function updateModuleProgress(moduleId: string): Promise<void> {
   const userId = await getAuthUserId();
   if (!userId) return;
 
-  const { data: existing } = await supabase
+  const { data: existing, error: fetchError } = await supabase
     .from("module_enrollments")
     .select("id, sessions_count")
     .eq("module_id", moduleId)
     .maybeSingle();
 
+  if (fetchError) {
+    console.error("Failed to fetch module progress:", fetchError);
+    return;
+  }
+
   if (existing) {
-    await supabase.from("module_enrollments").update({
+    const { error: updateError } = await supabase.from("module_enrollments").update({
       status: "in_progress",
       sessions_count: (existing.sessions_count ?? 0) + 1,
     }).eq("id", existing.id);
+
+    if (updateError) {
+      console.error("Failed to update module progress:", updateError);
+    }
   }
 }
 
@@ -84,9 +106,12 @@ export async function getChallengeEnrollments(): Promise<ChallengeEnrollment[]> 
     .select("*")
     .order("enrolled_at", { ascending: false });
 
-  if (error || !data) return [];
+  if (error) {
+    console.error("Failed to fetch challenge enrollments:", error);
+    return [];
+  }
 
-  return data.map((row: any) => ({
+  return (data ?? []).map((row: any) => ({
     id: row.id,
     challengeType: row.challenge_type,
     status: row.status,
@@ -97,12 +122,21 @@ export async function getChallengeEnrollments(): Promise<ChallengeEnrollment[]> 
 
 export async function enrollInChallenge(challengeType: string): Promise<void> {
   const userId = await getAuthUserId();
-  if (!userId) return;
+  if (!userId) {
+    toast({ title: "Sign in required", description: "Please sign in to enroll.", variant: "destructive" });
+    throw new Error("Not authenticated");
+  }
 
-  await supabase.from("challenge_enrollments").upsert(
+  const { error } = await supabase.from("challenge_enrollments").upsert(
     { user_id: userId, challenge_type: challengeType, status: "enrolled" },
     { onConflict: "user_id,challenge_type" }
   );
+
+  if (error) {
+    console.error("Failed to enroll in challenge:", error);
+    toast({ title: "Enrollment failed", description: "Could not enroll. Please try again.", variant: "destructive" });
+    throw error;
+  }
 }
 
 export async function updateChallengeStatus(challengeType: string, status: "in_progress" | "completed"): Promise<void> {
@@ -112,10 +146,16 @@ export async function updateChallengeStatus(challengeType: string, status: "in_p
   const update: any = { status };
   if (status === "completed") update.completed_at = new Date().toISOString();
 
-  await supabase.from("challenge_enrollments")
+  const { error } = await supabase.from("challenge_enrollments")
     .update(update)
     .eq("challenge_type", challengeType)
     .eq("user_id", userId);
+
+  if (error) {
+    console.error("Failed to update challenge status:", error);
+    toast({ title: "Update failed", description: "Could not update challenge status.", variant: "destructive" });
+    throw error;
+  }
 }
 
 // --- User Preferences ---
@@ -137,7 +177,11 @@ export async function getUserPreferences(): Promise<UserPreferences | null> {
     .eq("id", userId)
     .maybeSingle();
 
-  if (error || !data) return null;
+  if (error) {
+    console.error("Failed to fetch user preferences:", error);
+    return null;
+  }
+  if (!data) return null;
 
   return {
     onboardingCompleted: data.onboarding_completed ?? false,
@@ -153,13 +197,22 @@ export async function saveUserPreferences(prefs: {
   selectedModules: string[];
 }): Promise<void> {
   const userId = await getAuthUserId();
-  if (!userId) return;
+  if (!userId) {
+    toast({ title: "Sign in required", description: "Please sign in to save preferences.", variant: "destructive" });
+    throw new Error("Not authenticated");
+  }
 
-  await supabase.from("user_preferences").upsert({
+  const { error } = await supabase.from("user_preferences").upsert({
     id: userId,
     onboarding_completed: true,
     primary_goal: prefs.primaryGoal,
     coaching_style: prefs.coachingStyle,
     selected_modules: prefs.selectedModules,
   }, { onConflict: "id" });
+
+  if (error) {
+    console.error("Failed to save user preferences:", error);
+    toast({ title: "Save failed", description: "Could not save preferences. Please try again.", variant: "destructive" });
+    throw error;
+  }
 }

@@ -242,7 +242,7 @@ const ResultScreen = () => {
               <Button
                 variant="outline"
                 className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-8 py-6"
-                onClick={() => window.open("https://calendly.com", "_blank")}
+                onClick={() => window.open("https://call.coachkayelevates.org/widget/booking/d93xqjlytvCCkndwqJmu", "_blank")}
               >
                 <Calendar className="mr-2 h-5 w-5" />
                 Book a Session with Coach Kay
