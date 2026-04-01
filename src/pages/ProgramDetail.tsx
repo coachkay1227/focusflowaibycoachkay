@@ -1,14 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
-import { getProgramBySlug, PILLAR_META, type Program } from "@/data/programs";
+import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms } from "@/data/programs";
 import { enrollInModule } from "@/lib/enrollment-store";
 import SEOHead from "@/components/SEOHead";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import MobileNav from "@/components/MobileNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -37,9 +37,10 @@ const ProgramDetail = () => {
     );
   }
 
-  const pillar = PILLAR_META[program.pillar];
+  const pillar = FOCUS_PILLARS[program.pillar];
   const hasAccess = program.accessTier === "free" || (user && TIER_RANK[tier] >= TIER_RANK[program.accessTier]);
-  const canStart = program.category === "module" || program.category === "assessment";
+  const canStart = program.type === "assessment";
+  const recommended = getRecommendedPrograms(program.id, 3);
 
   const handleEnroll = async () => {
     if (!user) { navigate("/auth"); return; }
@@ -58,7 +59,7 @@ const ProgramDetail = () => {
     ...(program.price > 0 && {
       offers: {
         "@type": "Offer",
-        price: (program.price / 100).toFixed(2),
+        price: program.price.toFixed(2),
         priceCurrency: "USD",
       },
     }),
@@ -68,7 +69,7 @@ const ProgramDetail = () => {
     <div className="relative min-h-screen overflow-hidden grain-overlay">
       <SEOHead
         title={`${program.title} — FocusFlow AI`}
-        description={program.description}
+        description={program.tagline}
         path={`/programs/${program.slug}`}
         jsonLd={jsonLd}
       />
@@ -87,41 +88,39 @@ const ProgramDetail = () => {
       </div>
 
       <main className="relative z-10 px-6 py-8 max-w-3xl mx-auto">
-        {/* Pillar & Featured */}
+        {/* Pillar & Meta */}
         <div className="flex items-center gap-3 mb-6">
           <div
             className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-lg font-bold"
             style={{ borderColor: pillar.color, color: pillar.color }}
           >
-            {pillar.label}
+            {program.pillar}
           </div>
           <div>
             <span className="text-xs text-muted-foreground uppercase tracking-wider">
-              {pillar.full} Pillar
+              {program.pillarFull} Pillar
             </span>
             <div className="flex items-center gap-2">
               {program.isFeatured && <Star className="h-3.5 w-3.5 text-primary fill-primary" />}
-              <Badge className="bg-muted text-muted-foreground text-xs capitalize">{program.category}</Badge>
+              {program.isNew && <Badge className="bg-accent/20 text-accent border-accent/30 text-[10px]">New</Badge>}
+              <Badge className="bg-muted text-muted-foreground text-xs capitalize">{program.type}</Badge>
             </div>
           </div>
         </div>
 
-        {/* Title */}
+        {/* Title & Tagline */}
         <h1
-          className="font-heading text-3xl md:text-5xl font-light mb-4"
+          className="font-heading text-3xl md:text-5xl font-light mb-3"
           style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
         >
           {program.title}
         </h1>
+        <p className="text-primary/80 italic text-base md:text-lg mb-6">{program.tagline}</p>
 
         {/* Meta row */}
         <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4" /> {program.durationLabel}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Users className="h-4 w-4" /> {program.audience}
-          </span>
+          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> {program.durationLabel}</span>
+          <span className="flex items-center gap-1.5"><Users className="h-4 w-4" /> {program.audience.join(", ")}</span>
           {program.accessTier !== "free" && (
             <Badge className="bg-primary/15 text-primary border-primary/30 capitalize text-xs">
               {TIER_LABELS[program.accessTier]}
@@ -131,7 +130,28 @@ const ProgramDetail = () => {
 
         {/* Description */}
         <div className="bg-card/30 backdrop-blur-sm border border-border rounded-xl p-6 md:p-8 mb-8">
-          <p className="text-foreground/90 leading-relaxed text-base md:text-lg">{program.description}</p>
+          <p className="text-foreground/90 leading-relaxed">{program.description}</p>
+        </div>
+
+        {/* What You Get */}
+        <div className="mb-8">
+          <h2 className="font-heading text-xl font-light mb-4">What You Get</h2>
+          <ul className="space-y-2">
+            {program.whatYouGet.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
+                <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Transformation */}
+        <div className="bg-card/50 border border-primary/20 rounded-xl p-6 mb-8">
+          <h2 className="font-heading text-lg font-light mb-2 flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" /> The Transformation
+          </h2>
+          <p className="text-foreground/80 leading-relaxed">{program.transformation}</p>
         </div>
 
         {/* Coach Note */}
@@ -143,61 +163,43 @@ const ProgramDetail = () => {
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-10">
           {program.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground"
-            >
-              {tag}
-            </span>
+            <span key={tag} className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground">{tag}</span>
           ))}
         </div>
 
-        {/* Pricing & CTA Card */}
-        <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6 md:p-8">
+        {/* Pricing & CTA */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6 md:p-8 mb-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            {/* Price */}
             <div>
-              {program.price === 0 ? (
-                <div className="text-3xl font-heading font-light text-accent">Free</div>
-              ) : (
-                <>
-                  <div className="text-3xl font-heading font-light text-foreground">
-                    ${(program.price / 100).toLocaleString()}
-                    {program.category === "subscription" && (
-                      <span className="text-base text-muted-foreground">/mo</span>
-                    )}
-                  </div>
-                  {program.paymentPlan && (
-                    <p className="text-sm text-muted-foreground mt-1">{program.paymentPlan}</p>
-                  )}
-                </>
+              <div className="text-3xl font-heading font-light text-foreground">
+                {program.priceDisplay}
+              </div>
+              {program.paymentPlan && (
+                <p className="text-sm text-muted-foreground mt-1">{program.paymentPlan.label}</p>
               )}
             </div>
 
-            {/* CTA */}
             <div className="flex flex-col gap-2">
               {!hasAccess ? (
                 <>
-                  <Button
-                    onClick={() => navigate(user ? "/modules" : "/auth")}
-                    className="gap-2"
-                  >
+                  <Button onClick={() => navigate(user ? "/modules" : "/auth")} className="gap-2">
                     <Lock className="h-4 w-4" />
                     {user ? "Upgrade to Unlock" : "Sign In to Access"}
                   </Button>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Requires {TIER_LABELS[program.accessTier]} access
-                  </p>
+                  <p className="text-xs text-muted-foreground text-center">Requires {TIER_LABELS[program.accessTier]} access</p>
                 </>
+              ) : program.isGated && program.cohortCode ? (
+                <Button variant="outline" className="gap-2" disabled>
+                  <Lock className="h-4 w-4" /> Cohort Code Required
+                </Button>
               ) : program.isGated ? (
                 <Button variant="outline" className="gap-2" disabled>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Application Required
+                  <CheckCircle2 className="h-4 w-4" /> Application Required
                 </Button>
               ) : canStart ? (
                 <div className="flex gap-3">
                   <Button onClick={() => navigate(`/clarity/${program.id}`)} className="gap-2">
-                    Start Session
+                    <Sparkles className="h-4 w-4" /> Start Session
                   </Button>
                   {user && (
                     <Button variant="outline" onClick={handleEnroll} disabled={enrolling}>
@@ -206,13 +208,35 @@ const ProgramDetail = () => {
                   )}
                 </div>
               ) : (
-                <Button onClick={() => navigate("/auth")} className="gap-2">
-                  Get Started
+                <Button onClick={handleEnroll} disabled={enrolling} className="gap-2">
+                  {enrolling ? "Enrolling..." : "Enroll Now"}
                 </Button>
               )}
             </div>
           </div>
         </div>
+
+        {/* Recommended */}
+        {recommended.length > 0 && (
+          <div>
+            <h2 className="font-heading text-xl font-light mb-4">Related Programs</h2>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {recommended.map((rec) => (
+                <button
+                  key={rec.id}
+                  onClick={() => navigate(`/programs/${rec.slug}`)}
+                  className="text-left bg-card/30 border border-border rounded-lg p-4 hover:border-primary/30 transition-colors"
+                >
+                  <div className="text-xs text-muted-foreground mb-1">{rec.durationLabel} · {rec.type}</div>
+                  <div className="text-sm font-medium text-foreground mb-1">{rec.title}</div>
+                  <div className="flex items-center gap-1 text-xs text-primary/60">
+                    View <ArrowRight className="h-3 w-3" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
