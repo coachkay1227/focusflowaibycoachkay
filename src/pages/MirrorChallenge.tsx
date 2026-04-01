@@ -99,22 +99,6 @@ interface ChallengeData {
   startedAt: number;
 }
 
-function getStorageKey(type: string) {
-  return `focus-flow-challenge-${type}`;
-}
-
-function loadData(type: string): ChallengeData {
-  try {
-    const raw = localStorage.getItem(getStorageKey(type));
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { entries: {}, currentDay: 1, startedAt: Date.now() };
-}
-
-function saveData(type: string, data: ChallengeData) {
-  localStorage.setItem(getStorageKey(type), JSON.stringify(data));
-}
-
 const MirrorChallenge = () => {
   const navigate = useNavigate();
   const { type } = useParams<{ type?: string }>();
