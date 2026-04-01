@@ -9,6 +9,7 @@ const navItems = [
   { label: "Challenges", path: "/challenges", icon: Trophy, authOnly: false },
   { label: "Coach Kay", path: "/coach", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },
+  { label: "Profile", path: "/profile", icon: User, authOnly: true },
 ];
 
 const MobileNav = () => {

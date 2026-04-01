@@ -16,6 +16,7 @@ import Auth from "./pages/Auth.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/modules" element={<Modules />} />
             <Route path="/coach" element={<CoachChat />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
