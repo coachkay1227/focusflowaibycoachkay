@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { programs, PILLAR_META, type FocusPillar, getProgramsByPillar } from "@/data/programs";
+import { useAccessLevel } from "@/hooks/use-access-level";
+import { programs, FOCUS_PILLARS, type FocusPillar, getProgramsByPillar } from "@/data/programs";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
@@ -13,10 +14,12 @@ import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PILLARS: FocusPillar[] = ["F", "O", "C", "U", "S"];
+const TIER_RANK: Record<string, number> = { free: 0, subscriber: 1, cohort: 2, premium: 3, corporate: 4 };
 
 const Modules = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { tier } = useAccessLevel();
   const { toast } = useToast();
   const containerRef = useRef<HTMLDivElement>(null);
   const [activePillar, setActivePillar] = useState<FocusPillar | "all">("all");
@@ -54,7 +57,7 @@ const Modules = () => {
   };
 
   const filteredPrograms = activePillar === "all"
-    ? programs
+    ? [...programs].sort((a, b) => a.order - b.order)
     : getProgramsByPillar(activePillar);
 
   const jsonLd = {
@@ -71,8 +74,8 @@ const Modules = () => {
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
       <SEOHead
-        title="Modules — FocusFlow AI"
-        description="Explore guided clarity modules designed to help you build self-awareness, emotional resilience, and purposeful focus."
+        title="Programs — FocusFlow AI"
+        description="Explore the full F.O.C.U.S. program catalog — assessments, challenges, courses, sprints, and signature programs powered by AI coaching."
         path="/modules"
         jsonLd={jsonLd}
       />
@@ -90,18 +93,18 @@ const Modules = () => {
         <MobileNav />
       </div>
 
-      <div className="relative z-10 px-6 py-12 max-w-5xl mx-auto">
+      <div className="relative z-10 px-6 py-8 md:py-12 max-w-6xl mx-auto">
         {/* Hero */}
         <AnimatedSection className="text-center mb-10">
-          <span className="font-mono-label text-primary tracking-[0.2em]">Programs & Modules</span>
+          <span className="font-mono-label text-primary tracking-[0.2em]">F.O.C.U.S. PROGRAMS</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
             style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
           >
             Choose your path
           </h1>
-          <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            Each program maps to a pillar of the F.O.C.U.S. framework. Pick the one that matches where you are right now.
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-sm md:text-base">
+            Foundation · Opportunity · Create · Uplift · Support — each program maps to a pillar. Pick the one that matches where you are right now.
           </p>
         </AnimatedSection>
 
@@ -115,11 +118,12 @@ const Modules = () => {
                 : "bg-card/50 text-muted-foreground hover:text-foreground border border-border"
             }`}
           >
-            All
+            All ({programs.length})
           </button>
           {PILLARS.map((p) => {
-            const meta = PILLAR_META[p];
+            const meta = FOCUS_PILLARS[p];
             const isActive = activePillar === p;
+            const count = getProgramsByPillar(p).length;
             return (
               <button
                 key={p}
@@ -131,27 +135,40 @@ const Modules = () => {
                 }`}
                 style={isActive ? { backgroundColor: meta.color, borderColor: meta.color } : {}}
               >
-                <span className="font-bold">{meta.label}</span>
+                <span className="font-bold">{p}</span>
                 <span className="hidden sm:inline ml-1">· {meta.full}</span>
+                <span className="ml-1 text-xs opacity-70">({count})</span>
               </button>
             );
           })}
         </div>
 
         {/* Program Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPrograms.map((program, i) => (
-            <AnimatedSection key={program.id} delay={i * 80}>
-              <AccessGate requiredTier={program.accessTier}>
-                <ProgramCard
-                  program={program}
-                  enrollment={getEnrollment(program.id)}
-                  onEnroll={handleEnroll}
-                  enrolling={enrolling === program.id}
-                />
-              </AccessGate>
-            </AnimatedSection>
-          ))}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredPrograms.map((program, i) => {
+            const needsGate = program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
+            return (
+              <AnimatedSection key={program.id} delay={Math.min(i * 60, 600)}>
+                {needsGate ? (
+                  <AccessGate requiredTier={program.accessTier}>
+                    <ProgramCard
+                      program={program}
+                      enrollment={getEnrollment(program.id)}
+                      onEnroll={handleEnroll}
+                      enrolling={enrolling === program.id}
+                    />
+                  </AccessGate>
+                ) : (
+                  <ProgramCard
+                    program={program}
+                    enrollment={getEnrollment(program.id)}
+                    onEnroll={handleEnroll}
+                    enrolling={enrolling === program.id}
+                  />
+                )}
+              </AnimatedSection>
+            );
+          })}
         </div>
 
         {filteredPrograms.length === 0 && (
