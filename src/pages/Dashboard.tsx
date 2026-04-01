@@ -14,6 +14,7 @@ import { ArrowRight, BookOpen, Trophy, Sparkles, LogOut, Plus } from "lucide-rea
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
+import { useAccessLevel } from "@/hooks/use-access-level";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
@@ -24,6 +25,7 @@ const statusColors: Record<string, string> = {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { tier, loading: tierLoading } = useAccessLevel();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
@@ -92,7 +94,12 @@ const Dashboard = () => {
           >
             Welcome back, {displayName}
           </h1>
-          <p className="text-muted-foreground mt-2">Your clarity journey at a glance.</p>
+          <p className="text-muted-foreground mt-2">
+            Your clarity journey at a glance.
+            {!tierLoading && (
+              <Badge className="ml-3 bg-primary/15 text-primary border-primary/30 text-xs capitalize">{tier} tier</Badge>
+            )}
+          </p>
         </AnimatedSection>
 
         {loading ? (
