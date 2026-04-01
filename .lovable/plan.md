@@ -1,65 +1,90 @@
 
-# Focus Flow AI — MVP Implementation Plan
-**Clarity Code by Coach Kay**
 
-## Design System Setup
-- Configure CSS custom properties from brand assets: deep navy backgrounds (#0A1520, #0D1B2A), gold accents (#C9A84C, #E0C470), cream text (#F5EDD6)
-- Import Google Fonts: Cormorant Garamond (headings), DM Sans (body), DM Mono (labels/tags)
-- Add cinematic CSS animations: floating orbs, grain overlay, fade-up reveals, gold line draws — all pure CSS keyframes
-- Mouse-following ambient glow via CSS custom properties (zero re-renders)
+# Focus Flow AI — Phase 2: AI-Powered Coaching System
 
-## Page 1: Cinematic Landing / Hero
-- Full-screen hero with choreographed entrance: gold line draw → headline blur-in → CTA fade-up → ambient glow
-- Brand watermark (blurred ghost logo pulsing behind hero)
-- Floating gradient orbs + subtle grid overlay
-- Copy: "See clearly. Move with purpose." + Coach Kay positioning
-- Primary CTA: "Begin Your Clarity Check" → starts the flow
-- Scroll-triggered section reveals via IntersectionObserver
-- Sections: How It Works (3 steps), What You'll Discover, Social Proof / Testimonials
+## What exists today
+- Cinematic landing page, clarity session (6 questions), result screen with simulated local mapping, 7-day mirror challenge, community preview page
+- All insights are hardcoded maps in `clarity-engine.ts` — no real AI
 
-## Page 2: Clarity Session Flow (Core Feature)
-- One question per screen, 6 questions total
-- Progress bar with step indicator (Step X of 6)
-- Smooth CSS transitions between questions (fade + slide)
-- Question types: selectable option cards + text input fields
-- Questions cover: current emotional state, biggest challenge, what's been tried, what's holding them back, what clarity would change, one word for desired feeling
-- Each selection animates smoothly to the next question
+## What this plan adds
 
-## Page 3: AI Result / Insight Screen
-- Simulated AI-generated response in Coach Kay's voice
-- Three sections with staggered reveal animations:
-  - **The Truth** — "Here's what's really going on"
-  - **The Pattern** — "Here's what keeps showing up"
-  - **The Action** — "Here's your next move"
-- Content dynamically assembled based on user's answers using a local mapping engine (no API needed for MVP)
-- Three CTA buttons: "Continue with AI Coach" / "Book a Session with Coach Kay" / "Start the Mirror Challenge"
+### 1. Real AI-Powered Clarity Insights (replace simulated engine)
+- **New edge function** `supabase/functions/clarity-insight/index.ts` — sends user's 6 answers + Coach Kay system prompt to Lovable AI gateway, streams back personalized Truth/Pattern/Action
+- System prompt encodes Coach Kay's voice: warm, direct, emotionally intelligent, pattern-aware
+- Uses tool calling to return structured JSON: `{ truth, pattern, action }`
+- **Update `ResultScreen.tsx`** — call edge function instead of local `generateInsight()`, show streaming "generating" state, render AI response
+- Keep local engine as instant fallback if AI call fails
 
-## Page 4: Mirror Challenge Module
-- 7-day reflection challenge
-- Daily prompt card with journaling text input
-- Day progress tracker (Day 1–7 visual indicators)
-- Submit reflection → unlock next day's prompt
-- Local storage for progress persistence
-- Completion celebration screen
+### 2. Coaching Modules System (5 modules)
+- **New file** `src/lib/modules.ts` — define module configs: Clarity Check (existing), Emotional Reset, Focus Flow, Purpose & Happiness, Goal Shift. Each has its own question set (5-8 questions), tone mode, and system prompt
+- **New page** `src/pages/Modules.tsx` — module selection screen with cards for each module
+- **Update `ClaritySession.tsx`** — accept a `moduleId` route param, load questions from the selected module instead of hardcoded `clarityQuestions`
+- **Update routing** — add `/modules` route and `/clarity/:moduleId` pattern
 
-## Page 5: Community Preview
-- Static section with testimonial-style cards
-- Sample "community post" cards showing transformation stories
-- CTA to join waitlist / community
+### 3. Expanded Challenge System (multi-duration)
+- **Update `src/lib/clarity-engine.ts`** — add challenge configs for 3-day, 4-day, 8-day, 14-day, 30-day alongside existing 7-day
+- **New page** `src/pages/Challenges.tsx` — challenge picker screen
+- **Update `MirrorChallenge.tsx`** — accept challenge type via route param, load appropriate prompts, track per-challenge in localStorage
+- AI-generated adaptive daily responses via edge function after each journal entry
 
-## Cinematic Visual Effects (CSS-only)
-- 3-4 floating blurred gradient orbs with slow drift animations
-- Grain texture overlay
-- Card hover: translateY(-6px) + gold border glow + gradient line sweep
-- CTA buttons: pulse glow animation + hover scale
-- Section headings: animated underline on reveal
-- All animations GPU-composited (transform/opacity only)
+### 4. Decision Mode (signature feature)
+- **New component** `src/components/DecisionMode.tsx` — when user expresses being stuck (detected via keywords in text answers), present 2-3 clear options with likely outcomes, prompt a decision
+- Integrates into clarity session flow (after text questions) and as standalone accessible from result screen
+- Uses Lovable AI to generate contextual options based on user's answers
 
-## Technical Approach
-- Mobile-first responsive design
-- React Router for page navigation
-- Local state management (useState/useReducer)
-- LocalStorage for challenge progress
-- No external animation libraries
-- No backend needed — all simulated locally
-- Reusable components: AnimatedSection, ClarityCard, ProgressBar, QuestionScreen, InsightCard
+### 5. Session Memory & Pattern Detection
+- **New file** `src/lib/session-store.ts` — localStorage-based store for past session answers, insights, patterns, and timestamps
+- After each clarity session, save full session data
+- **New edge function** `supabase/functions/pattern-detect/index.ts` — sends past 3-5 sessions to AI, asks it to identify recurring patterns, avoidance language, inconsistencies between goals and actions
+- **Update `ResultScreen.tsx`** — if returning user, show "Pattern Evolution" section comparing current vs past insights
+- Pattern summary displayed as a new card on result screen
+
+### 6. AI Coaching Chat (Continue with AI Coach)
+- **New edge function** `supabase/functions/coach-chat/index.ts` — streaming chat with Coach Kay personality, seeded with user's latest clarity results
+- **New page** `src/pages/CoachChat.tsx` — simple chat UI with streaming responses, markdown rendering via `react-markdown`
+- Supports 4 response modes: supportive, reflective, direct/challenging, strategic (AI selects based on context)
+- Rate limit and credit error handling with user-friendly toasts
+
+## Technical details
+
+**Backend (Lovable Cloud):**
+- 3 edge functions: `clarity-insight`, `pattern-detect`, `coach-chat`
+- All use `LOVABLE_API_KEY` (already available) → Lovable AI gateway
+- Model: `google/gemini-3-flash-preview` (default)
+- Coach Kay system prompt shared across functions, stored in a shared prompt file
+
+**Frontend changes:**
+- Install `react-markdown` for chat rendering
+- New routes: `/modules`, `/clarity/:moduleId`, `/challenges`, `/challenges/:type`, `/coach`
+- localStorage schema for session history: `{ sessions: [...], challenges: {...} }`
+- All new pages use existing design system (floating orbs, grain, mouse glow, AnimatedSection)
+
+**Data flow:**
+```text
+User → Clarity Session → Edge Function (AI insight) → Result Screen
+                                                    → Pattern Detection (if returning user)
+                                                    → Decision Mode (if stuck detected)
+Result Screen → Coach Chat (streaming) 
+             → Challenge Selection → Daily Prompts + AI responses
+```
+
+## File changes summary
+| Action | File |
+|--------|------|
+| Create | `supabase/functions/clarity-insight/index.ts` |
+| Create | `supabase/functions/coach-chat/index.ts` |
+| Create | `supabase/functions/pattern-detect/index.ts` |
+| Create | `src/lib/modules.ts` |
+| Create | `src/lib/session-store.ts` |
+| Create | `src/lib/coach-prompts.ts` |
+| Create | `src/pages/Modules.tsx` |
+| Create | `src/pages/Challenges.tsx` |
+| Create | `src/pages/CoachChat.tsx` |
+| Create | `src/components/DecisionMode.tsx` |
+| Update | `src/App.tsx` (new routes) |
+| Update | `src/pages/ClaritySession.tsx` (module support) |
+| Update | `src/pages/ResultScreen.tsx` (AI insights, pattern section) |
+| Update | `src/pages/MirrorChallenge.tsx` (multi-duration) |
+| Update | `src/pages/Index.tsx` (nav links to modules/challenges) |
+| Install | `react-markdown` |
+
