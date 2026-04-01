@@ -25,6 +25,7 @@ const statusColors: Record<string, string> = {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { tier, loading: tierLoading } = useAccessLevel();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
