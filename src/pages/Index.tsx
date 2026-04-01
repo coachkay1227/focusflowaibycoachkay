@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import AnimatedSection from "@/components/AnimatedSection";
