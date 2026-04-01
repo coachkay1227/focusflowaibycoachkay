@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
