@@ -400,4 +400,28 @@ export const TEMPLATE_PREVIEWS = {
       clarityLevel: "Reflecting",
       dashboardUrl: "https://app.focusflow.ai/dashboard",
     }),
+
+  weeklyDigest: () =>
+    weeklyDigestEmail({
+      userName: "Jordan",
+      weekLabel: "March 24 – March 30, 2026",
+      clarityScore: 42,
+      clarityLevel: "Reflecting",
+      previousScore: 35,
+      sessionsThisWeek: 4,
+      totalSessions: 18,
+      challengeDaysCompleted: 3,
+      streak: 5,
+      topInsight: "You tend to overthink when you're avoiding a decision you've already made.",
+      scoreHistory: [
+        { label: "Mon", score: 36 },
+        { label: "Tue", score: 38 },
+        { label: "Wed", score: 38 },
+        { label: "Thu", score: 40 },
+        { label: "Fri", score: 42 },
+        { label: "Sat", score: 42 },
+        { label: "Sun", score: 42 },
+      ],
+      dashboardUrl: "https://app.focusflow.ai/dashboard",
+    }),
 };
