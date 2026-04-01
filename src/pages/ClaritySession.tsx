@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate, useParams } from "react-router-dom";
 import { clarityQuestions, type ClarityAnswers } from "@/lib/clarity-engine";
 import { getModule } from "@/lib/modules";
