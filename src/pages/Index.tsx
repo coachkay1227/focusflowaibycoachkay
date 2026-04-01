@@ -9,6 +9,7 @@ import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [phase, setPhase] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
