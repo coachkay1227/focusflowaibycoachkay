@@ -221,6 +221,11 @@ const Dashboard = () => {
                 </div>
               )}
             </AnimatedSection>
+
+            {/* Weekly Insights */}
+            <AnimatedSection delay={400}>
+              <WeeklyInsights />
+            </AnimatedSection>
           </div>
         )}
       </div>
