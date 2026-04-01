@@ -81,18 +81,19 @@ const ResultScreen = () => {
       timestamp: Date.now(),
       moduleId,
       answers,
-      insight: null, // will be updated below
+      insight: null,
     };
 
     // Fetch patterns if returning user
-    if (hasHistory()) {
+    const hasHist = await hasHistoryCloud();
+    if (hasHist) {
       fetchPatterns();
     }
 
     // Save with insight after state update
     setTimeout(() => {
       session.insight = insight;
-      saveSession(session);
+      saveSessionCloud(session);
     }, 100);
   };
 
