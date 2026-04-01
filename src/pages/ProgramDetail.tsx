@@ -1,14 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
+import { useSubscription } from "@/hooks/use-subscription";
 import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms } from "@/data/programs";
 import { enrollInModule } from "@/lib/enrollment-store";
+import { STRIPE_TIERS } from "@/lib/stripe-tiers";
 import SEOHead from "@/components/SEOHead";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import MobileNav from "@/components/MobileNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -20,6 +22,7 @@ const ProgramDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { tier } = useAccessLevel();
+  const { startCheckout } = useSubscription();
   const [enrolling, setEnrolling] = useState(false);
 
   const program = slug ? getProgramBySlug(slug) : undefined;
@@ -182,10 +185,30 @@ const ProgramDetail = () => {
             <div className="flex flex-col gap-2">
               {!hasAccess ? (
                 <>
-                  <Button onClick={() => navigate(user ? "/modules" : "/auth")} className="gap-2">
-                    <Lock className="h-4 w-4" />
-                    {user ? "Upgrade to Unlock" : "Sign In to Access"}
-                  </Button>
+                  {user ? (
+                    <Button
+                      onClick={async () => {
+                        const tierConfig = STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS];
+                        if (tierConfig) {
+                          try {
+                            await startCheckout(tierConfig.price_id);
+                          } catch (e) {
+                            toast.error("Could not start checkout. Please try again.");
+                          }
+                        } else {
+                          navigate("/modules");
+                        }
+                      }}
+                      className="gap-2"
+                    >
+                      <CreditCard className="h-4 w-4" />
+                      Subscribe — ${STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS]?.price ?? ""}/mo
+                    </Button>
+                  ) : (
+                    <Button onClick={() => navigate("/auth")} className="gap-2">
+                      <Lock className="h-4 w-4" /> Sign In to Access
+                    </Button>
+                  )}
                   <p className="text-xs text-muted-foreground text-center">Requires {TIER_LABELS[program.accessTier]} access</p>
                 </>
               ) : program.isGated && program.cohortCode ? (

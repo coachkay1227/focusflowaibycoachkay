@@ -15,6 +15,7 @@ import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import { useAccessLevel } from "@/hooks/use-access-level";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
@@ -26,6 +27,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { tier, loading: tierLoading } = useAccessLevel();
+  const { subscribed, subscriptionEnd, openPortal } = useSubscription();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
@@ -100,6 +102,16 @@ const Dashboard = () => {
               <Badge className="ml-3 bg-primary/15 text-primary border-primary/30 text-xs capitalize">{tier} tier</Badge>
             )}
           </p>
+          {subscribed && (
+            <div className="mt-3 flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">
+                Subscription active{subscriptionEnd ? ` until ${new Date(subscriptionEnd).toLocaleDateString()}` : ""}
+              </span>
+              <Button variant="outline" size="sm" onClick={openPortal} className="text-xs h-7">
+                Manage Subscription
+              </Button>
+            </div>
+          )}
         </AnimatedSection>
 
         {loading ? (
