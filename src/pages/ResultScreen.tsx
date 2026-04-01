@@ -60,6 +60,7 @@ const ResultScreen = () => {
   const fetchInsight = async () => {
     if (!answers) return;
     
+    let insightData: InsightResult;
     try {
       const { data, error } = await supabase.functions.invoke("clarity-insight", {
         body: { answers, moduleId },
@@ -67,37 +68,33 @@ const ResultScreen = () => {
 
       if (error || data?.error) {
         console.warn("AI insight failed, using local fallback:", error || data?.error);
-        setInsight(generateInsight(answers));
-      } else {
-        setInsight(data as InsightResult);
+        insightData = generateInsight(answers);
+    } else {
+        insightData = data as InsightResult;
       }
     } catch (e) {
       console.warn("AI insight error, using local fallback:", e);
-      setInsight(generateInsight(answers));
+      insightData = generateInsight(answers);
     }
 
+    setInsight(insightData);
     setReady(true);
 
-    // Save session
+    // Save session with the local insightData variable (not stale React state)
     const session: SessionRecord = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
       moduleId,
       answers,
-      insight: null,
+      insight: insightData,
     };
+    saveSessionCloud(session);
 
     // Fetch patterns if returning user
     const hasHist = await hasHistoryCloud();
     if (hasHist) {
       fetchPatterns();
     }
-
-    // Save with insight after state update
-    setTimeout(() => {
-      session.insight = insight;
-      saveSessionCloud(session);
-    }, 100);
 
     // Update module enrollment progress
     updateModuleProgress(moduleId);

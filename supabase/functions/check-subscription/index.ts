@@ -86,11 +86,7 @@ serve(async (req) => {
         logStep("Tier synced", { tier });
       }
     } else {
-      logStep("No active subscription");
-      // Reset to free if no active sub
-      await supabaseClient
-        .from("user_access_levels")
-        .upsert({ id: user.id, tier: "free" }, { onConflict: "id" });
+      logStep("No active subscription — preserving existing tier (may be manually assigned)");
     }
 
     return new Response(
