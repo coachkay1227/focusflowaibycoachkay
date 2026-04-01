@@ -1,82 +1,75 @@
 
 
-# SEO Overhaul: Structured Data, Sitemap, Meta Tags & Best Practices
+# Create `useAccessLevel` Hook
 
-## Current State (Audit Findings)
+## Overview
+Create a custom React hook that reads the current user's access tier and returns a typed value. Since access tiers represent authorization levels (not just preferences), we should store them in a dedicated table following security best practices — not in `user_metadata` which is client-editable.
 
-| Area | Status | Issue |
-|------|--------|-------|
-| **Page titles** | Missing | Only `index.html` has a title; all SPA routes share the same one |
-| **Meta descriptions** | Missing | No per-page descriptions |
-| **Canonical tags** | Missing | No canonical tags anywhere |
-| **Sitemap.xml** | Missing | No sitemap exists |
-| **HTML Sitemap** | Missing | No sitemap page |
-| **Structured data (JSON-LD)** | Missing | No schemas at all |
-| **Image alt attributes** | Mostly N/A | App uses icons, not images; one `alt="Avatar"` exists — acceptable |
-| **robots.txt** | Present | Functional but missing `Sitemap:` directive |
-| **OG/Twitter meta** | Partial | Present on index.html but static; uses placeholder Lovable OG image |
+## Approach
+Store access levels in a new `user_access_levels` table (not in `user_metadata`, which users can modify themselves — a security risk). The hook reads from this table, falling back to `"free"` for unauthenticated or unassigned users.
 
-## Plan
+## Database Change
 
-### 1. Add react-helmet-async for per-page meta tags
-- Install `react-helmet-async`
-- Wrap `App` with `<HelmetProvider>`
-- Create a reusable `<SEOHead>` component accepting title, description, canonical, and JSON-LD schema
-- Add unique `<SEOHead>` to each page with relevant title/description/canonical
+New table `user_access_levels`:
+```sql
+create type public.access_tier as enum ('free', 'subscriber', 'cohort', 'premium', 'corporate');
 
-### 2. Per-page SEO metadata
+create table public.user_access_levels (
+  id uuid primary key references auth.users(id) on delete cascade,
+  tier access_tier not null default 'free',
+  created_at timestamptz default now()
+);
 
-| Page | Title | Description |
-|------|-------|-------------|
-| `/` | FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay | See clearly. Move with purpose. AI-powered clarity coaching... |
-| `/modules` | Modules — FocusFlow AI | Explore guided clarity modules... |
-| `/challenges` | Challenges — FocusFlow AI | Take on transformative challenges... |
-| `/coach` | Coach Kay — FocusFlow AI | Chat with your AI clarity coach... |
-| `/clarity` | Clarity Session — FocusFlow AI | Begin your guided clarity check... |
-| `/dashboard` | Dashboard — FocusFlow AI | Track your clarity journey... |
-| `/community` | Community — FocusFlow AI | Connect with fellow clarity seekers... |
-| `/profile` | Profile — FocusFlow AI | Manage your profile and preferences... |
-| `/auth` | Sign In — FocusFlow AI | Sign in or create your account... |
+alter table public.user_access_levels enable row level security;
 
-### 3. JSON-LD Structured Data
-- **Homepage**: `Organization` + `WebSite` with `SearchAction`
-- **Modules page**: `ItemList` of `Course` items
-- **Challenges page**: `ItemList` of `Event` items
-- **Coach Chat**: `FAQPage` or `Service` schema
-- **Clarity Session**: `Service` schema
+create policy "Users can read own access level"
+  on public.user_access_levels for select
+  to authenticated
+  using (auth.uid() = id);
+```
 
-### 4. Canonical tags
-- Each `<SEOHead>` outputs `<link rel="canonical" href="...">` using the page path
+A security-definer function for server-side tier checks:
+```sql
+create or replace function public.get_user_tier(_user_id uuid)
+returns access_tier
+language sql stable security definer
+set search_path = public
+as $$
+  select coalesce(
+    (select tier from public.user_access_levels where id = _user_id),
+    'free'::access_tier
+  )
+$$;
+```
 
-### 5. Static sitemap.xml
-- Create `public/sitemap.xml` listing all public routes with priorities
-- Since this is an SPA with known routes, a static file is sufficient
+## Hook File
 
-### 6. HTML Sitemap page
-- Create `/sitemap` route with a simple page listing all public links
+**Create `src/hooks/use-access-level.ts`**
 
-### 7. Update robots.txt
-- Add `Sitemap: https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app/sitemap.xml`
+```typescript
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+// ... useState, useEffect
 
-### 8. Update index.html
-- Add `<link rel="canonical" href="/">` as fallback
-- Keep existing OG tags (they'll be overridden per-page by Helmet)
+export type AccessTier = "free" | "subscriber" | "cohort" | "premium" | "corporate";
 
-## Files Changed
+export function useAccessLevel(): { tier: AccessTier; loading: boolean } {
+  // If no user → return "free" immediately
+  // Otherwise query user_access_levels table
+  // Cache result for session duration
+  // Default to "free" on error or missing row
+}
+```
+
+## Files
 
 | Action | File |
 |--------|------|
-| Create | `src/components/SEOHead.tsx` |
-| Create | `public/sitemap.xml` |
-| Create | `src/pages/Sitemap.tsx` |
-| Update | `src/App.tsx` (add HelmetProvider, sitemap route) |
-| Update | `src/main.tsx` (HelmetProvider wrapper) |
-| Update | `public/robots.txt` (add Sitemap directive) |
-| Update | `index.html` (canonical fallback) |
-| Update | All page files (add `<SEOHead>` with unique meta + JSON-LD) |
+| Migration | New table `user_access_levels` + enum + RLS + helper function |
+| Create | `src/hooks/use-access-level.ts` |
 
-## Technical Notes
-- `react-helmet-async` chosen over `react-helmet` (maintained, SSR-ready)
-- JSON-LD schemas follow Google's structured data guidelines
-- Sitemap is static since all routes are known at build time; if dynamic content is added later, it can be generated via an edge function
+## Notes
+- Storing tiers server-side prevents privilege escalation (users cannot edit their own tier via `user_metadata`)
+- The `get_user_tier` function uses `security definer` so it can be called in RLS policies for other tables
+- Default row creation can be added to the existing `handle_new_user` trigger if desired
 
