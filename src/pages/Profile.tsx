@@ -65,12 +65,24 @@ const Profile = () => {
     });
   };
 
+  const sanitizeAvatarUrl = (url: string): string => {
+    if (!url) return "";
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:") return "";
+      return parsed.href;
+    } catch {
+      return "";
+    }
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+    const safeAvatar = sanitizeAvatarUrl(avatarUrl);
     try {
       const [profileRes, prefsRes] = await Promise.all([
-        supabase.from("profiles").update({ display_name: displayName, avatar_url: avatarUrl }).eq("id", user.id),
+        supabase.from("profiles").update({ display_name: displayName, avatar_url: safeAvatar }).eq("id", user.id),
         supabase.from("user_preferences").upsert({ id: user.id, coaching_style: coachingStyle }, { onConflict: "id" }),
       ]);
       if (profileRes.error) throw profileRes.error;

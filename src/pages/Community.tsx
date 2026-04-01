@@ -4,39 +4,33 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, ExternalLink, Users, BookOpen, MessageCircle, Calendar } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 
-const posts = [
+const SKOOL_URL = "https://www.skool.com/focusflow-elevation-hub";
+
+const highlights = [
+  { icon: BookOpen, text: "12+ AI coaching modules" },
+  { icon: MessageCircle, text: "Weekly group coaching & Q&A" },
+  { icon: Users, text: "24/7 community support" },
+  { icon: Calendar, text: "Specialty prompts & tools" },
+];
+
+const testimonials = [
   {
     name: "Jordan K.",
-    time: "2 days ago",
-    content: "Day 6 of the Mirror Challenge. I realized I've been performing confidence instead of building it. The prompt about 'what would you do if no one was watching' wrecked me — in the best way. I'd quit my job. I'd paint. I'd sleep more. Why am I not doing those things?",
     tag: "Mirror Challenge",
+    content: "Day 6 of the Mirror Challenge. I realized I've been performing confidence instead of building it. The prompt about 'what would you do if no one was watching' wrecked me — in the best way.",
   },
   {
     name: "Serena L.",
-    time: "5 days ago",
-    content: "Just finished my first Clarity Session. The pattern it identified — 'using variety as a distraction from depth' — hit different. I've started 12 projects this year. Finished zero. Not because I'm lazy, but because finishing means being judged. That's the real pattern.",
     tag: "Clarity Session",
+    content: "Just finished my first Clarity Session. The pattern it identified — 'using variety as a distraction from depth' — hit different. I've started 12 projects this year. Finished zero. That's the real pattern.",
   },
   {
     name: "Marcus W.",
-    time: "1 week ago",
-    content: "Coach Kay told me: 'Frustration is unprocessed ambition.' I've been sitting with that for three days. It changed how I talk to myself. I'm not angry at the world — I'm angry at myself for not acting on what I know. Time to stop rehearsing and start doing.",
     tag: "Insight",
-  },
-  {
-    name: "Anya R.",
-    time: "1 week ago",
-    content: "The action step from my result was simple: 'Schedule 30 minutes that exist purely for you. No productivity, no output, no justification.' I did it yesterday. I sat in a park and did nothing. And I cried. Because I realized I haven't given myself that in years.",
-    tag: "Breakthrough",
-  },
-  {
-    name: "Dev P.",
-    time: "2 weeks ago",
-    content: "My Clarity Report said: 'You collect evidence of your inadequacy while dismissing proof of your competence.' Read that three times. Saved it to my phone. It's my new screensaver. Thank you, Coach Kay.",
-    tag: "Clarity Session",
+    content: "Coach Kay told me: 'Frustration is unprocessed ambition.' I've been sitting with that for three days. It changed how I talk to myself.",
   },
 ];
 
@@ -57,7 +51,7 @@ const Community = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title="Community — FocusFlow AI" description="Connect with fellow clarity seekers. Read real stories, breakthroughs, and reflections from the FocusFlow AI community." path="/community" />
+      <SEOHead title="Community — FocusFlow AI" description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, access AI modules, weekly coaching, and 24/7 community support." path="/community" />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
@@ -73,8 +67,9 @@ const Community = () => {
       </div>
 
       <div className="relative z-10 px-6 py-12 max-w-3xl mx-auto">
+        {/* Hero */}
         <AnimatedSection className="text-center mb-16">
-          <span className="font-mono-label text-primary tracking-[0.2em]">The Clarity Circle</span>
+          <span className="font-mono-label text-primary tracking-[0.2em]">The Elevation Hub</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
             style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
@@ -82,43 +77,105 @@ const Community = () => {
             You're not alone in this.
           </h1>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            Real stories from people doing the work. Honest reflections. Shared breakthroughs.
+            Join 98+ elevation seekers rebuilding their lives and businesses with AI and intentional growth. Free to join.
           </p>
+          <Button
+            onClick={() => window.open(SKOOL_URL, "_blank")}
+            className="mt-8 animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-8 py-6 text-base"
+          >
+            <ExternalLink className="mr-2 h-5 w-5" />
+            Join the Community on Skool
+          </Button>
         </AnimatedSection>
 
-        <div className="space-y-6">
-          {posts.map((post, i) => (
-            <AnimatedSection key={i} delay={i * 100}>
-              <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6 md:p-8">
-                <div className="flex items-center gap-3 mb-4">
+        {/* About Coach Kay */}
+        <AnimatedSection delay={100}>
+          <div className="clarity-card rounded-lg border border-primary/20 bg-card/30 backdrop-blur-sm p-8 mb-12">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center">
+                <span className="text-sm text-primary font-medium">K</span>
+              </div>
+              <div>
+                <h3 className="font-heading text-lg font-light">Coach Kay</h3>
+                <p className="text-xs text-muted-foreground">AI & Life Transformation Coach</p>
+              </div>
+            </div>
+            <p className="text-foreground/80 leading-relaxed text-sm mb-4">
+              I'm an accredited AI Consultant, AI Strategist, and Master Life Coach trained in transformation, mindfulness, purpose, and goal-setting. My mission is simple: make sure no one gets left behind in the AI revolution.
+            </p>
+            <p className="text-foreground/70 leading-relaxed text-sm">
+              We're in a critical window (2026–2027). Just like social media in 2008 or smartphones in 2010, early adopters gained massive leverage. I've spent 1,000+ hours mastering AI so you can compress years of growth into months.
+            </p>
+          </div>
+        </AnimatedSection>
+
+        {/* What's inside */}
+        <AnimatedSection delay={200}>
+          <div className="mb-12">
+            <h2 className="font-heading text-2xl font-light text-center mb-8">
+              FREE inside the community
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {highlights.map((item, i) => (
+                <div key={i} className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-5 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                    <item.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="text-foreground/80 text-sm">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Member stories */}
+        <AnimatedSection delay={300}>
+          <h2 className="font-heading text-2xl font-light text-center mb-8">
+            What members are saying
+          </h2>
+          <div className="space-y-4 mb-12">
+            {testimonials.map((post, i) => (
+              <div key={i} className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6">
+                <div className="flex items-center gap-3 mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
                     <span className="text-xs text-primary font-medium">{post.name[0]}</span>
                   </div>
-                  <div>
-                    <span className="text-sm font-medium text-foreground">{post.name}</span>
-                    <span className="text-xs text-muted-foreground/50 ml-2">{post.time}</span>
-                  </div>
-                  <span className="ml-auto font-mono-label text-primary/40">{post.tag}</span>
+                  <span className="text-sm font-medium text-foreground">{post.name}</span>
+                  <span className="ml-auto font-mono-label text-primary/40 text-xs">{post.tag}</span>
                 </div>
                 <p className="text-foreground/80 leading-relaxed text-sm">{post.content}</p>
               </div>
-            </AnimatedSection>
-          ))}
-        </div>
-
-        <AnimatedSection delay={600} className="text-center mt-16">
-          <div className="clarity-card rounded-lg border border-border bg-card/20 backdrop-blur-sm p-12">
-            <h3 className="font-heading text-2xl font-light mb-4">Start your own story.</h3>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Begin with a Clarity Session. See what emerges. Then share — or keep it for yourself. Either way, you'll know.
+            ))}
+            <p className="text-center text-xs text-muted-foreground/50 mt-2">
+              Member testimonials from the FocusFlow Elevation Hub
             </p>
-            <Button
-              onClick={() => navigate("/clarity")}
-              className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-8 py-6"
-            >
-              <Sparkles className="mr-2 h-5 w-5" />
-              Begin Your Clarity Check
-            </Button>
+          </div>
+        </AnimatedSection>
+
+        {/* Bottom CTA */}
+        <AnimatedSection delay={400} className="text-center">
+          <div className="clarity-card rounded-lg border border-primary/15 bg-card/20 backdrop-blur-sm p-12">
+            <h3 className="font-heading text-2xl font-light mb-4">Ready to elevate?</h3>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+              Join the community. Access AI coaching modules, weekly group sessions, and a support system that moves with you.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => window.open(SKOOL_URL, "_blank")}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-8 py-6"
+              >
+                <ExternalLink className="mr-2 h-5 w-5" />
+                Join Free on Skool
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/clarity")}
+                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-8 py-6"
+              >
+                <Sparkles className="mr-2 h-5 w-5" />
+                Try a Clarity Session First
+              </Button>
+            </div>
           </div>
         </AnimatedSection>
       </div>

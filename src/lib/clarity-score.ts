@@ -106,11 +106,17 @@ export async function computeClarityScore(): Promise<ClarityScore | null> {
 function computeStreak(dates: string[]): number {
   if (dates.length === 0) return 0;
 
-  const daySet = new Set(dates.map(d => new Date(d).toISOString().split("T")[0]));
+  // Use local timezone for day bucketing so evening sessions don't count as tomorrow
+  const toLocalDay = (d: string) => {
+    const dt = new Date(d);
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+  };
+
+  const daySet = new Set(dates.map(toLocalDay));
   const sortedDays = [...daySet].sort().reverse();
 
-  const today = new Date().toISOString().split("T")[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const today = toLocalDay(new Date().toISOString());
+  const yesterday = toLocalDay(new Date(Date.now() - 86400000).toISOString());
 
   // Streak must start from today or yesterday
   if (sortedDays[0] !== today && sortedDays[0] !== yesterday) return 0;
