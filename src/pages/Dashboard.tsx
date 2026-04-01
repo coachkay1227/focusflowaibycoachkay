@@ -14,6 +14,7 @@ import { ArrowRight, BookOpen, Trophy, Sparkles, LogOut, Plus } from "lucide-rea
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
+import { useAccessLevel } from "@/hooks/use-access-level";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
