@@ -96,6 +96,9 @@ const ResultScreen = () => {
       session.insight = insight;
       saveSessionCloud(session);
     }, 100);
+
+    // Update module enrollment progress
+    updateModuleProgress(moduleId);
   };
 
   const fetchPatterns = async () => {

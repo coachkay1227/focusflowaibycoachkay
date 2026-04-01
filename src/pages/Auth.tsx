@@ -19,10 +19,17 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
 
   // Redirect if already signed in
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      getUserPreferences().then((prefs) => {
+        if (!prefs || !prefs.onboardingCompleted) {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
+      });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

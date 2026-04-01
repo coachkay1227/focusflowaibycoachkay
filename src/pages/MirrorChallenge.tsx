@@ -154,8 +154,14 @@ const MirrorChallenge = () => {
     setData(newData);
     saveChallengeDataCloud(challengeType, newData);
 
+    // Update enrollment status
+    if (selectedDay === 1 && !data.entries[1]) {
+      updateChallengeStatus(challengeType, "in_progress");
+    }
+
     if (selectedDay === totalDays && !data.entries[totalDays]) {
       setShowCelebration(true);
+      updateChallengeStatus(challengeType, "completed");
     }
   };
 
