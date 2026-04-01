@@ -1,9 +1,13 @@
-import { useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { coachingModules } from "@/lib/modules";
+import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
-import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass, Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const iconMap: Record<string, typeof Eye> = {
   eye: Eye,
@@ -13,9 +17,25 @@ const iconMap: Record<string, typeof Eye> = {
   compass: Compass,
 };
 
+const statusLabels: Record<string, string> = {
+  enrolled: "Enrolled",
+  in_progress: "In Progress",
+  completed: "Completed",
+};
+
 const Modules = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [enrollments, setEnrollments] = useState<ModuleEnrollment[]>([]);
+  const [enrolling, setEnrolling] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      getModuleEnrollments().then(setEnrollments);
+    }
+  }, [user]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -27,6 +47,22 @@ const Modules = () => {
     el.addEventListener("mousemove", handler, { passive: true });
     return () => el.removeEventListener("mousemove", handler);
   }, []);
+
+  const getEnrollment = (moduleId: string) => enrollments.find((e) => e.moduleId === moduleId);
+
+  const handleEnroll = async (moduleId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    setEnrolling(moduleId);
+    await enrollInModule(moduleId);
+    const updated = await getModuleEnrollments();
+    setEnrollments(updated);
+    setEnrolling(null);
+    toast({ title: "Enrolled!", description: "Module added to your dashboard." });
+  };
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
@@ -60,25 +96,63 @@ const Modules = () => {
         <div className="grid md:grid-cols-2 gap-6">
           {coachingModules.map((mod, i) => {
             const Icon = iconMap[mod.icon] || Eye;
+            const enrollment = getEnrollment(mod.id);
             return (
               <AnimatedSection key={mod.id} delay={i * 120}>
-                <button
-                  onClick={() => navigate(`/clarity/${mod.id}`)}
-                  className="clarity-card w-full text-left rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8 h-full group"
-                >
+                <div className="clarity-card w-full text-left rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8 h-full group">
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
-                    <span className="font-mono-label text-muted-foreground/50">{mod.duration}</span>
+                    <div className="flex items-center gap-2">
+                      {enrollment && (
+                        <Badge className={`text-xs ${
+                          enrollment.status === "completed"
+                            ? "bg-accent/20 text-accent border-accent/30"
+                            : enrollment.status === "in_progress"
+                            ? "bg-primary/20 text-primary border-primary/30"
+                            : "bg-secondary text-secondary-foreground"
+                        }`}>
+                          {statusLabels[enrollment.status]}
+                        </Badge>
+                      )}
+                      <span className="font-mono-label text-muted-foreground/50">{mod.duration}</span>
+                    </div>
                   </div>
                   <h3 className="font-heading text-xl md:text-2xl font-light mb-1">{mod.title}</h3>
                   <p className="text-primary/80 text-sm mb-3">{mod.subtitle}</p>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-4">{mod.description}</p>
-                  <span className="flex items-center gap-2 text-sm text-primary/60 group-hover:text-primary transition-colors">
-                    Start session <ArrowRight className="h-3 w-3" />
-                  </span>
-                </button>
+                  
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => navigate(`/clarity/${mod.id}`)}
+                      className="flex items-center gap-2 text-sm text-primary/60 hover:text-primary transition-colors"
+                    >
+                      {enrollment ? "Continue session" : "Start session"} <ArrowRight className="h-3 w-3" />
+                    </button>
+                    {user && !enrollment && (
+                      <button
+                        onClick={(e) => handleEnroll(mod.id, e)}
+                        disabled={enrolling === mod.id}
+                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors ml-auto"
+                      >
+                        {enrolling === mod.id ? "..." : (
+                          <>
+                            <Check className="h-3 w-3" /> Enroll
+                          </>
+                        )}
+                      </button>
+                    )}
+                    {!user && (
+                      <button
+                        onClick={() => navigate("/auth")}
+                        className="text-xs text-muted-foreground/50 hover:text-primary transition-colors ml-auto"
+                      >
+                        Sign in to enroll
+                      </button>
+                    )}
+                  </div>
+                </div>
               </AnimatedSection>
             );
           })}

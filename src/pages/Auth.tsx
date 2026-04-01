@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getUserPreferences } from "@/lib/enrollment-store";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
 import FloatingOrbs from "@/components/FloatingOrbs";
@@ -18,10 +19,17 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
 
   // Redirect if already signed in
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      getUserPreferences().then((prefs) => {
+        if (!prefs || !prefs.onboardingCompleted) {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
+      });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +57,7 @@ const Auth = () => {
       toast({ title: "Check your email", description: "We've sent you a verification link. Please confirm your email before signing in." });
       setMode("signin");
     } else {
-      navigate("/");
+      // useEffect will handle redirect based on onboarding status
     }
   };
 

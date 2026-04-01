@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-store";
+import { updateChallengeStatus } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
@@ -153,8 +154,14 @@ const MirrorChallenge = () => {
     setData(newData);
     saveChallengeDataCloud(challengeType, newData);
 
+    // Update enrollment status
+    if (selectedDay === 1 && !data.entries[1]) {
+      updateChallengeStatus(challengeType, "in_progress");
+    }
+
     if (selectedDay === totalDays && !data.entries[totalDays]) {
       setShowCelebration(true);
+      updateChallengeStatus(challengeType, "completed");
     }
   };
 

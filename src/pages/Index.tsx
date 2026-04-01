@@ -70,6 +70,14 @@ const Index = () => {
           <span className="text-primary">Focus</span> Flow
         </div>
         <div className="flex items-center gap-6">
+          {user && (
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block font-medium"
+            >
+              Dashboard
+            </button>
+          )}
           <button
             onClick={() => navigate("/modules")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"

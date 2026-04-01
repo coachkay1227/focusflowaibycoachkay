@@ -14,6 +14,8 @@ import Challenges from "./pages/Challenges.tsx";
 import CoachChat from "./pages/CoachChat.tsx";
 import Auth from "./pages/Auth.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
+import Onboarding from "./pages/Onboarding.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clarity" element={<ClaritySession />} />
             <Route path="/clarity/:moduleId" element={<ClaritySession />} />
             <Route path="/result" element={<ResultScreen />} />
