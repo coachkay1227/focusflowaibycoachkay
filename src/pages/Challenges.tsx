@@ -68,6 +68,7 @@ const Challenges = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Challenges — FocusFlow AI" description="Take on transformative clarity challenges — 3-day, 4-day, or 7-day deep dives into honest self-reflection and growth." path="/challenges" jsonLd={{ "@context": "https://schema.org", "@type": "ItemList", name: "FocusFlow AI Challenges", itemListElement: challengeTypes.map((c, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "Event", name: c.title, description: c.description } })) }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

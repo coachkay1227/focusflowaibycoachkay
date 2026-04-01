@@ -69,6 +69,7 @@ const ResetPassword = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <SEOHead title="Reset Password — FocusFlow AI" description="Set a new password for your FocusFlow AI account." path="/reset-password" />
       <FloatingOrbs />
       <div className="mouse-glow" />
 

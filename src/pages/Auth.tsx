@@ -75,6 +75,7 @@ const Auth = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <SEOHead title="Sign In — FocusFlow AI" description="Sign in or create your FocusFlow AI account to save your clarity sessions, track progress, and unlock personalized coaching." path="/auth" />
       <FloatingOrbs />
       <div className="mouse-glow" />
 

@@ -142,6 +142,7 @@ const CoachChat = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay flex flex-col">
+      <SEOHead title="Coach Kay — FocusFlow AI" description="Chat with your AI clarity coach. Get personalized insights, challenge your thinking, and unlock deeper self-awareness." path="/coach" jsonLd={{ "@context": "https://schema.org", "@type": "Service", name: "Coach Kay AI", provider: { "@type": "Organization", name: "FocusFlow AI" }, description: "AI-powered clarity coaching conversations" }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

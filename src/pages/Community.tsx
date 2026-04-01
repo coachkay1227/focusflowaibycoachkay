@@ -57,6 +57,7 @@ const Community = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Community — FocusFlow AI" description="Connect with fellow clarity seekers. Read real stories, breakthroughs, and reflections from the FocusFlow AI community." path="/community" />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
