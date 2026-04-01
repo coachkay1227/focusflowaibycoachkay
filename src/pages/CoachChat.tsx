@@ -152,7 +152,7 @@ const CoachChat = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Coach</span> Kay
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       {/* Messages */}

@@ -67,7 +67,7 @@ const Community = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       <div className="relative z-10 px-6 py-12 max-w-3xl mx-auto">

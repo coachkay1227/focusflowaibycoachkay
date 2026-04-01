@@ -140,7 +140,7 @@ const ResultScreen = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       {!ready ? (
