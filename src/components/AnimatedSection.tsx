@@ -1,0 +1,61 @@
+import { useEffect, useRef, useState } from "react";
+
+interface AnimatedSectionProps {
+  children: React.ReactNode;
+  className?: string;
+  staggerChildren?: boolean;
+  delay?: number;
+}
+
+const AnimatedSection = ({ children, className = "", staggerChildren = false, delay = 0 }: AnimatedSectionProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), delay);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [delay]);
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(40px)",
+        transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
+        willChange: "transform, opacity",
+      }}
+    >
+      {staggerChildren
+        ? Array.isArray(children)
+          ? children.map((child, i) => (
+              <div
+                key={i}
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? "translateY(0)" : "translateY(20px)",
+                  transition: `opacity 0.5s ease-out ${i * 0.12}s, transform 0.5s ease-out ${i * 0.12}s`,
+                }}
+              >
+                {child}
+              </div>
+            ))
+          : children
+        : children}
+    </div>
+  );
+};
+
+export default AnimatedSection;
