@@ -45,6 +45,7 @@ const App = () => (
             <Route path="/coach" element={<CoachChat />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/email-preview" element={<EmailPreview />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
