@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { clarityQuestions, type ClarityAnswers } from "@/lib/clarity-engine";
+import { getModule } from "@/lib/modules";
+import type { ModuleQuestion } from "@/lib/modules";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
@@ -9,14 +11,22 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 
 const ClaritySession = () => {
   const navigate = useNavigate();
+  const { moduleId } = useParams<{ moduleId?: string }>();
+  
+  // Get questions from module or default
+  const resolvedModuleId = moduleId || "clarity-check";
+  const mod = getModule(resolvedModuleId);
+  const questions: ModuleQuestion[] = (mod && mod.questions.length > 0) ? mod.questions : clarityQuestions;
+  const moduleTitle = mod?.title || "Clarity Check";
+
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [animState, setAnimState] = useState<"enter" | "exit" | "idle">("enter");
   const [textValue, setTextValue] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const question = clarityQuestions[currentStep];
-  const progress = ((currentStep + 1) / clarityQuestions.length) * 100;
+  const question = questions[currentStep];
+  const progress = ((currentStep + 1) / questions.length) * 100;
   const canProceed = question.type === "options" ? !!answers[question.id] : textValue.trim().length > 0;
 
   useEffect(() => {
@@ -35,23 +45,23 @@ const ClaritySession = () => {
     if (question.type === "text") {
       setAnswers((prev) => ({ ...prev, [question.id]: textValue }));
     }
-    if (currentStep === clarityQuestions.length - 1) {
+    if (currentStep === questions.length - 1) {
       const finalAnswers = { ...answers };
       if (question.type === "text") finalAnswers[question.id] = textValue;
-      navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers } });
+      navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
       return;
     }
     setAnimState("exit");
     setTimeout(() => {
       setCurrentStep((s) => s + 1);
-      setTextValue(answers[clarityQuestions[currentStep + 1]?.id] || "");
+      setTextValue(answers[questions[currentStep + 1]?.id] || "");
       setAnimState("enter");
     }, 300);
   };
 
   const goBack = () => {
     if (currentStep === 0) {
-      navigate("/");
+      navigate(moduleId ? "/modules" : "/");
       return;
     }
     if (question.type === "text" && textValue.trim()) {
@@ -60,7 +70,7 @@ const ClaritySession = () => {
     setAnimState("exit");
     setTimeout(() => {
       setCurrentStep((s) => s - 1);
-      const prevQ = clarityQuestions[currentStep - 1];
+      const prevQ = questions[currentStep - 1];
       if (prevQ.type === "text") setTextValue(answers[prevQ.id] || "");
       setAnimState("enter");
     }, 300);
@@ -68,17 +78,16 @@ const ClaritySession = () => {
 
   const selectOption = (value: string) => {
     setAnswers((prev) => ({ ...prev, [question.id]: value }));
-    // Auto-advance after selection with delay
     setTimeout(() => {
-      if (currentStep === clarityQuestions.length - 1) {
+      if (currentStep === questions.length - 1) {
         const finalAnswers = { ...answers, [question.id]: value };
-        navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers } });
+        navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
         return;
       }
       setAnimState("exit");
       setTimeout(() => {
         setCurrentStep((s) => s + 1);
-        setTextValue(answers[clarityQuestions[currentStep + 1]?.id] || "");
+        setTextValue(answers[questions[currentStep + 1]?.id] || "");
         setAnimState("enter");
       }, 300);
     }, 400);
@@ -89,26 +98,23 @@ const ClaritySession = () => {
       <div className="mouse-glow" />
       <FloatingOrbs />
 
-      {/* Header */}
       <div className="relative z-10 px-6 md:px-12 py-6 flex items-center justify-between">
         <button onClick={goBack} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">Focus</span> Flow
+          <span className="text-primary">{moduleTitle}</span>
         </div>
         <span className="font-mono-label text-muted-foreground/60">
-          {currentStep + 1} / {clarityQuestions.length}
+          {currentStep + 1} / {questions.length}
         </span>
       </div>
 
-      {/* Progress */}
       <div className="relative z-10 px-6 md:px-12">
         <Progress value={progress} className="h-[2px] bg-border" />
       </div>
 
-      {/* Question */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[80vh] px-6">
         <div
           className={`w-full max-w-2xl ${animState === "enter" ? "animate-question-enter" : animState === "exit" ? "animate-question-exit" : ""}`}

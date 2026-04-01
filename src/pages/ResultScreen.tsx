@@ -1,26 +1,47 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { generateInsight, type ClarityAnswers } from "@/lib/clarity-engine";
+import { saveSession, getRecentSessions, hasHistory, type SessionRecord } from "@/lib/session-store";
+import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Calendar, Trophy, ArrowLeft } from "lucide-react";
+import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+interface InsightResult {
+  truth: string;
+  pattern: string;
+  action: string;
+}
+
+interface PatternResult {
+  summary: string;
+  recurring: string;
+  growth: string;
+  callout: string;
+}
 
 const ResultScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const answers = (location.state as { answers: ClarityAnswers })?.answers;
+  const { toast } = useToast();
+  const state = location.state as { answers: ClarityAnswers; moduleId?: string } | undefined;
+  const answers = state?.answers;
+  const moduleId = state?.moduleId || "clarity-check";
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [insight, setInsight] = useState<InsightResult | null>(null);
+  const [patterns, setPatterns] = useState<PatternResult | null>(null);
+  const [loadingPatterns, setLoadingPatterns] = useState(false);
 
   useEffect(() => {
     if (!answers) {
       navigate("/clarity");
       return;
     }
-    // Simulate brief "processing" moment
-    setTimeout(() => setReady(true), 1200);
-  }, [answers, navigate]);
+    fetchInsight();
+  }, [answers, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const el = containerRef.current;
@@ -33,21 +54,79 @@ const ResultScreen = () => {
     return () => el.removeEventListener("mousemove", handler);
   }, []);
 
-  if (!answers) return null;
-  const insight = generateInsight(answers);
+  const fetchInsight = async () => {
+    if (!answers) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke("clarity-insight", {
+        body: { answers, moduleId },
+      });
 
-  const sections = [
-    { label: "THE TRUTH", title: "Here's what's really going on", content: insight.truth, color: "text-primary" },
-    { label: "THE PATTERN", title: "Here's what keeps showing up", content: insight.pattern, color: "text-accent" },
-    { label: "THE ACTION", title: "Here's your next move", content: insight.action, color: "text-primary" },
-  ];
+      if (error || data?.error) {
+        console.warn("AI insight failed, using local fallback:", error || data?.error);
+        setInsight(generateInsight(answers));
+      } else {
+        setInsight(data as InsightResult);
+      }
+    } catch (e) {
+      console.warn("AI insight error, using local fallback:", e);
+      setInsight(generateInsight(answers));
+    }
+
+    setReady(true);
+
+    // Save session
+    const session: SessionRecord = {
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      moduleId,
+      answers,
+      insight: null, // will be updated below
+    };
+
+    // Fetch patterns if returning user
+    if (hasHistory()) {
+      fetchPatterns();
+    }
+
+    // Save with insight after state update
+    setTimeout(() => {
+      session.insight = insight;
+      saveSession(session);
+    }, 100);
+  };
+
+  const fetchPatterns = async () => {
+    setLoadingPatterns(true);
+    try {
+      const sessions = getRecentSessions(5);
+      const { data, error } = await supabase.functions.invoke("pattern-detect", {
+        body: { sessions },
+      });
+      if (!error && !data?.error) {
+        setPatterns(data as PatternResult);
+      }
+    } catch (e) {
+      console.warn("Pattern detection failed:", e);
+    }
+    setLoadingPatterns(false);
+  };
+
+  if (!answers) return null;
+
+  const sections = insight
+    ? [
+        { label: "THE TRUTH", title: "Here's what's really going on", content: insight.truth, color: "text-primary" },
+        { label: "THE PATTERN", title: "Here's what keeps showing up", content: insight.pattern, color: "text-accent" },
+        { label: "THE ACTION", title: "Here's your next move", content: insight.action, color: "text-primary" },
+      ]
+    : [];
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
       <div className="mouse-glow" />
       <FloatingOrbs />
 
-      {/* Header */}
       <div className="relative z-10 px-6 md:px-12 py-6 flex items-center justify-between">
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Home
@@ -100,6 +179,45 @@ const ResultScreen = () => {
             ))}
           </div>
 
+          {/* Pattern Evolution Section */}
+          {(patterns || loadingPatterns) && (
+            <>
+              <AnimatedSection delay={700} className="my-12">
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+              </AnimatedSection>
+
+              <AnimatedSection delay={800}>
+                <div className="clarity-card rounded-lg border border-primary/20 bg-card/30 backdrop-blur-sm p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    <span className="font-mono-label text-primary tracking-[0.15em]">Pattern Evolution</span>
+                  </div>
+                  {loadingPatterns ? (
+                    <p className="text-muted-foreground text-sm">Analyzing your patterns across sessions...</p>
+                  ) : patterns ? (
+                    <div className="space-y-4">
+                      <p className="text-foreground/80 leading-relaxed">{patterns.summary}</p>
+                      <div className="grid md:grid-cols-2 gap-4 mt-4">
+                        <div className="p-4 rounded-lg bg-card/20 border border-border/50">
+                          <span className="font-mono-label text-primary/60 text-xs">Recurring</span>
+                          <p className="text-foreground/70 text-sm mt-2">{patterns.recurring}</p>
+                        </div>
+                        <div className="p-4 rounded-lg bg-card/20 border border-border/50">
+                          <span className="font-mono-label text-primary/60 text-xs">Growth</span>
+                          <p className="text-foreground/70 text-sm mt-2">{patterns.growth}</p>
+                        </div>
+                      </div>
+                      <div className="mt-4 p-4 rounded-lg bg-primary/5 border border-primary/15">
+                        <span className="font-mono-label text-primary/80 text-xs">Coach Kay's Call-Out</span>
+                        <p className="text-foreground/80 text-sm mt-2 italic">{patterns.callout}</p>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </AnimatedSection>
+            </>
+          )}
+
           {/* Gold divider */}
           <AnimatedSection delay={800} className="my-16">
             <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
@@ -108,12 +226,12 @@ const ResultScreen = () => {
           {/* CTAs */}
           <AnimatedSection delay={900} className="text-center space-y-4">
             <h3 className="font-heading text-2xl md:text-3xl font-light mb-8">What's your next move?</h3>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
               <Button
-                onClick={() => navigate("/clarity")}
+                onClick={() => navigate("/coach", { state: { context: { ...insight, answers } } })}
                 className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-8 py-6"
               >
-                <Sparkles className="mr-2 h-5 w-5" />
+                <MessageCircle className="mr-2 h-5 w-5" />
                 Continue with AI Coach
               </Button>
               <Button
@@ -127,10 +245,10 @@ const ResultScreen = () => {
               <Button
                 variant="outline"
                 className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-8 py-6"
-                onClick={() => navigate("/mirror-challenge")}
+                onClick={() => navigate("/challenges")}
               >
                 <Trophy className="mr-2 h-5 w-5" />
-                Start the Mirror Challenge
+                Start a Challenge
               </Button>
             </div>
           </AnimatedSection>
