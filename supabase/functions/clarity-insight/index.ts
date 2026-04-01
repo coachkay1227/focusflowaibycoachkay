@@ -21,7 +21,36 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { answers, moduleId } = await req.json();
+    const body = await req.json();
+    const answers = body?.answers;
+    const moduleId = body?.moduleId;
+
+    if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
+      return new Response(JSON.stringify({ error: "Invalid answers object" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (Object.keys(answers).length > 20) {
+      return new Response(JSON.stringify({ error: "Too many answers" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    for (const [key, value] of Object.entries(answers)) {
+      if (typeof key !== "string" || key.length > 100 || typeof value !== "string" || (value as string).length > 5000) {
+        return new Response(JSON.stringify({ error: "Invalid answer entry" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    if (moduleId && (typeof moduleId !== "string" || moduleId.length > 100)) {
+      return new Response(JSON.stringify({ error: "Invalid moduleId" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
