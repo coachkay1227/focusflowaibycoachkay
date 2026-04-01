@@ -258,6 +258,113 @@ export function sessionSummaryEmail(data: SessionSummaryData): string {
 }
 
 // ---------------------------------------------------------------------------
+// 4. Weekly Digest
+// ---------------------------------------------------------------------------
+
+interface WeeklyDigestData {
+  userName: string;
+  weekLabel: string;
+  clarityScore: number;
+  clarityLevel: string;
+  previousScore: number;
+  sessionsThisWeek: number;
+  totalSessions: number;
+  challengeDaysCompleted: number;
+  streak: number;
+  topInsight?: string;
+  scoreHistory: { label: string; score: number }[];
+  dashboardUrl: string;
+}
+
+export function weeklyDigestEmail(data: WeeklyDigestData): string {
+  const scoreDelta = data.clarityScore - data.previousScore;
+  const deltaSign = scoreDelta >= 0 ? "+" : "";
+  const deltaColor = scoreDelta >= 0 ? "#16a34a" : "#dc2626";
+
+  const barChart = data.scoreHistory
+    .map((point) => {
+      const barHeight = Math.max(4, Math.round((point.score / 100) * 80));
+      return `
+      <td style="vertical-align:bottom;text-align:center;padding:0 4px;">
+        <div style="width:28px;height:${barHeight}px;background-color:${BRAND.gold};border-radius:4px 4px 0 0;margin:0 auto;"></div>
+        <p style="margin:4px 0 0;font-size:10px;color:${BRAND.footerText};">${point.label}</p>
+      </td>`;
+    })
+    .join("");
+
+  const statCell = (label: string, value: string | number, icon: string) => `
+    <td style="text-align:center;padding:12px 8px;">
+      <p style="margin:0;font-size:20px;">${icon}</p>
+      <p style="margin:4px 0 2px;font-size:22px;font-weight:700;color:${BRAND.darkBg};">${value}</p>
+      <p style="margin:0;font-size:11px;color:${BRAND.footerText};text-transform:uppercase;letter-spacing:1px;">${label}</p>
+    </td>`;
+
+  const content = `
+    <h2 style="margin:0 0 4px;font-size:22px;color:${BRAND.darkBg};font-weight:600;">
+      Your Weekly Clarity Digest 📊
+    </h2>
+    <p style="margin:0 0 24px;font-size:13px;color:${BRAND.footerText};">
+      ${data.weekLabel}
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6;">
+      Hey ${data.userName || "there"}, here's how your clarity evolved this week.
+    </p>
+
+    <!-- Score highlight -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.darkBg};border-radius:8px;margin-bottom:24px;">
+      <tr>
+        <td style="padding:24px;text-align:center;">
+          <p style="margin:0 0 4px;font-size:11px;color:${BRAND.textMuted};text-transform:uppercase;letter-spacing:1.5px;">Clarity Score</p>
+          <p style="margin:0;font-size:42px;font-weight:700;color:${BRAND.gold};">${data.clarityScore}</p>
+          <p style="margin:4px 0 0;font-size:14px;color:${BRAND.textLight};">
+            Level: ${data.clarityLevel} &nbsp;
+            <span style="color:${deltaColor};font-weight:600;">${deltaSign}${scoreDelta} this week</span>
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Score evolution chart -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;margin-bottom:24px;">
+      <tr>
+        <td style="padding:20px 16px 12px;">
+          <p style="margin:0 0 12px;font-size:11px;color:${BRAND.footerText};text-transform:uppercase;letter-spacing:1.5px;">Score Evolution</p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
+            <tr>${barChart}</tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Stats row -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;margin-bottom:24px;">
+      <tr>
+        ${statCell("Sessions", data.sessionsThisWeek, "🧠")}
+        ${statCell("Challenges", data.challengeDaysCompleted, "🏆")}
+        ${statCell("Streak", `${data.streak}d`, "🔥")}
+      </tr>
+    </table>
+
+    ${data.topInsight ? `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;border-radius:8px;border-left:4px solid ${BRAND.gold};margin-bottom:24px;">
+      <tr>
+        <td style="padding:20px 24px;">
+          <p style="margin:0 0 4px;font-size:11px;color:${BRAND.footerText};text-transform:uppercase;letter-spacing:1.5px;">💡 Top Insight This Week</p>
+          <p style="margin:0;font-size:15px;color:${BRAND.darkBg};font-style:italic;line-height:1.5;">"${data.topInsight}"</p>
+        </td>
+      </tr>
+    </table>` : ""}
+
+    ${ctaButton("View Full Dashboard", data.dashboardUrl)}
+
+    <p style="margin:0;font-size:13px;color:${BRAND.footerText};text-align:center;line-height:1.5;">
+      Clarity compounds. Every session builds on the last.
+    </p>`;
+
+  return baseWrapper(content);
+}
+
+// ---------------------------------------------------------------------------
 // Preview helpers (for testing in browser)
 // ---------------------------------------------------------------------------
 
@@ -291,6 +398,30 @@ export const TEMPLATE_PREVIEWS = {
       insightAction: "Write down the decision you've been avoiding. Set a 24-hour deadline to act on it.",
       clarityScore: 42,
       clarityLevel: "Reflecting",
+      dashboardUrl: "https://app.focusflow.ai/dashboard",
+    }),
+
+  weeklyDigest: () =>
+    weeklyDigestEmail({
+      userName: "Jordan",
+      weekLabel: "March 24 – March 30, 2026",
+      clarityScore: 42,
+      clarityLevel: "Reflecting",
+      previousScore: 35,
+      sessionsThisWeek: 4,
+      totalSessions: 18,
+      challengeDaysCompleted: 3,
+      streak: 5,
+      topInsight: "You tend to overthink when you're avoiding a decision you've already made.",
+      scoreHistory: [
+        { label: "Mon", score: 36 },
+        { label: "Tue", score: 38 },
+        { label: "Wed", score: 38 },
+        { label: "Thu", score: 40 },
+        { label: "Fri", score: 42 },
+        { label: "Sat", score: 42 },
+        { label: "Sun", score: 42 },
+      ],
       dashboardUrl: "https://app.focusflow.ai/dashboard",
     }),
 };

@@ -8,6 +8,7 @@ const templates = [
   { id: "enrollmentConfirmation", label: "Enrollment Confirmation" },
   { id: "challengeReminder", label: "Challenge Reminder" },
   { id: "sessionSummary", label: "Session Summary" },
+  { id: "weeklyDigest", label: "Weekly Digest" },
 ] as const;
 
 type TemplateKey = (typeof templates)[number]["id"];
