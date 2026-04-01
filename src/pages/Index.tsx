@@ -6,6 +6,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 const Index = () => {
   const navigate = useNavigate();
