@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenge_enrollments: {
+        Row: {
+          challenge_type: string
+          completed_at: string | null
+          enrolled_at: string | null
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          challenge_type: string
+          completed_at?: string | null
+          enrolled_at?: string | null
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          challenge_type?: string
+          completed_at?: string | null
+          enrolled_at?: string | null
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenge_progress: {
         Row: {
           challenge_type: string
@@ -74,6 +101,36 @@ export type Database = {
         }
         Relationships: []
       }
+      module_enrollments: {
+        Row: {
+          completed_at: string | null
+          enrolled_at: string | null
+          id: string
+          module_id: string
+          sessions_count: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          enrolled_at?: string | null
+          id?: string
+          module_id: string
+          sessions_count?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          enrolled_at?: string | null
+          id?: string
+          module_id?: string
+          sessions_count?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -92,6 +149,33 @@ export type Database = {
           created_at?: string | null
           display_name?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          coaching_style: string | null
+          created_at: string | null
+          id: string
+          onboarding_completed: boolean | null
+          primary_goal: string | null
+          selected_modules: string[] | null
+        }
+        Insert: {
+          coaching_style?: string | null
+          created_at?: string | null
+          id: string
+          onboarding_completed?: boolean | null
+          primary_goal?: string | null
+          selected_modules?: string[] | null
+        }
+        Update: {
+          coaching_style?: string | null
+          created_at?: string | null
+          id?: string
+          onboarding_completed?: boolean | null
+          primary_goal?: string | null
+          selected_modules?: string[] | null
         }
         Relationships: []
       }
