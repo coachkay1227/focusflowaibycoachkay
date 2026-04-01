@@ -102,6 +102,16 @@ const Dashboard = () => {
               <Badge className="ml-3 bg-primary/15 text-primary border-primary/30 text-xs capitalize">{tier} tier</Badge>
             )}
           </p>
+          {subscribed && (
+            <div className="mt-3 flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">
+                Subscription active{subscriptionEnd ? ` until ${new Date(subscriptionEnd).toLocaleDateString()}` : ""}
+              </span>
+              <Button variant="outline" size="sm" onClick={openPortal} className="text-xs h-7">
+                Manage Subscription
+              </Button>
+            </div>
+          )}
         </AnimatedSection>
 
         {loading ? (
