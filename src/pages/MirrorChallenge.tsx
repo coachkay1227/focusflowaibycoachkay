@@ -138,6 +138,11 @@ const MirrorChallenge = () => {
     return () => el.removeEventListener("mousemove", handler);
   }, []);
 
+  const isCompleted = data.currentDay > totalDays;
+  const prompt = prompts[selectedDay - 1];
+  const isDayUnlocked = selectedDay <= data.currentDay;
+  const isDayCompleted = !!data.entries[selectedDay];
+
   const handleSubmit = () => {
     if (!journalText.trim()) return;
     const newData = {
@@ -146,7 +151,7 @@ const MirrorChallenge = () => {
       currentDay: selectedDay === data.currentDay ? data.currentDay + 1 : data.currentDay,
     };
     setData(newData);
-    saveData(challengeType, newData);
+    saveChallengeDataCloud(challengeType, newData);
 
     if (selectedDay === totalDays && !data.entries[totalDays]) {
       setShowCelebration(true);
