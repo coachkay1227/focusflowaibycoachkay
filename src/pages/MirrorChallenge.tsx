@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
@@ -98,22 +99,6 @@ interface ChallengeData {
   startedAt: number;
 }
 
-function getStorageKey(type: string) {
-  return `focus-flow-challenge-${type}`;
-}
-
-function loadData(type: string): ChallengeData {
-  try {
-    const raw = localStorage.getItem(getStorageKey(type));
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { entries: {}, currentDay: 1, startedAt: Date.now() };
-}
-
-function saveData(type: string, data: ChallengeData) {
-  localStorage.setItem(getStorageKey(type), JSON.stringify(data));
-}
-
 const MirrorChallenge = () => {
   const navigate = useNavigate();
   const { type } = useParams<{ type?: string }>();
@@ -122,16 +107,25 @@ const MirrorChallenge = () => {
   const totalDays = prompts.length;
   const challengeTitle = `${totalDays}-Day ${challengeType === "7-day" ? "Mirror Challenge" : challengeType === "3-day" ? "Spark" : challengeType === "4-day" ? "Shift" : challengeType === "8-day" ? "Alignment" : challengeType === "14-day" ? "Transformation" : "Evolution"}`;
 
-  const [data, setData] = useState<ChallengeData>(() => loadData(challengeType));
-  const [selectedDay, setSelectedDay] = useState(data.currentDay > totalDays ? totalDays : data.currentDay);
-  const [journalText, setJournalText] = useState(data.entries[data.currentDay > totalDays ? totalDays : data.currentDay] || "");
+  const [data, setData] = useState<ChallengeData>({ entries: {}, currentDay: 1, startedAt: Date.now() });
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(1);
+  const [journalText, setJournalText] = useState("");
   const [showCelebration, setShowCelebration] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const isCompleted = data.currentDay > totalDays;
-  const prompt = prompts[selectedDay - 1];
-  const isDayUnlocked = selectedDay <= data.currentDay;
-  const isDayCompleted = !!data.entries[selectedDay];
+  // Load data from cloud on mount
+  useEffect(() => {
+    getChallengeDataCloud(challengeType).then((loaded) => {
+      if (loaded) {
+        setData(loaded);
+        const day = loaded.currentDay > totalDays ? totalDays : loaded.currentDay;
+        setSelectedDay(day);
+        setJournalText(loaded.entries[day] || "");
+      }
+      setDataLoaded(true);
+    });
+  }, [challengeType, totalDays]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -144,6 +138,11 @@ const MirrorChallenge = () => {
     return () => el.removeEventListener("mousemove", handler);
   }, []);
 
+  const isCompleted = data.currentDay > totalDays;
+  const prompt = prompts[selectedDay - 1];
+  const isDayUnlocked = selectedDay <= data.currentDay;
+  const isDayCompleted = !!data.entries[selectedDay];
+
   const handleSubmit = () => {
     if (!journalText.trim()) return;
     const newData = {
@@ -152,7 +151,7 @@ const MirrorChallenge = () => {
       currentDay: selectedDay === data.currentDay ? data.currentDay + 1 : data.currentDay,
     };
     setData(newData);
-    saveData(challengeType, newData);
+    saveChallengeDataCloud(challengeType, newData);
 
     if (selectedDay === totalDays && !data.entries[totalDays]) {
       setShowCelebration(true);

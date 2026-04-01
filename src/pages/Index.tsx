@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Eye, Lightbulb, Zap } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [phase, setPhase] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -98,6 +101,28 @@ const Index = () => {
           >
             Start Session
           </Button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Avatar className="h-8 w-8 border border-primary/30">
+                <AvatarImage src={user.user_metadata?.avatar_url || user.user_metadata?.picture} />
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {(user.email?.[0] || "U").toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <button onClick={signOut} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <Button
+              onClick={() => navigate("/auth")}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <User className="h-4 w-4 mr-1" /> Sign In
+            </Button>
+          )}
         </div>
       </nav>
 

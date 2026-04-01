@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      challenge_progress: {
+        Row: {
+          challenge_type: string
+          current_day: number | null
+          entries: Json | null
+          id: string
+          started_at: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_type: string
+          current_day?: number | null
+          entries?: Json | null
+          id?: string
+          started_at?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_type?: string
+          current_day?: number | null
+          entries?: Json | null
+          id?: string
+          started_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      clarity_sessions: {
+        Row: {
+          answers: Json
+          created_at: string | null
+          id: string
+          insight_action: string | null
+          insight_pattern: string | null
+          insight_truth: string | null
+          module_id: string
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          created_at?: string | null
+          id?: string
+          insight_action?: string | null
+          insight_pattern?: string | null
+          insight_truth?: string | null
+          module_id: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string | null
+          id?: string
+          insight_action?: string | null
+          insight_pattern?: string | null
+          insight_truth?: string | null
+          module_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

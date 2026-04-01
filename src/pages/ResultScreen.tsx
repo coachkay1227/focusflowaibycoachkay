@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { generateInsight, type ClarityAnswers } from "@/lib/clarity-engine";
-import { saveSession, getRecentSessions, hasHistory, type SessionRecord } from "@/lib/session-store";
+import { saveSessionCloud, getRecentSessionsCloud, hasHistoryCloud, type SessionRecord } from "@/lib/session-store";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
@@ -81,25 +81,26 @@ const ResultScreen = () => {
       timestamp: Date.now(),
       moduleId,
       answers,
-      insight: null, // will be updated below
+      insight: null,
     };
 
     // Fetch patterns if returning user
-    if (hasHistory()) {
+    const hasHist = await hasHistoryCloud();
+    if (hasHist) {
       fetchPatterns();
     }
 
     // Save with insight after state update
     setTimeout(() => {
       session.insight = insight;
-      saveSession(session);
+      saveSessionCloud(session);
     }, 100);
   };
 
   const fetchPatterns = async () => {
     setLoadingPatterns(true);
     try {
-      const sessions = getRecentSessions(5);
+      const sessions = await getRecentSessionsCloud(5);
       const { data, error } = await supabase.functions.invoke("pattern-detect", {
         body: { sessions },
       });
