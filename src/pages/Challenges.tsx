@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getChallengeEnrollments, enrollInChallenge, type ChallengeEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Trophy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -67,6 +68,7 @@ const Challenges = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Challenges — FocusFlow AI" description="Take on transformative clarity challenges — 3-day, 4-day, or 7-day deep dives into honest self-reflection and growth." path="/challenges" jsonLd={{ "@context": "https://schema.org", "@type": "ItemList", name: "FocusFlow AI Challenges", itemListElement: challengeTypes.map((c, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "Event", name: c.title, description: c.description } })) }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

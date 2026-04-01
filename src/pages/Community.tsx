@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
@@ -56,6 +57,7 @@ const Community = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Community — FocusFlow AI" description="Connect with fellow clarity seekers. Read real stories, breakthroughs, and reflections from the FocusFlow AI community." path="/community" />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

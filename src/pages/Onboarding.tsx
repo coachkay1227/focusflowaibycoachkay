@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { saveUserPreferences, enrollInModule } from "@/lib/enrollment-store";
 import { coachingModules } from "@/lib/modules";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Sparkles, Check } from "lucide-react";
@@ -75,6 +76,7 @@ const Onboarding = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <SEOHead title="Get Started — FocusFlow AI" description="Set up your clarity coaching preferences and choose your first modules to begin your FocusFlow AI journey." path="/onboarding" />
       <FloatingOrbs />
       <div className="mouse-glow" />
 

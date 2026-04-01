@@ -6,6 +6,7 @@ import { getRecentSessionsCloud, type SessionRecord } from "@/lib/session-store"
 import { coachingModules } from "@/lib/modules";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -56,6 +57,7 @@ const Dashboard = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Dashboard — FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
 const ClaritySession = () => {
@@ -95,6 +96,7 @@ const ClaritySession = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title={`${moduleTitle} — FocusFlow AI`} description="Begin your guided clarity check. Answer honest questions and receive AI-powered insights about your patterns and potential." path="/clarity" jsonLd={{ "@context": "https://schema.org", "@type": "Service", name: "Clarity Session", provider: { "@type": "Organization", name: "FocusFlow AI" }, description: "AI-guided self-reflection session" }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

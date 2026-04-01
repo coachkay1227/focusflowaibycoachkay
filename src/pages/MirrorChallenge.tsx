@@ -4,6 +4,7 @@ import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-sto
 import { updateChallengeStatus } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Check, Lock, Trophy } from "lucide-react";
@@ -215,6 +216,7 @@ const MirrorChallenge = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title={`${challengeType.replace("-", " ").replace(/\b\w/g, c => c.toUpperCase())} Challenge — FocusFlow AI`} description="Take on a transformative clarity challenge. Daily prompts, honest reflection, and real breakthroughs." path={`/challenges/${challengeType}`} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

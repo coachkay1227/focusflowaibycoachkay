@@ -5,6 +5,7 @@ import { coachingModules } from "@/lib/modules";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -67,6 +68,7 @@ const Modules = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Modules — FocusFlow AI" description="Explore guided clarity modules designed to help you build self-awareness, emotional resilience, and purposeful focus." path="/modules" jsonLd={{ "@context": "https://schema.org", "@type": "ItemList", name: "FocusFlow AI Modules", itemListElement: coachingModules.map((m, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "Course", name: m.title, description: m.description } })) }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

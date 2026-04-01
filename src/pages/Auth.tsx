@@ -4,6 +4,7 @@ import { getUserPreferences } from "@/lib/enrollment-store";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Mail, Lock, Sparkles } from "lucide-react";
@@ -74,6 +75,7 @@ const Auth = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <SEOHead title="Sign In — FocusFlow AI" description="Sign in or create your FocusFlow AI account to save your clarity sessions, track progress, and unlock personalized coaching." path="/auth" />
       <FloatingOrbs />
       <div className="mouse-glow" />
 

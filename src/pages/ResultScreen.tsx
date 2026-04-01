@@ -6,6 +6,7 @@ import { updateModuleProgress } from "@/lib/enrollment-store";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -130,6 +131,7 @@ const ResultScreen = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+      <SEOHead title="Your Clarity Report — FocusFlow AI" description="Review your personalized clarity insights, patterns, and action steps from your session with Coach Kay." path="/result" />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
@@ -138,7 +140,7 @@ const ResultScreen = () => {
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">Focus</span>Flow AI
+          <span className="text-primary">FocusFlow</span> AI
         </div>
         <MobileNav />
       </div>

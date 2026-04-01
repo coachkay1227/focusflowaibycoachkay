@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import MobileNav from "@/components/MobileNav";
+import SEOHead from "@/components/SEOHead";
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import { ArrowLeft, Save, User, Camera } from "lucide-react";
 import { toast } from "sonner";
@@ -86,6 +87,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead title="Profile — FocusFlow AI" description="Manage your FocusFlow AI profile, update your coaching preferences, and view your clarity stats." path="/profile" />
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">

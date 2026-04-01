@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-react";
@@ -37,6 +38,26 @@ const Index = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay grid-overlay">
+      <SEOHead
+        title="FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay"
+        description="See clearly. Move with purpose. AI-powered clarity coaching that helps you cut through mental fog, identify patterns, and take meaningful action."
+        path="/"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "FocusFlow AI",
+            url: "https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app",
+            description: "AI-powered clarity coaching by Coach Kay",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "FocusFlow AI",
+            url: "https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app",
+          },
+        ]}
+      />
       {/* Mouse glow */}
       <div className="mouse-glow" />
 
