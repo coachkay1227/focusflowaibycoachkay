@@ -48,16 +48,7 @@ const Dashboard = () => {
     ]).finally(() => setLoading(false));
   }, [user, navigate]);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "You";
 

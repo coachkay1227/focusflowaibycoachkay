@@ -47,16 +47,7 @@ const ResultScreen = () => {
     fetchInsight();
   }, [answers, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   const fetchInsight = async () => {
     if (!answers) return;

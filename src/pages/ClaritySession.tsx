@@ -31,16 +31,7 @@ const ClaritySession = () => {
   const progress = ((currentStep + 1) / questions.length) * 100;
   const canProceed = question.type === "options" ? !!answers[question.id] : textValue.trim().length > 0;
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   const goNext = () => {
     if (!canProceed) return;

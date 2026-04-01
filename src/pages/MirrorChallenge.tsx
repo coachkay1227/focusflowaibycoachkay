@@ -131,16 +131,7 @@ const MirrorChallenge = () => {
     });
   }, [challengeType, totalDays]);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   const isCompleted = data.currentDay > totalDays;
   const prompt = prompts[selectedDay - 1];
