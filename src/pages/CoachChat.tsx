@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import FloatingOrbs from "@/components/FloatingOrbs";
@@ -25,16 +26,7 @@ const CoachChat = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });

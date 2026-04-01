@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate, useParams } from "react-router-dom";
 import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-store";
 import { updateChallengeStatus } from "@/lib/enrollment-store";
@@ -130,16 +131,7 @@ const MirrorChallenge = () => {
     });
   }, [challengeType, totalDays]);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   const isCompleted = data.currentDay > totalDays;
   const prompt = prompts[selectedDay - 1];
@@ -190,7 +182,7 @@ const MirrorChallenge = () => {
             <button
               key={day}
               onClick={() => handleDaySelect(day)}
-              className={`w-8 h-8 md:w-10 md:h-10 rounded-full border flex items-center justify-center text-xs transition-all ${
+              className={`w-11 h-11 md:w-11 md:h-11 rounded-full border flex items-center justify-center text-xs transition-all ${
                 active
                   ? "border-primary bg-primary/15 text-primary"
                   : completed

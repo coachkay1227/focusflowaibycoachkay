@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -25,16 +26,7 @@ const Index = () => {
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay grid-overlay">

@@ -2,23 +2,8 @@ import { type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel, type AccessTier } from "@/hooks/use-access-level";
+import { TIER_RANK, TIER_LABELS } from "@/lib/tier-constants";
 import { Lock } from "lucide-react";
-
-const TIER_RANK: Record<AccessTier, number> = {
-  free: 0,
-  subscriber: 1,
-  cohort: 2,
-  premium: 3,
-  corporate: 4,
-};
-
-const TIER_LABELS: Record<AccessTier, string> = {
-  free: "Free",
-  subscriber: "Subscriber",
-  cohort: "Cohort Member",
-  premium: "Premium",
-  corporate: "Corporate",
-};
 
 interface AccessGateProps {
   requiredTier: AccessTier;
