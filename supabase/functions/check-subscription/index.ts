@@ -39,6 +39,31 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // ─── PROTECTED TIER GUARD ───────────────────────────────────
+    // Tiers that are manually assigned (not managed by Stripe subscriptions).
+    // If the user already holds one of these, we never overwrite it —
+    // regardless of what Stripe says. This prevents the 60-second poll
+    // from resetting cohort, premium, corporate, or admin users to "free".
+    const PROTECTED_TIERS = ["cohort", "premium", "corporate"];
+
+    const { data: accessRow } = await supabaseClient
+      .from("user_access_levels")
+      .select("tier")
+      .eq("id", user.id)
+      .single();
+
+    const currentTier = accessRow?.tier ?? "free";
+    logStep("Current tier", { currentTier });
+
+    if (PROTECTED_TIERS.includes(currentTier)) {
+      logStep("Protected tier — skipping Stripe check entirely", { currentTier });
+      return new Response(
+        JSON.stringify({ subscribed: false, product_id: null, subscription_end: null, tier: currentTier }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+    // ─── END PROTECTED TIER GUARD ───────────────────────────────
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
@@ -70,7 +95,6 @@ serve(async (req) => {
       logStep("Active subscription found", { productId, subscriptionEnd });
 
       // Sync tier to user_access_levels based on product
-      // Map product IDs to tiers
       const PRODUCT_TIER_MAP: Record<string, string> = {
         "prod_UFpARkX0OxZg51": "subscriber",
       };
@@ -86,7 +110,16 @@ serve(async (req) => {
         logStep("Tier synced", { tier });
       }
     } else {
-      logStep("No active subscription — preserving existing tier (may be manually assigned)");
+      // Only downgrade if current tier is "subscriber" (Stripe-managed).
+      // "free" users stay free. Protected tiers already returned above.
+      if (currentTier === "subscriber") {
+        logStep("Stripe sub lapsed — downgrading subscriber to free");
+        await supabaseClient
+          .from("user_access_levels")
+          .upsert({ id: user.id, tier: "free" }, { onConflict: "id" });
+      } else {
+        logStep("No active subscription — preserving existing tier", { currentTier });
+      }
     }
 
     return new Response(
