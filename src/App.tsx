@@ -47,6 +47,7 @@ const App = () => (
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/email-preview" element={<EmailPreview />} />
+            <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
