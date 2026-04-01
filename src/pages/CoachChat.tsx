@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import FloatingOrbs from "@/components/FloatingOrbs";
