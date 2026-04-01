@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getModuleEnrollments, getChallengeEnrollments, type ModuleEnrollment, type ChallengeEnrollment } from "@/lib/enrollment-store";
 import { getRecentSessionsCloud, type SessionRecord } from "@/lib/session-store";
 import { coachingModules } from "@/lib/modules";
+import { programs } from "@/data/programs";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
