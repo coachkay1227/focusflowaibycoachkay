@@ -7,6 +7,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Trophy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MobileNav from "@/components/MobileNav";
 
 const challengeTypes = [
   { type: "3-day", title: "3-Day Spark", subtitle: "Quick clarity reset", description: "Three focused days to break through mental fog and reconnect with your truth.", days: 3 },
@@ -76,7 +77,7 @@ const Challenges = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       <div className="relative z-10 px-6 py-12 max-w-4xl mx-auto">

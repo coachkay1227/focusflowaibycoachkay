@@ -9,6 +9,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MobileNav from "@/components/MobileNav";
 
 interface InsightResult {
   truth: string;
@@ -139,7 +140,7 @@ const ResultScreen = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       {!ready ? (

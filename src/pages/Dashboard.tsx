@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowRight, BookOpen, Trophy, Sparkles, LogOut, Plus } from "lucide-react";
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
+import MobileNav from "@/components/MobileNav";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
@@ -72,9 +73,10 @@ const Dashboard = () => {
               {(user?.email?.[0] || "U").toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <button onClick={signOut} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={signOut} className="text-muted-foreground hover:text-foreground transition-colors hidden md:block">
             <LogOut className="h-4 w-4" />
           </button>
+          <MobileNav />
         </div>
       </nav>
 

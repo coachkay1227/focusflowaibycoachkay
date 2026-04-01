@@ -8,6 +8,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MobileNav from "@/components/MobileNav";
 
 const iconMap: Record<string, typeof Eye> = {
   eye: Eye,
@@ -76,7 +77,7 @@ const Modules = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       <div className="relative z-10 px-6 py-12 max-w-4xl mx-auto">

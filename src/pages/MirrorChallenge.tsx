@@ -7,6 +7,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Check, Lock, Trophy } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 // Challenge prompt configs
 const challengePrompts: Record<string, { prompt: string }[]> = {
@@ -224,7 +225,7 @@ const MirrorChallenge = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       <div className="relative z-10 px-6 py-12 max-w-3xl mx-auto">

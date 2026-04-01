@@ -6,6 +6,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -105,13 +106,13 @@ const Index = () => {
           <Button
             onClick={() => navigate("/clarity")}
             size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex"
           >
             Start Session
           </Button>
           {user ? (
             <div className="flex items-center gap-3">
-              <Avatar className="h-8 w-8 border border-primary/30">
+              <Avatar className="h-8 w-8 border border-primary/30 hidden md:flex">
                 <AvatarImage src={user.user_metadata?.avatar_url || user.user_metadata?.picture} />
                 <AvatarFallback className="bg-primary/10 text-primary text-xs">
                   {(user.email?.[0] || "U").toUpperCase()}
@@ -126,11 +127,12 @@ const Index = () => {
               onClick={() => navigate("/auth")}
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground hidden md:inline-flex"
             >
               <User className="h-4 w-4 mr-1" /> Sign In
             </Button>
           )}
+          <MobileNav />
         </div>
       </nav>
 

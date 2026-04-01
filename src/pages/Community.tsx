@@ -4,6 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Sparkles } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 const posts = [
   {
@@ -66,7 +67,7 @@ const Community = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Focus</span>Flow AI
         </div>
-        <div />
+        <MobileNav />
       </div>
 
       <div className="relative z-10 px-6 py-12 max-w-3xl mx-auto">
