@@ -7,6 +7,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Check, Lock, Trophy } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 // Challenge prompt configs
 const challengePrompts: Record<string, { prompt: string }[]> = {
