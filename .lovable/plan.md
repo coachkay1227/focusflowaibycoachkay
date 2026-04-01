@@ -1,95 +1,117 @@
 
 
-# Add Google Auth + Password Reset + Cloud Data Persistence
+# Full Enrollment System: Onboarding + Module & Challenge Enrollment + Progress Tracking
 
 ## Overview
-Add authentication (Google OAuth + email/password with password reset) so users can persist clarity sessions and challenge progress across devices. Migrate data storage from localStorage to the database.
+Build a complete enrollment system with three parts: (1) post-signup onboarding flow, (2) module enrollment with completion tracking, (3) challenge enrollment with progress persistence. Add a user dashboard to view all enrollments and progress.
 
 ## Database Changes
 
-### 1. Profiles table
+### 1. `module_enrollments` table
 ```sql
-create table public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  display_name text,
-  avatar_url text,
-  created_at timestamptz default now()
-);
-alter table public.profiles enable row level security;
-create policy "Users can read own profile" on public.profiles for select to authenticated using (auth.uid() = id);
-create policy "Users can update own profile" on public.profiles for update to authenticated using (auth.uid() = id);
-```
-Plus a trigger to auto-create profile on signup.
-
-### 2. Sessions table (replaces localStorage sessions)
-```sql
-create table public.clarity_sessions (
+create table public.module_enrollments (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade not null,
   module_id text not null,
-  answers jsonb not null,
-  insight_truth text,
-  insight_pattern text,
-  insight_action text,
-  created_at timestamptz default now()
+  status text not null default 'enrolled', -- enrolled, in_progress, completed
+  enrolled_at timestamptz default now(),
+  completed_at timestamptz,
+  sessions_count integer default 0,
+  unique (user_id, module_id)
 );
-alter table public.clarity_sessions enable row level security;
--- Users can only CRUD their own sessions
+-- RLS: users can CRUD own enrollments
 ```
 
-### 3. Challenge progress table (replaces localStorage challenges)
+### 2. `challenge_enrollments` table
 ```sql
-create table public.challenge_progress (
+create table public.challenge_enrollments (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade not null,
   challenge_type text not null,
-  entries jsonb default '{}'::jsonb,
-  current_day integer default 1,
-  started_at timestamptz default now(),
+  status text not null default 'enrolled', -- enrolled, in_progress, completed
+  enrolled_at timestamptz default now(),
+  completed_at timestamptz,
   unique (user_id, challenge_type)
 );
-alter table public.challenge_progress enable row level security;
+-- RLS: users can CRUD own enrollments
+```
+
+### 3. `user_preferences` table (for onboarding data)
+```sql
+create table public.user_preferences (
+  id uuid primary key references auth.users(id) on delete cascade,
+  onboarding_completed boolean default false,
+  primary_goal text,        -- e.g. 'clarity', 'emotional-health', 'focus', 'purpose'
+  coaching_style text,      -- e.g. 'supportive', 'direct', 'reflective'
+  selected_modules text[],  -- modules chosen during onboarding
+  created_at timestamptz default now()
+);
+-- RLS: users can read/update/insert own preferences
 ```
 
 ## Frontend Changes
 
-### 4. Auth context + provider
-- Create `src/contexts/AuthContext.tsx` — wraps app with auth state, provides `user`, `signIn`, `signOut`, `signInWithGoogle`, `loading`
-- Uses `supabase.auth.onAuthStateChange` listener
-- Wrap `<App>` in `<AuthProvider>`
+### 4. Onboarding Flow (`src/pages/Onboarding.tsx`)
+- Shown after first sign-up (when `user_preferences.onboarding_completed = false`)
+- 3-step cinematic flow:
+  - **Step 1**: "What brought you here?" — select primary goal (Clarity, Emotional Health, Focus, Purpose/Meaning)
+  - **Step 2**: "How do you like to be coached?" — select style (Supportive, Direct, Reflective, Strategic)
+  - **Step 3**: "Pick your starting modules" — multi-select from the 5 coaching modules
+- On completion: saves preferences, auto-enrolls in selected modules, redirects to dashboard
+- Matches existing cinematic dark navy/gold design with floating orbs
 
-### 5. Auth page (`src/pages/Auth.tsx`)
-- Single page with tabs: Sign In / Sign Up
-- Email + password form fields
-- "Sign in with Google" button (using `lovable.auth.signInWithOAuth("google")` via Lovable Cloud managed OAuth)
-- "Forgot password?" link triggers `supabase.auth.resetPasswordForEmail()`
-- Matches existing cinematic design (dark navy, gold accents, floating orbs)
+### 5. User Dashboard (`src/pages/Dashboard.tsx`)
+- New route: `/dashboard`
+- Sections:
+  - **My Modules**: enrolled modules with status badges (enrolled/in-progress/completed), session count, "Continue" or "Start" button
+  - **My Challenges**: enrolled challenges with progress bar, current day indicator
+  - **Recent Sessions**: last 3-5 clarity sessions with brief insight preview
+- Soft prompt to enroll in more modules/challenges if lists are short
 
-### 6. Reset password page (`src/pages/ResetPassword.tsx`)
-- Route: `/reset-password`
-- Form to enter new password
-- Calls `supabase.auth.updateUser({ password })`
-- Checks for `type=recovery` in URL hash
+### 6. Enrollment actions on Modules page
+- Update `src/pages/Modules.tsx`: add "Enroll" button for authenticated users (replaces direct "Start session" for unenrolled modules)
+- Show enrollment status badge on each module card
+- Enrolled modules show "Continue" instead of "Enroll"
+- Anonymous users still get "Start session" (no enrollment needed)
 
-### 7. Configure Social Auth
-- Use the Configure Social Login tool to generate the lovable OAuth module for Google
+### 7. Enrollment actions on Challenges page
+- Update `src/pages/Challenges.tsx`: add "Enroll" button for authenticated users
+- Show enrollment status on each challenge card
+- Track when challenge status changes to in_progress (first entry) and completed
 
-### 8. Update session-store to use database
-- Update `src/lib/session-store.ts` — add async functions that read/write to `clarity_sessions` and `challenge_progress` tables when user is authenticated, fall back to localStorage for anonymous users
-- Update `ResultScreen.tsx`, `MirrorChallenge.tsx`, and pattern-detect calls to use async store
+### 8. Auto-update enrollment status
+- When a user completes a clarity session for a module, update `module_enrollments.status` to `in_progress` and increment `sessions_count`
+- When a user completes a challenge (all days), update `challenge_enrollments.status` to `completed`
+- Update `session-store.ts` with enrollment helper functions
 
-### 9. Update navigation
-- Add user avatar / sign-in button to Index page header area
-- Show sign-out option when authenticated
-- Protect certain features (coach chat, challenges) with soft auth prompts — not hard gates, but encourage sign-in to save progress
+### 9. Navigation updates
+- After sign-up, redirect to `/onboarding` instead of `/`
+- Add "Dashboard" link to nav bar for authenticated users
+- Update `Auth.tsx` to check onboarding status on sign-in and redirect accordingly
 
-### 10. Routing updates in App.tsx
-- Add `/auth` route
-- Add `/reset-password` route
+### 10. Routing
+- Add `/onboarding` route
+- Add `/dashboard` route
+
+## Files to Create/Modify
+
+| Action | File |
+|--------|------|
+| Create | `src/pages/Onboarding.tsx` |
+| Create | `src/pages/Dashboard.tsx` |
+| Create | `src/lib/enrollment-store.ts` |
+| Update | `src/pages/Modules.tsx` |
+| Update | `src/pages/Challenges.tsx` |
+| Update | `src/pages/MirrorChallenge.tsx` (update enrollment on progress) |
+| Update | `src/pages/ResultScreen.tsx` (update enrollment on session complete) |
+| Update | `src/pages/Auth.tsx` (redirect to onboarding) |
+| Update | `src/pages/Index.tsx` (add Dashboard nav link) |
+| Update | `src/App.tsx` (new routes) |
+| Migration | New tables: `module_enrollments`, `challenge_enrollments`, `user_preferences` |
 
 ## Technical Notes
-- Google OAuth uses Lovable Cloud's managed credentials — no setup needed
-- Email confirmation will remain enabled (users verify email before signing in)
-- All existing localStorage data continues to work for anonymous users
-- Authenticated users get cloud persistence automatically
+- All enrollment data is cloud-only (requires authentication)
+- Anonymous users continue using the app without enrollment — soft prompts encourage sign-in
+- Onboarding is skippable but encouraged
+- Dashboard becomes the authenticated user's home base
 
