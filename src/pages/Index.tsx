@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Eye, Lightbulb, Zap } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
