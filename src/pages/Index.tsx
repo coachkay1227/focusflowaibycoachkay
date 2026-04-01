@@ -68,16 +68,28 @@ const Index = () => {
         </div>
         <div className="flex items-center gap-6">
           <button
+            onClick={() => navigate("/modules")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Modules
+          </button>
+          <button
+            onClick={() => navigate("/challenges")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Challenges
+          </button>
+          <button
+            onClick={() => navigate("/coach")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Coach Kay
+          </button>
+          <button
             onClick={() => navigate("/community")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
             Community
-          </button>
-          <button
-            onClick={() => navigate("/mirror-challenge")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            Mirror Challenge
           </button>
           <Button
             onClick={() => navigate("/clarity")}
