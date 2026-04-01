@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MobileNav from "@/components/MobileNav";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
