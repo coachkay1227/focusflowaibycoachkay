@@ -20,7 +20,15 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { sessions } = await req.json();
+    const body = await req.json();
+    const sessions = body?.sessions;
+
+    if (!Array.isArray(sessions) || sessions.length === 0 || sessions.length > 100) {
+      return new Response(JSON.stringify({ error: "Invalid sessions array" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
