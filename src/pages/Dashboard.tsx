@@ -160,7 +160,7 @@ const Dashboard = () => {
                           <h3 className="font-heading text-lg font-light">{mod?.title || enrollment.moduleId}</h3>
                           <Badge className={statusColors[enrollment.status]}>{enrollment.status.replace("_", " ")}</Badge>
                         </div>
-                        <p className="text-muted-foreground text-sm mb-3">{mod?.subtitle}</p>
+                        <p className="text-muted-foreground text-sm mb-3">{"subtitle" in (mod || {}) ? (mod as any).subtitle : (mod as any)?.tagline}</p>
                         <div className="flex items-center justify-between">
                           <span className="font-mono-label text-muted-foreground/60">{enrollment.sessionsCount} sessions</span>
                           <span className="text-sm text-primary/60 group-hover:text-primary transition-colors flex items-center gap-1">
