@@ -43,6 +43,7 @@ const App = () => (
             <Route path="/modules" element={<Modules />} />
             <Route path="/coach" element={<CoachChat />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
