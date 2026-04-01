@@ -7,7 +7,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sparkles, ArrowRight, Eye, Lightbulb, Zap, User, LogOut } from "lucide-react";
+import { Sparkles, ArrowRight, User, LogOut } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 
 const Index = () => {
@@ -247,71 +247,85 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* F.O.C.U.S. Framework */}
       <section id="how-it-works" className="relative z-10 py-24 md:py-32 px-6">
-        <AnimatedSection className="max-w-5xl mx-auto">
+        <AnimatedSection className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <span className="font-mono-label text-primary tracking-[0.2em]">The Process</span>
+            <span className="font-mono-label text-primary tracking-[0.2em]">THE FRAMEWORK</span>
             <h2 className="font-heading text-3xl md:text-5xl font-light mt-4" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
-              Three steps to clarity
+              Your F.O.C.U.S. Journey
             </h2>
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Every module, challenge, and coaching session maps to one of five transformational pillars. This is your roadmap — not a course, a life system.
+            </p>
           </div>
         </AnimatedSection>
 
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {[
-            {
-              icon: Eye,
-              title: "Reflect",
-              desc: "Answer six guided questions designed to cut through surface-level thinking and reach what's really going on.",
-              step: "01",
-            },
-            {
-              icon: Lightbulb,
-              title: "Reveal",
-              desc: "Receive a personalized insight — your truth, your pattern, and your next action — in Coach Kay's direct, warm voice.",
-              step: "02",
-            },
-            {
-              icon: Zap,
-              title: "Act",
-              desc: "Choose your path: continue with AI coaching, book a live session, or start the 7-Day Mirror Challenge.",
-              step: "03",
-            },
+            { step: "01", letter: "F", name: "Foundation", desc: "Identity, mindset, and inner work. Clearing what's holding you back so you can build on solid ground.", tag: "Core Inner Work", highlight: false },
+            { step: "02", letter: "O", name: "Opportunity", desc: "Recognizing open doors, aligning with purpose, and shifting from survival mode to strategic clarity.", tag: "Vision & Direction", highlight: false },
+            { step: "03", letter: "C", name: "Create", desc: "Taking aligned action, designing your life by intention, and building what you were made to build.", tag: "The Turning Point", highlight: true },
+            { step: "04", letter: "U", name: "Uplift", desc: "Elevating your standards, habits, and environment. Becoming the version of yourself that sustains success.", tag: "Habits & Growth", highlight: false },
+            { step: "05", letter: "S", name: "Support", desc: "Community, accountability, and ongoing coaching. You don't grow alone — this is where it compounds.", tag: "Community & Coaching", highlight: false },
           ].map((item, i) => (
-            <AnimatedSection key={item.step} delay={i * 150}>
-              <div className="clarity-card rounded-lg border border-border bg-card/50 backdrop-blur-sm p-8 h-full">
-                <span className="font-mono-label text-primary/60">{item.step}</span>
-                <div className="mt-4 mb-4 w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center">
-                  <item.icon className="h-5 w-5 text-primary" />
+            <AnimatedSection key={item.letter} delay={i * 100}>
+              <div
+                className={`clarity-card rounded-lg backdrop-blur-sm p-6 h-full flex flex-col border ${
+                  item.highlight
+                    ? "border-primary/60 bg-card/60"
+                    : "border-border bg-card/50"
+                }`}
+              >
+                <span className="font-mono-label text-primary/60 text-xs">{item.step}</span>
+                <div className={`mt-3 font-heading text-4xl font-light ${item.highlight ? "text-primary" : "text-foreground"}`}>
+                  {item.letter}
                 </div>
-                <h3 className="font-heading text-2xl font-light mb-3">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed text-sm">{item.desc}</p>
+                <h3 className={`font-heading text-lg font-medium mt-1 mb-3 ${item.highlight ? "text-primary" : "text-foreground"}`}>
+                  {item.name}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">{item.desc}</p>
+                <span className="mt-4 inline-block font-mono-label text-[10px] tracking-wider text-primary/70 border border-primary/20 rounded-full px-3 py-1 self-start">
+                  {item.tag}
+                </span>
               </div>
             </AnimatedSection>
           ))}
         </div>
       </section>
 
-      {/* What You'll Discover */}
+      {/* Entry Points */}
       <section className="relative z-10 py-24 md:py-32 px-6">
         <AnimatedSection className="max-w-3xl mx-auto text-center">
-          <span className="font-mono-label text-primary tracking-[0.2em]">The Insight</span>
-          <h2 className="font-heading text-3xl md:text-5xl font-light mt-4 mb-8" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
-            What you'll discover
+          <span className="font-mono-label text-primary tracking-[0.2em]">YOUR ENTRY POINT</span>
+          <h2 className="font-heading text-3xl md:text-5xl font-light mt-4 mb-4" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
+            One app. Every path.
           </h2>
-          <div className="space-y-6 text-left">
+          <p className="text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+            Whether you're at an event, mid-cohort, or starting solo — FocusFlow AI meets you exactly where you are.
+          </p>
+          <div className="space-y-4 text-left">
             {[
-              { label: "The Truth", text: "What's really going on beneath the noise — the honest insight you've been avoiding or couldn't see." },
-              { label: "The Pattern", text: "The recurring behavior or belief that keeps showing up in your life, keeping you in the same loop." },
-              { label: "The Action", text: "One clear, specific next step. Not a to-do list. Not a 90-day plan. Just the one move that changes everything." },
+              { step: "01", title: "Quick Clarity Check", duration: "5 Minutes", sub: "Event table · No sign-up required", badge: "FREE" },
+              { step: "02", title: "Cohort Journey", duration: "3, 8, or 12 Weeks", sub: "Coach Kay–led · 1 module per session", badge: null },
+              { step: "03", title: "Full Access", duration: "All Modules & Challenges", sub: "Self-paced · AI coach always on", badge: null },
+              { step: "04", title: "Reentry & Community Track", duration: "", sub: "Justice-impacted · Grant-funded access", badge: null },
+              { step: "05", title: "Corporate & Nonprofit Cohorts", duration: "", sub: "B2B · Shield Her Elevation LLC / Forward Focus Elevation", badge: null },
             ].map((item, i) => (
-              <AnimatedSection key={item.label} delay={i * 120}>
+              <AnimatedSection key={item.step} delay={i * 100}>
                 <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6 flex gap-6 items-start">
-                  <span className="font-mono-label text-primary shrink-0 mt-1">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <h3 className="font-heading text-xl font-medium text-primary mb-1">{item.label}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{item.text}</p>
+                  <span className="font-mono-label text-primary shrink-0 mt-1">{item.step}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <h3 className="font-heading text-xl font-medium text-foreground">{item.title}</h3>
+                      {item.duration && <span className="text-muted-foreground text-sm">· {item.duration}</span>}
+                      {item.badge && (
+                        <span className="font-mono-label text-[10px] tracking-wider text-primary border border-primary/30 rounded-full px-2 py-0.5">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed mt-1">{item.sub}</p>
                   </div>
                 </div>
               </AnimatedSection>
