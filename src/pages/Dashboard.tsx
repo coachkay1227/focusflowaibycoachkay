@@ -27,6 +27,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { tier, loading: tierLoading } = useAccessLevel();
+  const { subscribed, subscriptionEnd, openPortal } = useSubscription();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
