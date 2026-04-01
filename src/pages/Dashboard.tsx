@@ -94,7 +94,12 @@ const Dashboard = () => {
           >
             Welcome back, {displayName}
           </h1>
-          <p className="text-muted-foreground mt-2">Your clarity journey at a glance.</p>
+          <p className="text-muted-foreground mt-2">
+            Your clarity journey at a glance.
+            {!tierLoading && (
+              <Badge className="ml-3 bg-primary/15 text-primary border-primary/30 text-xs capitalize">{tier} tier</Badge>
+            )}
+          </p>
         </AnimatedSection>
 
         {loading ? (
