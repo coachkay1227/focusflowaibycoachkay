@@ -1,42 +1,30 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { coachingModules } from "@/lib/modules";
+import { programs, PILLAR_META, type FocusPillar, getProgramsByPillar } from "@/data/programs";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass, Check } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import ProgramCard from "@/components/ProgramCard";
+import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
+import { ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const iconMap: Record<string, typeof Eye> = {
-  eye: Eye,
-  heart: Heart,
-  target: Target,
-  sun: Sun,
-  compass: Compass,
-};
-
-const statusLabels: Record<string, string> = {
-  enrolled: "Enrolled",
-  in_progress: "In Progress",
-  completed: "Completed",
-};
+const PILLARS: FocusPillar[] = ["F", "O", "C", "U", "S"];
 
 const Modules = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activePillar, setActivePillar] = useState<FocusPillar | "all">("all");
   const [enrollments, setEnrollments] = useState<ModuleEnrollment[]>([]);
   const [enrolling, setEnrolling] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
-      getModuleEnrollments().then(setEnrollments);
-    }
+    if (user) getModuleEnrollments().then(setEnrollments);
   }, [user]);
 
   useEffect(() => {
@@ -50,28 +38,48 @@ const Modules = () => {
     return () => el.removeEventListener("mousemove", handler);
   }, []);
 
-  const getEnrollment = (moduleId: string) => enrollments.find((e) => e.moduleId === moduleId);
+  const getEnrollment = (programId: string) => {
+    const e = enrollments.find((en) => en.moduleId === programId);
+    return e ? { status: e.status } : null;
+  };
 
-  const handleEnroll = async (moduleId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    setEnrolling(moduleId);
-    await enrollInModule(moduleId);
+  const handleEnroll = async (programId: string) => {
+    if (!user) { navigate("/auth"); return; }
+    setEnrolling(programId);
+    await enrollInModule(programId);
     const updated = await getModuleEnrollments();
     setEnrollments(updated);
     setEnrolling(null);
-    toast({ title: "Enrolled!", description: "Module added to your dashboard." });
+    toast({ title: "Enrolled!", description: "Program added to your dashboard." });
+  };
+
+  const filteredPrograms = activePillar === "all"
+    ? programs
+    : getProgramsByPillar(activePillar);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "FocusFlow AI Programs",
+    itemListElement: filteredPrograms.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: { "@type": "Course", name: p.title, description: p.description },
+    })),
   };
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title="Modules — FocusFlow AI" description="Explore guided clarity modules designed to help you build self-awareness, emotional resilience, and purposeful focus." path="/modules" jsonLd={{ "@context": "https://schema.org", "@type": "ItemList", name: "FocusFlow AI Modules", itemListElement: coachingModules.map((m, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "Course", name: m.title, description: m.description } })) }} />
+      <SEOHead
+        title="Modules — FocusFlow AI"
+        description="Explore guided clarity modules designed to help you build self-awareness, emotional resilience, and purposeful focus."
+        path="/modules"
+        jsonLd={jsonLd}
+      />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
+      {/* Header */}
       <div className="relative z-10 px-6 md:px-12 py-6 flex items-center justify-between">
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Home
@@ -82,9 +90,10 @@ const Modules = () => {
         <MobileNav />
       </div>
 
-      <div className="relative z-10 px-6 py-12 max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-16">
-          <span className="font-mono-label text-primary tracking-[0.2em]">Coaching Modules</span>
+      <div className="relative z-10 px-6 py-12 max-w-5xl mx-auto">
+        {/* Hero */}
+        <AnimatedSection className="text-center mb-10">
+          <span className="font-mono-label text-primary tracking-[0.2em]">Programs & Modules</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
             style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
@@ -92,74 +101,62 @@ const Modules = () => {
             Choose your path
           </h1>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            Each module is designed for a different moment. Pick the one that matches where you are right now.
+            Each program maps to a pillar of the F.O.C.U.S. framework. Pick the one that matches where you are right now.
           </p>
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {coachingModules.map((mod, i) => {
-            const Icon = iconMap[mod.icon] || Eye;
-            const enrollment = getEnrollment(mod.id);
+        {/* Pillar Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          <button
+            onClick={() => setActivePillar("all")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              activePillar === "all"
+                ? "bg-primary text-primary-foreground"
+                : "bg-card/50 text-muted-foreground hover:text-foreground border border-border"
+            }`}
+          >
+            All
+          </button>
+          {PILLARS.map((p) => {
+            const meta = PILLAR_META[p];
+            const isActive = activePillar === p;
             return (
-              <AnimatedSection key={mod.id} delay={i * 120}>
-                <div className="clarity-card w-full text-left rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8 h-full group">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {enrollment && (
-                        <Badge className={`text-xs ${
-                          enrollment.status === "completed"
-                            ? "bg-accent/20 text-accent border-accent/30"
-                            : enrollment.status === "in_progress"
-                            ? "bg-primary/20 text-primary border-primary/30"
-                            : "bg-secondary text-secondary-foreground"
-                        }`}>
-                          {statusLabels[enrollment.status]}
-                        </Badge>
-                      )}
-                      <span className="font-mono-label text-muted-foreground/50">{mod.duration}</span>
-                    </div>
-                  </div>
-                  <h3 className="font-heading text-xl md:text-2xl font-light mb-1">{mod.title}</h3>
-                  <p className="text-primary/80 text-sm mb-3">{mod.subtitle}</p>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4">{mod.description}</p>
-                  
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => navigate(`/clarity/${mod.id}`)}
-                      className="flex items-center gap-2 text-sm text-primary/60 hover:text-primary transition-colors"
-                    >
-                      {enrollment ? "Continue session" : "Start session"} <ArrowRight className="h-3 w-3" />
-                    </button>
-                    {user && !enrollment && (
-                      <button
-                        onClick={(e) => handleEnroll(mod.id, e)}
-                        disabled={enrolling === mod.id}
-                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors ml-auto"
-                      >
-                        {enrolling === mod.id ? "..." : (
-                          <>
-                            <Check className="h-3 w-3" /> Enroll
-                          </>
-                        )}
-                      </button>
-                    )}
-                    {!user && (
-                      <button
-                        onClick={() => navigate("/auth")}
-                        className="text-xs text-muted-foreground/50 hover:text-primary transition-colors ml-auto"
-                      >
-                        Sign in to enroll
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </AnimatedSection>
+              <button
+                key={p}
+                onClick={() => setActivePillar(p)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                  isActive
+                    ? "text-primary-foreground"
+                    : "bg-card/50 text-muted-foreground hover:text-foreground border-border"
+                }`}
+                style={isActive ? { backgroundColor: meta.color, borderColor: meta.color } : {}}
+              >
+                <span className="font-bold">{meta.label}</span>
+                <span className="hidden sm:inline ml-1">· {meta.full}</span>
+              </button>
             );
           })}
         </div>
+
+        {/* Program Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPrograms.map((program, i) => (
+            <AnimatedSection key={program.id} delay={i * 80}>
+              <AccessGate requiredTier={program.accessTier}>
+                <ProgramCard
+                  program={program}
+                  enrollment={getEnrollment(program.id)}
+                  onEnroll={handleEnroll}
+                  enrolling={enrolling === program.id}
+                />
+              </AccessGate>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        {filteredPrograms.length === 0 && (
+          <p className="text-center text-muted-foreground mt-12">No programs found for this pillar.</p>
+        )}
       </div>
     </div>
   );
