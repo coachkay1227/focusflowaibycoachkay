@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowRight, BookOpen, Trophy, Sparkles, LogOut, Plus } from "lucide-react";
+import ClarityScoreCard from "@/components/ClarityScoreCard";
+import WeeklyInsights from "@/components/WeeklyInsights";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
