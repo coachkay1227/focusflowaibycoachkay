@@ -6,6 +6,7 @@ import { getRecentSessionsCloud, type SessionRecord } from "@/lib/session-store"
 import { coachingModules } from "@/lib/modules";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

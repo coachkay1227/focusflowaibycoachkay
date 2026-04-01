@@ -4,6 +4,7 @@ import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-sto
 import { updateChallengeStatus } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Check, Lock, Trophy } from "lucide-react";

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import MobileNav from "@/components/MobileNav";
+import SEOHead from "@/components/SEOHead";
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import { ArrowLeft, Save, User, Camera } from "lucide-react";
 import { toast } from "sonner";

@@ -4,6 +4,7 @@ import { getUserPreferences } from "@/lib/enrollment-store";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Mail, Lock, Sparkles } from "lucide-react";

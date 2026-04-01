@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getChallengeEnrollments, enrollInChallenge, type ChallengeEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Trophy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";

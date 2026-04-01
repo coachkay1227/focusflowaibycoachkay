@@ -5,6 +5,7 @@ import { coachingModules } from "@/lib/modules";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Eye, Heart, Target, Sun, Compass, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";

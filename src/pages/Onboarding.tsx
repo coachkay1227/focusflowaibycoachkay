@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { saveUserPreferences, enrollInModule } from "@/lib/enrollment-store";
 import { coachingModules } from "@/lib/modules";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Sparkles, Check } from "lucide-react";

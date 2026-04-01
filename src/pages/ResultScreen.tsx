@@ -6,6 +6,7 @@ import { updateModuleProgress } from "@/lib/enrollment-store";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
