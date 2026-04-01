@@ -100,7 +100,7 @@ const ResultScreen = () => {
   const fetchPatterns = async () => {
     setLoadingPatterns(true);
     try {
-      const sessions = getRecentSessions(5);
+      const sessions = await getRecentSessionsCloud(5);
       const { data, error } = await supabase.functions.invoke("pattern-detect", {
         body: { sessions },
       });
