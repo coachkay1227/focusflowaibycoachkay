@@ -57,7 +57,7 @@ const Auth = () => {
       toast({ title: "Check your email", description: "We've sent you a verification link. Please confirm your email before signing in." });
       setMode("signin");
     } else {
-      navigate("/");
+      // useEffect will handle redirect based on onboarding status
     }
   };
 
