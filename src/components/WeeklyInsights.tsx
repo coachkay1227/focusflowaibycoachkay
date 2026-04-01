@@ -4,10 +4,40 @@ import ReactMarkdown from "react-markdown";
 import { Sparkles, RefreshCw, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const CACHE_KEY = "focusflow_weekly_insights";
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+interface CachedInsights {
+  recap: string;
+  meta: { sessionsCount: number; challengesActive: number; generatedAt: string };
+  cachedAt: number;
+}
+
+function getCachedInsights(): CachedInsights | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const cached: CachedInsights = JSON.parse(raw);
+    if (Date.now() - cached.cachedAt > CACHE_TTL) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    return cached;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedInsights(recap: string, meta: CachedInsights["meta"]) {
+  const entry: CachedInsights = { recap, meta, cachedAt: Date.now() };
+  localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
+}
+
 const WeeklyInsights = () => {
-  const [recap, setRecap] = useState<string | null>(null);
+  const cached = getCachedInsights();
+  const [recap, setRecap] = useState<string | null>(cached?.recap ?? null);
   const [loading, setLoading] = useState(false);
-  const [meta, setMeta] = useState<{ sessionsCount: number; challengesActive: number; generatedAt: string } | null>(null);
+  const [meta, setMeta] = useState<{ sessionsCount: number; challengesActive: number; generatedAt: string } | null>(cached?.meta ?? null);
   const [error, setError] = useState<string | null>(null);
 
   const generateInsights = async () => {
@@ -20,12 +50,15 @@ const WeeklyInsights = () => {
       if (fnError) throw new Error(fnError.message);
       if (data?.error) throw new Error(data.error);
 
-      setRecap(data.recap);
-      setMeta({
+      const newMeta = {
         sessionsCount: data.sessionsCount,
         challengesActive: data.challengesActive,
         generatedAt: data.generatedAt,
-      });
+      };
+
+      setRecap(data.recap);
+      setMeta(newMeta);
+      setCachedInsights(data.recap, newMeta);
     } catch (err: any) {
       setError(err.message || "Failed to generate insights");
     } finally {
@@ -51,6 +84,7 @@ const WeeklyInsights = () => {
           onClick={generateInsights}
           disabled={loading}
           className="text-primary hover:text-primary/80"
+          aria-label={recap ? "Regenerate weekly insights" : "Generate weekly insights"}
         >
           {loading ? (
             <RefreshCw className="h-4 w-4 animate-spin" />

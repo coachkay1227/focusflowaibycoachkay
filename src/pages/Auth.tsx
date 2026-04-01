@@ -134,8 +134,10 @@ const Auth = () => {
         {/* Email form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
+            <label htmlFor="auth-email" className="sr-only">Email address</label>
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              id="auth-email"
               type="email"
               placeholder="Email"
               value={email}
@@ -147,8 +149,10 @@ const Auth = () => {
 
           {mode !== "forgot" && (
             <div className="relative">
+              <label htmlFor="auth-password" className="sr-only">Password</label>
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
+                id="auth-password"
                 type="password"
                 placeholder="Password"
                 value={password}

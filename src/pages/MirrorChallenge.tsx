@@ -182,7 +182,7 @@ const MirrorChallenge = () => {
             <button
               key={day}
               onClick={() => handleDaySelect(day)}
-              className={`w-8 h-8 md:w-10 md:h-10 rounded-full border flex items-center justify-center text-xs transition-all ${
+              className={`w-11 h-11 md:w-11 md:h-11 rounded-full border flex items-center justify-center text-xs transition-all ${
                 active
                   ? "border-primary bg-primary/15 text-primary"
                   : completed

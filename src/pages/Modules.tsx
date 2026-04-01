@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { programs, FOCUS_PILLARS, type FocusPillar, getProgramsByPillar } from "@/data/programs";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
+import { TIER_RANK } from "@/lib/tier-constants";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
@@ -14,7 +16,6 @@ import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PILLARS: FocusPillar[] = ["F", "O", "C", "U", "S"];
-const TIER_RANK: Record<string, number> = { free: 0, subscriber: 1, cohort: 2, premium: 3, corporate: 4 };
 
 const Modules = () => {
   const navigate = useNavigate();

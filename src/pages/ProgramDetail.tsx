@@ -5,6 +5,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms } from "@/data/programs";
 import { enrollInModule } from "@/lib/enrollment-store";
 import { STRIPE_TIERS } from "@/lib/stripe-tiers";
+import { TIER_RANK, TIER_LABELS } from "@/lib/tier-constants";
 import SEOHead from "@/components/SEOHead";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import MobileNav from "@/components/MobileNav";
@@ -13,9 +14,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
-
-const TIER_RANK: Record<string, number> = { free: 0, subscriber: 1, cohort: 2, premium: 3, corporate: 4 };
-const TIER_LABELS: Record<string, string> = { free: "Free", subscriber: "Subscriber", cohort: "Cohort", premium: "Premium", corporate: "Corporate" };
 
 const ProgramDetail = () => {
   const { slug } = useParams<{ slug: string }>();
