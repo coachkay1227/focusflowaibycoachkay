@@ -61,7 +61,7 @@ const Index = () => {
           userSelect: "none",
         }}
       >
-        FOCUS FLOW
+        FOCUSFLOW AI
       </div>
 
       {/* Navigation */}
