@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate, useParams } from "react-router-dom";
 import { getChallengeDataCloud, saveChallengeDataCloud } from "@/lib/session-store";
 import { updateChallengeStatus } from "@/lib/enrollment-store";
