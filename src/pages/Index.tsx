@@ -68,16 +68,28 @@ const Index = () => {
         </div>
         <div className="flex items-center gap-6">
           <button
+            onClick={() => navigate("/modules")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Modules
+          </button>
+          <button
+            onClick={() => navigate("/challenges")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Challenges
+          </button>
+          <button
+            onClick={() => navigate("/coach")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Coach Kay
+          </button>
+          <button
             onClick={() => navigate("/community")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
             Community
-          </button>
-          <button
-            onClick={() => navigate("/mirror-challenge")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            Mirror Challenge
           </button>
           <Button
             onClick={() => navigate("/clarity")}
@@ -327,9 +339,11 @@ const Index = () => {
           <div className="font-heading text-lg font-light">
             <span className="text-primary">Focus</span> Flow <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
           </div>
-          <div className="flex gap-6 text-sm text-muted-foreground/60">
+          <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">
             <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">Clarity Session</button>
-            <button onClick={() => navigate("/mirror-challenge")} className="hover:text-foreground transition-colors">Mirror Challenge</button>
+            <button onClick={() => navigate("/modules")} className="hover:text-foreground transition-colors">Modules</button>
+            <button onClick={() => navigate("/challenges")} className="hover:text-foreground transition-colors">Challenges</button>
+            <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">Coach Kay</button>
             <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">Community</button>
           </div>
         </div>
