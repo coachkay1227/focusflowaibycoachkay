@@ -1,14 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
+import { useSubscription } from "@/hooks/use-subscription";
 import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms } from "@/data/programs";
 import { enrollInModule } from "@/lib/enrollment-store";
+import { STRIPE_TIERS } from "@/lib/stripe-tiers";
 import SEOHead from "@/components/SEOHead";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import MobileNav from "@/components/MobileNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
