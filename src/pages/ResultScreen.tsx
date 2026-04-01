@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useLocation, useNavigate } from "react-router-dom";
 import { generateInsight, type ClarityAnswers } from "@/lib/clarity-engine";
 import { saveSessionCloud, getRecentSessionsCloud, hasHistoryCloud, type SessionRecord } from "@/lib/session-store";
