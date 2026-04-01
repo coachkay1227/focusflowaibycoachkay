@@ -18,6 +18,7 @@ import Onboarding from "./pages/Onboarding.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Profile from "./pages/Profile.tsx";
 import EmailPreview from "./pages/EmailPreview.tsx";
+import ProgramDetail from "./pages/ProgramDetail.tsx";
 import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/challenges" element={<Challenges />} />
             <Route path="/challenges/:type" element={<MirrorChallenge />} />
             <Route path="/modules" element={<Modules />} />
+            <Route path="/programs/:slug" element={<ProgramDetail />} />
             <Route path="/coach" element={<CoachChat />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />

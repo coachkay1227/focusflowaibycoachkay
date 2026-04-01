@@ -55,7 +55,12 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
       </div>
 
       {/* Title & meta */}
-      <h3 className="font-heading text-lg md:text-xl font-light mb-1">{program.title}</h3>
+      <h3
+        className="font-heading text-lg md:text-xl font-light mb-1 cursor-pointer hover:text-primary transition-colors"
+        onClick={() => navigate(`/programs/${program.slug}`)}
+      >
+        {program.title}
+      </h3>
       <div className="flex items-center gap-3 mb-3">
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="h-3 w-3" /> {program.durationLabel}
