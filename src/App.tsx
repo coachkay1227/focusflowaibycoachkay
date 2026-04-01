@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,7 +10,6 @@ import ClaritySession from "./pages/ClaritySession.tsx";
 import ResultScreen from "./pages/ResultScreen.tsx";
 import MirrorChallenge from "./pages/MirrorChallenge.tsx";
 import Community from "./pages/Community.tsx";
-import Modules from "./pages/Modules.tsx";
 import Challenges from "./pages/Challenges.tsx";
 import CoachChat from "./pages/CoachChat.tsx";
 import Auth from "./pages/Auth.tsx";
@@ -18,9 +18,12 @@ import Onboarding from "./pages/Onboarding.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Profile from "./pages/Profile.tsx";
 import EmailPreview from "./pages/EmailPreview.tsx";
-import ProgramDetail from "./pages/ProgramDetail.tsx";
 import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
+// Lazy-load heavy pages that import programs.ts (1965 lines)
+const Modules = lazy(() => import("./pages/Modules.tsx"));
+const ProgramDetail = lazy(() => import("./pages/ProgramDetail.tsx"));
 
 const queryClient = new QueryClient();
 
