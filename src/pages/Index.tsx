@@ -67,7 +67,7 @@ const Index = () => {
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
         <div className="font-heading text-xl md:text-2xl font-light tracking-wide text-foreground">
-          <span className="text-primary">Focus</span> Flow
+          <span className="text-primary">Focus</span>Flow AI
         </div>
         <div className="flex items-center gap-6">
           {user && (
