@@ -178,7 +178,7 @@ const Profile = () => {
         </div>
 
         {/* Clarity Score */}
-        {score && <ClarityScoreCard score={score} />}
+        {score && <ClarityScoreCard />}
 
         {/* Sign Out */}
         <Button variant="outline" onClick={() => { signOut(); navigate("/"); }} className="w-full">
