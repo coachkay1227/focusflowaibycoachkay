@@ -95,8 +95,13 @@ serve(async (req) => {
       logStep("Active subscription found", { productId, subscriptionEnd });
 
       // Sync tier to user_access_levels based on product
+      // Map all Stripe product IDs to access tiers
       const PRODUCT_TIER_MAP: Record<string, string> = {
         "prod_UFpARkX0OxZg51": "subscriber",
+        "prod_UGHVIcGfn5LEoU": "cohort",
+        "prod_UGHWgMWBPbxXjH": "premium",
+        "prod_UGHpmJnJVVhIef": "premium",
+        "prod_UGHqGWOM8Iqo3K": "premium",
       };
       const tier = PRODUCT_TIER_MAP[productId] || "subscriber";
 
