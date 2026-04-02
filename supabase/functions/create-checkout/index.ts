@@ -12,6 +12,15 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
+// Known valid price IDs and their checkout modes
+const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
+  "price_1THJVvBReje0oFcLhkxCXesA": "subscription", // Subscriber $27/mo
+  "price_1THkwQBReje0oFcL8i3WGwS0": "payment",      // 8-Week Cohort $997
+  "price_1THkx7BReje0oFcLRrF38PA8": "payment",      // 30-Day F.O.C.U.S. $297
+  "price_1THlFpBReje0oFcLuNY16veh": "payment",      // 30-Day Intensive $497
+  "price_1THlGgBReje0oFcLu5PGmZih": "payment",      // 12-Week Mastery $1997
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -19,7 +28,7 @@ serve(async (req) => {
 
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
   );
 
   try {
@@ -34,13 +43,18 @@ serve(async (req) => {
 
     const { priceId } = await req.json();
     if (!priceId) throw new Error("priceId is required");
-    logStep("Price requested", { priceId });
+
+    // Validate priceId against known prices
+    const mode = PRICE_MODE_MAP[priceId];
+    if (!mode) {
+      throw new Error(`Invalid priceId: ${priceId}. Not a recognized product price.`);
+    }
+    logStep("Price validated", { priceId, mode });
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Find or skip existing customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId: string | undefined;
     if (customers.data.length > 0) {
@@ -48,16 +62,25 @@ serve(async (req) => {
       logStep("Existing customer found", { customerId });
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: any = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
-      mode: "subscription",
+      mode,
       success_url: `${req.headers.get("origin")}/dashboard?checkout=success`,
       cancel_url: `${req.headers.get("origin")}/modules?checkout=cancelled`,
-    });
+      metadata: { supabase_user_id: user.id },
+    };
 
-    logStep("Checkout session created", { sessionId: session.id });
+    // For one-time payments, attach payment_intent_data with user metadata
+    if (mode === "payment") {
+      sessionParams.payment_intent_data = {
+        metadata: { supabase_user_id: user.id },
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
+    logStep("Checkout session created", { sessionId: session.id, mode });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
