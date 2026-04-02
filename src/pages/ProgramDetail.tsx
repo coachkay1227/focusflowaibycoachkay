@@ -186,7 +186,8 @@ const ProgramDetail = () => {
                   {user ? (
                     <Button
                       onClick={async () => {
-                        const tierConfig = STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS];
+                        const tierConfigs = STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS];
+                        const tierConfig = tierConfigs?.[0];
                         if (tierConfig) {
                           try {
                             await startCheckout(tierConfig.price_id);
@@ -200,7 +201,10 @@ const ProgramDetail = () => {
                       className="gap-2"
                     >
                       <CreditCard className="h-4 w-4" />
-                      Subscribe — ${STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS]?.price ?? ""}/mo
+                      {(() => {
+                        const tc = STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS]?.[0];
+                        return tc ? (tc.interval === "month" ? `Subscribe — $${tc.price}/mo` : `Purchase — $${tc.price}`) : "Get Access";
+                      })()}
                     </Button>
                   ) : (
                     <Button onClick={() => navigate("/auth")} className="gap-2">
