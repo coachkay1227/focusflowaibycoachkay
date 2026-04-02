@@ -1,5 +1,6 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
@@ -37,17 +38,7 @@ const testimonials = [
 const Community = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: MouseEvent) => {
-      el.style.setProperty("--mx", e.clientX + "px");
-      el.style.setProperty("--my", e.clientY + "px");
-    };
-    el.addEventListener("mousemove", handler, { passive: true });
-    return () => el.removeEventListener("mousemove", handler);
-  }, []);
+  useMouseGlow(containerRef);
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">

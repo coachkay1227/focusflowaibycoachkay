@@ -204,7 +204,7 @@ const CoachChat = () => {
       </div>
 
       {/* Input */}
-      <div className="relative z-10 shrink-0 border-t border-border/30 bg-background/50 backdrop-blur-sm px-6 py-4">
+      <div className="relative z-10 shrink-0 border-t border-border/30 bg-background/50 backdrop-blur-sm px-6 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
         <div className="max-w-2xl mx-auto flex gap-3">
           <Textarea
             value={input}

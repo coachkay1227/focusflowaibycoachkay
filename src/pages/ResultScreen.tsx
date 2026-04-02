@@ -226,14 +226,14 @@ const ResultScreen = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
               <Button
                 onClick={() => navigate("/coach", { state: { context: { ...insight, answers } } })}
-                className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-8 py-6"
+                className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-6 py-4 sm:px-8 sm:py-6"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
                 Continue with AI Coach
               </Button>
               <Button
                 variant="outline"
-                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-8 py-6"
+                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4 sm:px-8 sm:py-6"
                 onClick={() => window.open("https://call.coachkayelevates.org/widget/booking/d93xqjlytvCCkndwqJmu", "_blank")}
               >
                 <Calendar className="mr-2 h-5 w-5" />
@@ -241,7 +241,7 @@ const ResultScreen = () => {
               </Button>
               <Button
                 variant="outline"
-                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-8 py-6"
+                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4 sm:px-8 sm:py-6"
                 onClick={() => navigate("/challenges")}
               >
                 <Trophy className="mr-2 h-5 w-5" />
