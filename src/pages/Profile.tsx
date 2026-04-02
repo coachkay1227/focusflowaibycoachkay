@@ -118,8 +118,8 @@ const Profile = () => {
         <div className="flex flex-col items-center gap-4 pt-4">
           <div className="relative">
             <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-primary/30">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              {sanitizeAvatarUrl(avatarUrl) ? (
+                <img src={sanitizeAvatarUrl(avatarUrl)} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <User className="h-10 w-10 text-muted-foreground" />
               )}
