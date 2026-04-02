@@ -12,6 +12,16 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
+const PRODUCT_TIER_MAP: Record<string, string> = {
+  "prod_UFpARkX0OxZg51": "subscriber",
+  "prod_UGHVIcGfn5LEoU": "cohort",
+  "prod_UGHWgMWBPbxXjH": "premium",
+  "prod_UGHpmJnJVVhIef": "premium",
+  "prod_UGHqGWOM8Iqo3K": "premium",
+};
+
+const PROTECTED_TIERS = ["cohort", "premium", "corporate"];
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -39,13 +49,7 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // ─── PROTECTED TIER GUARD ───────────────────────────────────
-    // Tiers that are manually assigned (not managed by Stripe subscriptions).
-    // If the user already holds one of these, we never overwrite it —
-    // regardless of what Stripe says. This prevents the 60-second poll
-    // from resetting cohort, premium, corporate, or admin users to "free".
-    const PROTECTED_TIERS = ["cohort", "premium", "corporate"];
-
+    // Check current tier in DB
     const { data: accessRow } = await supabaseClient
       .from("user_access_levels")
       .select("tier")
@@ -55,14 +59,14 @@ serve(async (req) => {
     const currentTier = accessRow?.tier ?? "free";
     logStep("Current tier", { currentTier });
 
+    // Protected tiers are never overwritten by Stripe polling
     if (PROTECTED_TIERS.includes(currentTier)) {
-      logStep("Protected tier — skipping Stripe check entirely", { currentTier });
+      logStep("Protected tier — skipping Stripe check", { currentTier });
       return new Response(
         JSON.stringify({ subscribed: false, product_id: null, subscription_end: null, tier: currentTier }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
-    // ─── END PROTECTED TIER GUARD ───────────────────────────────
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
@@ -78,6 +82,7 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
+    // 1. Check active subscriptions
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
@@ -94,30 +99,37 @@ serve(async (req) => {
       productId = subscription.items.data[0].price.product as string;
       logStep("Active subscription found", { productId, subscriptionEnd });
 
-      // Sync tier to user_access_levels based on product
-      // Map all Stripe product IDs to access tiers
-      const PRODUCT_TIER_MAP: Record<string, string> = {
-        "prod_UFpARkX0OxZg51": "subscriber",
-        "prod_UGHVIcGfn5LEoU": "cohort",
-        "prod_UGHWgMWBPbxXjH": "premium",
-        "prod_UGHpmJnJVVhIef": "premium",
-        "prod_UGHqGWOM8Iqo3K": "premium",
-      };
       const tier = PRODUCT_TIER_MAP[productId] || "subscriber";
-
-      const { error: updateError } = await supabaseClient
+      await supabaseClient
         .from("user_access_levels")
         .upsert({ id: user.id, tier }, { onConflict: "id" });
-
-      if (updateError) {
-        logStep("Failed to sync tier", { error: updateError.message });
-      } else {
-        logStep("Tier synced", { tier });
-      }
+      logStep("Tier synced from subscription", { tier });
     } else {
-      // Only downgrade if current tier is "subscriber" (Stripe-managed).
-      // "free" users stay free. Protected tiers already returned above.
-      if (currentTier === "subscriber") {
+      // 2. Check completed one-time checkout sessions
+      const sessions = await stripe.checkout.sessions.list({
+        customer: customerId,
+        status: "complete",
+        limit: 10,
+      });
+
+      const paidOneTime = sessions.data.find(
+        (s) => s.mode === "payment" && s.payment_status === "paid"
+      );
+
+      if (paidOneTime) {
+        const lineItems = await stripe.checkout.sessions.listLineItems(paidOneTime.id, { limit: 1 });
+        const oneTimeProductId = lineItems.data[0]?.price?.product as string;
+        if (oneTimeProductId && PRODUCT_TIER_MAP[oneTimeProductId]) {
+          const tier = PRODUCT_TIER_MAP[oneTimeProductId];
+          productId = oneTimeProductId;
+          logStep("One-time purchase found", { productId, tier });
+
+          await supabaseClient
+            .from("user_access_levels")
+            .upsert({ id: user.id, tier }, { onConflict: "id" });
+          logStep("Tier synced from one-time purchase", { tier });
+        }
+      } else if (currentTier === "subscriber") {
         logStep("Stripe sub lapsed — downgrading subscriber to free");
         await supabaseClient
           .from("user_access_levels")
