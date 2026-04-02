@@ -241,7 +241,7 @@ const ResultScreen = () => {
               </Button>
               <Button
                 variant="outline"
-                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-8 py-6"
+                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4 sm:px-8 sm:py-6"
                 onClick={() => navigate("/challenges")}
               >
                 <Trophy className="mr-2 h-5 w-5" />

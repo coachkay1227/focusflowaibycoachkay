@@ -10,6 +10,7 @@ interface AnimatedSectionProps {
 const AnimatedSection = ({ children, className = "", staggerChildren = false, delay = 0 }: AnimatedSectionProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [transitionDone, setTransitionDone] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
