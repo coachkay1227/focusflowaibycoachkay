@@ -173,6 +173,12 @@
   opacity: 0.3;
 }
 
+@media (max-width: 767px) {
+  .grain-overlay::before {
+    animation: none;
+  }
+}
+
 /* Grid overlay */
 .grid-overlay {
   background-image:

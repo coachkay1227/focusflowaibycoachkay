@@ -32,11 +32,12 @@ const AnimatedSection = ({ children, className = "", staggerChildren = false, de
     <div
       ref={ref}
       className={className}
+      onTransitionEnd={() => { if (visible) setTransitionDone(true); }}
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(40px)",
         transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
-        willChange: "transform, opacity",
+        willChange: transitionDone ? "auto" : "transform, opacity",
       }}
     >
       {staggerChildren
