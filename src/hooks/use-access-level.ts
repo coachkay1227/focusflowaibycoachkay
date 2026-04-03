@@ -20,7 +20,7 @@ export function useAccessLevel(): { tier: AccessTier; loading: boolean } {
     setLoading(true);
 
     supabase
-      .from("user_access_levels" as any)
+      .from("user_access_levels")
       .select("tier")
       .eq("id", user.id)
       .single()
@@ -29,7 +29,7 @@ export function useAccessLevel(): { tier: AccessTier; loading: boolean } {
         if (error || !data) {
           setTier("free");
         } else {
-          setTier((data as any).tier as AccessTier);
+          setTier(data.tier as AccessTier);
         }
         setLoading(false);
       });

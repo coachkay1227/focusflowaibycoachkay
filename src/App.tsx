@@ -6,24 +6,24 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index.tsx";
-import ClaritySession from "./pages/ClaritySession.tsx";
-import ResultScreen from "./pages/ResultScreen.tsx";
-import MirrorChallenge from "./pages/MirrorChallenge.tsx";
 import Community from "./pages/Community.tsx";
-import Challenges from "./pages/Challenges.tsx";
-import CoachChat from "./pages/CoachChat.tsx";
 import Auth from "./pages/Auth.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
-import Dashboard from "./pages/Dashboard.tsx";
-import Profile from "./pages/Profile.tsx";
 import EmailPreview from "./pages/EmailPreview.tsx";
 import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
-// Lazy-load heavy pages that import programs.ts (1965 lines)
+// Lazy-load heavy pages
 const Modules = lazy(() => import("./pages/Modules.tsx"));
 const ProgramDetail = lazy(() => import("./pages/ProgramDetail.tsx"));
+const ClaritySession = lazy(() => import("./pages/ClaritySession.tsx"));
+const ResultScreen = lazy(() => import("./pages/ResultScreen.tsx"));
+const MirrorChallenge = lazy(() => import("./pages/MirrorChallenge.tsx"));
+const Challenges = lazy(() => import("./pages/Challenges.tsx"));
+const CoachChat = lazy(() => import("./pages/CoachChat.tsx"));
+const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
+const Profile = lazy(() => import("./pages/Profile.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -39,18 +39,18 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/clarity" element={<ClaritySession />} />
-            <Route path="/clarity/:moduleId" element={<ClaritySession />} />
-            <Route path="/result" element={<ResultScreen />} />
-            <Route path="/mirror-challenge" element={<MirrorChallenge />} />
-            <Route path="/challenges" element={<Challenges />} />
-            <Route path="/challenges/:type" element={<MirrorChallenge />} />
+            <Route path="/dashboard" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Dashboard /></Suspense>} />
+            <Route path="/clarity" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ClaritySession /></Suspense>} />
+            <Route path="/clarity/:moduleId" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ClaritySession /></Suspense>} />
+            <Route path="/result" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ResultScreen /></Suspense>} />
+            <Route path="/mirror-challenge" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><MirrorChallenge /></Suspense>} />
+            <Route path="/challenges" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Challenges /></Suspense>} />
+            <Route path="/challenges/:type" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><MirrorChallenge /></Suspense>} />
             <Route path="/modules" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Modules /></Suspense>} />
             <Route path="/programs/:slug" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ProgramDetail /></Suspense>} />
-            <Route path="/coach" element={<CoachChat />} />
+            <Route path="/coach" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><CoachChat /></Suspense>} />
             <Route path="/community" element={<Community />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Profile /></Suspense>} />
             <Route path="/email-preview" element={<EmailPreview />} />
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />

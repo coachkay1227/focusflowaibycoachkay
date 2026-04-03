@@ -31,7 +31,15 @@ export async function getModuleEnrollments(): Promise<ModuleEnrollment[]> {
     return [];
   }
 
-  return (data ?? []).map((row: any) => ({
+  interface ModuleEnrollmentRow {
+    id: string;
+    module_id: string;
+    status: string;
+    enrolled_at: string;
+    completed_at: string | null;
+    sessions_count: number;
+  }
+  return (data ?? []).map((row: ModuleEnrollmentRow) => ({
     id: row.id,
     moduleId: row.module_id,
     status: row.status,
@@ -111,7 +119,14 @@ export async function getChallengeEnrollments(): Promise<ChallengeEnrollment[]> 
     return [];
   }
 
-  return (data ?? []).map((row: any) => ({
+  interface ChallengeEnrollmentRow {
+    id: string;
+    challenge_type: string;
+    status: string;
+    enrolled_at: string;
+    completed_at: string | null;
+  }
+  return (data ?? []).map((row: ChallengeEnrollmentRow) => ({
     id: row.id,
     challengeType: row.challenge_type,
     status: row.status,
@@ -143,7 +158,7 @@ export async function updateChallengeStatus(challengeType: string, status: "in_p
   const userId = await getAuthUserId();
   if (!userId) return;
 
-  const update: any = { status };
+  const update: { status: string; completed_at?: string } = { status };
   if (status === "completed") update.completed_at = new Date().toISOString();
 
   const { error } = await supabase.from("challenge_enrollments")

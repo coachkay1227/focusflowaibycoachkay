@@ -20,7 +20,7 @@ const CoachChat = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const context = (location.state as any)?.context || null;
+  const context = (location.state as { context?: string } | null)?.context || null;
     const { user } = useAuth();
 
   const [messages, setMessages] = useState<Msg[]>([]);

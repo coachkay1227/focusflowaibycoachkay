@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,9 +33,9 @@ const Profile = () => {
     if (!user) { navigate("/auth"); return; }
     loadProfile();
     loadStats();
-  }, [user]);
+  }, [user, loadProfile, navigate]);
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     if (!user) return;
     const [profileRes, prefsRes] = await Promise.all([
       supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).single(),
@@ -48,7 +48,7 @@ const Profile = () => {
     if (prefsRes.data) {
       setCoachingStyle(prefsRes.data.coaching_style || "");
     }
-  };
+  }, [user]);
 
   const loadStats = async () => {
     const [clarityScore, sessionsRes, modulesRes, challengesRes] = await Promise.all([
@@ -88,8 +88,8 @@ const Profile = () => {
       if (profileRes.error) throw profileRes.error;
       if (prefsRes.error) throw prefsRes.error;
       toast.success("Profile updated!");
-    } catch (e: any) {
-      toast.error(e.message || "Failed to save");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to save");
     } finally {
       setSaving(false);
     }

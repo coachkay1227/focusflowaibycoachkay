@@ -59,8 +59,8 @@ const WeeklyInsights = () => {
       setRecap(data.recap);
       setMeta(newMeta);
       setCachedInsights(data.recap, newMeta);
-    } catch (err: any) {
-      setError(err.message || "Failed to generate insights");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to generate insights");
     } finally {
       setLoading(false);
     }

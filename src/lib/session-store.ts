@@ -28,7 +28,7 @@ function loadStore(): SessionStoreData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch { /* Return default store on parse error */ }
   return { sessions: [], challenges: {} };
 }
 
@@ -87,7 +87,7 @@ export async function saveSessionCloud(session: SessionRecord): Promise<void> {
   await supabase.from("clarity_sessions").insert({
     user_id: userId,
     module_id: session.moduleId,
-    answers: session.answers as any,
+    answers: session.answers as unknown as Record<string, unknown>,
     insight_truth: session.insight?.truth ?? null,
     insight_pattern: session.insight?.pattern ?? null,
     insight_action: session.insight?.action ?? null,
@@ -108,7 +108,16 @@ export async function getRecentSessionsCloud(count = 5): Promise<SessionRecord[]
 
   if (error || !data || data.length === 0) return getRecentSessions(count);
 
-  return data.map((row: any) => ({
+  interface ClaritySessionRow {
+    id: string;
+    created_at: string;
+    module_id: string;
+    answers: Record<string, unknown>;
+    insight_truth: string | null;
+    insight_pattern: string | null;
+    insight_action: string | null;
+  }
+  return data.map((row: ClaritySessionRow) => ({
     id: row.id,
     timestamp: new Date(row.created_at).getTime(),
     moduleId: row.module_id,
@@ -166,14 +175,14 @@ export async function saveChallengeDataCloud(challengeType: string, challengeDat
 
   if (existing) {
     await supabase.from("challenge_progress").update({
-      entries: challengeData.entries as any,
+      entries: challengeData.entries as unknown as Record<string, unknown>,
       current_day: challengeData.currentDay,
     }).eq("id", existing.id);
   } else {
     await supabase.from("challenge_progress").insert({
       user_id: userId,
       challenge_type: challengeType,
-      entries: challengeData.entries as any,
+      entries: challengeData.entries as unknown as Record<string, unknown>,
       current_day: challengeData.currentDay,
       started_at: new Date(challengeData.startedAt).toISOString(),
     });

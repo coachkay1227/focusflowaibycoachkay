@@ -53,7 +53,12 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const sessionSummary = sessions.map((s: any, i: number) => {
+    interface SessionSummary {
+      timestamp: number;
+      answers: Record<string, string>;
+      insight?: { truth: string; pattern: string; action: string };
+    }
+    const sessionSummary = sessions.map((s: SessionSummary, i: number) => {
       const date = new Date(s.timestamp).toLocaleDateString();
       const answers = Object.entries(s.answers).map(([k, v]) => `  ${k}: ${v}`).join("\n");
       const insight = s.insight ? `  Truth: ${s.insight.truth}\n  Pattern: ${s.insight.pattern}\n  Action: ${s.insight.action}` : "  No insight generated";

@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { getModuleEnrollments, getChallengeEnrollments, type ModuleEnrollment, type ChallengeEnrollment } from "@/lib/enrollment-store";
 import { getRecentSessionsCloud, type SessionRecord } from "@/lib/session-store";
-import { coachingModules } from "@/lib/modules";
-import { programs } from "@/data/programs";
+import { coachingModules, type CoachingModule } from "@/lib/modules";
+import { programs, type Program } from "@/data/programs";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
@@ -152,7 +152,7 @@ const Dashboard = () => {
                           <h3 className="font-heading text-lg font-light">{mod?.title || enrollment.moduleId}</h3>
                           <Badge className={statusColors[enrollment.status]}>{enrollment.status.replace("_", " ")}</Badge>
                         </div>
-                        <p className="text-muted-foreground text-sm mb-3">{"subtitle" in (mod || {}) ? (mod as any).subtitle : (mod as any)?.tagline}</p>
+                        <p className="text-muted-foreground text-sm mb-3">{("subtitle" in (mod || {})) ? (mod as CoachingModule).subtitle : (mod as Program)?.tagline}</p>
                         <div className="flex items-center justify-between">
                           <span className="font-mono-label text-muted-foreground/60">{enrollment.sessionsCount} sessions</span>
                           <span className="text-sm text-primary/60 group-hover:text-primary transition-colors flex items-center gap-1">
