@@ -37,7 +37,7 @@ const CoachChat = () => {
 
   // Send initial greeting based on context
   useEffect(() => {
-    if (context && messages.length === 0) {
+    if (context && messages.length === 0 && user) {
       sendMessage("I just completed my clarity session. What do you see?", true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
