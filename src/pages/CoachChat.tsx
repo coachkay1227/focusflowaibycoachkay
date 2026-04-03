@@ -10,6 +10,7 @@ import { ArrowLeft, Send, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -20,6 +21,7 @@ const CoachChat = () => {
   const location = useLocation();
   const { toast } = useToast();
   const context = (location.state as any)?.context || null;
+    const { user } = useAuth();
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -236,7 +238,9 @@ const CoachChat = () => {
         </div>
       </div>
 
-      {/* Input */}
+      {user ? (
+              
+ {/* Input */}
       <div
         className="relative z-10 shrink-0 border-t border-border/30 bg-background/50 backdrop-blur-sm px-6 py-4"
         style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
