@@ -131,7 +131,10 @@ const Index = () => {
                   {(user.email?.[0] || "U").toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <button onClick={signOut} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
+              <button
+                onClick={signOut}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+              >
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
@@ -201,8 +204,8 @@ const Index = () => {
             transition: "all 0.6s ease-out",
           }}
         >
-          An AI-powered clarity experience that helps you cut through the noise,
-          identify your patterns, and take your next bold step.
+          An AI-powered clarity experience that helps you cut through the noise, identify your patterns, and take your
+          next bold step.
         </p>
 
         {/* CTA */}
@@ -252,36 +255,77 @@ const Index = () => {
         <AnimatedSection className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="font-mono-label text-primary tracking-[0.2em]">THE FRAMEWORK</span>
-            <h2 className="font-heading text-3xl md:text-5xl font-light mt-4" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
+            <h2
+              className="font-heading text-3xl md:text-5xl font-light mt-4"
+              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+            >
               Your F.O.C.U.S. Journey
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Every module, challenge, and coaching session maps to one of five transformational pillars. This is your roadmap — not a course, a life system.
+              Every module, challenge, and coaching session maps to one of five transformational pillars. This is your
+              roadmap — not a course, a life system.
             </p>
           </div>
         </AnimatedSection>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {[
-            { step: "01", letter: "F", name: "Foundation", desc: "Identity, mindset, and inner work. Clearing what's holding you back so you can build on solid ground.", tag: "Core Inner Work", highlight: false },
-            { step: "02", letter: "O", name: "Opportunity", desc: "Recognizing open doors, aligning with purpose, and shifting from survival mode to strategic clarity.", tag: "Vision & Direction", highlight: false },
-            { step: "03", letter: "C", name: "Create", desc: "Taking aligned action, designing your life by intention, and building what you were made to build.", tag: "The Turning Point", highlight: true },
-            { step: "04", letter: "U", name: "Uplift", desc: "Elevating your standards, habits, and environment. Becoming the version of yourself that sustains success.", tag: "Habits & Growth", highlight: false },
-            { step: "05", letter: "S", name: "Support", desc: "Community, accountability, and ongoing coaching. You don't grow alone — this is where it compounds.", tag: "Community & Coaching", highlight: false },
+            {
+              step: "01",
+              letter: "F",
+              name: "Foundation",
+              desc: "Identity, mindset, and inner work. Clearing what's holding you back so you can build on solid ground.",
+              tag: "Core Inner Work",
+              highlight: false,
+            },
+            {
+              step: "02",
+              letter: "O",
+              name: "Opportunity",
+              desc: "Recognizing open doors, aligning with purpose, and shifting from survival mode to strategic clarity.",
+              tag: "Vision & Direction",
+              highlight: false,
+            },
+            {
+              step: "03",
+              letter: "C",
+              name: "Create",
+              desc: "Taking aligned action, designing your life by intention, and building what you were made to build.",
+              tag: "The Turning Point",
+              highlight: true,
+            },
+            {
+              step: "04",
+              letter: "U",
+              name: "Uplift",
+              desc: "Elevating your standards, habits, and environment. Becoming the version of yourself that sustains success.",
+              tag: "Habits & Growth",
+              highlight: false,
+            },
+            {
+              step: "05",
+              letter: "S",
+              name: "Support",
+              desc: "Community, accountability, and ongoing coaching. You don't grow alone — this is where it compounds.",
+              tag: "Community & Coaching",
+              highlight: false,
+            },
           ].map((item, i) => (
             <AnimatedSection key={item.letter} delay={i * 100}>
               <div
                 className={`clarity-card rounded-lg backdrop-blur-sm p-6 h-full flex flex-col border ${
-                  item.highlight
-                    ? "border-primary/60 bg-card/60"
-                    : "border-border bg-card/50"
+                  item.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/50"
                 }`}
               >
                 <span className="font-mono-label text-primary/60 text-xs">{item.step}</span>
-                <div className={`mt-3 font-heading text-4xl font-light ${item.highlight ? "text-primary" : "text-foreground"}`}>
+                <div
+                  className={`mt-3 font-heading text-4xl font-light ${item.highlight ? "text-primary" : "text-foreground"}`}
+                >
                   {item.letter}
                 </div>
-                <h3 className={`font-heading text-lg font-medium mt-1 mb-3 ${item.highlight ? "text-primary" : "text-foreground"}`}>
+                <h3
+                  className={`font-heading text-lg font-medium mt-1 mb-3 ${item.highlight ? "text-primary" : "text-foreground"}`}
+                >
                   {item.name}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">{item.desc}</p>
@@ -298,7 +342,10 @@ const Index = () => {
       <section className="relative z-10 py-24 md:py-32 px-6">
         <AnimatedSection className="max-w-3xl mx-auto text-center">
           <span className="font-mono-label text-primary tracking-[0.2em]">YOUR ENTRY POINT</span>
-          <h2 className="font-heading text-3xl md:text-5xl font-light mt-4 mb-4" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
+          <h2
+            className="font-heading text-3xl md:text-5xl font-light mt-4 mb-4"
+            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+          >
             One app. Every path.
           </h2>
           <p className="text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
@@ -306,11 +353,41 @@ const Index = () => {
           </p>
           <div className="space-y-4 text-left">
             {[
-              { step: "01", title: "Quick Clarity Check", duration: "5 Minutes", sub: "Event table · No sign-up required", badge: "FREE" },
-              { step: "02", title: "Cohort Journey", duration: "3, 8, or 12 Weeks", sub: "Coach Kay–led · 1 module per session", badge: null },
-              { step: "03", title: "Full Access", duration: "All Modules & Challenges", sub: "Self-paced · AI coach always on", badge: null },
-              { step: "04", title: "Reentry & Community Track", duration: "", sub: "Justice-impacted · Grant-funded access", badge: null },
-              { step: "05", title: "Corporate & Nonprofit Cohorts", duration: "", sub: "B2B · Shield Her Elevation LLC / Forward Focus Elevation", badge: null },
+              {
+                step: "01",
+                title: "Quick Clarity Check",
+                duration: "5 Minutes",
+                sub: "Event table · No sign-up required",
+                badge: "FREE",
+              },
+              {
+                step: "02",
+                title: "Cohort Journey",
+                duration: "3, 8, or 12 Weeks",
+                sub: "Coach Kay–led · 1 module per session",
+                badge: null,
+              },
+              {
+                step: "03",
+                title: "Full Access",
+                duration: "All Modules & Challenges",
+                sub: "Self-paced · AI coach always on",
+                badge: null,
+              },
+              {
+                step: "04",
+                title: "Reentry & Community Track",
+                duration: "",
+                sub: "Justice-impacted · Grant-funded access",
+                badge: null,
+              },
+              {
+                step: "05",
+                title: "Corporate & Nonprofit Cohorts",
+                duration: "",
+                sub: "B2B · Shield Her Elevation LLC / Forward Focus Elevation",
+                badge: null,
+              },
             ].map((item, i) => (
               <AnimatedSection key={item.step} delay={i * 100}>
                 <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6 flex gap-6 items-start">
@@ -339,7 +416,10 @@ const Index = () => {
         <AnimatedSection className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <span className="font-mono-label text-primary tracking-[0.2em]">Transformations</span>
-            <h2 className="font-heading text-3xl md:text-5xl font-light mt-4" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
+            <h2
+              className="font-heading text-3xl md:text-5xl font-light mt-4"
+              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+            >
               What they're saying
             </h2>
           </div>
@@ -347,17 +427,20 @@ const Index = () => {
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
           {[
             {
-              quote: "I've done therapy, journaling, meditation — but this 5-minute session showed me a pattern I'd been blind to for years.",
+              quote:
+                "I've done therapy, journaling, meditation — but this 5-minute session showed me a pattern I'd been blind to for years.",
               name: "Aisha M.",
               role: "Creative Director",
             },
             {
-              quote: "The Mirror Challenge rewired how I start my mornings. Day 4 broke something open in me. I'm not the same person I was a week ago.",
+              quote:
+                "The Mirror Challenge rewired how I start my mornings. Day 4 broke something open in me. I'm not the same person I was a week ago.",
               name: "David R.",
               role: "Founder & CEO",
             },
             {
-              quote: "Coach Kay's voice in the results felt like someone who actually sees me. Not generic advice — real, specific truth.",
+              quote:
+                "Coach Kay's voice in the results felt like someone who actually sees me. Not generic advice — real, specific truth.",
               name: "Priya S.",
               role: "Product Designer",
             },
@@ -378,11 +461,15 @@ const Index = () => {
       {/* Final CTA */}
       <section className="relative z-10 py-24 md:py-32 px-6">
         <AnimatedSection className="max-w-2xl mx-auto text-center">
-          <h2 className="font-heading text-3xl md:text-5xl font-light mb-6" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}>
+          <h2
+            className="font-heading text-3xl md:text-5xl font-light mb-6"
+            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+          >
             Ready to see clearly?
           </h2>
           <p className="text-muted-foreground mb-10 max-w-lg mx-auto">
-            Your clarity session takes less than 5 minutes. No sign-up. No commitment. Just honest, AI-powered insight from Coach Kay's Clarity Code framework.
+            Your clarity session takes less than 5 minutes. No sign-up. No commitment. Just honest, AI-powered insight
+            from Coach Kay's Clarity Code framework.
           </p>
           <Button
             onClick={() => navigate("/clarity")}
@@ -399,14 +486,25 @@ const Index = () => {
       <footer className="relative z-10 py-12 px-6 border-t border-border/30">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="font-heading text-lg font-light">
-            <span className="text-primary">Focus</span>Flow AI <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
+            <span className="text-primary">Focus</span>Flow AI{" "}
+            <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
           </div>
           <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">
-            <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">Clarity Session</button>
-            <button onClick={() => navigate("/modules")} className="hover:text-foreground transition-colors">Modules</button>
-            <button onClick={() => navigate("/challenges")} className="hover:text-foreground transition-colors">Challenges</button>
-            <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">Coach Kay</button>
-            <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">Community</button>
+            <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">
+              Clarity Session
+            </button>
+            <button onClick={() => navigate("/modules")} className="hover:text-foreground transition-colors">
+              Modules
+            </button>
+            <button onClick={() => navigate("/challenges")} className="hover:text-foreground transition-colors">
+              Challenges
+            </button>
+            <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">
+              Coach Kay
+            </button>
+            <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">
+              Community
+            </button>
           </div>
         </div>
       </footer>

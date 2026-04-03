@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
+import { supabase } from "@/integrations/supabase/client";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -47,13 +48,13 @@ const CoachChat = () => {
     setIsLoading(true);
 
     let assistantSoFar = "";
-    
+
     try {
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token ?? ""}`,
         },
         body: JSON.stringify({ messages: newMessages, context }),
       });
@@ -61,9 +62,17 @@ const CoachChat = () => {
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
         if (resp.status === 429) {
-          toast({ title: "Slow down", description: "Rate limited. Please wait a moment and try again.", variant: "destructive" });
+          toast({
+            title: "Slow down",
+            description: "Rate limited. Please wait a moment and try again.",
+            variant: "destructive",
+          });
         } else if (resp.status === 402) {
-          toast({ title: "Credits needed", description: "AI credits exhausted. Please add funds to continue.", variant: "destructive" });
+          toast({
+            title: "Credits needed",
+            description: "AI credits exhausted. Please add funds to continue.",
+            variant: "destructive",
+          });
         } else {
           toast({ title: "Error", description: errData.error || "Something went wrong.", variant: "destructive" });
         }
@@ -114,7 +123,11 @@ const CoachChat = () => {
       }
     } catch (e) {
       console.error("Chat error:", e);
-      toast({ title: "Connection error", description: "Failed to connect to Coach Kay. Please try again.", variant: "destructive" });
+      toast({
+        title: "Connection error",
+        description: "Failed to connect to Coach Kay. Please try again.",
+        variant: "destructive",
+      });
     }
 
     setIsLoading(false);
@@ -134,13 +147,27 @@ const CoachChat = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay flex flex-col">
-      <SEOHead title="Coach Kay — FocusFlow AI" description="Chat with your AI clarity coach. Get personalized insights, challenge your thinking, and unlock deeper self-awareness." path="/coach" jsonLd={{ "@context": "https://schema.org", "@type": "Service", name: "Coach Kay AI", provider: { "@type": "Organization", name: "FocusFlow AI" }, description: "AI-powered clarity coaching conversations" }} />
+      <SEOHead
+        title="Coach Kay — FocusFlow AI"
+        description="Chat with your AI clarity coach. Get personalized insights, challenge your thinking, and unlock deeper self-awareness."
+        path="/coach"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Coach Kay AI",
+          provider: { "@type": "Organization", name: "FocusFlow AI" },
+          description: "AI-powered clarity coaching conversations",
+        }}
+      />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
       {/* Header */}
       <div className="relative z-10 px-6 md:px-12 py-6 flex items-center justify-between shrink-0">
-        <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
         <div className="font-heading text-lg font-light">
@@ -165,10 +192,7 @@ const CoachChat = () => {
           )}
 
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-            >
+            <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               <div
                 className={`max-w-[80%] rounded-lg p-4 ${
                   msg.role === "user"
@@ -191,9 +215,18 @@ const CoachChat = () => {
             <div className="flex justify-start">
               <div className="bg-card/40 border border-border backdrop-blur-sm rounded-lg p-4">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div
+                    className="w-2 h-2 rounded-full bg-primary/40 animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <div
+                    className="w-2 h-2 rounded-full bg-primary/40 animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <div
+                    className="w-2 h-2 rounded-full bg-primary/40 animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
                 </div>
               </div>
             </div>
@@ -204,7 +237,10 @@ const CoachChat = () => {
       </div>
 
       {/* Input */}
-      <div className="relative z-10 shrink-0 border-t border-border/30 bg-background/50 backdrop-blur-sm px-6 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+      <div
+        className="relative z-10 shrink-0 border-t border-border/30 bg-background/50 backdrop-blur-sm px-6 py-4"
+        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+      >
         <div className="max-w-2xl mx-auto flex gap-3">
           <Textarea
             value={input}
