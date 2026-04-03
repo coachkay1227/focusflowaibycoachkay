@@ -82,10 +82,13 @@ const ResultScreen = () => {
     };
     saveSessionCloud(session);
 
-    // Fetch patterns if returning user
-    const hasHist = await hasHistoryCloud();
-    if (hasHist) {
-      fetchPatterns();
+    // Fetch patterns only for authenticated users (requires JWT)
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    if (currentSession) {
+      const hasHist = await hasHistoryCloud();
+      if (hasHist) {
+        fetchPatterns();
+      }
     }
 
     // Update module enrollment progress
