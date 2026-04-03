@@ -238,9 +238,7 @@ const CoachChat = () => {
         </div>
       </div>
 
-      {user ? (
-              
- {/* Input */}
+      {/* Input */}
       <div
         className="relative z-10 shrink-0 border-t border-border/30 bg-background/50 backdrop-blur-sm px-6 py-4"
         style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
@@ -250,13 +248,14 @@ const CoachChat = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Share what's on your mind..."
+            placeholder={user ? "Share what's on your mind..." : "Sign in to chat with Coach Kay"}
+            disabled={!user}
             className="bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 min-h-[48px] max-h-[120px] resize-none focus:border-primary/40"
             rows={1}
           />
           <Button
             onClick={handleSend}
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || isLoading || !user}
             className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 shrink-0"
             size="icon"
           >
