@@ -1,63 +1,109 @@
 
 
-# Mobile Optimization & Animation Performance Audit
+# Full System Audit: Auth, Supabase, Stripe, State, Redirects + Fixes
 
-## Current State
+## Executive Summary
 
-The app is already well-structured for responsive design — most pages use `md:` breakpoints, `MobileNav` is present everywhere, and the day tracker touch targets were already fixed to `w-11 h-11` (44px). However, there are specific issues to address.
+After examining every page, edge function, hook, and store file, the system is **largely sound**. There are **2 code fixes needed** (MobileNav overlay + console warning) and **1 potential issue** worth noting. Everything else is correctly wired.
 
-## Findings & Fixes
+---
 
-### 1. Community page still inlines mouse glow instead of using the shared hook
-- `Community.tsx` lines 41-50 manually attach mousemove instead of calling `useMouseGlow(containerRef)`
-- **Fix**: Replace inline listener with `useMouseGlow` import (3 lines replaces 9)
+## Flow-by-Flow Audit
 
-### 2. FloatingOrbs performance on mobile
-- 4 orbs with `filter: blur(80px)` and continuous CSS animations on `willChange: "transform"` — this is GPU-heavy on low-end phones
-- **Fix**: Reduce to 2 orbs on mobile using a CSS media query approach, and reduce blur to 40px on small screens via a `useIsMobile` conditional
+### 1. Authentication Flow — PASS
 
-### 3. Grain overlay is expensive on mobile
-- The `grain-overlay::before` pseudo-element covers 200% viewport with a stepped animation — causes jank on phones
-- **Fix**: Disable grain animation on mobile with `@media (max-width: 767px)` — keep static grain, remove the animation
+| Step | Status | Detail |
+|------|--------|--------|
+| Sign up | OK | Email/password via `signUp`, Google OAuth via `lovable.auth.signInWithOAuth` |
+| Email verification | OK | Auto-confirm is OFF; toast tells user to verify |
+| Sign in | OK | `signInWithPassword`, redirects to onboarding or dashboard based on preferences |
+| Session persistence | OK | `AuthContext` uses `onAuthStateChange` set up BEFORE `getSession()` — correct order |
+| Password reset | OK | Sends reset link with `redirectTo: /reset-password`, dedicated `ResetPassword.tsx` page exists |
+| Sign out | OK | Calls `supabase.auth.signOut()`, clears session |
+| Protected routes | OK | Dashboard, Onboarding, Profile all check `user` and redirect to `/auth` |
+| HIBP check | OK | Enabled by user in Cloud settings |
 
-### 4. Font sizes too small on some mobile views
-- Clarity Session question text at `text-3xl` (30px) on mobile is fine, but the `font-mono-label` at `0.7rem` (11.2px) is below the 12px minimum for readability
-- **Fix**: Bump `font-mono-label` to `0.75rem` (12px)
+### 2. Supabase Data Flow — PASS
 
-### 5. CoachChat input area needs safe-area padding on iOS
-- The bottom input bar sits at the viewport bottom — on iPhones with home indicator, it gets covered
-- **Fix**: Add `pb-safe` / `env(safe-area-inset-bottom)` padding to the chat input container
+| Table | RLS | CRUD | Notes |
+|-------|-----|------|-------|
+| profiles | OK | Read/Insert/Update | Auto-created via `handle_new_user` trigger |
+| user_access_levels | OK | Read only (client) | Mutations blocked; only service role updates |
+| user_preferences | OK | Read/Insert/Update | Used by onboarding |
+| clarity_sessions | OK | Read/Insert/Delete | No UPDATE — intentional (immutable sessions) |
+| module_enrollments | OK | Full CRUD | Used by enrollment-store |
+| challenge_enrollments | OK | Full CRUD | Used by challenge flow |
+| challenge_progress | OK | Read/Insert/Update | No DELETE — acceptable |
 
-### 6. CTA buttons on ResultScreen stack poorly on small screens
-- Three full-width buttons with `px-8 py-6` look oversized on 320px screens
-- **Fix**: Reduce button padding on mobile: `px-6 py-4 sm:px-8 sm:py-6`
+### 3. Edge Functions — PASS (with notes)
 
-### 7. Homepage F.O.C.U.S. cards horizontal scroll on small screens
-- 5-column grid collapses to 1-col on mobile (already correct via `grid-cols-1 sm:grid-cols-2 lg:grid-cols-5`) — no issue here
+| Function | Auth | Validation | Status |
+|----------|------|------------|--------|
+| clarity-insight | None (public) | Input sanitized, size-limited | OK — stateless AI, no DB |
+| coach-chat | JWT via `getClaims` | Messages validated (count, size) | OK |
+| pattern-detect | JWT via `getClaims` | Sessions array validated | OK |
+| check-subscription | JWT via `getUser` | Protected tiers preserved | OK |
+| create-checkout | JWT via `getUser` | priceId validated against allowlist | OK |
+| customer-portal | JWT via `getUser` | N/A | OK |
+| stripe-webhook | Signature or fallback | Checks payment_status + metadata | OK |
+| weekly-insights | N/A | N/A | OK |
 
-### 8. `willChange` left permanently on AnimatedSection
-- `willChange: "transform, opacity"` is set even after animation completes — wastes GPU memory
-- **Fix**: Clear `willChange` after animation by setting it to `"auto"` once `visible` is true (after transition ends)
+### 4. Stripe Integration — PASS
 
-### 9. Nav buttons have no minimum touch target
-- Desktop nav buttons in `Index.tsx` header are `text-sm` with no padding — fine since they're `hidden md:block`
-- MobileNav buttons are `px-4 py-3` (48px height) — meets 44px minimum ✓
+- `create-checkout` correctly sets `mode` based on price (subscription vs payment)
+- `stripe-webhook` handles `checkout.session.completed` and upserts tier
+- `check-subscription` checks active subs AND one-time checkout sessions
+- Protected tiers (cohort, premium, corporate) are never overwritten by polling
+- Product-to-tier mapping is consistent across all 3 files
+
+### 5. State Management — PASS
+
+- **Authenticated users**: All data goes through Supabase (sessions, enrollments, challenges)
+- **Anonymous users**: localStorage fallback in `session-store.ts` and `enrollment-store.ts`
+- `useAccessLevel` reads from `user_access_levels` table
+- `useSubscription` polls `check-subscription` every 60s when session exists
+
+### 6. Redirects — PASS
+
+| From | Condition | To |
+|------|-----------|-----|
+| `/auth` | Already signed in, no onboarding | `/onboarding` |
+| `/auth` | Already signed in, onboarding done | `/dashboard` |
+| `/dashboard` | No user | `/auth` |
+| `/onboarding` | No user | `/auth` |
+| `/result` | No answers in state | `/clarity` |
+| Checkout success | Via Stripe redirect | `/dashboard?checkout=success` |
+| Checkout cancel | Via Stripe redirect | `/modules?checkout=cancelled` |
+
+---
+
+## Issues Found
+
+### FIX 1: MobileNav overlay opacity (from screenshot)
+- **File**: `src/components/MobileNav.tsx` line 39
+- **Problem**: `bg-black/60` lets hero text bleed through on mobile
+- **Fix**: Change to `bg-black/80`
+
+### FIX 2: AnimatedSection console warning — "Function components cannot be given refs"
+- **File**: `src/components/AnimatedSection.tsx`
+- **Problem**: `AnimatedSection` is a function component that uses an internal `ref`, but `Index.tsx` renders it as a child inside elements that may pass refs. The console shows repeated warnings about this.
+- **Fix**: Wrap `AnimatedSection` with `React.forwardRef` so refs pass through cleanly. This is cosmetic (no runtime crash) but creates console noise.
+
+### NOTE: CoachChat sends messages even when unauthenticated (partial)
+- The input is correctly disabled when `!user`, and the send button is disabled
+- However, the initial auto-greeting (`sendMessage("I just completed...")`) fires without checking `user` — if someone navigates to `/coach` with context in `location.state` but no auth, it will fire and get a 401 from the edge function
+- **Severity**: Low — the edge function returns 401 gracefully, and the toast shows an error. Not a crash, but worth guarding.
+- **Fix**: Add `if (!user) return;` guard in the initial greeting `useEffect`
+
+---
 
 ## Changes Summary
 
 | File | Change | Impact |
 |------|--------|--------|
-| `Community.tsx` | Use `useMouseGlow` hook | Code cleanup |
-| `FloatingOrbs.tsx` | Accept `reduced` prop, render 2 orbs with less blur on mobile | Performance |
-| `src/index.css` | Disable grain animation on mobile, bump mono-label size | Performance + accessibility |
-| `AnimatedSection.tsx` | Clear `willChange` after animation | GPU memory |
-| `CoachChat.tsx` | Add safe-area bottom padding | iOS usability |
-| `ResultScreen.tsx` | Responsive button padding | Small screen layout |
+| `MobileNav.tsx` | `bg-black/60` → `bg-black/80` | Fixes mobile overlap |
+| `AnimatedSection.tsx` | Wrap with `React.forwardRef` | Eliminates console warnings |
+| `CoachChat.tsx` | Guard initial greeting with `user` check | Prevents unnecessary 401 |
 
-## What stays untouched
-- All existing animations, keyframes, and transitions
-- FloatingOrbs on desktop (identical rendering)
-- Color variables, design system, card styles
-- All interactive UI/UX behavior
-- No 3D or external animation libraries added (per constraint)
+No database migrations needed. No edge function changes needed. No Stripe changes needed.
 
