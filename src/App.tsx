@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index.tsx";
 import Community from "./pages/Community.tsx";
 import Auth from "./pages/Auth.tsx";
@@ -24,6 +25,10 @@ const Challenges = lazy(() => import("./pages/Challenges.tsx"));
 const CoachChat = lazy(() => import("./pages/CoachChat.tsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const Profile = lazy(() => import("./pages/Profile.tsx"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.tsx"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers.tsx"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics.tsx"));
+const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -51,6 +56,10 @@ const App = () => (
             <Route path="/coach" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><CoachChat /></Suspense>} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Profile /></Suspense>} />
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminDashboard /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminUsers /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminAnalytics /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminContent /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<EmailPreview />} />
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />

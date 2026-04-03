@@ -18,6 +18,7 @@ import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useRoles } from "@/hooks/use-roles";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
@@ -30,6 +31,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { tier, loading: tierLoading } = useAccessLevel();
   const { subscribed, subscriptionEnd, openPortal } = useSubscription();
+  const { isAdmin } = useRoles();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
@@ -64,6 +66,9 @@ const Dashboard = () => {
           <span className="text-primary">Focus</span>Flow AI
         </div>
         <div className="flex items-center gap-4">
+          {isAdmin && (
+            <button onClick={() => navigate("/admin")} className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block">Admin</button>
+          )}
           <button onClick={() => navigate("/modules")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">Modules</button>
           <button onClick={() => navigate("/challenges")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">Challenges</button>
           <Avatar className="h-8 w-8 border border-primary/30">
