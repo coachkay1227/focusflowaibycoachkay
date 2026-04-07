@@ -14,6 +14,14 @@ export function useRoles() {
       return;
     }
 
+    // Fast-path: known admin emails bypass RPC
+    const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+    if (ADMIN_EMAILS.includes(user.email ?? "")) {
+      setIsAdmin(true);
+      setLoading(false);
+      return;
+    }
+
     const checkRole = async () => {
       try {
         const { data, error } = await supabase.rpc("has_role", {

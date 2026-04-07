@@ -41,12 +41,19 @@ serve(async (req) => {
     if (!user) throw new Error("User not authenticated");
     logStep("User authenticated", { userId: user.id });
 
-    const { data: isAdmin, error: roleError } = await supabaseClient.rpc("has_role", {
-      _user_id: user.id,
-      _role: "admin",
-    });
-    if (roleError) throw new Error(`Role check error: ${roleError.message}`);
-    if (!isAdmin) throw new Error("Admin access required");
+    const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+    let adminVerified = ADMIN_EMAILS.includes(user.email ?? "");
+
+    if (!adminVerified) {
+      const { data: isAdmin, error: roleError } = await supabaseClient.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+      if (roleError) throw new Error(`Role check error: ${roleError.message}`);
+      adminVerified = !!isAdmin;
+    }
+
+    if (!adminVerified) throw new Error("Admin access required");
     logStep("Admin access confirmed");
 
     const body = await req.json();
@@ -63,6 +70,10 @@ serve(async (req) => {
           .select("id, display_name, created_at");
 
         if (profilesError) throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
+
+        // Fetch emails from auth.users via admin API
+        const { data: authData } = await supabaseAdmin.auth.admin.listUsers();
+        const emailMap = new Map((authData?.users ?? []).map((u: { id: string; email?: string }) => [u.id, u.email ?? null]));
 
         const { data: accessLevels } = await supabaseAdmin
           .from("user_access_levels")
@@ -99,6 +110,7 @@ serve(async (req) => {
         const users = (profiles ?? []).map((p: { id: string; display_name: string | null; created_at: string | null }) => ({
           id: p.id,
           display_name: p.display_name,
+          email: emailMap.get(p.id) ?? null,
           tier: (accessMap.get(p.id) as string) ?? "free",
           created_at: p.created_at,
           session_count: sessionCounts[p.id] ?? 0,
@@ -148,6 +160,10 @@ serve(async (req) => {
 
         if (profileError) throw new Error(`Failed to fetch profile: ${profileError.message}`);
 
+        // Get email from auth
+        const { data: authUserData } = await supabaseAdmin.auth.admin.getUserById(user_id);
+        const email = authUserData?.user?.email ?? null;
+
         const { data: accessLevel } = await supabaseAdmin
           .from("user_access_levels")
           .select("tier")
@@ -156,44 +172,119 @@ serve(async (req) => {
 
         const { data: sessions, error: sessionsError } = await supabaseAdmin
           .from("clarity_sessions")
-          .select("*")
+          .select("id, module_id, created_at")
           .eq("user_id", user_id)
           .order("created_at", { ascending: false })
-          .limit(50);
+          .limit(10);
 
         if (sessionsError) throw new Error(`Failed to fetch sessions: ${sessionsError.message}`);
 
-        const { data: enrollments, error: enrollmentsError } = await supabaseAdmin
+        const { data: challenges } = await supabaseAdmin
           .from("challenge_progress")
-          .select("*, challenges(*)")
+          .select("challenge_type, current_day, started_at")
           .eq("user_id", user_id);
 
-        if (enrollmentsError) throw new Error(`Failed to fetch enrollments: ${enrollmentsError.message}`);
-
-        const { data: sessionCount, error: sessionCountError } = await supabaseAdmin
-          .from("clarity_sessions")
-          .select("id", { count: "exact", head: true })
+        const { data: moduleEnrollments } = await supabaseAdmin
+          .from("module_enrollments")
+          .select("module_id, status, enrolled_at")
           .eq("user_id", user_id);
-
-        if (sessionCountError) throw new Error(`Failed to count sessions: ${sessionCountError.message}`);
-
-        const { data: challengeCount, error: challengeCountError } = await supabaseAdmin
-          .from("challenge_progress")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", user_id);
-
-        if (challengeCountError) throw new Error(`Failed to count challenges: ${challengeCountError.message}`);
 
         const detail = {
-          profile,
+          profile: { ...profile, email },
           tier: accessLevel?.tier ?? "free",
-          session_count: sessionCount?.count ?? 0,
-          challenge_count: challengeCount?.count ?? 0,
           recent_sessions: sessions ?? [],
-          enrollments: enrollments ?? [],
+          challenges: challenges ?? [],
+          enrollments: moduleEnrollments ?? [],
         };
 
         return new Response(JSON.stringify({ user: detail }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      case "get_recent_activity": {
+        logStep("Action: get_recent_activity");
+
+        const [signupsRes, sessionsRes, challengesRes, enrollmentsRes] = await Promise.all([
+          supabaseAdmin.from("profiles").select("id, display_name, created_at").order("created_at", { ascending: false }).limit(10),
+          supabaseAdmin.from("clarity_sessions").select("user_id, module_id, created_at").order("created_at", { ascending: false }).limit(10),
+          supabaseAdmin.from("challenge_progress").select("user_id, challenge_type, current_day, started_at").order("started_at", { ascending: false }).limit(10),
+          supabaseAdmin.from("module_enrollments").select("user_id, module_id, status, enrolled_at").order("enrolled_at", { ascending: false }).limit(10),
+        ]);
+
+        // Build a combined profile name lookup
+        const allUserIds = new Set<string>();
+        sessionsRes.data?.forEach((s: { user_id: string }) => allUserIds.add(s.user_id));
+        challengesRes.data?.forEach((c: { user_id: string }) => allUserIds.add(c.user_id));
+        enrollmentsRes.data?.forEach((e: { user_id: string }) => allUserIds.add(e.user_id));
+
+        const { data: nameProfiles } = await supabaseAdmin
+          .from("profiles")
+          .select("id, display_name")
+          .in("id", [...allUserIds]);
+
+        const nameMap = new Map((nameProfiles ?? []).map((p: { id: string; display_name: string | null }) => [p.id, p.display_name ?? "User"]));
+
+        type ActivityEvent = { type: string; name: string; detail: string; timestamp: string };
+        const events: ActivityEvent[] = [];
+
+        (signupsRes.data ?? []).forEach((p: { display_name: string | null; created_at: string | null }) => {
+          if (p.created_at) events.push({ type: "signup", name: p.display_name ?? "New User", detail: "joined FocusFlow", timestamp: p.created_at });
+        });
+
+        (sessionsRes.data ?? []).forEach((s: { user_id: string; module_id: string; created_at: string | null }) => {
+          if (s.created_at) events.push({ type: "session", name: nameMap.get(s.user_id) ?? "User", detail: `completed ${s.module_id}`, timestamp: s.created_at });
+        });
+
+        (challengesRes.data ?? []).forEach((c: { user_id: string; challenge_type: string; current_day: number; started_at: string | null }) => {
+          if (c.started_at) events.push({ type: "challenge", name: nameMap.get(c.user_id) ?? "User", detail: `${c.challenge_type} day ${c.current_day}`, timestamp: c.started_at });
+        });
+
+        (enrollmentsRes.data ?? []).forEach((e: { user_id: string; module_id: string; status: string; enrolled_at: string | null }) => {
+          if (e.enrolled_at) events.push({ type: "enrollment", name: nameMap.get(e.user_id) ?? "User", detail: `enrolled in ${e.module_id}`, timestamp: e.enrolled_at });
+        });
+
+        events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+        return new Response(JSON.stringify({ events: events.slice(0, 20) }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      case "get_content_settings": {
+        logStep("Action: get_content_settings");
+
+        const { data, error } = await supabaseAdmin
+          .from("content_settings")
+          .select("*");
+
+        return new Response(JSON.stringify({ settings: data ?? [], error: error?.message }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: error ? 500 : 200,
+        });
+      }
+
+      case "update_content_setting": {
+        const { content_id, enabled, featured, custom_tagline } = body;
+        logStep("Action: update_content_setting", { content_id, enabled, featured });
+
+        if (!content_id) throw new Error("Missing content_id");
+
+        const { error: upsertError } = await supabaseAdmin
+          .from("content_settings")
+          .upsert({
+            id: content_id,
+            enabled: enabled ?? true,
+            featured: featured ?? false,
+            custom_tagline: custom_tagline ?? null,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "id" });
+
+        if (upsertError) throw new Error(`Failed to update content setting: ${upsertError.message}`);
+
+        return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
         });

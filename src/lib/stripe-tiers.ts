@@ -22,7 +22,7 @@ export const STRIPE_TIERS: Partial<Record<AccessTier, TierConfig[]>> = {
     {
       price_id: "price_1THkwQBReje0oFcL8i3WGwS0",
       product_id: "prod_UGHVIcGfn5LEoU",
-      name: "8-Week AI Transformation Cohort",
+      name: "8-Week Life Transformation Cohort",
       price: 997,
       interval: "one_time",
     },

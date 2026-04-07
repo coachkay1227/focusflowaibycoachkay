@@ -12,8 +12,11 @@ import SEOHead from "@/components/SEOHead";
 import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
-import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/use-subscription";
+import { STRIPE_TIERS } from "@/lib/stripe-tiers";
 
 const PILLARS: FocusPillar[] = ["F", "O", "C", "U", "S"];
 
@@ -22,6 +25,7 @@ const Modules = () => {
   const { user } = useAuth();
   const { tier } = useAccessLevel();
   const { toast } = useToast();
+  const { startCheckout } = useSubscription();
   const containerRef = useRef<HTMLDivElement>(null);
   const [activePillar, setActivePillar] = useState<FocusPillar | "all">("all");
   const [enrollments, setEnrollments] = useState<ModuleEnrollment[]>([]);
@@ -29,7 +33,13 @@ const Modules = () => {
 
   useEffect(() => {
     if (user) getModuleEnrollments().then(setEnrollments);
-  }, [user]);
+    // Handle Stripe checkout cancelled redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "cancelled") {
+      toast({ title: "No worries", description: "You can start a plan anytime you're ready." });
+      window.history.replaceState({}, "", "/modules");
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useMouseGlow(containerRef);
 
@@ -98,6 +108,60 @@ const Modules = () => {
           <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-sm md:text-base">
             Foundation · Opportunity · Create · Uplift · Support — each program maps to a pillar. Pick the one that matches where you are right now.
           </p>
+        </AnimatedSection>
+
+        {/* Pricing */}
+        <AnimatedSection delay={100} className="mb-14">
+          <div className="text-center mb-6">
+            <span className="font-mono-label text-primary tracking-[0.2em]">PLANS</span>
+            <h2 className="font-heading text-2xl md:text-3xl font-light mt-2">
+              Find your level
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { name: "Free", price: "$0", period: "", desc: "Clarity Check + Mirror Challenge entry", priceId: null, highlight: false },
+              { name: "Monthly", price: "$27", period: "/mo", desc: "All modules, coach chat, weekly insights", priceId: STRIPE_TIERS.subscriber?.[0]?.price_id, highlight: false },
+              { name: "30-Day Package", price: "$497", period: "", desc: "4 sessions (60 min) + full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 497)?.price_id, highlight: true },
+              { name: "8-Week Cohort", price: "$997", period: "", desc: "Coach Kay-led cohort + all modules", priceId: STRIPE_TIERS.cohort?.[0]?.price_id, highlight: false },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                className={`clarity-card rounded-lg backdrop-blur-sm p-6 flex flex-col border ${
+                  plan.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/30"
+                }`}
+              >
+                {plan.highlight && (
+                  <span className="font-mono-label text-[10px] tracking-wider text-primary mb-2">MOST POPULAR</span>
+                )}
+                <h3 className="font-heading text-lg font-medium">{plan.name}</h3>
+                <div className="mt-2 mb-3">
+                  <span className="font-heading text-3xl font-light text-primary">{plan.price}</span>
+                  {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+                </div>
+                <p className="text-muted-foreground text-xs leading-relaxed flex-1">{plan.desc}</p>
+                {plan.priceId ? (
+                  <Button
+                    onClick={() => user ? startCheckout(plan.priceId!) : navigate("/auth")}
+                    size="sm"
+                    className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
+                  >
+                    {user ? "Get Started" : "Sign In to Start"}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => navigate("/clarity")}
+                    variant="outline"
+                    size="sm"
+                    className="mt-4 border-border hover:border-primary/40"
+                  >
+                    <Sparkles className="mr-1 h-3 w-3" />
+                    Try Free
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
         </AnimatedSection>
 
         {/* Pillar Tabs */}

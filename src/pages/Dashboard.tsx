@@ -19,6 +19,7 @@ import MobileNav from "@/components/MobileNav";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useRoles } from "@/hooks/use-roles";
+import { useToast } from "@/hooks/use-toast";
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
@@ -32,6 +33,7 @@ const Dashboard = () => {
   const { tier, loading: tierLoading } = useAccessLevel();
   const { subscribed, subscriptionEnd, openPortal } = useSubscription();
   const { isAdmin } = useRoles();
+  const { toast } = useToast();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
@@ -43,12 +45,18 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
+    // Handle Stripe checkout success redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "success") {
+      toast({ title: "Welcome aboard!", description: "Your payment was successful. Your access has been upgraded." });
+      window.history.replaceState({}, "", "/dashboard");
+    }
     Promise.all([
       getModuleEnrollments().then(setModuleEnrollments),
       getChallengeEnrollments().then(setChallengeEnrollments),
       getRecentSessionsCloud(5).then(setRecentSessions),
     ]).finally(() => setLoading(false));
-  }, [user, navigate]);
+  }, [user, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useMouseGlow(containerRef);
 
