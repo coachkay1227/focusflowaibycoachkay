@@ -1,5 +1,5 @@
 // ============================================================
-// FocusFlow AI — Master Program Data
+// FocusFlow — Master Program Data
 // src/data/programs.ts
 // Coach K Elevates | Shield Her Elevation LLC
 // Framework: F.O.C.U.S. (Foundation · Opportunity · Create · Uplift · Support)
