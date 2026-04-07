@@ -60,7 +60,7 @@ const AdminDashboard = () => {
 
         setRecentUsers(statsData?.recentUsers || []);
       } catch (error) {
-        console.error("Failed to fetch admin stats:", error);
+        // Stats fetch failed — toast handled by UI
       } finally {
         setLoading(false);
       }

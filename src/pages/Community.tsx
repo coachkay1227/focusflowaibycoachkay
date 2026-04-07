@@ -11,7 +11,7 @@ import MobileNav from "@/components/MobileNav";
 const SKOOL_URL = "https://www.skool.com/focusflow-elevation-hub";
 
 const highlights = [
-  { icon: BookOpen, text: "12+ AI coaching modules" },
+  { icon: BookOpen, text: "12+ coaching modules" },
   { icon: MessageCircle, text: "Weekly group coaching & Q&A" },
   { icon: Users, text: "24/7 community support" },
   { icon: Calendar, text: "Specialty prompts & tools" },
@@ -42,7 +42,7 @@ const Community = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title="Community — FocusFlow AI" description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, access AI modules, weekly coaching, and 24/7 community support." path="/community" />
+      <SEOHead title="The Elevation Hub — FocusFlow Community" description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support." path="/community" />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
@@ -68,7 +68,7 @@ const Community = () => {
             You're not alone in this.
           </h1>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            Join 98+ elevation seekers rebuilding their lives and businesses with AI and intentional growth. Free to join.
+            Join 98+ elevation seekers rebuilding their lives and businesses with intentional growth. Free to join.
           </p>
           <Button
             onClick={() => window.open(SKOOL_URL, "_blank")}
@@ -88,14 +88,14 @@ const Community = () => {
               </div>
               <div>
                 <h3 className="font-heading text-lg font-light">Coach Kay</h3>
-                <p className="text-xs text-muted-foreground">AI & Life Transformation Coach</p>
+                <p className="text-xs text-muted-foreground">Life Transformation Coach</p>
               </div>
             </div>
             <p className="text-foreground/80 leading-relaxed text-sm mb-4">
-              I'm an accredited AI Consultant, AI Strategist, and Master Life Coach trained in transformation, mindfulness, purpose, and goal-setting. My mission is simple: make sure no one gets left behind in the AI revolution.
+              Master Certified Life Coach with 600+ hours of client coaching. Trained in transformation, mindfulness, purpose, and goal-setting. Creator of the Clarity Code framework and the F.O.C.U.S. methodology.
             </p>
             <p className="text-foreground/70 leading-relaxed text-sm">
-              We're in a critical window (2026–2027). Just like social media in 2008 or smartphones in 2010, early adopters gained massive leverage. I've spent 1,000+ hours mastering AI so you can compress years of growth into months.
+              My tools are powered by the latest in technology — but my approach is rooted in real coaching science. I built FocusFlow so you can compress years of growth into months.
             </p>
           </div>
         </AnimatedSection>
@@ -148,7 +148,7 @@ const Community = () => {
           <div className="clarity-card rounded-lg border border-primary/15 bg-card/20 backdrop-blur-sm p-12">
             <h3 className="font-heading text-2xl font-light mb-4">Ready to elevate?</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Join the community. Access AI coaching modules, weekly group sessions, and a support system that moves with you.
+              Join the community. Access coaching modules, weekly group sessions, and a support system that moves with you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button

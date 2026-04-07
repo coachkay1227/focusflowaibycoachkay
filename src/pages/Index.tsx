@@ -31,22 +31,51 @@ const Index = () => {
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay grid-overlay">
       <SEOHead
-        title="FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay"
-        description="See clearly. Move with purpose. AI-powered clarity coaching that helps you cut through mental fog, identify patterns, and take meaningful action."
+        title="FocusFlow AI — Clarity Coaching by Coach Kay"
+        description="See clearly. Move with purpose. Master-certified clarity coaching that helps you cut through mental fog, identify patterns, and take meaningful action."
         path="/"
         jsonLd={[
           {
             "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "FocusFlow AI",
-            url: typeof window !== "undefined" ? window.location.origin : "",
-            description: "AI-powered clarity coaching by Coach Kay",
+            "@type": "ProfessionalService",
+            name: "FocusFlow AI by Coach Kay",
+            url: "https://focusflowelevation-hub.com",
+            description: "Master-certified clarity coaching powered by the F.O.C.U.S. framework",
+            serviceType: "Life Coaching",
+            provider: {
+              "@type": "Person",
+              name: "Coach Kay",
+              jobTitle: "Master Certified Life Coach",
+              description: "Master Certified Life Coach with 600+ hours of client coaching. Creator of the Clarity Code framework and F.O.C.U.S. methodology.",
+            },
+            areaServed: "Worldwide",
           },
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "FocusFlow AI",
-            url: typeof window !== "undefined" ? window.location.origin : "",
+            url: "https://focusflowelevation-hub.com",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "What is a Clarity Check?",
+                acceptedAnswer: { "@type": "Answer", text: "A free 5-minute guided self-reflection session that identifies your patterns and provides a personalized clarity report with actionable next steps." },
+              },
+              {
+                "@type": "Question",
+                name: "Do I need to sign up to try it?",
+                acceptedAnswer: { "@type": "Answer", text: "No. The Clarity Check is completely free with no sign-up required. You can save your results by creating an account afterward." },
+              },
+              {
+                "@type": "Question",
+                name: "What is the Mirror Challenge?",
+                acceptedAnswer: { "@type": "Answer", text: "A daily guided reflection challenge available in 3, 7, 14, or 30-day formats. Each day includes a specific prompt designed to build self-awareness and lasting change." },
+              },
+            ],
           },
         ]}
       />
@@ -204,7 +233,7 @@ const Index = () => {
             transition: "all 0.6s ease-out",
           }}
         >
-          An AI-powered clarity experience that helps you cut through the noise, identify your patterns, and take your
+          A clarity experience that helps you cut through the noise, identify your patterns, and take your
           next bold step.
         </p>
 
@@ -246,8 +275,27 @@ const Index = () => {
             transition: "opacity 1s ease-out",
           }}
         >
-          5-minute guided session · No sign-up required
+          5-minute guided session · No sign-up required · Personalized clarity report
         </div>
+      </section>
+
+      {/* Credentials Bar */}
+      <section className="relative z-10 py-8 px-6">
+        <AnimatedSection className="max-w-4xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-center">
+            {[
+              "Master Certified Life Coach",
+              "600+ Coaching Hours",
+              "Accredited Training",
+              "Clarity Code Creator",
+            ].map((cred, i) => (
+              <div key={cred} className="flex items-center gap-4 md:gap-8">
+                <span className="font-mono-label text-[11px] tracking-wider text-primary/70">{cred}</span>
+                {i < 3 && <span className="hidden md:inline text-primary/20">|</span>}
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* F.O.C.U.S. Framework */}
@@ -371,7 +419,7 @@ const Index = () => {
                 step: "03",
                 title: "Full Access",
                 duration: "All Modules & Challenges",
-                sub: "Self-paced · AI coach always on",
+                sub: "Self-paced · Coach always on",
                 badge: null,
               },
               {
@@ -468,7 +516,7 @@ const Index = () => {
             Ready to see clearly?
           </h2>
           <p className="text-muted-foreground mb-10 max-w-lg mx-auto">
-            Your clarity session takes less than 5 minutes. No sign-up. No commitment. Just honest, AI-powered insight
+            Your clarity session takes less than 5 minutes. No sign-up. No commitment. Just honest, personalized insight
             from Coach Kay's Clarity Code framework.
           </p>
           <Button
@@ -484,27 +532,33 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="relative z-10 py-12 px-6 border-t border-border/30">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="font-heading text-lg font-light">
-            <span className="text-primary">Focus</span>Flow AI{" "}
-            <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+            <div className="font-heading text-lg font-light">
+              <span className="text-primary">Focus</span>Flow AI{" "}
+              <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
+            </div>
+            <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">
+              <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">
+                Clarity Session
+              </button>
+              <button onClick={() => navigate("/modules")} className="hover:text-foreground transition-colors">
+                Modules
+              </button>
+              <button onClick={() => navigate("/challenges")} className="hover:text-foreground transition-colors">
+                Challenges
+              </button>
+              <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">
+                Coach Kay
+              </button>
+              <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">
+                Community
+              </button>
+            </div>
           </div>
-          <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">
-            <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">
-              Clarity Session
-            </button>
-            <button onClick={() => navigate("/modules")} className="hover:text-foreground transition-colors">
-              Modules
-            </button>
-            <button onClick={() => navigate("/challenges")} className="hover:text-foreground transition-colors">
-              Challenges
-            </button>
-            <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">
-              Coach Kay
-            </button>
-            <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">
-              Community
-            </button>
+          <div className="text-center text-xs text-muted-foreground/40 space-y-1">
+            <p>Master Certified Life Coach · Coach Kay</p>
+            <p>&copy; {new Date().getFullYear()} FocusFlow Elevation · Shield Her Elevation LLC</p>
           </div>
         </div>
       </footer>

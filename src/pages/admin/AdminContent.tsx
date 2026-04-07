@@ -77,7 +77,7 @@ const AdminContent = () => {
         });
         setChallengeStats(stats);
       } catch (error) {
-        console.error("Failed to fetch content stats:", error);
+        // Content stats fetch failed
       } finally {
         setLoading(false);
       }

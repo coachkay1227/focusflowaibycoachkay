@@ -38,7 +38,7 @@ export function useSubscription() {
         loading: false,
       });
     } catch (err) {
-      console.error("check-subscription error:", err);
+      // Error handled silently
       setState((s) => ({ ...s, loading: false }));
     }
   }, [session?.access_token]);

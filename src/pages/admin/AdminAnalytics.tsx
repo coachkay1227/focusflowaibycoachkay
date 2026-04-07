@@ -100,7 +100,7 @@ const AdminAnalytics = () => {
         const completedChallenges = challenges?.filter((c) => (c.current_day ?? 0) >= 7).length ?? 0;
         setChallengeCompletion({ total: totalChallenges, completed: completedChallenges });
       } catch (error) {
-        console.error("Failed to fetch analytics:", error);
+        // Analytics fetch failed
       } finally {
         setLoading(false);
       }

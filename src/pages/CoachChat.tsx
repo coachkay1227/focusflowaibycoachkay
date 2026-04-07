@@ -26,6 +26,7 @@ const CoachChat = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -123,8 +124,7 @@ const CoachChat = () => {
           }
         }
       }
-    } catch (e) {
-      console.error("Chat error:", e);
+    } catch {
       toast({
         title: "Connection error",
         description: "Failed to connect to Coach Kay. Please try again.",
@@ -136,8 +136,10 @@ const CoachChat = () => {
   };
 
   const handleSend = () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || cooldown) return;
     sendMessage(input.trim());
+    setCooldown(true);
+    setTimeout(() => setCooldown(false), 3000);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -150,15 +152,15 @@ const CoachChat = () => {
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay flex flex-col">
       <SEOHead
-        title="Coach Kay — FocusFlow AI"
-        description="Chat with your AI clarity coach. Get personalized insights, challenge your thinking, and unlock deeper self-awareness."
+        title="Talk to Coach Kay — Personalized Clarity Coaching"
+        description="Chat with Coach Kay for personalized clarity insights. Get real coaching, challenge your thinking, and unlock deeper self-awareness."
         path="/coach"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Service",
-          name: "Coach Kay AI",
-          provider: { "@type": "Organization", name: "FocusFlow AI" },
-          description: "AI-powered clarity coaching conversations",
+          name: "Coach Kay",
+          provider: { "@type": "Person", name: "Coach Kay", jobTitle: "Master Certified Life Coach" },
+          description: "Personalized clarity coaching conversations",
         }}
       />
       <div className="mouse-glow" />
@@ -255,7 +257,7 @@ const CoachChat = () => {
           />
           <Button
             onClick={handleSend}
-            disabled={!input.trim() || isLoading || !user}
+            disabled={!input.trim() || isLoading || cooldown || !user}
             className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 shrink-0"
             size="icon"
           >

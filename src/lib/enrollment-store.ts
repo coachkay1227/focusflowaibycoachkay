@@ -27,7 +27,7 @@ export async function getModuleEnrollments(): Promise<ModuleEnrollment[]> {
     .order("enrolled_at", { ascending: false });
 
   if (error) {
-    console.error("Failed to fetch module enrollments:", error);
+    // Error handled silently
     return [];
   }
 
@@ -62,7 +62,7 @@ export async function enrollInModule(moduleId: string): Promise<void> {
   );
 
   if (error) {
-    console.error("Failed to enroll in module:", error);
+    // Error handled silently
     toast({ title: "Enrollment failed", description: "Could not enroll. Please try again.", variant: "destructive" });
     throw error;
   }
@@ -79,7 +79,7 @@ export async function updateModuleProgress(moduleId: string): Promise<void> {
     .maybeSingle();
 
   if (fetchError) {
-    console.error("Failed to fetch module progress:", fetchError);
+    // Error handled silently
     return;
   }
 
@@ -90,7 +90,7 @@ export async function updateModuleProgress(moduleId: string): Promise<void> {
     }).eq("id", existing.id);
 
     if (updateError) {
-      console.error("Failed to update module progress:", updateError);
+      // Error handled silently
     }
   }
 }
@@ -115,7 +115,7 @@ export async function getChallengeEnrollments(): Promise<ChallengeEnrollment[]> 
     .order("enrolled_at", { ascending: false });
 
   if (error) {
-    console.error("Failed to fetch challenge enrollments:", error);
+    // Error handled silently
     return [];
   }
 
@@ -148,7 +148,7 @@ export async function enrollInChallenge(challengeType: string): Promise<void> {
   );
 
   if (error) {
-    console.error("Failed to enroll in challenge:", error);
+    // Error handled silently
     toast({ title: "Enrollment failed", description: "Could not enroll. Please try again.", variant: "destructive" });
     throw error;
   }
@@ -167,7 +167,7 @@ export async function updateChallengeStatus(challengeType: string, status: "in_p
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Failed to update challenge status:", error);
+    // Error handled silently
     toast({ title: "Update failed", description: "Could not update challenge status.", variant: "destructive" });
     throw error;
   }
@@ -193,7 +193,7 @@ export async function getUserPreferences(): Promise<UserPreferences | null> {
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to fetch user preferences:", error);
+    // Error handled silently
     return null;
   }
   if (!data) return null;
@@ -226,7 +226,7 @@ export async function saveUserPreferences(prefs: {
   }, { onConflict: "id" });
 
   if (error) {
-    console.error("Failed to save user preferences:", error);
+    // Error handled silently
     toast({ title: "Save failed", description: "Could not save preferences. Please try again.", variant: "destructive" });
     throw error;
   }

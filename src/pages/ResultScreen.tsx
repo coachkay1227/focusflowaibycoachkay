@@ -59,13 +59,11 @@ const ResultScreen = () => {
       });
 
       if (error || data?.error) {
-        console.warn("AI insight failed, using local fallback:", error || data?.error);
         insightData = generateInsight(answers);
     } else {
         insightData = data as InsightResult;
       }
-    } catch (e) {
-      console.warn("AI insight error, using local fallback:", e);
+    } catch {
       insightData = generateInsight(answers);
     }
 
@@ -105,8 +103,8 @@ const ResultScreen = () => {
       if (!error && !data?.error) {
         setPatterns(data as PatternResult);
       }
-    } catch (e) {
-      console.warn("Pattern detection failed:", e);
+    } catch {
+      // Pattern detection failed silently
     }
     setLoadingPatterns(false);
   };
@@ -232,7 +230,7 @@ const ResultScreen = () => {
                 className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-6 py-4 sm:px-8 sm:py-6"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
-                Continue with AI Coach
+                Continue with Coach Kay
               </Button>
               <Button
                 variant="outline"

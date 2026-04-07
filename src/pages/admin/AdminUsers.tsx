@@ -63,7 +63,6 @@ const AdminUsers = () => {
 
         setUsers(mapped);
       } catch (error) {
-        console.error("Failed to fetch users:", error);
         toast.error("Failed to load users");
       } finally {
         setLoading(false);
@@ -87,7 +86,6 @@ const AdminUsers = () => {
       );
       toast.success(`Tier updated to ${newTier}`);
     } catch (error) {
-      console.error("Failed to update tier:", error);
       toast.error("Failed to update tier. The manage-users edge function may not be deployed yet.");
     } finally {
       setUpdatingTier(null);
