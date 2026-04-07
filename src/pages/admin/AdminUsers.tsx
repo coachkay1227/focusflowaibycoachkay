@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { UserDetailModal } from "@/components/admin/UserDetailModal";
 import { Search, Loader2, AlertCircle } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { toast } from "sonner";
@@ -29,6 +30,7 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [updatingTier, setUpdatingTier] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -53,10 +55,10 @@ const AdminUsers = () => {
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
 
-        const mapped: AdminUser[] = (data?.users ?? []).map((u: { id: string; display_name: string | null; tier: AccessTier; created_at: string | null }) => ({
+        const mapped: AdminUser[] = (data?.users ?? []).map((u: { id: string; display_name: string | null; email?: string | null; tier: AccessTier; created_at: string | null }) => ({
           id: u.id,
           display_name: u.display_name,
-          email: null,
+          email: u.email ?? null,
           tier: u.tier,
           created_at: u.created_at,
         }));
@@ -160,13 +162,13 @@ const AdminUsers = () => {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filtered.map((u) => (
-                    <tr key={u.id} className="hover:bg-card/20 transition-colors">
+                    <tr key={u.id} className="hover:bg-card/20 transition-colors cursor-pointer" onClick={() => setSelectedUserId(u.id)}>
                       <td className="px-6 py-4">
                         <p className="font-medium truncate max-w-[200px]">
                           {u.display_name || "Unnamed User"}
                         </p>
                         <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-                          {u.id.slice(0, 12)}...
+                          {u.email || u.id.slice(0, 12) + "..."}
                         </p>
                       </td>
                       <td className="px-6 py-4">
@@ -207,11 +209,16 @@ const AdminUsers = () => {
         <div className="mt-4 flex items-start gap-2 text-xs text-muted-foreground">
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           <p>
-            Tier changes require the <code className="font-mono bg-card/50 px-1 rounded">manage-users</code> edge function to be deployed.
-            Contact your Supabase admin to deploy it if tier updates are failing.
+            Click any user row to view full details. Tier changes require the <code className="font-mono bg-card/50 px-1 rounded">manage-users</code> edge function to be deployed.
           </p>
         </div>
       </div>
+
+      <UserDetailModal
+        userId={selectedUserId}
+        onClose={() => setSelectedUserId(null)}
+        onTierChange={(userId, tier) => handleTierChange(userId, tier as AccessTier)}
+      />
     </div>
   );
 };

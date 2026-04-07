@@ -405,7 +405,7 @@ const Index = () => {
                 step: "01",
                 title: "Quick Clarity Check",
                 duration: "5 Minutes",
-                sub: "Event table · No sign-up required",
+                sub: "Start here · No sign-up required",
                 badge: "FREE",
               },
               {
@@ -420,20 +420,6 @@ const Index = () => {
                 title: "Full Access",
                 duration: "All Modules & Challenges",
                 sub: "Self-paced · Coach always on",
-                badge: null,
-              },
-              {
-                step: "04",
-                title: "Reentry & Community Track",
-                duration: "",
-                sub: "Justice-impacted · Grant-funded access",
-                badge: null,
-              },
-              {
-                step: "05",
-                title: "Corporate & Nonprofit Cohorts",
-                duration: "",
-                sub: "B2B · Shield Her Elevation LLC / Forward Focus Elevation",
                 badge: null,
               },
             ].map((item, i) => (
@@ -456,6 +442,27 @@ const Index = () => {
               </AnimatedSection>
             ))}
           </div>
+
+          {/* Nonprofit & Community Impact */}
+          <AnimatedSection delay={400} className="mt-10">
+            <div className="clarity-card rounded-lg border border-border/50 bg-card/20 backdrop-blur-sm p-6 text-center">
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                We also support community organizations and nonprofits through{" "}
+                <a
+                  href="https://forward-focus-elevation.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                >
+                  Forward Focus Elevation
+                </a>
+                {" "}— bringing clarity coaching to communities that need it most.
+              </p>
+              <p className="text-muted-foreground/50 text-xs mt-2">
+                Corporate & organizational cohorts available · Contact us for details
+              </p>
+            </div>
+          </AnimatedSection>
         </AnimatedSection>
       </section>
 
