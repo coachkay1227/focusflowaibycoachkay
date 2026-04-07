@@ -88,7 +88,7 @@ export const programs: Program[] = [
     pillar: "F",
     pillarFull: "Foundation",
     type: "assessment",
-    category: "AI Assessment",
+    category: "Assessment",
     duration: "5min",
     durationLabel: "5 minutes",
     tagline: "Know exactly where you are — so you know where to go.",
@@ -126,14 +126,14 @@ export const programs: Program[] = [
     pillar: "F",
     pillarFull: "Foundation",
     type: "assessment",
-    category: "AI Assessment",
+    category: "Assessment",
     duration: "5min",
     durationLabel: "5–7 minutes",
     tagline: "Discover your Mind-Action-Character type and get your personalized path.",
     description:
-      "This proprietary self-scored assessment types you across three dimensions — Mind, Action, and Character — then uses AI to deliver a fully personalized coaching path. Think of it as your personality GPS. It tells you how you process, how you move, and who you're becoming. No generic buckets — your type is uniquely yours.",
+      "This proprietary self-scored assessment types you across three dimensions — Mind, Action, and Character — then delivers a fully personalized coaching path. Think of it as your personality GPS. It tells you how you process, how you move, and who you're becoming. No generic buckets — your type is uniquely yours.",
     coachNote:
-      "This is the assessment I use in every single cohort intake. It changes how people see themselves in 7 minutes flat. The AI follow-up is what makes it magical — it doesn't just type you, it coaches you from that type.",
+      "This is the assessment I use in every single cohort intake. It changes how people see themselves in 7 minutes flat. The follow-up is what makes it magical — it doesn't just type you, it coaches you from that type.",
     whatYouGet: [
       "Self-scored MAC type assessment (20 questions)",
       "Your unique 3-dimension type profile",
@@ -753,7 +753,7 @@ export const programs: Program[] = [
     whatYouGet: [
       "Impulse pattern audit: your triggers and your responses",
       "Neuroscience of self-regulation (applied, not academic)",
-      "7 daily regulation practices with AI debrief",
+      "7 daily regulation practices with guided debrief",
       "Emotional escalation interrupt protocol",
       "30-day self-control habit plan",
     ],
@@ -861,7 +861,7 @@ export const programs: Program[] = [
     durationLabel: "8 weeks",
     tagline: "Regulate from the inside out — starting with what you eat.",
     description:
-      "Stress coaching that ignores the body is incomplete. This 8-week program addresses the physical component of emotional dysregulation — specifically how blood sugar instability drives anxiety, mood swings, and mental fog. AI-guided weekly coaching sessions combine nutritional guidance with emotional wellness practices to help you find a baseline of calm that no supplement or meditation alone can create.",
+      "Stress coaching that ignores the body is incomplete. This 8-week program addresses the physical component of emotional dysregulation — specifically how blood sugar instability drives anxiety, mood swings, and mental fog. Weekly guided coaching sessions combine nutritional guidance with emotional wellness practices to help you find a baseline of calm that no supplement or meditation alone can create.",
     coachNote:
       "I added this to the platform because I kept watching clients do all the inner work and still feel terrible. Turns out, the body has a vote. This program respects that.",
     whatYouGet: [
@@ -941,7 +941,7 @@ export const programs: Program[] = [
     durationLabel: "5 days",
     tagline: "Accountability isn't a punishment — it's a practice.",
     description:
-      "Most people learned accountability through shame and consequences. No wonder they avoid it. This 5-day program reframes and rebuilds accountability as a learnable, shame-free skill using Coach Kay's coaching methodology. AI guides you through daily accountability practices that feel empowering, not punishing — and stick long after the 5 days end.",
+      "Most people learned accountability through shame and consequences. No wonder they avoid it. This 5-day program reframes and rebuilds accountability as a learnable, shame-free skill using Coach Kay's coaching methodology. Coaching guides you through daily accountability practices that feel empowering, not punishing — and stick long after the 5 days end.",
     coachNote:
       "I've never met a client who didn't want to be accountable. They just needed to be taught how without the shame that usually comes with it.",
     whatYouGet: [
@@ -949,7 +949,7 @@ export const programs: Program[] = [
       "Shame-free accountability framework",
       "5 daily accountability practice sessions with guided coaching",
       "Personal accountability structure design",
-      "Accountability partner protocol (optional AI partner included)",
+      "Accountability partner protocol (optional digital partner included)",
     ],
     transformation:
       "You transform from someone who avoids accountability to someone who uses it as a daily superpower.",
@@ -1063,7 +1063,7 @@ export const programs: Program[] = [
       "Worth excavation: what you actually deserve",
       "7-day guided confidence + wealth building plan",
       "Income expansion mindset shifts",
-      "First wealth action step with AI accountability",
+      "First wealth action step with built-in accountability",
     ],
     transformation:
       "You stop leaving money — and opportunity — on the table because you finally believe you belong at the table.",
@@ -1251,7 +1251,7 @@ export const programs: Program[] = [
     description:
       "You're spending an average of 7 hours a day on screens — and most of it isn't serving you. This 7-day challenge is a structured, intentional reduction of tech consumption with coaching guiding you through each stage of the detox. You'll design a technology relationship that works for your life instead of consuming it.",
     coachNote:
-      "I built this specifically because the people using FocusFlow AI most need to also know when to put the tech down. This challenge models that.",
+      "I built this specifically because the people using FocusFlow most need to also know when to put the tech down. This challenge models that.",
     whatYouGet: [
       "Tech consumption audit: where your screen time actually goes",
       "7-day mindful tech reduction protocol",
@@ -1709,7 +1709,7 @@ export const programs: Program[] = [
     durationLabel: "2-day workshop",
     tagline: "Track your transformation like a CEO tracks their business.",
     description:
-      "What gets measured gets managed. This 2-day workshop builds your personal transformation KPI dashboard — tracking the metrics that actually matter for your growth: consistency score, energy levels, goal completion rate, income trajectory, habit streaks, and more. AI powers the analysis and coaching sessions deliver the interpretation.",
+      "What gets measured gets managed. This 2-day workshop builds your personal transformation KPI dashboard — tracking the metrics that actually matter for your growth: consistency score, energy levels, goal completion rate, income trajectory, habit streaks, and more. Smart analysis powers the data and coaching sessions deliver the interpretation.",
     coachNote:
       "I built this for the analytical thinkers who need to see the data to trust the process. It's also the most fundable asset in the platform — perfect for impact reporting with grants.",
     whatYouGet: [
@@ -1741,7 +1741,7 @@ export const programs: Program[] = [
 
   {
     id: "8-week-ai-transformation",
-    title: "8-Week AI & Life Transformation Intensive",
+    title: "8-Week Life Transformation Intensive",
     slug: "8-week-ai-life-transformation",
     pillar: "C",
     pillarFull: "Create",
@@ -1792,7 +1792,7 @@ export const programs: Program[] = [
     durationLabel: "30 days",
     tagline: "One month. One framework. One version of you that doesn't quit.",
     description:
-      "The 30-Day F.O.C.U.S. Intensive is the higher-touch version of the self-paced 30-day reset. It includes weekly group coaching calls, daily AI sessions, and the full F.O.C.U.S. curriculum compressed into one powerful month. Application required — not because it's exclusive, but because Coach Kay is invested in your results and needs to know you're ready.",
+      "The 30-Day F.O.C.U.S. Intensive is the higher-touch version of the self-paced 30-day reset. It includes weekly group coaching calls, daily coaching sessions, and the full F.O.C.U.S. curriculum compressed into one powerful month. Application required — not because it's exclusive, but because Coach Kay is invested in your results and needs to know you're ready.",
     coachNote:
       "30 days is enough time to completely shift a pattern if you show up fully. This is built for the person who's ready to show up fully.",
     whatYouGet: [
