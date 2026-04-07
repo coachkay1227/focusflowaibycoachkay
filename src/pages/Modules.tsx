@@ -55,7 +55,7 @@ const Modules = () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "FocusFlow AI Programs",
+    name: "FocusFlow Coaching Programs",
     itemListElement: filteredPrograms.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -66,8 +66,8 @@ const Modules = () => {
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
       <SEOHead
-        title="Programs — FocusFlow AI"
-        description="Explore the full F.O.C.U.S. program catalog — assessments, challenges, courses, sprints, and signature programs powered by AI coaching."
+        title="Coaching Programs — FocusFlow by Coach Kay"
+        description="Explore the full F.O.C.U.S. program catalog — assessments, challenges, courses, sprints, and signature programs powered by Coach Kay's framework."
         path="/modules"
         jsonLd={jsonLd}
       />

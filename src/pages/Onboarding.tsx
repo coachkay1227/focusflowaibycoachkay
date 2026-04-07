@@ -68,7 +68,7 @@ const Onboarding = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
-      <SEOHead title="Get Started — FocusFlow AI" description="Set up your clarity coaching preferences and choose your first modules to begin your FocusFlow AI journey." path="/onboarding" />
+      <SEOHead title="Get Started — FocusFlow AI" description="Set up your clarity coaching preferences and choose your first modules to begin your FocusFlow clarity journey." path="/onboarding" />
       <FloatingOrbs />
       <div className="mouse-glow" />
 

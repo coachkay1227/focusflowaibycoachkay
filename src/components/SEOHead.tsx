@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const BASE_URL = "https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app";
+const BASE_URL = "https://focusflowelevation-hub.com";
 
 interface SEOHeadProps {
   title: string;

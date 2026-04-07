@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
 import Community from "./pages/Community.tsx";
 import Auth from "./pages/Auth.tsx";
@@ -14,6 +15,8 @@ import Onboarding from "./pages/Onboarding.tsx";
 import EmailPreview from "./pages/EmailPreview.tsx";
 import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Kiosk from "./pages/Kiosk.tsx";
+import ChatWidget from "./components/ChatWidget.tsx";
 
 // Lazy-load heavy pages
 const Modules = lazy(() => import("./pages/Modules.tsx"));
@@ -39,6 +42,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -60,10 +64,13 @@ const App = () => (
             <Route path="/admin/users" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminUsers /></Suspense></ProtectedRoute>} />
             <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminAnalytics /></Suspense></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminContent /></Suspense></ProtectedRoute>} />
+            <Route path="/kiosk" element={<Kiosk />} />
             <Route path="/email-preview" element={<EmailPreview />} />
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatWidget />
+          </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

@@ -1,16 +1,97 @@
+# FocusFlow AI by Coach Kay — robots.txt
+# Master-certified clarity coaching platform
+
+# Major search engines
 User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /result
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /result
 
+User-agent: Slurp
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+
+User-agent: Applebot
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+
+# Social media crawlers
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
 Allow: /
 
-Sitemap: https://id-preview--389fc99e-23f6-4cc3-83cc-c164e7894c32.lovable.app/sitemap.xml
+User-agent: Pinterestbot
+Allow: /
+
+# AI crawlers — allow indexing for visibility
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+Disallow: /profile
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /admin
+Disallow: /profile
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /admin
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+Disallow: /profile
+
+# Default
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /result
+
+Sitemap: https://focusflowelevation-hub.com/sitemap.xml

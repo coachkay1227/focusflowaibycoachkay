@@ -21,7 +21,7 @@ export function useRoles() {
           _role: "admin",
         });
         if (error) {
-          console.error("Role check error:", error);
+          // Error handled silently
           setIsAdmin(false);
         } else {
           setIsAdmin(!!data);

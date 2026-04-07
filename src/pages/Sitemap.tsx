@@ -19,7 +19,7 @@ const Sitemap = () => (
     <FloatingOrbs />
     <SEOHead
       title="Sitemap — FocusFlow AI"
-      description="Browse all pages on FocusFlow AI, your AI-powered clarity coaching platform by Coach Kay."
+      description="Browse all pages on FocusFlow AI, your clarity coaching platform by Coach Kay."
       path="/sitemap"
     />
     <div className="relative z-10 px-6 md:px-12 py-6">

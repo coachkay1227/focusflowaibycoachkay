@@ -88,7 +88,7 @@ const ClaritySession = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title={`${moduleTitle} — FocusFlow AI`} description="Begin your guided clarity check. Answer honest questions and receive AI-powered insights about your patterns and potential." path="/clarity" jsonLd={{ "@context": "https://schema.org", "@type": "Service", name: "Clarity Session", provider: { "@type": "Organization", name: "FocusFlow AI" }, description: "AI-guided self-reflection session" }} />
+      <SEOHead title={`${moduleTitle} — FocusFlow AI`} description="Begin your guided clarity check. Answer honest questions and receive personalized insights about your patterns and potential." path="/clarity" jsonLd={{ "@context": "https://schema.org", "@type": "Service", name: "Clarity Session", provider: { "@type": "Person", name: "Coach Kay", jobTitle: "Master Certified Life Coach" }, description: "Guided self-reflection session" }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
