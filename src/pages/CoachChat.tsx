@@ -257,7 +257,7 @@ const CoachChat = () => {
           />
           <Button
             onClick={handleSend}
-            disabled={!input.trim() || isLoading || !user}
+            disabled={!input.trim() || isLoading || cooldown || !user}
             className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 shrink-0"
             size="icon"
           >
