@@ -98,7 +98,7 @@ export const programs: Program[] = [
       "I built this because most people don't know what they actually need — they just know something isn't working. This tool names it. That's where transformation begins.",
     whatYouGet: [
       "15-question F.O.C.U.S. intake assessment",
-      "AI-generated insight report personalized to your answers",
+      "Personalized insight report personalized to your answers",
       "Your primary pillar + your biggest block identified",
       "Coach Kay's recommended next program for your journey",
       "Instant access — no sign-up required at events",
@@ -179,7 +179,7 @@ export const programs: Program[] = [
     whatYouGet: [
       "7 daily coaching sessions (10-15 min each)",
       "Release audit: what you're holding, why, and what it costs",
-      "Guided journaling prompts with AI feedback",
+      "Guided journaling prompts with personalized feedback",
       "Emotional pattern identification tool",
       "Day 7 identity reset ritual",
     ],
@@ -218,7 +218,7 @@ export const programs: Program[] = [
       "7 daily mirror exercises with guided coaching debrief",
       "Identity audit: beliefs that are running you vs. serving you",
       "Personalized self-perception reframe report",
-      "Daily accountability check-in with AI Coach Kay",
+      "Daily accountability check-in with Coach Kay",
       "Final day: written declaration of your real identity",
     ],
     transformation:
@@ -249,7 +249,7 @@ export const programs: Program[] = [
     durationLabel: "5 days",
     tagline: "The self-audit that shows you everything you've been avoiding seeing.",
     description:
-      "This is your honest conversation with yourself — with AI as your guide. Over 5 days, you'll complete a structured self-audit across your relationships, habits, finances, mental state, and purpose alignment. The AI coach doesn't judge. It just reflects back what's really there — so you can finally decide what to do about it.",
+      "This is your honest conversation with yourself — with a trusted guide. Over 5 days, you'll complete a structured self-audit across your relationships, habits, finances, mental state, and purpose alignment. The coaching doesn't judge. It just reflects back what's really there — so you can finally decide what to do about it.",
     coachNote:
       "I use this as a post-event follow-up for everyone who takes the Clarity Check. It's the bridge between 'I see the problem' and 'I'm ready to do something about it.'",
     whatYouGet: [
@@ -287,7 +287,7 @@ export const programs: Program[] = [
     durationLabel: "7 days",
     tagline: "Connect the calm you crave to the direction you've been missing.",
     description:
-      "Most people chase purpose while drowning in chaos. This program flips that. Over 7 days, you'll build a daily peace practice first — then anchor it to a clear sense of direction. Because you can't hear your purpose when everything is loud. Coach Kay's AI guides each session with emotionally intelligent prompts designed to quiet the noise and light the path.",
+      "Most people chase purpose while drowning in chaos. This program flips that. Over 7 days, you'll build a daily peace practice first — then anchor it to a clear sense of direction. Because you can't hear your purpose when everything is loud. Coach Kay guides each session with emotionally intelligent prompts designed to quiet the noise and light the path.",
     coachNote:
       "Peace isn't the absence of problems — it's the presence of a foundation strong enough to hold them. That's what we build here.",
     whatYouGet: [
@@ -369,7 +369,7 @@ export const programs: Program[] = [
     whatYouGet: [
       "Values inventory and ranking exercise",
       "Life alignment audit across 6 areas",
-      "AI gap analysis: where you are vs. your values",
+      "Gap analysis: where you are vs. your values",
       "5 daily micro-actions to close each gap",
       "Alignment score + personalized accountability plan",
     ],
@@ -484,7 +484,7 @@ export const programs: Program[] = [
       "Fixed vs. growth mindset diagnostic",
       "5 daily growth mindset challenges with guided coaching",
       "Failure reframe toolkit",
-      "Success evidence journal (AI-prompted)",
+      "Success evidence journal (guided prompts)",
       "30-day growth habit installation plan",
     ],
     transformation:
@@ -515,14 +515,14 @@ export const programs: Program[] = [
     durationLabel: "5 days",
     tagline: "Your story isn't what happened — it's how you're holding it.",
     description:
-      "Every limitation you believe is real was once a story someone told you — or you told yourself. This 5-day reframing challenge teaches you the coaching skill of perspective shift using AI-guided practice. You'll bring in your actual challenges and leave with completely different relationships to them. Not because the facts changed. Because your lens did.",
+      "Every limitation you believe is real was once a story someone told you — or you told yourself. This 5-day reframing challenge teaches you the coaching skill of perspective shift using guided practice. You'll bring in your actual challenges and leave with completely different relationships to them. Not because the facts changed. Because your lens did.",
     coachNote:
       "Perspective is the most underrated coaching tool. It costs nothing and changes everything. I teach it first for a reason.",
     whatYouGet: [
-      "5 daily perspective-shift exercises with AI coach",
+      "5 daily perspective-shift exercises with Coach Kay",
       "Your top 3 current limiting stories identified",
       "Reframe toolkit: 7 powerful reframing techniques",
-      "Real-scenario practice with AI feedback",
+      "Real-scenario practice with personalized feedback",
       "Personal perspective upgrade statement",
     ],
     transformation:
@@ -553,13 +553,13 @@ export const programs: Program[] = [
     durationLabel: "5 days",
     tagline: "The trifecta that unstucks everything.",
     description:
-      "When you're stuck, something in this trifecta is missing: you either can't see clearly, don't have the energy to move, or can't access the creative thinking to find a new path. This 5-day challenge targets all three simultaneously using AI-guided daily sessions that restore your mental bandwidth, physical vitality, and creative access.",
+      "When you're stuck, something in this trifecta is missing: you either can't see clearly, don't have the energy to move, or can't access the creative thinking to find a new path. This 5-day challenge targets all three simultaneously using guided daily sessions that restore your mental bandwidth, physical vitality, and creative access.",
     coachNote:
       "This is the challenge I give people who say 'I don't even know where to start.' By Day 3, they always know.",
     whatYouGet: [
       "Clarity diagnostic: what's actually clouding your thinking",
       "Energy recovery protocol (sustainable, not hype-based)",
-      "Creativity activation exercises (AI-facilitated)",
+      "Creativity activation exercises (guided)",
       "5-day integrated daily practice",
       "Personalized unstuck action plan",
     ],
@@ -598,7 +598,7 @@ export const programs: Program[] = [
       "Day 1: Deep reflection — who you've been, who you're becoming",
       "Day 2: Vision activation + goal architecture session",
       "Emotional 'why' excavation exercise",
-      "AI-coached goal reality-testing",
+      "guided goal reality-testing",
       "Your personal ignition statement",
     ],
     transformation:
@@ -638,7 +638,7 @@ export const programs: Program[] = [
       "One hour of intentional work beats three hours of reactive busy-ness every single time. This challenge proves it to you — in real time.",
     whatYouGet: [
       "Power Hour design framework (your version, not a template)",
-      "7-day AI-coached accountability sessions",
+      "7-day guided accountability sessions",
       "Daily debrief: what worked, what to adjust",
       "Distraction audit and elimination plan",
       "Power Hour ritual that sticks beyond Day 7",
@@ -714,7 +714,7 @@ export const programs: Program[] = [
       "The mental backlog is usually heavier than the actual work. This challenge proves it — most of what people are carrying, they don't actually need to complete.",
     whatYouGet: [
       "Full incomplete inventory across all life areas",
-      "AI-coached completion vs. release decision framework",
+      "guided completion vs. release decision framework",
       "5-day completion sprint with daily accountability",
       "Conscious release ritual for things you're letting go",
       "Clear-plate ceremony at Day 5",
@@ -785,13 +785,13 @@ export const programs: Program[] = [
     durationLabel: "5 days",
     tagline: "Stop putting out fires. Start preventing them.",
     description:
-      "Reactive living is exhausting. This 5-day program is a systematic shift from always-behind to consistently-ahead — using proactive planning systems, AI-coached scheduling, and a complete restructure of how you relate to time. You'll leave with a personal proactivity architecture that makes being ahead the default, not the exception.",
+      "Reactive living is exhausting. This 5-day program is a systematic shift from always-behind to consistently-ahead — using proactive planning systems, guided scheduling, and a complete restructure of how you relate to time. You'll leave with a personal proactivity architecture that makes being ahead the default, not the exception.",
     coachNote:
       "The people who look effortlessly on top of things aren't naturally different. They just installed the right systems. That's what this builds.",
     whatYouGet: [
       "Reactive vs. proactive audit across your life",
       "Weekly and daily architecture redesign",
-      "AI-coached time blocking and prioritization",
+      "guided time blocking and prioritization",
       "Proactivity triggers: habits that pull you forward",
       "Personal proactivity blueprint",
     ],
@@ -984,7 +984,7 @@ export const programs: Program[] = [
       "Every leader I've worked with had to do this internal work first. The external results followed automatically.",
     whatYouGet: [
       "Leadership readiness self-assessment",
-      "7 daily AI-coached leadership development sessions",
+      "7 daily guided leadership development sessions",
       "Personal leadership manifesto",
       "Communication and influence audit",
       "30-day leadership growth plan",
@@ -1022,7 +1022,7 @@ export const programs: Program[] = [
       "Most leadership programs teach you how to manage people. This one teaches you how to lead yourself — which is actually the harder and more important skill.",
     whatYouGet: [
       "Leadership transformation model walkthrough",
-      "8-day AI-coached leadership skill-building program",
+      "8-day guided leadership skill-building program",
       "Personal leadership gap analysis",
       "Communication style assessment and upgrade",
       "Leadership declaration and 90-day action plan",
@@ -1061,7 +1061,7 @@ export const programs: Program[] = [
     whatYouGet: [
       "Confidence + money belief audit",
       "Worth excavation: what you actually deserve",
-      "7-day AI-coached confidence + wealth building plan",
+      "7-day guided confidence + wealth building plan",
       "Income expansion mindset shifts",
       "First wealth action step with AI accountability",
     ],
@@ -1135,7 +1135,7 @@ export const programs: Program[] = [
     durationLabel: "5 days",
     tagline: "Stop relying on motivation. Build systems that run without it.",
     description:
-      "Motivation is unreliable. Habits are not. This 5-day challenge is the fastest on-ramp to sustainable productivity in the platform — designed for people who want quick wins that actually compound. Each day introduces one high-leverage habit with an AI-coached installation protocol that makes it stick.",
+      "Motivation is unreliable. Habits are not. This 5-day challenge is the fastest on-ramp to sustainable productivity in the platform — designed for people who want quick wins that actually compound. Each day introduces one high-leverage habit with an guided installation protocol that makes it stick.",
     coachNote:
       "This is my favorite entry point for new clients. Five days. Five habits. Each one small enough to actually do, powerful enough to actually matter.",
     whatYouGet: [
@@ -1216,7 +1216,7 @@ export const programs: Program[] = [
       "Mindfulness doesn't have to mean meditation for an hour. It means choosing how you meet your day. This program teaches you exactly how.",
     whatYouGet: [
       "7 guided mindful morning practices (10–20 min each)",
-      "AI-coached intention-setting each morning",
+      "guided intention-setting each morning",
       "Presence check-in framework for throughout the day",
       "Mindful morning ritual blueprint",
       "Evening reflection close to complete the loop",
@@ -1255,7 +1255,7 @@ export const programs: Program[] = [
     whatYouGet: [
       "Tech consumption audit: where your screen time actually goes",
       "7-day mindful tech reduction protocol",
-      "AI-coached relationship redesign with your devices",
+      "guided relationship redesign with your devices",
       "Analog replacement activities for each detox stage",
       "Sustainable tech boundaries blueprint",
     ],
@@ -1287,7 +1287,7 @@ export const programs: Program[] = [
     durationLabel: "30 days",
     tagline: "The 30-day system for habits that outlast motivation.",
     description:
-      "This is your complete habit mastery curriculum — everything Coach Kay knows about building lasting change compressed into 30 days of AI-coached practice. Weeks 1–2 identify and install, Weeks 3–4 stress-test and compound. You'll walk out with a personalized habit architecture that works with your brain, your schedule, and your life.",
+      "This is your complete habit mastery curriculum — everything Coach Kay knows about building lasting change compressed into 30 days of guided practice. Weeks 1–2 identify and install, Weeks 3–4 stress-test and compound. You'll walk out with a personalized habit architecture that works with your brain, your schedule, and your life.",
     coachNote:
       "I've watched people build incredible habits in this program that they're still running years later. It works because it's built for you, not for some idealized version of you.",
     whatYouGet: [
@@ -1332,7 +1332,7 @@ export const programs: Program[] = [
       "Inconsistency root cause diagnosis",
       "Identity-based consistency protocol",
       "Environment and trigger redesign",
-      "7 daily AI-coached consistency practices",
+      "7 daily guided consistency practices",
       "The 1% improvement daily habit blueprint",
     ],
     transformation:
@@ -1401,7 +1401,7 @@ export const programs: Program[] = [
     durationLabel: "30 days",
     tagline: "The simplest physical upgrade with the biggest mental payoff.",
     description:
-      "Dehydration affects focus, mood, energy, and decision-making — most people are chronically dehydrated and don't know it. This 30-day guided reset pairs hydration as the anchor habit with a broader health foundation reset. Simple, science-backed, and AI-coached weekly to keep you on track and expanding the practice.",
+      "Dehydration affects focus, mood, energy, and decision-making — most people are chronically dehydrated and don't know it. This 30-day guided reset pairs hydration as the anchor habit with a broader health foundation reset. Simple, science-backed, and guided weekly to keep you on track and expanding the practice.",
     coachNote:
       "I always start here with clients who feel foggy or exhausted. It sounds too simple to matter. And then it massively matters.",
     whatYouGet: [
@@ -1487,7 +1487,7 @@ export const programs: Program[] = [
     whatYouGet: [
       "AI content creation system for your niche",
       "Community architecture design (structure, offers, culture)",
-      "8-day AI-coached implementation plan",
+      "8-day guided implementation plan",
       "Monetization model selection and build-out",
       "Your first 90-day community growth roadmap",
     ],
@@ -1524,7 +1524,7 @@ export const programs: Program[] = [
       "The people winning with AI are the ones who think well. This challenge builds that foundation.",
     whatYouGet: [
       "Cognitive style assessment",
-      "5 mental model installations with AI-coached practice",
+      "5 mental model installations with guided practice",
       "Systems thinking primer",
       "First-principles reasoning exercises",
       "AI collaboration protocol using your upgraded thinking",
@@ -1557,7 +1557,7 @@ export const programs: Program[] = [
     durationLabel: "7 days",
     tagline: "The ability to focus deeply is the most valuable skill in an AI world.",
     description:
-      "As AI handles shallow work, the humans who win will be the ones who can think deeply. This 7-day challenge — built on Cal Newport's research and layered with Coach Kay's coaching methodology — trains your deep work capacity through daily focused sessions, distraction elimination, and AI-coached reflection on your practice.",
+      "As AI handles shallow work, the humans who win will be the ones who can think deeply. This 7-day challenge — built on Cal Newport's research and layered with Coach Kay's coaching methodology — trains your deep work capacity through daily focused sessions, distraction elimination, and guided reflection on your practice.",
     coachNote:
       "Deep work is rare. That's why it's valuable. This challenge makes you someone who can do it — consistently.",
     whatYouGet: [
@@ -1749,14 +1749,14 @@ export const programs: Program[] = [
     category: "Signature Program",
     duration: "8week",
     durationLabel: "8 weeks",
-    tagline: "The complete F.O.C.U.S. transformation — powered by AI, guided by Coach Kay.",
+    tagline: "The complete F.O.C.U.S. transformation — guided by Coach Kay.",
     description:
-      "This is the flagship. Eight weeks. The full F.O.C.U.S. framework. AI coaching every single day. Live group sessions weekly. This program takes you from wherever you are right now to a completely rebuilt foundation, a clear sense of opportunity, aligned action, elevated habits, and a support system that keeps you growing long after the 8 weeks end. This is the program that cohort participants access with their code — and what the general public pays full price for.",
+      "This is the flagship. Eight weeks. The full F.O.C.U.S. framework. Coaching every single day. Live group sessions weekly. This program takes you from wherever you are right now to a completely rebuilt foundation, a clear sense of opportunity, aligned action, elevated habits, and a support system that keeps you growing long after the 8 weeks end. This is the program that cohort participants access with their code — and what the general public pays full price for.",
     coachNote:
       "I designed this to be the most comprehensive life coaching experience available anywhere. Every module, every session, every prompt is built from 20 years of coaching experience and the best of what technology can do. This is what I wish existed when I started my journey.",
     whatYouGet: [
       "Full 8-week F.O.C.U.S. curriculum (40+ modules, challenges, sprints)",
-      "Daily AI coaching sessions with Coach Kay's voice and framework",
+      "Daily coaching sessions with Coach Kay's voice and framework",
       "Weekly live group coaching sessions (recorded)",
       "MAC Type Assessment + personalized path",
       "F.O.C.U.S. progress tracker and KPI dashboard",
@@ -1797,7 +1797,7 @@ export const programs: Program[] = [
       "30 days is enough time to completely shift a pattern if you show up fully. This is built for the person who's ready to show up fully.",
     whatYouGet: [
       "30-day F.O.C.U.S. curriculum (curated module sequence)",
-      "Daily AI coaching sessions",
+      "Daily coaching sessions",
       "4 weekly live group coaching calls with Coach Kay",
       "MAC Type intake and personalized path",
       "Private community for 30-day cohort",
@@ -1837,7 +1837,7 @@ export const programs: Program[] = [
       "I only accept people I genuinely believe are ready for this level of work. If you're reading this, take the clarity check first. If you're ready — apply. I want to see what you build.",
     whatYouGet: [
       "12-week full F.O.C.U.S. mastery curriculum",
-      "Daily AI coaching sessions",
+      "Daily coaching sessions",
       "12 weekly live group coaching sessions",
       "2 private 1:1 sessions with Coach Kay",
       "Full module library access (all 40+ programs)",
@@ -1875,12 +1875,12 @@ export const programs: Program[] = [
     durationLabel: "8 days",
     tagline: "Leadership and achievement aren't destinations — they're daily practices.",
     description:
-      "This outcomes-oriented 8-day program is built for the person who is done with potential and ready for results. It combines the best of Coach Kay's leadership coaching with the F.O.C.U.S. Create pillar — taking you through a structured arc from intention to execution to evidence of achievement. AI coaching drives every session.",
+      "This outcomes-oriented 8-day program is built for the person who is done with potential and ready for results. It combines the best of Coach Kay's leadership coaching with the F.O.C.U.S. Create pillar — taking you through a structured arc from intention to execution to evidence of achievement. Coaching drives every session.",
     coachNote:
       "This one is for the person who has tried everything else. They have the intelligence, the desire, and the work ethic. They just need the framework. This is it.",
     whatYouGet: [
       "Leadership + achievement readiness assessment",
-      "8-day AI-coached leadership and results program",
+      "8-day guided leadership and results program",
       "Goal architecture: from vision to daily action",
       "Evidence collection: tracking your wins in real time",
       "Personal achievement system that scales beyond Day 8",
