@@ -6,7 +6,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { Mail, Send } from "lucide-react";
 
 interface UserDetailModalProps {
   userId: string | null;
@@ -101,7 +103,19 @@ export function UserDetailModal({
         return;
       }
 
-      setUser(data as UserDetail);
+      // Map edge function response shape to our interface
+      const detail = data?.user ?? data;
+      const mapped: UserDetail = {
+        id: userId!,
+        display_name: detail?.profile?.display_name ?? "Unnamed User",
+        email: detail?.profile?.email ?? "",
+        created_at: detail?.profile?.created_at ?? "",
+        tier: detail?.tier ?? "free",
+        sessions: detail?.recent_sessions ?? [],
+        challenges: detail?.challenges ?? [],
+        enrollments: detail?.enrollments ?? [],
+      };
+      setUser(mapped);
       setLoading(false);
     }
 
@@ -285,9 +299,85 @@ export function UserDetailModal({
                 </ul>
               )}
             </div>
+
+            {/* Email Triggers Section */}
+            <EmailTriggers userId={userId!} userName={user.display_name} />
           </>
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function EmailTriggers({ userId, userName }: { userId: string; userName: string }) {
+  const [sending, setSending] = useState<string | null>(null);
+  const [customMsg, setCustomMsg] = useState("");
+  const [customSubj, setCustomSubj] = useState("");
+  const [result, setResult] = useState<string | null>(null);
+
+  const send = async (template: string, extra?: Record<string, unknown>) => {
+    setSending(template);
+    setResult(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-email", {
+        body: { template, user_id: userId, ...extra },
+      });
+      if (error) throw error;
+      setResult(data?.method === "resend" ? `Sent to ${data.sent_to}` : `Queued (configure RESEND_API_KEY to send)`);
+    } catch {
+      setResult("Failed to send email");
+    }
+    setSending(null);
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-card/30 p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Mail className="h-4 w-4 text-primary" />
+        <h3 className="text-sm font-heading text-foreground">Send Email</h3>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-3">
+        <Button size="sm" variant="outline" className="text-xs" disabled={!!sending} onClick={() => send("welcome")}>
+          {sending === "welcome" ? "Sending..." : "Welcome"}
+        </Button>
+        <Button size="sm" variant="outline" className="text-xs" disabled={!!sending} onClick={() => send("reengagement")}>
+          {sending === "reengagement" ? "Sending..." : "Re-engage"}
+        </Button>
+        <Button size="sm" variant="outline" className="text-xs" disabled={!!sending} onClick={() => send("challenge_reminder", { challenge_type: "Mirror Challenge", day: 1 })}>
+          {sending === "challenge_reminder" ? "Sending..." : "Challenge Reminder"}
+        </Button>
+      </div>
+
+      <div className="space-y-2">
+        <input
+          type="text"
+          placeholder="Subject line..."
+          value={customSubj}
+          onChange={(e) => setCustomSubj(e.target.value)}
+          className="w-full px-3 py-1.5 rounded-md border border-border bg-card/30 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+        />
+        <textarea
+          placeholder="Custom message to send..."
+          value={customMsg}
+          onChange={(e) => setCustomMsg(e.target.value)}
+          rows={3}
+          className="w-full px-3 py-1.5 rounded-md border border-border bg-card/30 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+        />
+        <Button
+          size="sm"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs"
+          disabled={!customSubj.trim() || !customMsg.trim() || !!sending}
+          onClick={() => send("custom", { subject: customSubj, message: customMsg })}
+        >
+          <Send className="mr-1 h-3 w-3" />
+          {sending === "custom" ? "Sending..." : "Send Custom Email"}
+        </Button>
+      </div>
+
+      {result && (
+        <p className="mt-2 text-xs text-muted-foreground">{result}</p>
+      )}
+    </div>
   );
 }
