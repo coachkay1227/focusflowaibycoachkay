@@ -43,7 +43,7 @@ const MobileNav = () => {
 
       {/* Slide-in panel */}
       <div
-        className={`fixed top-0 right-0 z-[56] h-full w-72 bg-card border-l border-border transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 z-[56] h-full className={`fixed top-0 right-0 z-[56] h-full w-full bg-[hsl(210,40%,8%)] transform transition-transform duration-300 ease-out ${ transform transition-transform duration-300 ease-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
