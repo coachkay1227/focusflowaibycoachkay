@@ -192,11 +192,11 @@ const AdminContent = () => {
                 <p className="text-muted-foreground text-sm mb-3">{mod.subtitle}</p>
                 <div className="flex items-center gap-2">
                   <span className="font-mono-label text-xs text-muted-foreground/60">
-                    {mod.sessions.length} sessions
+                    {mod.questions.length} questions
                   </span>
                   <span className="text-muted-foreground/40">·</span>
                   <span className="font-mono-label text-xs text-muted-foreground/60">
-                    Week {mod.week}
+                    {mod.duration}
                   </span>
                 </div>
               </div>
@@ -221,12 +221,12 @@ const AdminContent = () => {
                 <h3 className="font-heading text-base font-light mb-1">{program.title}</h3>
                 <p className="text-muted-foreground text-sm mb-3">{program.tagline}</p>
                 <div className="flex items-center gap-2 flex-wrap">
-                  {program.modules.map((modId) => (
+                  {program.tags.map((tag) => (
                     <span
-                      key={modId}
+                      key={tag}
                       className="font-mono-label text-xs bg-primary/10 text-primary/80 px-2 py-0.5 rounded"
                     >
-                      {modId}
+                      {tag}
                     </span>
                   ))}
                 </div>

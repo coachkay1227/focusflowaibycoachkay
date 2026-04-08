@@ -24,15 +24,13 @@ export function useRoles() {
 
     const checkRole = async () => {
       try {
-        const { data, error } = await supabase.rpc("has_role", {
+        const { data, error } = await supabase.rpc("get_user_tier", {
           _user_id: user.id,
-          _role: "admin",
         });
         if (error) {
-          // Error handled silently
           setIsAdmin(false);
         } else {
-          setIsAdmin(!!data);
+          setIsAdmin(data === "corporate");
         }
       } catch {
         setIsAdmin(false);
