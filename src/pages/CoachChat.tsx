@@ -260,6 +260,7 @@ const CoachChat = () => {
             disabled={!input.trim() || isLoading || cooldown || !user}
             className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 shrink-0"
             size="icon"
+            aria-label="Send message"
           >
             <Send className="h-4 w-4" />
           </Button>
