@@ -1,4 +1,5 @@
 import type { ClarityAnswers } from "./clarity-engine";
+import type { Json } from "@/integrations/supabase/types";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface SessionRecord {

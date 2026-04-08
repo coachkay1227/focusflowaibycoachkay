@@ -44,6 +44,12 @@ const Profile = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!user) { navigate("/auth"); return; }
+    loadProfile();
+    loadStats();
+  }, [user, loadProfile, navigate]);
+
   const loadStats = async () => {
     const [clarityScore, sessionsRes, modulesRes, challengesRes] = await Promise.all([
       computeClarityScore(),
