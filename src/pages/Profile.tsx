@@ -29,12 +29,6 @@ const Profile = () => {
   const [score, setScore] = useState<ClarityScore | null>(null);
   const [stats, setStats] = useState({ sessions: 0, modules: 0, challenges: 0 });
 
-  useEffect(() => {
-    if (!user) { navigate("/auth"); return; }
-    loadProfile();
-    loadStats();
-  }, [user, loadProfile, navigate]);
-
   const loadProfile = useCallback(async () => {
     if (!user) return;
     const [profileRes, prefsRes] = await Promise.all([

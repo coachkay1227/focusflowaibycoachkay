@@ -42,7 +42,7 @@ export async function getModuleEnrollments(): Promise<ModuleEnrollment[]> {
   return (data ?? []).map((row: ModuleEnrollmentRow) => ({
     id: row.id,
     moduleId: row.module_id,
-    status: row.status,
+    status: row.status as ModuleEnrollment["status"],
     enrolledAt: row.enrolled_at,
     completedAt: row.completed_at,
     sessionsCount: row.sessions_count,
@@ -129,7 +129,7 @@ export async function getChallengeEnrollments(): Promise<ChallengeEnrollment[]> 
   return (data ?? []).map((row: ChallengeEnrollmentRow) => ({
     id: row.id,
     challengeType: row.challenge_type,
-    status: row.status,
+    status: row.status as ChallengeEnrollment["status"],
     enrolledAt: row.enrolled_at,
     completedAt: row.completed_at,
   }));

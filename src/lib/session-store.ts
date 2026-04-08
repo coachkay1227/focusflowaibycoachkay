@@ -87,7 +87,7 @@ export async function saveSessionCloud(session: SessionRecord): Promise<void> {
   await supabase.from("clarity_sessions").insert({
     user_id: userId,
     module_id: session.moduleId,
-    answers: session.answers as unknown as Record<string, unknown>,
+    answers: session.answers as unknown as Json,
     insight_truth: session.insight?.truth ?? null,
     insight_pattern: session.insight?.pattern ?? null,
     insight_action: session.insight?.action ?? null,
@@ -108,20 +108,11 @@ export async function getRecentSessionsCloud(count = 5): Promise<SessionRecord[]
 
   if (error || !data || data.length === 0) return getRecentSessions(count);
 
-  interface ClaritySessionRow {
-    id: string;
-    created_at: string;
-    module_id: string;
-    answers: Record<string, unknown>;
-    insight_truth: string | null;
-    insight_pattern: string | null;
-    insight_action: string | null;
-  }
-  return data.map((row: ClaritySessionRow) => ({
+  return data.map((row) => ({
     id: row.id,
     timestamp: new Date(row.created_at).getTime(),
     moduleId: row.module_id,
-    answers: row.answers,
+    answers: row.answers as unknown as ClarityAnswers,
     insight: row.insight_truth ? {
       truth: row.insight_truth,
       pattern: row.insight_pattern,
@@ -175,14 +166,14 @@ export async function saveChallengeDataCloud(challengeType: string, challengeDat
 
   if (existing) {
     await supabase.from("challenge_progress").update({
-      entries: challengeData.entries as unknown as Record<string, unknown>,
+      entries: challengeData.entries as unknown as Json,
       current_day: challengeData.currentDay,
     }).eq("id", existing.id);
   } else {
     await supabase.from("challenge_progress").insert({
       user_id: userId,
       challenge_type: challengeType,
-      entries: challengeData.entries as unknown as Record<string, unknown>,
+      entries: challengeData.entries as unknown as Json,
       current_day: challengeData.currentDay,
       started_at: new Date(challengeData.startedAt).toISOString(),
     });
