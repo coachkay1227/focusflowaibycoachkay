@@ -65,7 +65,7 @@ const App = () => (
             <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminAnalytics /></Suspense></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminContent /></Suspense></ProtectedRoute>} />
             <Route path="/kiosk" element={<Kiosk />} />
-            <Route path="/email-preview" element={<EmailPreview />} />
+            <Route path="/email-preview" element={<ProtectedRoute requireAdmin><EmailPreview /></ProtectedRoute>} />
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
