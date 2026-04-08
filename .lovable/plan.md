@@ -1,109 +1,72 @@
 
 
-# Full System Audit: Auth, Supabase, Stripe, State, Redirects + Fixes
+# Fix All Build Errors
 
-## Executive Summary
-
-After examining every page, edge function, hook, and store file, the system is **largely sound**. There are **2 code fixes needed** (MobileNav overlay + console warning) and **1 potential issue** worth noting. Everything else is correctly wired.
+There are **4 categories** of build errors to fix. No testing can happen until these are resolved.
 
 ---
 
-## Flow-by-Flow Audit
+## 1. Edge Function Import — `npm:@supabase/supabase-js@2.57.2`
 
-### 1. Authentication Flow — PASS
+**Problem**: All 6 edge functions use `npm:@supabase/supabase-js@2.57.2` which Deno can't resolve without `nodeModulesDir` config.
 
-| Step | Status | Detail |
-|------|--------|--------|
-| Sign up | OK | Email/password via `signUp`, Google OAuth via `lovable.auth.signInWithOAuth` |
-| Email verification | OK | Auto-confirm is OFF; toast tells user to verify |
-| Sign in | OK | `signInWithPassword`, redirects to onboarding or dashboard based on preferences |
-| Session persistence | OK | `AuthContext` uses `onAuthStateChange` set up BEFORE `getSession()` — correct order |
-| Password reset | OK | Sends reset link with `redirectTo: /reset-password`, dedicated `ResetPassword.tsx` page exists |
-| Sign out | OK | Calls `supabase.auth.signOut()`, clears session |
-| Protected routes | OK | Dashboard, Onboarding, Profile all check `user` and redirect to `/auth` |
-| HIBP check | OK | Enabled by user in Cloud settings |
+**Fix**: Change all 6 files to use the ESM import instead:
+```typescript
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+```
 
-### 2. Supabase Data Flow — PASS
-
-| Table | RLS | CRUD | Notes |
-|-------|-----|------|-------|
-| profiles | OK | Read/Insert/Update | Auto-created via `handle_new_user` trigger |
-| user_access_levels | OK | Read only (client) | Mutations blocked; only service role updates |
-| user_preferences | OK | Read/Insert/Update | Used by onboarding |
-| clarity_sessions | OK | Read/Insert/Delete | No UPDATE — intentional (immutable sessions) |
-| module_enrollments | OK | Full CRUD | Used by enrollment-store |
-| challenge_enrollments | OK | Full CRUD | Used by challenge flow |
-| challenge_progress | OK | Read/Insert/Update | No DELETE — acceptable |
-
-### 3. Edge Functions — PASS (with notes)
-
-| Function | Auth | Validation | Status |
-|----------|------|------------|--------|
-| clarity-insight | None (public) | Input sanitized, size-limited | OK — stateless AI, no DB |
-| coach-chat | JWT via `getClaims` | Messages validated (count, size) | OK |
-| pattern-detect | JWT via `getClaims` | Sessions array validated | OK |
-| check-subscription | JWT via `getUser` | Protected tiers preserved | OK |
-| create-checkout | JWT via `getUser` | priceId validated against allowlist | OK |
-| customer-portal | JWT via `getUser` | N/A | OK |
-| stripe-webhook | Signature or fallback | Checks payment_status + metadata | OK |
-| weekly-insights | N/A | N/A | OK |
-
-### 4. Stripe Integration — PASS
-
-- `create-checkout` correctly sets `mode` based on price (subscription vs payment)
-- `stripe-webhook` handles `checkout.session.completed` and upserts tier
-- `check-subscription` checks active subs AND one-time checkout sessions
-- Protected tiers (cohort, premium, corporate) are never overwritten by polling
-- Product-to-tier mapping is consistent across all 3 files
-
-### 5. State Management — PASS
-
-- **Authenticated users**: All data goes through Supabase (sessions, enrollments, challenges)
-- **Anonymous users**: localStorage fallback in `session-store.ts` and `enrollment-store.ts`
-- `useAccessLevel` reads from `user_access_levels` table
-- `useSubscription` polls `check-subscription` every 60s when session exists
-
-### 6. Redirects — PASS
-
-| From | Condition | To |
-|------|-----------|-----|
-| `/auth` | Already signed in, no onboarding | `/onboarding` |
-| `/auth` | Already signed in, onboarding done | `/dashboard` |
-| `/dashboard` | No user | `/auth` |
-| `/onboarding` | No user | `/auth` |
-| `/result` | No answers in state | `/clarity` |
-| Checkout success | Via Stripe redirect | `/dashboard?checkout=success` |
-| Checkout cancel | Via Stripe redirect | `/modules?checkout=cancelled` |
+**Files**: `check-subscription`, `coach-chat`, `create-checkout`, `customer-portal`, `pattern-detect`, `stripe-webhook`
 
 ---
 
-## Issues Found
+## 2. Type Casting in `enrollment-store.ts`
 
-### FIX 1: MobileNav overlay opacity (from screenshot)
-- **File**: `src/components/MobileNav.tsx` line 39
-- **Problem**: `bg-black/60` lets hero text bleed through on mobile
-- **Fix**: Change to `bg-black/80`
+**Problem**: Supabase returns `status` as `string`, but our interfaces expect `"enrolled" | "in_progress" | "completed"`.
 
-### FIX 2: AnimatedSection console warning — "Function components cannot be given refs"
-- **File**: `src/components/AnimatedSection.tsx`
-- **Problem**: `AnimatedSection` is a function component that uses an internal `ref`, but `Index.tsx` renders it as a child inside elements that may pass refs. The console shows repeated warnings about this.
-- **Fix**: Wrap `AnimatedSection` with `React.forwardRef` so refs pass through cleanly. This is cosmetic (no runtime crash) but creates console noise.
-
-### NOTE: CoachChat sends messages even when unauthenticated (partial)
-- The input is correctly disabled when `!user`, and the send button is disabled
-- However, the initial auto-greeting (`sendMessage("I just completed...")`) fires without checking `user` — if someone navigates to `/coach` with context in `location.state` but no auth, it will fire and get a 401 from the edge function
-- **Severity**: Low — the edge function returns 401 gracefully, and the toast shows an error. Not a crash, but worth guarding.
-- **Fix**: Add `if (!user) return;` guard in the initial greeting `useEffect`
+**Fix**: Cast `row.status` in both `getModuleEnrollments` (line 42) and `getChallengeEnrollments` (line 129):
+```typescript
+status: row.status as ModuleEnrollment["status"],
+```
 
 ---
 
-## Changes Summary
+## 3. Type Issues in `session-store.ts`
 
-| File | Change | Impact |
-|------|--------|--------|
-| `MobileNav.tsx` | `bg-black/60` → `bg-black/80` | Fixes mobile overlap |
-| `AnimatedSection.tsx` | Wrap with `React.forwardRef` | Eliminates console warnings |
-| `CoachChat.tsx` | Guard initial greeting with `user` check | Prevents unnecessary 401 |
+**Problem**: Multiple type mismatches between `Json`, `Record<string, unknown>`, and `ClarityAnswers`.
 
-No database migrations needed. No edge function changes needed. No Stripe changes needed.
+**Fix**:
+- Line 87-88: Pass insert as a single object (not array), cast `answers` to `Json`
+- Line 110-120: Remove custom `ClaritySessionRow` interface, use Supabase's inferred type, cast `answers` as `ClarityAnswers`
+- Lines 178, 185: Cast `entries` and `challengeData.entries` properly to `Json`
+
+---
+
+## 4. Frontend Component Errors
+
+### `Profile.tsx` (line 34-36)
+**Problem**: `loadProfile` used before declaration — `useCallback` is defined after the `useEffect` that references it.
+
+**Fix**: Move the `useEffect` below the `useCallback` declarations, or wrap `loadProfile` call differently.
+
+### `AdminContent.tsx` (lines 195, 199, 224)
+**Problem**: Accessing `.sessions` and `.week` on `CoachingModule` (which doesn't have them), and `.modules` on `Program` (which doesn't have it).
+
+**Fix**: 
+- `mod.sessions.length` → `mod.questions.length` (modules have `questions`, not `sessions`)
+- `mod.week` → remove or replace with `mod.duration`
+- `program.modules` → `program.tags` or remove (Program interface has no `modules` field)
+
+---
+
+## Summary
+
+| File | Error | Fix |
+|------|-------|-----|
+| 6 edge functions | `npm:` import | Switch to `https://esm.sh/` |
+| `enrollment-store.ts` | status type | Cast to union type |
+| `session-store.ts` | Json vs Record types | Proper type casting |
+| `Profile.tsx` | Variable used before declaration | Reorder hooks |
+| `AdminContent.tsx` | Non-existent properties | Use correct property names |
+
+After these fixes, the build will pass and we can verify the mobile nav, coach chat, and animations.
 
