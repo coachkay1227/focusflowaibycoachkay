@@ -163,6 +163,7 @@ const Index = () => {
               <button
                 onClick={signOut}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+                aria-label="Sign out"
               >
                 <LogOut className="h-4 w-4" />
               </button>
