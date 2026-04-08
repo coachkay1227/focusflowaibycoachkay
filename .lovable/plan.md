@@ -1,72 +1,24 @@
 
 
-# Fix All Build Errors
+# Fix Mobile Nav Overlay — Background Content Bleeding Through
 
-There are **4 categories** of build errors to fix. No testing can happen until these are resolved.
+## Problem
 
----
+The mobile nav uses a slide-in panel (`w-72`) from the right with a semi-transparent overlay (`bg-black/80`) covering the rest. The hero text ("See clearly. Move with purpose.") bleeds through both the overlay AND the panel background, making nav links hard to read.
 
-## 1. Edge Function Import — `npm:@supabase/supabase-js@2.57.2`
+Root cause: `bg-card` (the panel background) is likely using a semi-transparent color variable.
 
-**Problem**: All 6 edge functions use `npm:@supabase/supabase-js@2.57.2` which Deno can't resolve without `nodeModulesDir` config.
+## Fix
 
-**Fix**: Change all 6 files to use the ESM import instead:
-```typescript
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-```
+Make the slide-in panel full-width on mobile and use a solid background:
 
-**Files**: `check-subscription`, `coach-chat`, `create-checkout`, `customer-portal`, `pattern-detect`, `stripe-webhook`
+### File: `src/components/MobileNav.tsx`
 
----
+**Change 1** — Panel width and background (line 46):
+- `w-72 bg-card` → `w-full bg-[hsl(220,25%,8%)]` (solid dark background matching the app theme)
+- This ensures zero bleed-through since the panel covers the entire viewport
 
-## 2. Type Casting in `enrollment-store.ts`
+**Change 2** — Overlay can stay as-is or be simplified since the panel is now full-width
 
-**Problem**: Supabase returns `status` as `string`, but our interfaces expect `"enrolled" | "in_progress" | "completed"`.
-
-**Fix**: Cast `row.status` in both `getModuleEnrollments` (line 42) and `getChallengeEnrollments` (line 129):
-```typescript
-status: row.status as ModuleEnrollment["status"],
-```
-
----
-
-## 3. Type Issues in `session-store.ts`
-
-**Problem**: Multiple type mismatches between `Json`, `Record<string, unknown>`, and `ClarityAnswers`.
-
-**Fix**:
-- Line 87-88: Pass insert as a single object (not array), cast `answers` to `Json`
-- Line 110-120: Remove custom `ClaritySessionRow` interface, use Supabase's inferred type, cast `answers` as `ClarityAnswers`
-- Lines 178, 185: Cast `entries` and `challengeData.entries` properly to `Json`
-
----
-
-## 4. Frontend Component Errors
-
-### `Profile.tsx` (line 34-36)
-**Problem**: `loadProfile` used before declaration — `useCallback` is defined after the `useEffect` that references it.
-
-**Fix**: Move the `useEffect` below the `useCallback` declarations, or wrap `loadProfile` call differently.
-
-### `AdminContent.tsx` (lines 195, 199, 224)
-**Problem**: Accessing `.sessions` and `.week` on `CoachingModule` (which doesn't have them), and `.modules` on `Program` (which doesn't have it).
-
-**Fix**: 
-- `mod.sessions.length` → `mod.questions.length` (modules have `questions`, not `sessions`)
-- `mod.week` → remove or replace with `mod.duration`
-- `program.modules` → `program.tags` or remove (Program interface has no `modules` field)
-
----
-
-## Summary
-
-| File | Error | Fix |
-|------|-------|-----|
-| 6 edge functions | `npm:` import | Switch to `https://esm.sh/` |
-| `enrollment-store.ts` | status type | Cast to union type |
-| `session-store.ts` | Json vs Record types | Proper type casting |
-| `Profile.tsx` | Variable used before declaration | Reorder hooks |
-| `AdminContent.tsx` | Non-existent properties | Use correct property names |
-
-After these fixes, the build will pass and we can verify the mobile nav, coach chat, and animations.
+This is a single-line CSS class change. No logic changes needed.
 
