@@ -48,6 +48,12 @@ const Auth = () => {
       return;
     }
 
+    if (mode === "signup" && password.length < 8) {
+      toast({ title: "Password too short", description: "Password must be at least 8 characters.", variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+
     const fn = mode === "signin" ? signIn : signUp;
     const { error } = await fn(email, password);
     setLoading(false);
