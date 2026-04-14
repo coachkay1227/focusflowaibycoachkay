@@ -1,13 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
-
-const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+const adminEmailsEnv = Deno.env.get("ADMIN_EMAILS") ?? "hello@coachkayelevates.org";
+const ADMIN_EMAILS = adminEmailsEnv.split(",").map((e: string) => e.trim());
 
 const BRAND = {
   gold: "#c9a227",
@@ -109,7 +105,7 @@ function customEmail(name: string, subject: string, message: string): string {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabase = createClient(
@@ -213,7 +209,7 @@ serve(async (req) => {
       }
 
       return new Response(JSON.stringify({ success: true, sent_to: recipientEmail, method: "resend" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -225,14 +221,14 @@ serve(async (req) => {
       method: "logged",
       note: "Email logged but not sent. Configure RESEND_API_KEY in Supabase secrets to enable sending.",
     }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
 
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     const status = msg.includes("Admin access") || msg.includes("Not authenticated") ? 403 : 400;
     return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status,
     });
   }

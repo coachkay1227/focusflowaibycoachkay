@@ -1,30 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { PRODUCT_TIER_MAP, PROTECTED_TIERS } from "../_shared/stripe-config.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
-const PRODUCT_TIER_MAP: Record<string, string> = {
-  "prod_UFpARkX0OxZg51": "subscriber",
-  "prod_UGHVIcGfn5LEoU": "cohort",
-  "prod_UGHWgMWBPbxXjH": "premium",
-  "prod_UGHpmJnJVVhIef": "premium",
-  "prod_UGHqGWOM8Iqo3K": "premium",
-};
-
-const PROTECTED_TIERS = ["cohort", "premium", "corporate"];
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabaseClient = createClient(
@@ -64,7 +50,7 @@ serve(async (req) => {
       logStep("Protected tier — skipping Stripe check", { currentTier });
       return new Response(
         JSON.stringify({ subscribed: false, product_id: null, subscription_end: null, tier: currentTier }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+        { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 }
       );
     }
 
@@ -74,7 +60,7 @@ serve(async (req) => {
     if (customers.data.length === 0) {
       logStep("No Stripe customer found");
       return new Response(JSON.stringify({ subscribed: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         status: 200,
       });
     }
@@ -146,7 +132,7 @@ serve(async (req) => {
         subscription_end: subscriptionEnd,
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         status: 200,
       }
     );
@@ -154,7 +140,7 @@ serve(async (req) => {
     const msg = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: msg });
     return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 500,
     });
   }

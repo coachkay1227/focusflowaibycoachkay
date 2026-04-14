@@ -6,8 +6,10 @@
 // "Where Focus Goes, Energy Flows."
 // ============================================================
 
+import type { AccessTier } from "@/hooks/use-access-level";
+
+export type { AccessTier };
 export type FocusPillar = "F" | "O" | "C" | "U" | "S";
-export type AccessTier = "free" | "subscriber" | "cohort" | "premium" | "corporate";
 export type Audience = "general" | "reentry" | "corporate" | "youth" | "nonprofit";
 export type ProgramType = "assessment" | "challenge" | "course" | "sprint" | "reset" | "workshop";
 export type Duration = "5min" | "1day" | "2day" | "5day" | "7day" | "8day" | "30day" | "8week" | "12week";
@@ -36,7 +38,7 @@ export interface Program {
   accessTier: AccessTier;
   price: number;
   priceDisplay: string;
-  paymentPlan: PaymentPlan | null;
+  paymentPlan?: PaymentPlan;
   cohortCode: boolean;
   tags: string[];
   audience: Audience[];
@@ -108,7 +110,7 @@ export const programs: Program[] = [
     accessTier: "free",
     price: 0,
     priceDisplay: "Free",
-    paymentPlan: null,
+
     cohortCode: false,
     tags: ["assessment", "intake", "ai", "quick-win", "entry-point"],
     audience: ["general", "reentry", "youth", "corporate", "nonprofit"],
@@ -146,7 +148,7 @@ export const programs: Program[] = [
     accessTier: "free",
     price: 0,
     priceDisplay: "Free",
-    paymentPlan: null,
+
     cohortCode: false,
     tags: ["assessment", "personality", "ai", "intake", "self-knowledge"],
     audience: ["general", "reentry", "youth", "corporate"],
@@ -188,7 +190,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["letting-go", "mindset", "healing", "inner-work", "emotional-intelligence"],
     audience: ["general", "reentry"],
@@ -226,7 +228,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["identity", "self-perception", "mirror", "mindset", "healing"],
     audience: ["general", "reentry", "youth"],
@@ -264,7 +266,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["reflection", "self-audit", "honesty", "clarity", "foundation"],
     audience: ["general", "reentry"],
@@ -302,7 +304,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["peace", "purpose", "mindfulness", "direction", "calm"],
     audience: ["general", "reentry", "nonprofit"],
@@ -340,7 +342,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["confidence", "self-assurance", "burnout-recovery", "resilience", "inner-work"],
     audience: ["general", "reentry", "youth"],
@@ -378,7 +380,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["alignment", "values", "integrity", "clarity", "foundation"],
     audience: ["general", "corporate"],
@@ -416,7 +418,7 @@ export const programs: Program[] = [
     accessTier: "free",
     price: 0,
     priceDisplay: "Free",
-    paymentPlan: null,
+
     cohortCode: false,
     tags: ["energy", "patterns", "assessment", "recovery", "awareness"],
     audience: ["general", "reentry", "corporate"],
@@ -454,7 +456,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["mindset", "empowerment", "survival-mode", "elevation", "inner-work"],
     audience: ["general", "reentry", "youth"],
@@ -492,7 +494,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["growth-mindset", "mindset-shift", "resilience", "learning", "foundation"],
     audience: ["general", "youth", "corporate"],
@@ -530,7 +532,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["perspective", "reframing", "stories", "mindset", "agency"],
     audience: ["general", "reentry", "youth"],
@@ -568,7 +570,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["clarity", "energy", "creativity", "unstuck", "flow"],
     audience: ["general", "reentry", "corporate"],
@@ -606,7 +608,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["goal-setting", "vision", "reflection", "ignition", "purpose"],
     audience: ["general", "reentry", "corporate", "youth"],
@@ -648,7 +650,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["focus", "time-management", "overwhelm", "productivity", "daily-practice"],
     audience: ["general", "corporate", "nonprofit"],
@@ -686,7 +688,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["minimalism", "declutter", "clarity", "decision-fatigue", "simplify"],
     audience: ["general", "corporate"],
@@ -724,7 +726,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["completion", "overwhelm", "mental-load", "release", "clarity"],
     audience: ["general", "reentry"],
@@ -762,7 +764,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["self-control", "emotional-regulation", "impulse", "discipline", "neuroscience"],
     audience: ["general", "reentry", "youth"],
@@ -800,7 +802,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["proactivity", "time-management", "planning", "stress-prevention", "systems"],
     audience: ["general", "corporate", "nonprofit"],
@@ -838,7 +840,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["discipline", "focus", "goals", "90-day", "momentum"],
     audience: ["general", "corporate", "reentry"],
@@ -918,7 +920,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["integrity", "accountability", "identity", "self-trust", "character"],
     audience: ["general", "reentry", "corporate"],
@@ -956,7 +958,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["accountability", "skill-building", "shame-free", "practice", "identity"],
     audience: ["general", "reentry", "corporate"],
@@ -994,7 +996,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["leadership", "growth", "identity", "influence", "self-awareness"],
     audience: ["general", "corporate", "nonprofit"],
@@ -1032,7 +1034,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["leadership", "transformation", "skills", "confidence", "identity"],
     audience: ["general", "corporate", "reentry"],
@@ -1070,7 +1072,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["confidence", "wealth", "money-mindset", "worth", "abundance"],
     audience: ["general", "reentry", "youth"],
@@ -1108,7 +1110,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["identity", "follow-through", "accountability", "say-do", "integrity"],
     audience: ["general", "corporate", "reentry"],
@@ -1150,7 +1152,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["habits", "productivity", "quick-win", "systems", "daily-practice"],
     audience: ["general", "youth", "corporate"],
@@ -1188,7 +1190,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["morning-ritual", "routine", "energy", "lifestyle-design", "daily-practice"],
     audience: ["general", "reentry", "youth"],
@@ -1226,7 +1228,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["mindfulness", "morning", "presence", "intention", "peace"],
     audience: ["general", "reentry"],
@@ -1264,7 +1266,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["tech-detox", "digital-wellness", "attention", "boundaries", "presence"],
     audience: ["general", "youth", "corporate"],
@@ -1340,7 +1342,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["consistency", "habits", "identity", "systems", "daily-practice"],
     audience: ["general", "reentry", "corporate"],
@@ -1378,7 +1380,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["wellness", "body", "recovery", "sleep", "holistic"],
     audience: ["general", "reentry"],
@@ -1416,7 +1418,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["hydration", "health", "30-day", "wellness", "foundation"],
     audience: ["general", "reentry", "youth"],
@@ -1454,7 +1456,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["fitness", "movement", "mac-type", "body", "energy"],
     audience: ["general", "youth", "reentry"],
@@ -1534,7 +1536,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["thinking", "cognitive", "ai", "mental-models", "strategy"],
     audience: ["general", "corporate", "youth"],
@@ -1572,7 +1574,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["deep-work", "focus", "productivity", "ai", "skill-building"],
     audience: ["general", "corporate"],
@@ -1610,7 +1612,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["systems", "productivity", "ai-tools", "operating-system", "efficiency"],
     audience: ["general", "corporate", "nonprofit"],
@@ -1648,7 +1650,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["learning", "ai", "skills", "accelerated", "education"],
     audience: ["general", "youth", "corporate"],
@@ -1686,7 +1688,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["execution", "action", "ai", "momentum", "speed"],
     audience: ["general", "corporate"],
@@ -1724,7 +1726,7 @@ export const programs: Program[] = [
     accessTier: "premium",
     price: 197,
     priceDisplay: "$197",
-    paymentPlan: null,
+
     cohortCode: false,
     tags: ["data", "kpi", "roi", "tracking", "ai", "impact"],
     audience: ["general", "corporate", "nonprofit"],
@@ -1890,7 +1892,7 @@ export const programs: Program[] = [
     accessTier: "subscriber",
     price: 47,
     priceDisplay: "$47/mo (included in subscription)",
-    paymentPlan: null,
+
     cohortCode: true,
     tags: ["leadership", "achievement", "results", "outcomes", "performance"],
     audience: ["general", "corporate", "reentry"],

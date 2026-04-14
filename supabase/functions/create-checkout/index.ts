@@ -1,29 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { PRICE_MODE_MAP } from "../_shared/stripe-config.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
-// Known valid price IDs and their checkout modes
-const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
-  "price_1THJVvBReje0oFcLhkxCXesA": "subscription", // Subscriber $27/mo
-  "price_1THkwQBReje0oFcL8i3WGwS0": "payment",      // 8-Week Cohort $997
-  "price_1THkx7BReje0oFcLRrF38PA8": "payment",      // 30-Day F.O.C.U.S. $297
-  "price_1THlFpBReje0oFcLuNY16veh": "payment",      // 30-Day Intensive $497
-  "price_1THlGgBReje0oFcLu5PGmZih": "payment",      // 12-Week Mastery $1997
-};
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabaseClient = createClient(
@@ -34,7 +21,8 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("No authorization header provided");
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
@@ -72,9 +60,14 @@ serve(async (req) => {
       metadata: { supabase_user_id: user.id },
     };
 
-    // For one-time payments, attach payment_intent_data with user metadata
     if (mode === "payment") {
+      // For one-time payments, attach payment_intent_data with user metadata
       sessionParams.payment_intent_data = {
+        metadata: { supabase_user_id: user.id },
+      };
+    } else if (mode === "subscription") {
+      // For subscriptions, attach metadata to the subscription object for renewals
+      sessionParams.subscription_data = {
         metadata: { supabase_user_id: user.id },
       };
     }
@@ -83,14 +76,14 @@ serve(async (req) => {
     logStep("Checkout session created", { sessionId: session.id, mode });
 
     return new Response(JSON.stringify({ url: session.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: msg });
     return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 500,
     });
   }

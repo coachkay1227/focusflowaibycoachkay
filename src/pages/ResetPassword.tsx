@@ -92,7 +92,7 @@ const ResetPassword = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
               className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 py-6"
             />
           </div>
@@ -104,7 +104,7 @@ const ResetPassword = () => {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
               className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 py-6"
             />
           </div>

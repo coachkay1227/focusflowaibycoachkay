@@ -14,24 +14,30 @@ export function useRoles() {
       return;
     }
 
-    // Fast-path: known admin emails bypass RPC
-    const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
-    if (ADMIN_EMAILS.includes(user.email ?? "")) {
-      setIsAdmin(true);
-      setLoading(false);
-      return;
-    }
-
     const checkRole = async () => {
       try {
+        // 1. Check via has_role RPC (proper RBAC — not in generated types yet)
+        const { data: hasAdminRole, error: roleError } = await (supabase.rpc as any)("has_role", {
+          _user_id: user.id,
+          _role: "admin",
+        });
+        if (!roleError && hasAdminRole) {
+          setIsAdmin(true);
+          setLoading(false);
+          return;
+        }
+        // 2. Check if tier is corporate
         const { data, error } = await supabase.rpc("get_user_tier", {
           _user_id: user.id,
         });
-        if (error) {
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(data === "corporate");
+        if (!error && data === "corporate") {
+          setIsAdmin(true);
+          setLoading(false);
+          return;
         }
+        // 3. Fallback: known admin email (bootstrap access before DB role is assigned)
+        const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+        setIsAdmin(ADMIN_EMAILS.includes(user.email ?? ""));
       } catch {
         setIsAdmin(false);
       } finally {
