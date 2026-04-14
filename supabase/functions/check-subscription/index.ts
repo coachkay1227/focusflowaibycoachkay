@@ -99,7 +99,7 @@ serve(async (req) => {
       });
 
       const paidOneTime = sessions.data.find(
-        (s) => s.mode === "payment" && s.payment_status === "paid"
+        (s: { mode: string; payment_status: string }) => s.mode === "payment" && s.payment_status === "paid"
       );
 
       if (paidOneTime) {
