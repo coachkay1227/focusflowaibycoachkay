@@ -16,8 +16,8 @@ export function useRoles() {
 
     const checkRole = async () => {
       try {
-        // Check via has_role RPC first (proper RBAC)
-        const { data: hasAdminRole, error: roleError } = await supabase.rpc("has_role", {
+        // 1. Check via has_role RPC (proper RBAC — not in generated types yet)
+        const { data: hasAdminRole, error: roleError } = await (supabase.rpc as any)("has_role", {
           _user_id: user.id,
           _role: "admin",
         });
@@ -26,15 +26,18 @@ export function useRoles() {
           setLoading(false);
           return;
         }
-        // Fallback: check if tier is corporate
+        // 2. Check if tier is corporate
         const { data, error } = await supabase.rpc("get_user_tier", {
           _user_id: user.id,
         });
-        if (error) {
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(data === "corporate");
+        if (!error && data === "corporate") {
+          setIsAdmin(true);
+          setLoading(false);
+          return;
         }
+        // 3. Fallback: known admin email (bootstrap access before DB role is assigned)
+        const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+        setIsAdmin(ADMIN_EMAILS.includes(user.email ?? ""));
       } catch {
         setIsAdmin(false);
       } finally {

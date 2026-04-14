@@ -30,7 +30,8 @@ serve(async (req) => {
         .gte("created_at", weekAgo)
         .order("created_at", { ascending: false }),
       supabase.from("challenge_progress")
-        .select("challenge_type, current_day, entries"),
+        .select("challenge_type, current_day, entries")
+        .eq("user_id", user.id),
       supabase.from("user_preferences")
         .select("primary_goal, coaching_style")
         .eq("id", user.id)
