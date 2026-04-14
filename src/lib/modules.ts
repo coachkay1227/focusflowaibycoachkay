@@ -19,6 +19,8 @@ export interface CoachingModule {
   duration: string;
 }
 
+import { clarityQuestions } from "@/lib/clarity-engine";
+
 export const coachingModules: CoachingModule[] = [
   {
     id: "clarity-check",
@@ -28,7 +30,7 @@ export const coachingModules: CoachingModule[] = [
     icon: "eye",
     toneMode: "reflective",
     duration: "5 min",
-    questions: [], // Uses default clarityQuestions from clarity-engine.ts
+    questions: clarityQuestions,
   },
   {
     id: "emotional-reset",

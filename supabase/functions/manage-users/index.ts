@@ -1,11 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[MANAGE-USERS] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
@@ -13,16 +9,10 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
-
-  const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     { auth: { persistSession: false } }
@@ -41,7 +31,8 @@ serve(async (req) => {
     if (!user) throw new Error("User not authenticated");
     logStep("User authenticated", { userId: user.id });
 
-    const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+    const adminEmailsEnv = Deno.env.get("ADMIN_EMAILS") ?? "hello@coachkayelevates.org";
+    const ADMIN_EMAILS = adminEmailsEnv.split(",").map((e: string) => e.trim());
     let adminVerified = ADMIN_EMAILS.includes(user.email ?? "");
 
     if (!adminVerified) {
@@ -65,17 +56,17 @@ serve(async (req) => {
       case "list_users": {
         logStep("Action: list_users");
 
-        const { data: profiles, error: profilesError } = await supabaseAdmin
+        const { data: profiles, error: profilesError } = await supabaseClient
           .from("profiles")
           .select("id, display_name, created_at");
 
         if (profilesError) throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
 
         // Fetch emails from auth.users via admin API
-        const { data: authData } = await supabaseAdmin.auth.admin.listUsers();
+        const { data: authData } = await supabaseClient.auth.admin.listUsers();
         const emailMap = new Map((authData?.users ?? []).map((u: { id: string; email?: string }) => [u.id, u.email ?? null]));
 
-        const { data: accessLevels } = await supabaseAdmin
+        const { data: accessLevels } = await supabaseClient
           .from("user_access_levels")
           .select("id, tier");
 
@@ -85,7 +76,7 @@ serve(async (req) => {
 
         const sessionCounts: Record<string, number> = {};
         if (userIds.length > 0) {
-          const { data: sessionData } = await supabaseAdmin
+          const { data: sessionData } = await supabaseClient
             .from("clarity_sessions")
             .select("user_id")
             .in("user_id", userIds);
@@ -97,7 +88,7 @@ serve(async (req) => {
 
         const challengeCounts: Record<string, number> = {};
         if (userIds.length > 0) {
-          const { data: challengeData } = await supabaseAdmin
+          const { data: challengeData } = await supabaseClient
             .from("challenge_progress")
             .select("user_id")
             .in("user_id", userIds);
@@ -118,7 +109,7 @@ serve(async (req) => {
         }));
 
         return new Response(JSON.stringify({ users }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
@@ -132,7 +123,7 @@ serve(async (req) => {
         const validTiers = ["free", "subscriber", "cohort", "premium", "corporate"];
         if (!validTiers.includes(tier)) throw new Error(`Invalid tier: ${tier}`);
 
-        const { error: upsertError } = await supabaseAdmin
+        const { error: upsertError } = await supabaseClient
           .from("user_access_levels")
           .upsert({ id: user_id, tier }, { onConflict: "id" });
 
@@ -141,7 +132,7 @@ serve(async (req) => {
         logStep("Tier updated successfully", { user_id, tier });
 
         return new Response(JSON.stringify({ success: true, user_id, tier }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
@@ -152,7 +143,7 @@ serve(async (req) => {
 
         if (!user_id) throw new Error("Missing user_id");
 
-        const { data: profile, error: profileError } = await supabaseAdmin
+        const { data: profile, error: profileError } = await supabaseClient
           .from("profiles")
           .select("*")
           .eq("id", user_id)
@@ -161,16 +152,16 @@ serve(async (req) => {
         if (profileError) throw new Error(`Failed to fetch profile: ${profileError.message}`);
 
         // Get email from auth
-        const { data: authUserData } = await supabaseAdmin.auth.admin.getUserById(user_id);
+        const { data: authUserData } = await supabaseClient.auth.admin.getUserById(user_id);
         const email = authUserData?.user?.email ?? null;
 
-        const { data: accessLevel } = await supabaseAdmin
+        const { data: accessLevel } = await supabaseClient
           .from("user_access_levels")
           .select("tier")
           .eq("id", user_id)
           .single();
 
-        const { data: sessions, error: sessionsError } = await supabaseAdmin
+        const { data: sessions, error: sessionsError } = await supabaseClient
           .from("clarity_sessions")
           .select("id, module_id, created_at")
           .eq("user_id", user_id)
@@ -179,12 +170,12 @@ serve(async (req) => {
 
         if (sessionsError) throw new Error(`Failed to fetch sessions: ${sessionsError.message}`);
 
-        const { data: challenges } = await supabaseAdmin
+        const { data: challenges } = await supabaseClient
           .from("challenge_progress")
           .select("challenge_type, current_day, started_at")
           .eq("user_id", user_id);
 
-        const { data: moduleEnrollments } = await supabaseAdmin
+        const { data: moduleEnrollments } = await supabaseClient
           .from("module_enrollments")
           .select("module_id, status, enrolled_at")
           .eq("user_id", user_id);
@@ -198,7 +189,7 @@ serve(async (req) => {
         };
 
         return new Response(JSON.stringify({ user: detail }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
@@ -207,10 +198,10 @@ serve(async (req) => {
         logStep("Action: get_recent_activity");
 
         const [signupsRes, sessionsRes, challengesRes, enrollmentsRes] = await Promise.all([
-          supabaseAdmin.from("profiles").select("id, display_name, created_at").order("created_at", { ascending: false }).limit(10),
-          supabaseAdmin.from("clarity_sessions").select("user_id, module_id, created_at").order("created_at", { ascending: false }).limit(10),
-          supabaseAdmin.from("challenge_progress").select("user_id, challenge_type, current_day, started_at").order("started_at", { ascending: false }).limit(10),
-          supabaseAdmin.from("module_enrollments").select("user_id, module_id, status, enrolled_at").order("enrolled_at", { ascending: false }).limit(10),
+          supabaseClient.from("profiles").select("id, display_name, created_at").order("created_at", { ascending: false }).limit(10),
+          supabaseClient.from("clarity_sessions").select("user_id, module_id, created_at").order("created_at", { ascending: false }).limit(10),
+          supabaseClient.from("challenge_progress").select("user_id, challenge_type, current_day, started_at").order("started_at", { ascending: false }).limit(10),
+          supabaseClient.from("module_enrollments").select("user_id, module_id, status, enrolled_at").order("enrolled_at", { ascending: false }).limit(10),
         ]);
 
         // Build a combined profile name lookup
@@ -219,7 +210,7 @@ serve(async (req) => {
         challengesRes.data?.forEach((c: { user_id: string }) => allUserIds.add(c.user_id));
         enrollmentsRes.data?.forEach((e: { user_id: string }) => allUserIds.add(e.user_id));
 
-        const { data: nameProfiles } = await supabaseAdmin
+        const { data: nameProfiles } = await supabaseClient
           .from("profiles")
           .select("id, display_name")
           .in("id", [...allUserIds]);
@@ -248,7 +239,7 @@ serve(async (req) => {
         events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
         return new Response(JSON.stringify({ events: events.slice(0, 20) }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
@@ -256,12 +247,12 @@ serve(async (req) => {
       case "get_content_settings": {
         logStep("Action: get_content_settings");
 
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await supabaseClient
           .from("content_settings")
           .select("*");
 
         return new Response(JSON.stringify({ settings: data ?? [], error: error?.message }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: error ? 500 : 200,
         });
       }
@@ -272,7 +263,7 @@ serve(async (req) => {
 
         if (!content_id) throw new Error("Missing content_id");
 
-        const { error: upsertError } = await supabaseAdmin
+        const { error: upsertError } = await supabaseClient
           .from("content_settings")
           .upsert({
             id: content_id,
@@ -285,7 +276,7 @@ serve(async (req) => {
         if (upsertError) throw new Error(`Failed to update content setting: ${upsertError.message}`);
 
         return new Response(JSON.stringify({ success: true }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
@@ -294,13 +285,13 @@ serve(async (req) => {
         logStep("Action: get_stats");
 
         const [usersRes, subsRes, sessionsRes, challengesRes] = await Promise.all([
-          supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }),
-          supabaseAdmin.from("user_access_levels").select("id", { count: "exact", head: true }).neq("tier", "free"),
-          supabaseAdmin.from("clarity_sessions").select("id", { count: "exact", head: true }),
-          supabaseAdmin.from("challenge_progress").select("id", { count: "exact", head: true }),
+          supabaseClient.from("profiles").select("id", { count: "exact", head: true }),
+          supabaseClient.from("user_access_levels").select("id", { count: "exact", head: true }).neq("tier", "free"),
+          supabaseClient.from("clarity_sessions").select("id", { count: "exact", head: true }),
+          supabaseClient.from("challenge_progress").select("id", { count: "exact", head: true }),
         ]);
 
-        const { data: recentProfiles } = await supabaseAdmin
+        const { data: recentProfiles } = await supabaseClient
           .from("profiles")
           .select("id, display_name, created_at")
           .order("created_at", { ascending: false })
@@ -317,7 +308,7 @@ serve(async (req) => {
         logStep("Stats retrieved", stats);
 
         return new Response(JSON.stringify({ stats }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
@@ -332,7 +323,7 @@ serve(async (req) => {
       ? 403
       : 500;
     return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status,
     });
   }

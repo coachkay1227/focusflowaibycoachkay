@@ -1,29 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { PRODUCT_TIER_MAP } from "../_shared/stripe-config.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
-// Product ID → access tier mapping
-const PRODUCT_TIER_MAP: Record<string, string> = {
-  "prod_UFpARkX0OxZg51": "subscriber",
-  "prod_UGHVIcGfn5LEoU": "cohort",
-  "prod_UGHWgMWBPbxXjH": "premium",
-  "prod_UGHpmJnJVVhIef": "premium",
-  "prod_UGHqGWOM8Iqo3K": "premium",
-};
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -43,15 +30,24 @@ serve(async (req) => {
 
     let event: Stripe.Event;
 
-    if (webhookSecret && sig) {
-      // Verify webhook signature when secret is configured
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-      logStep("Webhook signature verified", { type: event.type });
-    } else {
-      // Fallback: parse without signature verification (dev mode)
-      event = JSON.parse(body) as Stripe.Event;
-      logStep("Webhook received (no signature verification)", { type: event.type });
+    if (!webhookSecret) {
+      logStep("ERROR: STRIPE_WEBHOOK_SECRET is not configured");
+      return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 500,
+      });
     }
+
+    if (!sig) {
+      logStep("ERROR: Missing stripe-signature header");
+      return new Response(JSON.stringify({ error: "Missing signature" }), {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    logStep("Webhook signature verified", { type: event.type });
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -65,7 +61,7 @@ serve(async (req) => {
       if (session.payment_status !== "paid") {
         logStep("Payment not completed, skipping");
         return new Response(JSON.stringify({ received: true }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -74,7 +70,7 @@ serve(async (req) => {
       if (!userId) {
         logStep("No supabase_user_id in metadata, skipping");
         return new Response(JSON.stringify({ received: true }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -86,7 +82,7 @@ serve(async (req) => {
       if (!productId) {
         logStep("No product ID found in line items");
         return new Response(JSON.stringify({ received: true }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -102,17 +98,45 @@ serve(async (req) => {
       } else {
         logStep("Tier upgraded successfully", { userId, tier });
       }
+    } else if (event.type === "customer.subscription.deleted") {
+      // Subscription cancelled — downgrade to free
+      const subscription = event.data.object as Stripe.Subscription;
+      const userId = subscription.metadata?.supabase_user_id;
+      logStep("Subscription deleted", { subscriptionId: subscription.id, userId });
+
+      if (userId) {
+        const { error: downgradeError } = await supabaseClient
+          .from("user_access_levels")
+          .upsert({ id: userId, tier: "free" }, { onConflict: "id" });
+
+        if (downgradeError) {
+          logStep("Failed to downgrade tier", { error: downgradeError.message });
+        } else {
+          logStep("User downgraded to free", { userId });
+        }
+      } else {
+        logStep("No supabase_user_id in subscription metadata, skipping downgrade");
+      }
+    } else if (event.type === "invoice.payment_failed") {
+      // Payment failed — log for monitoring (user still has access until period ends)
+      const invoice = event.data.object as Stripe.Invoice;
+      const customerId = invoice.customer as string;
+      logStep("Invoice payment failed", {
+        invoiceId: invoice.id,
+        customerId,
+        attemptCount: invoice.attempt_count,
+      });
     }
 
     return new Response(JSON.stringify({ received: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: msg });
     return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 500,
     });
   }

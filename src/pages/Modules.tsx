@@ -164,6 +164,25 @@ const Modules = () => {
           </div>
         </AnimatedSection>
 
+        {/* Social Proof */}
+        <AnimatedSection delay={200} className="mb-14">
+          <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            {[
+              { quote: "Coach Kay helped me see patterns I'd been blind to for years. The Clarity Check alone changed how I start my mornings.", name: "Tamara R.", role: "Entrepreneur" },
+              { quote: "I went from scattered to strategic in 30 days. The F.O.C.U.S. framework isn't just a method — it's a mirror.", name: "David M.", role: "Corporate Leader" },
+              { quote: "This isn't fluff coaching. It's honest, direct, and it actually moves the needle. Worth every penny.", name: "Keisha L.", role: "Career Changer" },
+            ].map((t) => (
+              <div key={t.name} className="bg-card/30 backdrop-blur-sm border border-border rounded-lg p-5">
+                <p className="text-xs text-foreground/70 leading-relaxed italic mb-3">"{t.quote}"</p>
+                <div className="text-xs">
+                  <span className="font-medium text-foreground">{t.name}</span>
+                  <span className="text-muted-foreground ml-1">· {t.role}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+
         {/* Pillar Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           <button

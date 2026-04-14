@@ -17,6 +17,8 @@ import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Kiosk from "./pages/Kiosk.tsx";
 import ChatWidget from "./components/ChatWidget.tsx";
+import PageSkeleton from "./components/PageSkeleton.tsx";
+import DesktopNav from "./components/DesktopNav.tsx";
 
 // Lazy-load heavy pages
 const Modules = lazy(() => import("./pages/Modules.tsx"));
@@ -48,27 +50,28 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/dashboard" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Dashboard /></Suspense>} />
-            <Route path="/clarity" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ClaritySession /></Suspense>} />
-            <Route path="/clarity/:moduleId" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ClaritySession /></Suspense>} />
-            <Route path="/result" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ResultScreen /></Suspense>} />
-            <Route path="/mirror-challenge" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><MirrorChallenge /></Suspense>} />
-            <Route path="/challenges" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Challenges /></Suspense>} />
-            <Route path="/challenges/:type" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><MirrorChallenge /></Suspense>} />
-            <Route path="/modules" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Modules /></Suspense>} />
-            <Route path="/programs/:slug" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><ProgramDetail /></Suspense>} />
-            <Route path="/coach" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><CoachChat /></Suspense>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Dashboard /></Suspense></ProtectedRoute>} />
+            <Route path="/clarity" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense></ProtectedRoute>} />
+            <Route path="/clarity/:moduleId" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense></ProtectedRoute>} />
+            <Route path="/result" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ResultScreen /></Suspense></ProtectedRoute>} />
+            <Route path="/mirror-challenge" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
+            <Route path="/challenges" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Challenges /></Suspense></ProtectedRoute>} />
+            <Route path="/challenges/:type" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
+            <Route path="/modules" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Modules /></Suspense></ProtectedRoute>} />
+            <Route path="/programs/:slug" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense></ProtectedRoute>} />
+            <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
             <Route path="/community" element={<Community />} />
-            <Route path="/profile" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><Profile /></Suspense>} />
-            <Route path="/admin" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminDashboard /></Suspense></ProtectedRoute>} />
-            <Route path="/admin/users" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminUsers /></Suspense></ProtectedRoute>} />
-            <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminAnalytics /></Suspense></ProtectedRoute>} />
-            <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>}><AdminContent /></Suspense></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Profile /></Suspense></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminUsers /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAnalytics /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminContent /></Suspense></ProtectedRoute>} />
             <Route path="/kiosk" element={<Kiosk />} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><EmailPreview /></ProtectedRoute>} />
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <DesktopNav />
           <ChatWidget />
           </ErrorBoundary>
         </BrowserRouter>

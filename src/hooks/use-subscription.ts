@@ -47,7 +47,7 @@ export function useSubscription() {
   useEffect(() => {
     if (!session) return;
     checkSubscription();
-    const interval = setInterval(checkSubscription, 60_000);
+    const interval = setInterval(checkSubscription, 300_000);
     return () => clearInterval(interval);
   }, [session, checkSubscription]);
 
