@@ -35,6 +35,7 @@ const Modules = () => {
   const [activePillar, setActivePillar] = useState<FocusPillar | "all">("all");
   const [enrollments, setEnrollments] = useState<ModuleEnrollment[]>([]);
   const [enrolling, setEnrolling] = useState<string | null>(null);
+  const [applyDialog, setApplyDialog] = useState<{ open: boolean; mode: "application" | "inquiry"; programName?: string }>({ open: false, mode: "application" });
 
   useEffect(() => {
     if (user) getModuleEnrollments().then(setEnrollments);
