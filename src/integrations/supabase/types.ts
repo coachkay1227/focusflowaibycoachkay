@@ -101,6 +101,30 @@ export type Database = {
         }
         Relationships: []
       }
+      content_settings: {
+        Row: {
+          custom_tagline: string | null
+          enabled: boolean
+          featured: boolean
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          custom_tagline?: string | null
+          enabled?: boolean
+          featured?: boolean
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          custom_tagline?: string | null
+          enabled?: boolean
+          featured?: boolean
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       module_enrollments: {
         Row: {
           completed_at: string | null
