@@ -1,27 +1,32 @@
 
 
-# Admin Bypass for Content Gating + View Toggle
+# SEO Hardening — Full Optimization Pass
 
-## Problem
-As an admin, gated modules still show locked overlays because `AccessGate` only checks your `tier` (currently "free"), not your admin role. You need to see all content unrestricted while also being able to preview what regular users see.
+## What's Already Strong
+Your SEO is well above baseline. robots.txt, sitemap, structured data, OG tags, security headers, and per-page SEOHead are all in place. This plan addresses the remaining gaps to reach fully optimized.
 
 ## Plan
 
-### Step 1 — Admin bypasses AccessGate
-Update `src/components/AccessGate.tsx` to import `useRoles` and skip gating when `isAdmin` is true. One line change — admins see everything unlocked.
+### Step 1 — Add missing crawlers to robots.txt
+Add rules for: `Yandex`, `Baiduspider`, `Sogou`, `CCBot`, `Bytespider` (TikTok), `meta-externalagent` (Meta AI), `anthropic-ai`, `Cohere-ai`, `ia_archiver` (Alexa/Internet Archive). Apply same disallow patterns as existing bots.
 
-### Step 2 — Admin bypasses gating in Modules page
-Update `src/pages/Modules.tsx` line 224: when `isAdmin` is true, set `needsGate = false` so all program cards render ungated.
+### Step 2 — Add favicon and apple-touch-icon references to index.html
+The `favicon.ico` file exists but isn't linked. Add `<link rel="icon">` and `<link rel="apple-touch-icon">` tags to `index.html`.
 
-### Step 3 — Add admin view toggle
-Add a small floating toggle in `AccessGate` and `Modules` that only appears for admins — "Admin View" vs "User View". When toggled to "User View", the admin bypass is disabled and you see exactly what a free-tier user sees. This toggle state will be stored in a simple React context or localStorage so it persists across pages.
+### Step 3 — Create web app manifest
+Add `public/manifest.json` with app name, theme color, background color, icons, and display mode. Link it from `index.html`. This enables PWA-like behavior and better mobile bookmarking.
 
-### Step 4 — Fix "View Plans" button
-Update the `AccessGate` button that says "View Plans" — currently navigates to `/modules` which may be the same page. Change it to scroll to the pricing section on `/modules` using `navigate("/modules#plans")`.
+### Step 4 — Add Open Graph locale and site_name
+Add `og:locale` and `og:site_name` meta tags to `SEOHead.tsx` for richer social previews.
 
 ### Files Changed
-- `src/components/AccessGate.tsx` — add admin bypass + toggle
-- `src/pages/Modules.tsx` — add admin bypass + import useRoles
-- `src/contexts/AdminViewContext.tsx` — new, small context for the toggle state
-- `src/App.tsx` — wrap with AdminViewContext provider
+- `public/robots.txt` — add ~10 more crawler rules
+- `index.html` — add favicon, apple-touch-icon, and manifest links
+- `public/manifest.json` — new file
+- `src/components/SEOHead.tsx` — add og:locale and og:site_name
+
+### What This Does NOT Change
+- No design or functionality changes
+- No changes to existing crawl rules or sitemap content
+- Domain references stay as-is (can be updated when custom domain is finalized)
 
