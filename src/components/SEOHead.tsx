@@ -31,6 +31,8 @@ const SEOHead = ({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonical} />
       <meta property="og:type" content="website" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:site_name" content="FocusFlow AI by Coach Kay" />
       <meta property="og:image" content={ogImage} />
 
       {/* Twitter */}
