@@ -27,9 +27,18 @@ serve(async (req) => {
       });
     }
 
-    // Post to GHL webhook — the GHL_API_KEY is the webhook URL or API key
-    // depending on how the user configured their GHL automation
-    const res = await fetch(ghlApiKey, {
+    // Validate that GHL_API_KEY is a proper webhook URL
+    let webhookUrl: URL;
+    try {
+      webhookUrl = new URL(ghlApiKey);
+    } catch {
+      console.error(`[ghl-webhook] GHL_API_KEY is not a valid URL. Update the secret with your full GHL webhook URL (e.g. https://services.leadconnectorhq.com/hooks/...).`);
+      return new Response(JSON.stringify({ success: false, reason: "invalid_webhook_url" }), {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
+    const res = await fetch(webhookUrl.toString(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
