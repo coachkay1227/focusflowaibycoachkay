@@ -128,7 +128,8 @@ serve(async (req) => {
       if (!res.ok) {
         const err = await res.text();
         console.error("[apply-now] Gateway error:", err);
-        throw new Error("Email send failed");
+        // Fall through to log instead of throwing — don't block user flow
+        console.log(`[apply-now] Falling back to log. Would send to ${COACH_EMAIL}: ${subject}`);
       }
     } else {
       console.log(`[apply-now] Would send to ${COACH_EMAIL}: ${subject}`);
