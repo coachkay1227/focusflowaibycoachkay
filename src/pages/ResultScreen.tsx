@@ -85,24 +85,25 @@ const ResultScreen = () => {
     saveSessionCloud(session);
 
     // Resolve track recommendation
+    let resolvedTrack: TrackResult | null = null;
     try {
       const prefs = await getUserPreferences();
       const answersRecord: Record<string, string> = {};
       for (const [k, v] of Object.entries(answers)) {
         answersRecord[k] = typeof v === "string" ? v : JSON.stringify(v);
       }
-      const track = resolveTrack(
+      resolvedTrack = resolveTrack(
         answersRecord,
         { primaryGoal: prefs?.primaryGoal || undefined, lifeStage: undefined }
       );
-      setTrackResult(track);
+      setTrackResult(resolvedTrack);
     } catch {
       const answersRecord: Record<string, string> = {};
       for (const [k, v] of Object.entries(answers)) {
         answersRecord[k] = typeof v === "string" ? v : JSON.stringify(v);
       }
-      const track = resolveTrack(answersRecord);
-      setTrackResult(track);
+      resolvedTrack = resolveTrack(answersRecord);
+      setTrackResult(resolvedTrack);
     }
 
     // Fetch patterns only for authenticated users (requires JWT)
@@ -119,15 +120,15 @@ const ResultScreen = () => {
 
     // Fire GHL webhook for clarity session completion (fire-and-forget)
     const userEmail = currentSession?.user?.email;
-    if (userEmail && trackResult) {
+    if (userEmail) {
       supabase.functions.invoke("ghl-webhook", {
         body: {
           event: "clarity_session_complete",
           payload: {
             email: userEmail,
             moduleId,
-            phase: trackResult?.phaseLabel || "unknown",
-            track: trackResult?.recommendedChallengeType || "unknown",
+            phase: resolvedTrack?.phaseLabel || "unknown",
+            track: resolvedTrack?.recommendedChallengeType || "unknown",
             insightSummary: insightData?.truth?.slice(0, 200) || "",
           },
         },
