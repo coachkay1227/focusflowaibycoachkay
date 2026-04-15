@@ -1,80 +1,66 @@
 
 
-# Hybrid Email Strategy: Lovable (Transactional) + GHL (Marketing/Drip)
+# Performance Optimization Plan
 
-## How It Works
+## Root Cause Analysis
 
-Lovable handles emails that users expect immediately — password resets, signup confirmations, and application acknowledgments. GHL handles everything marketing — your 4-part clarity follow-up drip, re-engagement, promotions, and nurture sequences.
+The Lighthouse report flags 4 issues. Here's the exact root cause of each:
 
-```text
-User Action                     → Lovable (transactional)
-─────────────────────────────────────────────────────────
-Signs up                        → Branded confirmation email
-Resets password                  → Branded reset link
-Submits Apply Now                → "We got your application" confirmation
+### 1. Render-blocking requests (280ms savings)
+**Root cause**: Line 33 of `index.html` loads Google Fonts via a synchronous `<link rel="stylesheet">`. This blocks first paint until the entire font CSS (and then the font files) download. The chain is: HTML → font CSS → 4 WOFF2 files.
 
-User Action                     → GHL (marketing/drip via webhook)
-─────────────────────────────────────────────────────────
-Signs up                        → Welcome nurture sequence
-Completes clarity session        → 4-part follow-up drip
-Submits application              → Lead tagged for Coach Kay follow-up
+**Fix**: Switch to non-blocking font loading using `media="print" onload="this.media='all'"` pattern, or use `rel="preload"` for the font CSS.
+
+### 2. Max Potential First Input Delay (280ms)
+**Root cause**: The main JS bundle (`index-DZ4_UYaP.js`, 255KB) executes as a single long task. This is the *same* bundle that contains all eagerly-imported pages: `Index`, `Community`, `Auth`, `ResetPassword`, `Onboarding`, `EmailPreview`, `Sitemap`, `NotFound`, `Unsubscribe`, `EmailUnsubscribe`, `Kiosk`, `ChatWidget`, `AccessGate`, `DesktopNav`. These are all statically imported in `App.tsx` (lines 11-25), so they ship in the initial bundle even though most users only visit `/`.
+
+**Fix**: Lazy-load all pages except `Index`. Move `ChatWidget`, `DesktopNav`, and `AdminViewToggle` to lazy imports with idle loading.
+
+### 3. Unused JavaScript (144 KiB savings)
+**Root cause**: Same as #2 — 58% of `index-DZ4_UYaP.js` is unused on initial load because pages like `Auth`, `Community`, `Kiosk`, `Onboarding`, etc. are eagerly bundled but not rendered on `/`.
+
+**Fix**: Same lazy-loading fix resolves this.
+
+### 4. Cache lifetimes (355 KiB savings)
+**Root cause**: `vercel.json` has no `Cache-Control` headers for static assets. Vite outputs hashed filenames (`index-DZ4_UYaP.js`) which are safe to cache indefinitely, but without explicit headers Vercel serves them with `cache-control: no-cache` or short TTLs.
+
+**Fix**: Add immutable cache headers for `/_assets/*` in `vercel.json`.
+
+---
+
+## Implementation
+
+### Step 1: Non-blocking Google Fonts in `index.html`
+Replace the synchronous font `<link>` with the print-swap pattern:
+```html
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=..."
+      media="print" onload="this.media='all'" />
+<noscript>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=..." />
+</noscript>
 ```
 
-## Step 1: Configure Email Domain for This Project
+### Step 2: Lazy-load remaining eager pages in `App.tsx`
+Convert these static imports to `lazy()`:
+- `Community`, `Auth`, `ResetPassword`, `Onboarding`, `EmailPreview`, `Sitemap`, `NotFound`, `Unsubscribe`, `EmailUnsubscribe`, `Kiosk`
 
-The domain `notify.coachkayelevates.org` exists in your workspace but isn't linked to this project yet. You need to complete the setup dialog so Lovable can send branded auth and transactional emails from that subdomain. DNS verification is still pending — you'll need to add NS records at your domain registrar (wherever you manage coachkayelevates.org).
+Keep `Index` eager (it's the landing page). Wrap `ChatWidget` and `DesktopNav` in a deferred load (e.g., `requestIdleCallback` or `lazy`).
 
-## Step 2: Lovable Transactional Email Setup
+### Step 3: Cache headers in `vercel.json`
+Add a rule for hashed assets:
+```json
+{
+  "source": "/assets/(.*)",
+  "headers": [
+    { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+  ]
+}
+```
 
-Once domain is configured:
-- Set up email infrastructure (queue, retry, suppression)
-- Scaffold branded auth email templates (signup confirmation, password reset) matching FocusFlow gold/navy/cream identity
-- Create two transactional templates:
-  - **welcome-to-focusflow** — sent after signup, "Your Clarity Journey Starts Now"
-  - **application-received** — sent after Apply Now submit, confirms receipt
-- Wire triggers in `Auth.tsx` (after signup) and `ApplyNowDialog.tsx` (after submit)
-- Create branded `/unsubscribe` page (already partially built)
-- Deploy all edge functions
-
-### Files Changed
-| File | Change |
-|------|--------|
-| `supabase/functions/_shared/transactional-email-templates/welcome-to-focusflow.tsx` | New template |
-| `supabase/functions/_shared/transactional-email-templates/application-received.tsx` | New template |
-| `supabase/functions/_shared/transactional-email-templates/registry.ts` | Register templates |
-| `supabase/functions/_shared/email-templates/*.tsx` | Branded auth templates (scaffold) |
-| `src/pages/Auth.tsx` | Welcome email trigger after signup |
-| `src/components/ApplyNowDialog.tsx` | Application confirmation trigger |
-| `src/pages/Unsubscribe.tsx` | Already created — verify it works with new infrastructure |
-
-## Step 3: GHL Webhook Integration
-
-Create a lightweight edge function `ghl-webhook` that posts lead data to your GHL webhook URLs. Three triggers:
-
-1. **Signup** — push name + email + event type to GHL (fires alongside the Lovable welcome email)
-2. **Clarity session complete** — push email + phase/track + insight summary to GHL for the 4-part drip
-3. **Application submit** — push applicant data + program name to GHL for Coach Kay's pipeline
-
-You'll provide the GHL webhook URL(s) when ready. The `GHL_API_KEY` secret is already configured.
-
-### Files Changed
-| File | Change |
-|------|--------|
-| `supabase/functions/ghl-webhook/index.ts` | New — generic webhook forwarder |
-| `src/pages/Auth.tsx` | Also fire GHL webhook on signup |
-| `src/components/ApplyNowDialog.tsx` | Also fire GHL webhook on application |
-| `src/pages/ResultScreen.tsx` | Fire GHL webhook after clarity result |
-
-## Step 4: Deploy Everything
-
-Deploy all new and updated edge functions.
-
-## What This Does NOT Do
-- Does not build drip sequences in Lovable — that's GHL's job
-- Does not remove any existing features
-- Does not change Stripe config
-
-## First Action Required
-
-Click the button below to link the email domain to this project. Once that's done, I'll implement everything in one pass.
+### What this does NOT change
+- No design or branding changes
+- No new dependencies
+- No database or edge function changes
 
