@@ -199,6 +199,7 @@ export type Database = {
           coaching_style: string | null
           created_at: string | null
           id: string
+          life_stage: string | null
           onboarding_completed: boolean | null
           primary_goal: string | null
           selected_modules: string[] | null
@@ -207,6 +208,7 @@ export type Database = {
           coaching_style?: string | null
           created_at?: string | null
           id: string
+          life_stage?: string | null
           onboarding_completed?: boolean | null
           primary_goal?: string | null
           selected_modules?: string[] | null
@@ -215,6 +217,7 @@ export type Database = {
           coaching_style?: string | null
           created_at?: string | null
           id?: string
+          life_stage?: string | null
           onboarding_completed?: boolean | null
           primary_goal?: string | null
           selected_modules?: string[] | null
