@@ -15,10 +15,11 @@ import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/hooks/use-subscription";
 import { STRIPE_TIERS } from "@/lib/stripe-tiers";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 const PILLARS: FocusPillar[] = ["F", "O", "C", "U", "S"];
 
@@ -34,6 +35,7 @@ const Modules = () => {
   const [activePillar, setActivePillar] = useState<FocusPillar | "all">("all");
   const [enrollments, setEnrollments] = useState<ModuleEnrollment[]>([]);
   const [enrolling, setEnrolling] = useState<string | null>(null);
+  const [applyDialog, setApplyDialog] = useState<{ open: boolean; mode: "application" | "inquiry"; programName?: string }>({ open: false, mode: "application" });
 
   useEffect(() => {
     if (user) getModuleEnrollments().then(setEnrollments);
@@ -122,12 +124,14 @@ const Modules = () => {
               Find your level
             </h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {[
-              { name: "Free", price: "$0", period: "", desc: "Clarity Check + Mirror Challenge entry", priceId: null, highlight: false },
-              { name: "Monthly", price: "$27", period: "/mo", desc: "All modules, coach chat, weekly insights", priceId: STRIPE_TIERS.subscriber?.[0]?.price_id, highlight: false },
-              { name: "30-Day Package", price: "$497", period: "", desc: "4 sessions (60 min) + full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 497)?.price_id, highlight: true },
-              { name: "8-Week Cohort", price: "$997", period: "", desc: "Coach Kay-led cohort + all modules", priceId: STRIPE_TIERS.cohort?.[0]?.price_id, highlight: false },
+              { name: "Free", price: "$0", period: "", desc: "Clarity Check + Mirror Challenge entry", priceId: null, highlight: false, apply: false },
+              { name: "Monthly Subscriber", price: "$27", period: "/mo", desc: "All modules, coach chat, weekly insights", priceId: STRIPE_TIERS.subscriber?.[0]?.price_id, highlight: false, apply: false },
+              { name: "30-Day F.O.C.U.S. Reset", price: "$297", period: "", desc: "Structured 30-day clarity reset with full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 297)?.price_id, highlight: false, apply: false },
+              { name: "30-Day Intensive", price: "$497", period: "", desc: "4 private sessions (60 min) + full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 497)?.price_id, highlight: true, apply: true },
+              { name: "8-Week Cohort", price: "$997", period: "", desc: "Coach Kay-led group cohort + all modules + community", priceId: STRIPE_TIERS.cohort?.[0]?.price_id, highlight: false, apply: false },
+              { name: "12-Week Mastery", price: "$1,997", period: "", desc: "Deep transformation program — application required", priceId: STRIPE_TIERS.premium?.find(c => c.price === 1997)?.price_id, highlight: false, apply: true },
             ].map((plan) => (
               <div
                 key={plan.name}
@@ -138,13 +142,24 @@ const Modules = () => {
                 {plan.highlight && (
                   <span className="font-mono-label text-[10px] tracking-wider text-primary mb-2">MOST POPULAR</span>
                 )}
+                {plan.apply && !plan.highlight && (
+                  <span className="font-mono-label text-[10px] tracking-wider text-muted-foreground mb-2">APPLICATION REQUIRED</span>
+                )}
                 <h3 className="font-heading text-lg font-medium">{plan.name}</h3>
                 <div className="mt-2 mb-3">
                   <span className="font-heading text-3xl font-light text-primary">{plan.price}</span>
                   {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
                 </div>
                 <p className="text-muted-foreground text-xs leading-relaxed flex-1">{plan.desc}</p>
-                {plan.priceId ? (
+                {plan.apply ? (
+                  <Button
+                    onClick={() => setApplyDialog({ open: true, mode: "application", programName: plan.name })}
+                    size="sm"
+                    className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
+                  >
+                    Apply Now
+                  </Button>
+                ) : plan.priceId ? (
                   <Button
                     onClick={() => user ? startCheckout(plan.priceId!) : navigate("/auth")}
                     size="sm"
@@ -165,6 +180,26 @@ const Modules = () => {
                 )}
               </div>
             ))}
+          </div>
+
+          {/* Corporate & Private Coaching */}
+          <div className="mt-6 max-w-5xl mx-auto">
+            <div className="clarity-card rounded-lg backdrop-blur-sm p-6 border border-border bg-card/30 flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="font-heading text-lg font-medium">Corporate & Private Coaching</h3>
+                <p className="text-muted-foreground text-xs leading-relaxed mt-1">
+                  Custom transformation programs for teams, organizations, or private 1:1 engagements with Coach Kay.
+                </p>
+              </div>
+              <Button
+                onClick={() => setApplyDialog({ open: true, mode: "inquiry" })}
+                size="sm"
+                className="bg-card border border-border text-foreground hover:border-primary/40 shrink-0"
+              >
+                <Mail className="mr-1 h-3 w-3" />
+                Contact Coach Kay
+              </Button>
+            </div>
           </div>
         </AnimatedSection>
 
@@ -255,6 +290,13 @@ const Modules = () => {
           <p className="text-center text-muted-foreground mt-12">No programs found for this pillar.</p>
         )}
       </div>
+
+      <ApplyNowDialog
+        open={applyDialog.open}
+        onOpenChange={(open) => setApplyDialog((prev) => ({ ...prev, open }))}
+        mode={applyDialog.mode}
+        programName={applyDialog.programName}
+      />
     </div>
   );
 };
