@@ -1,24 +1,28 @@
 
 
-# Fix Mobile Nav Overlay — Background Content Bleeding Through
+# Generate OG Image PNG + Update References
 
-## Problem
+## What This Does
+Creates a proper 1200x630 PNG Open Graph image matching your existing SVG design, then updates all references so social media platforms render it correctly (many platforms don't support SVG for OG images).
 
-The mobile nav uses a slide-in panel (`w-72`) from the right with a semi-transparent overlay (`bg-black/80`) covering the rest. The hero text ("See clearly. Move with purpose.") bleeds through both the overlay AND the panel background, making nav links hard to read.
+## Steps
 
-Root cause: `bg-card` (the panel background) is likely using a semi-transparent color variable.
+### 1. Generate the PNG image
+Use a Python script (Pillow) to render a 1200x630 PNG with:
+- Dark navy background (`#0d1520`)
+- "FocusFlow" in gold serif (`#c9a227`), centered, large
+- "BY COACH KAY" in muted gold (`#8a7a5a`), letter-spaced
+- "See clearly. Move with purpose." in cream (`#e8d5a3`)
+- Gold horizontal line separator
+- Save to `public/og-image.png`
 
-## Fix
+### 2. Update 3 file references
+| File | Change |
+|------|--------|
+| `index.html` line 16 | `og-image.svg` → `og-image.png` |
+| `index.html` line 19 | `og-image.svg` → `og-image.png` |
+| `src/components/SEOHead.tsx` line 18 | `og-image.svg` → `og-image.png` |
 
-Make the slide-in panel full-width on mobile and use a solid background:
-
-### File: `src/components/MobileNav.tsx`
-
-**Change 1** — Panel width and background (line 46):
-- `w-72 bg-card` → `w-full bg-[hsl(220,25%,8%)]` (solid dark background matching the app theme)
-- This ensures zero bleed-through since the panel covers the entire viewport
-
-**Change 2** — Overlay can stay as-is or be simplified since the panel is now full-width
-
-This is a single-line CSS class change. No logic changes needed.
+### Regarding Supabase Access
+This project runs on **Lovable Cloud** — there is no separate Supabase dashboard to visit. All database tables, edge functions, and auth are managed automatically within Lovable. You don't need to log into any external Supabase account. Everything for this project is fully isolated and self-contained here.
 
