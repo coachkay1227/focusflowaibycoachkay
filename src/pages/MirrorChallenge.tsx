@@ -213,7 +213,7 @@ const MirrorChallenge = () => {
       <FloatingOrbs />
 
       <div className="relative z-10 px-6 md:px-12 py-6 flex items-center justify-between">
-        <button onClick={() => navigate(type ? "/challenges" : "/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button onClick={() => navigate(type ? "/challenges" : "/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors" aria-label={type ? "Go back to challenges" : "Go back home"}>
           <ArrowLeft className="h-4 w-4" /> {type ? "Challenges" : "Home"}
         </button>
         <div className="font-heading text-lg font-light">

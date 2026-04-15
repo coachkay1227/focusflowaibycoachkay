@@ -242,3 +242,36 @@
   background: hsl(43 75% 52% / 0.1);
   box-shadow: 0 0 20px hsl(43 75% 52% / 0.1);
 }
+
+/* Prose overrides for Coach Chat */
+.coach-prose {
+  font-family: 'DM Sans', sans-serif;
+}
+.coach-prose h1,
+.coach-prose h2,
+.coach-prose h3,
+.coach-prose h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+}
+.coach-prose p,
+.coach-prose li,
+.coach-prose blockquote {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Skip to content */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 0.5rem 1rem;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-size: 0.875rem;
+  border-radius: 0 0 0.5rem 0;
+}
+.skip-to-content:focus {
+  left: 0;
+  top: 0;
+}

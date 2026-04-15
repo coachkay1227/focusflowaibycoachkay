@@ -48,6 +48,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ErrorBoundary>
+          <main id="main-content">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </main>
           <DesktopNav />
           <ChatWidget />
           <AdminViewToggle />
