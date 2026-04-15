@@ -1,71 +1,43 @@
 
 
-# Audit and Fix Admin Access
+# Fix Google Account Picker and Password Reset Flow
 
-## Current State
+## Problems
 
-- **Admin user exists**: `hello@coachkayelevates.org` (ID: `72cabdb4-3825-4a97-a649-902853f83228`)
-- **Missing from DB**: `app_role` enum, `user_roles` table, `has_role()` function — none exist yet
-- **Current admin check** (`use-roles.ts`): Tries `has_role` RPC (fails silently), then checks `get_user_tier` for "corporate" (fails), then falls back to hardcoded email list — **admin access works via fallback only**
-- **Routes**: All four admin routes (`/admin`, `/admin/users`, `/admin/analytics`, `/admin/content`) are properly wrapped in `<ProtectedRoute requireAdmin>`
+1. **Google sign-in auto-selects account** — The `handleGoogleSignIn` in `Auth.tsx` does not pass `prompt: "select_account"`, so Google automatically signs in with the last-used account (your Gmail) instead of letting you pick `hello@coachkayelevates.org`.
+
+2. **Password reset link expires instantly** — The auth logs confirm `"One-time token not found"` (403). This happens because the `redirectTo` URL in `AuthContext.tsx` uses `window.location.origin` which resolves to the **preview** domain (`*.lovableproject.com`), but the reset email link hits the **published** domain or vice versa. The token is consumed during the redirect, but the Supabase session isn't established on the page that loads. The `ResetPassword.tsx` page checks for `type=recovery` in the URL hash, but the Supabase auth flow may strip it during the PKCE redirect.
 
 ## Plan
 
-### Step 1 — Create RBAC infrastructure (database migration)
+### Step 1 — Fix Google account picker
 
-Run a single migration that creates:
+In `src/pages/Auth.tsx`, update `handleGoogleSignIn` to pass `prompt: "select_account"`:
 
-```sql
--- 1. Enum
-CREATE TYPE public.app_role AS ENUM ('admin', 'moderator', 'user');
-
--- 2. Table
-CREATE TABLE public.user_roles (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  role app_role NOT NULL,
-  UNIQUE (user_id, role)
-);
-ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
-
--- 3. RLS: admins can read all, users can read own
-CREATE POLICY "Users can read own roles"
-  ON public.user_roles FOR SELECT TO authenticated
-  USING (auth.uid() = user_id);
-
--- 4. Security-definer function (no RLS recursion)
-CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role app_role)
-RETURNS boolean
-LANGUAGE sql STABLE SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.user_roles
-    WHERE user_id = _user_id AND role = _role
-  )
-$$;
-
--- 5. Grant admin role to Coach Kay
-INSERT INTO public.user_roles (user_id, role)
-VALUES ('72cabdb4-3825-4a97-a649-902853f83228', 'admin')
-ON CONFLICT (user_id, role) DO NOTHING;
+```typescript
+const result = await lovable.auth.signInWithOAuth("google", {
+  redirect_uri: window.location.origin,
+  extraParams: {
+    prompt: "select_account",
+  },
+});
 ```
 
-### Step 2 — Clean up `use-roles.ts`
+### Step 2 — Fix password reset flow
 
-Remove the `as any` cast on the `has_role` RPC call now that the function exists. Keep the email fallback as a safety net but log a warning when it's used.
+In `src/pages/ResetPassword.tsx`, improve the recovery detection:
 
-### Step 3 — Manual testing checklist
+- Listen for the `PASSWORD_RECOVERY` auth event (already done but may race with page load)
+- Also check for an active session with `getSession()` after the hash check, since Supabase may have already exchanged the token
+- Remove the strict `valid` gate that blocks the form — if the user arrives at `/reset-password` with an active session, show the form
 
-After migration, sign in as `hello@coachkayelevates.org` and verify:
-1. `/admin` — dashboard loads
-2. `/admin/users` — user list populates
-3. `/admin/analytics` — charts render
-4. `/admin/content` — modules/programs listed
+### Step 3 — Grant admin to Google account
 
-## Technical Notes
+Run a database migration to also assign `admin` role to `kizzy.alaoui@gmail.com` (ID: `c89185b2-c251-45c5-be16-e17e21e4241f`), and add the email to the fallback list in `use-roles.ts`.
 
-- The `has_role` function uses `SECURITY DEFINER` to bypass RLS on the `user_roles` table, preventing recursive policy checks.
-- No code changes needed for admin pages themselves — they already use `useRoles()` which calls `has_role`.
-- The `manage-users` edge function runs with the service role key and is unaffected by client-side RLS.
+### What This Fixes
+
+- Google sign-in will show the account picker so you can choose which account to sign in with
+- Password reset links will work — the form will appear when you click the email link
+- Both your accounts will have admin access
 
