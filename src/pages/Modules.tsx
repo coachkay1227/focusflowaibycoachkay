@@ -6,6 +6,8 @@ import { useAccessLevel } from "@/hooks/use-access-level";
 import { programs, FOCUS_PILLARS, type FocusPillar, getProgramsByPillar } from "@/data/programs";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import { TIER_RANK } from "@/lib/tier-constants";
+import { useRoles } from "@/hooks/use-roles";
+import { useAdminView } from "@/contexts/AdminViewContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
