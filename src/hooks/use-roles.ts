@@ -36,7 +36,7 @@ export function useRoles() {
           return;
         }
         // 3. Fallback: known admin email (bootstrap access before DB role is assigned)
-        const ADMIN_EMAILS = ["hello@coachkayelevates.org"];
+        const ADMIN_EMAILS = ["hello@coachkayelevates.org", "kizzy.alaoui@gmail.com"];
         setIsAdmin(ADMIN_EMAILS.includes(user.email ?? ""));
       } catch {
         setIsAdmin(false);

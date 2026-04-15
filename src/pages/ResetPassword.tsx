@@ -15,21 +15,40 @@ const ResetPassword = () => {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Check for recovery token in URL hash
+    // 1. Check URL hash for recovery token
     const hash = window.location.hash;
     if (hash.includes("type=recovery")) {
       setValid(true);
-    } else {
-      // Also listen for auth state change with recovery event
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-        if (event === "PASSWORD_RECOVERY") {
-          setValid(true);
-        }
-      });
-      return () => subscription.unsubscribe();
+      setChecking(false);
+      return;
     }
+
+    // 2. Check if there's already an active session (token was exchanged during redirect)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setValid(true);
+        setChecking(false);
+      }
+    });
+
+    // 3. Listen for PASSWORD_RECOVERY event
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setValid(true);
+        setChecking(false);
+      }
+    });
+
+    // Give it a moment then stop checking
+    const timeout = setTimeout(() => setChecking(false), 3000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,6 +71,17 @@ const ResetPassword = () => {
       navigate("/");
     }
   };
+
+  if (checking) {
+    return (
+      <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+        <FloatingOrbs />
+        <div className="relative z-10 text-center">
+          <p className="text-muted-foreground">Verifying reset link...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!valid) {
     return (
