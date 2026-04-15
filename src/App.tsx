@@ -17,6 +17,7 @@ import EmailPreview from "./pages/EmailPreview.tsx";
 import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
+import EmailUnsubscribe from "./pages/EmailUnsubscribe.tsx";
 import Kiosk from "./pages/Kiosk.tsx";
 import ChatWidget from "./components/ChatWidget.tsx";
 import { AdminViewToggle } from "./components/AccessGate.tsx";
@@ -75,6 +76,7 @@ const App = () => (
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><EmailPreview /></ProtectedRoute>} />
             <Route path="/sitemap" element={<Sitemap />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
+            <Route path="/email-unsubscribe" element={<EmailUnsubscribe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           </main>

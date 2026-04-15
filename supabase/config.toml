@@ -1,19 +1,27 @@
 project_id = "rarawrpajilqqlcxdzpj"
 
-[functions.clarity-insight]
-verify_jwt = false
-
-[functions.coach-chat]
-verify_jwt = false
-
-[functions.pattern-detect]
-verify_jwt = false
-
-[functions.stripe-webhook]
-verify_jwt = false
-
-[functions.ghl-webhook]
-verify_jwt = false
-
-[functions.apply-now]
-verify_jwt = false
+[functions]
+  [functions.apply-now]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.clarity-insight]
+    verify_jwt = false
+  [functions.coach-chat]
+    verify_jwt = false
+  [functions.ghl-webhook]
+    verify_jwt = false
+  [functions.handle-email-suppression]
+    verify_jwt = false
+  [functions.handle-email-unsubscribe]
+    verify_jwt = false
+  [functions.pattern-detect]
+    verify_jwt = false
+  [functions.preview-transactional-email]
+    verify_jwt = false
+  [functions.process-email-queue]
+    verify_jwt = true
+  [functions.send-transactional-email]
+    verify_jwt = true
+  [functions.stripe-webhook]
+    verify_jwt = false
