@@ -210,6 +210,7 @@ export async function saveUserPreferences(prefs: {
   primaryGoal: string;
   coachingStyle: string;
   selectedModules: string[];
+  lifeStage?: string;
 }): Promise<void> {
   const userId = await getAuthUserId();
   if (!userId) {
@@ -217,16 +218,20 @@ export async function saveUserPreferences(prefs: {
     throw new Error("Not authenticated");
   }
 
-  const { error } = await supabase.from("user_preferences").upsert({
+  const payload: Record<string, unknown> = {
     id: userId,
     onboarding_completed: true,
     primary_goal: prefs.primaryGoal,
     coaching_style: prefs.coachingStyle,
     selected_modules: prefs.selectedModules,
-  }, { onConflict: "id" });
+  };
+  if (prefs.lifeStage) {
+    payload.life_stage = prefs.lifeStage;
+  }
+
+  const { error } = await supabase.from("user_preferences").upsert(payload as never, { onConflict: "id" });
 
   if (error) {
-    // Error handled silently
     toast({ title: "Save failed", description: "Could not save preferences. Please try again.", variant: "destructive" });
     throw error;
   }
