@@ -26,6 +26,8 @@ const Modules = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { tier } = useAccessLevel();
+  const { isAdmin } = useRoles();
+  const { userView } = useAdminView();
   const { toast } = useToast();
   const { startCheckout } = useSubscription();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -223,7 +225,8 @@ const Modules = () => {
         {/* Program Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredPrograms.map((program, i) => {
-            const needsGate = program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
+            const adminBypass = isAdmin && !userView;
+            const needsGate = !adminBypass && program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
             return (
               <AnimatedSection key={program.id} delay={Math.min(i * 60, 600)}>
                 {needsGate ? (
