@@ -138,12 +138,18 @@ const Index = () => {
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
             Coach Kay
-          </button>
+141:           </button>
           <button
             onClick={() => navigate("/community")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
             Community
+          </button>
+          <button
+            onClick={() => navigate("/about")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            About
           </button>
           <Button
             onClick={() => navigate("/clarity")}
@@ -268,9 +274,29 @@ const Index = () => {
           </Button>
         </div>
 
+        {/* Meet Coach Kay link */}
+        <div
+          className="mt-8"
+          style={{
+            opacity: phase >= 4 ? 1 : 0,
+            transition: "opacity 0.8s ease-out",
+          }}
+        >
+          <button
+            onClick={() => navigate("/about")}
+            className="inline-flex items-center gap-2 text-sm text-primary/80 hover:text-primary transition-colors group"
+          >
+            <span className="h-8 w-8 rounded-full border border-primary/30 flex items-center justify-center group-hover:border-primary/60 transition-colors">
+              <User className="h-4 w-4" />
+            </span>
+            Meet Coach Kay — Your Clarity Guide
+            <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+          </button>
+        </div>
+
         {/* Ambient badge */}
         <div
-          className="mt-16 font-mono-label text-muted-foreground/50"
+          className="mt-8 font-mono-label text-muted-foreground/50"
           style={{
             opacity: phase >= 4 ? 1 : 0,
             transition: "opacity 1s ease-out",
