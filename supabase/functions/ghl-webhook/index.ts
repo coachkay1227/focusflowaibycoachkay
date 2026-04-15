@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
-const GHL_GATEWAY_URL = "https://connector-gateway.lovable.dev/ghl";
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -19,20 +17,20 @@ serve(async (req) => {
       });
     }
 
-    const ghlApiKey = Deno.env.get("GHL_API_KEY");
-    if (!ghlApiKey) {
-      console.log(`[ghl-webhook] GHL_API_KEY not configured. Would send event: ${event}`, JSON.stringify(payload));
-      return new Response(JSON.stringify({ success: true, queued: false, reason: "no_api_key" }), {
+    // Prefer GHL_WEBHOOK_URL, fall back to GHL_API_KEY for backwards compat
+    const webhookUrlRaw = Deno.env.get("GHL_WEBHOOK_URL") || Deno.env.get("GHL_API_KEY");
+    if (!webhookUrlRaw) {
+      console.log(`[ghl-webhook] No webhook URL configured. Would send event: ${event}`, JSON.stringify(payload));
+      return new Response(JSON.stringify({ success: true, queued: false, reason: "no_webhook_url" }), {
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    // Validate that GHL_API_KEY is a proper webhook URL
     let webhookUrl: URL;
     try {
-      webhookUrl = new URL(ghlApiKey);
+      webhookUrl = new URL(webhookUrlRaw);
     } catch {
-      console.error(`[ghl-webhook] GHL_API_KEY is not a valid URL. Update the secret with your full GHL webhook URL (e.g. https://services.leadconnectorhq.com/hooks/...).`);
+      console.error(`[ghl-webhook] Webhook URL is not valid. Set GHL_WEBHOOK_URL to your full GHL webhook URL.`);
       return new Response(JSON.stringify({ success: false, reason: "invalid_webhook_url" }), {
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
@@ -52,7 +50,6 @@ serve(async (req) => {
     if (!res.ok) {
       const err = await res.text();
       console.error(`[ghl-webhook] GHL error (${res.status}):`, err);
-      // Don't throw — GHL webhook failures shouldn't break the user flow
     }
 
     return new Response(JSON.stringify({ success: true }), {
