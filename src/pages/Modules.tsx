@@ -15,10 +15,11 @@ import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/hooks/use-subscription";
 import { STRIPE_TIERS } from "@/lib/stripe-tiers";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 const PILLARS: FocusPillar[] = ["F", "O", "C", "U", "S"];
 
