@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AdminViewProvider } from "@/contexts/AdminViewContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
@@ -17,6 +18,7 @@ import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Kiosk from "./pages/Kiosk.tsx";
 import ChatWidget from "./components/ChatWidget.tsx";
+import { AdminViewToggle } from "./components/AccessGate.tsx";
 import PageSkeleton from "./components/PageSkeleton.tsx";
 import DesktopNav from "./components/DesktopNav.tsx";
 
@@ -40,6 +42,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <AdminViewProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -73,9 +76,11 @@ const App = () => (
           </Routes>
           <DesktopNav />
           <ChatWidget />
+          <AdminViewToggle />
           </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
+      </AdminViewProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
