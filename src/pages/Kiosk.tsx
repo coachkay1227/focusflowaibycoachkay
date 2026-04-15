@@ -35,7 +35,7 @@ const Kiosk = () => {
   const current = TESTIMONIALS[quoteIndex];
 
   return (
-    <div className="relative min-h-screen overflow-hidden grain-overlay flex flex-col items-center justify-center px-8 cursor-default select-none">
+    <div className="relative min-h-screen overflow-hidden grain-overlay flex flex-col items-center justify-center px-8 pt-20 pb-16 cursor-default select-none">
       <FloatingOrbs />
 
       {/* Brand */}
