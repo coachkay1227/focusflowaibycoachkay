@@ -127,7 +127,7 @@ function generateQRMatrix(text: string): boolean[][] {
   return matrix;
 }
 
-const QRCodeDisplay = ({ url = "https://focusflowelevation-hub.com/clarity", size = 200, label }: QRCodeDisplayProps) => {
+const QRCodeDisplay = ({ url = "https://focusflowaibycoachkay.lovable.app/clarity", size = 200, label }: QRCodeDisplayProps) => {
   const matrix = useMemo(() => generateQRMatrix(url), [url]);
   const cellSize = size / QR_SIZE;
 

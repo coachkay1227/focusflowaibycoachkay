@@ -39,7 +39,7 @@ const Kiosk = () => {
       <FloatingOrbs />
 
       {/* Brand */}
-      <div className="relative z-10 absolute top-8 left-8">
+      <div className="z-10 absolute top-8 left-8">
         <div className="font-heading text-xl font-light tracking-wide text-foreground">
           <span className="text-primary">Focus</span>Flow
           <span className="text-muted-foreground/40 text-sm ml-2">by Coach Kay</span>
@@ -89,7 +89,7 @@ const Kiosk = () => {
       </div>
 
       {/* Credential line */}
-      <div className="relative z-10 absolute bottom-8 text-center">
+      <div className="z-10 absolute bottom-8 left-0 right-0 text-center">
         <p className="text-xs text-muted-foreground/30 font-mono-label tracking-wider">
           Master Certified Life Coach · 600+ Hours
         </p>
