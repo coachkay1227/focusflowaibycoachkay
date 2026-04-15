@@ -120,7 +120,7 @@ const Challenges = () => {
 
       <div className="relative z-10 px-6 py-12 max-w-4xl mx-auto">
         <AnimatedSection className="text-center mb-16">
-          <span className="font-mono-label text-primary tracking-[0.2em]">Challenge Programs</span>
+          <span className="font-mono-label text-primary tracking-[0.2em]">Guided Transformation Actions</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
             style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
@@ -128,7 +128,7 @@ const Challenges = () => {
             Commit to the work
           </h1>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            Guided daily prompts with adaptive coaching. Pick a duration that matches your readiness.
+            Each challenge is a structured daily coaching experience designed to create lasting change. Pick a duration that matches your readiness.
           </p>
         </AnimatedSection>
 
