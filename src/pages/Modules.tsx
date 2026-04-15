@@ -290,6 +290,13 @@ const Modules = () => {
           <p className="text-center text-muted-foreground mt-12">No programs found for this pillar.</p>
         )}
       </div>
+
+      <ApplyNowDialog
+        open={applyDialog.open}
+        onOpenChange={(open) => setApplyDialog((prev) => ({ ...prev, open }))}
+        mode={applyDialog.mode}
+        programName={applyDialog.programName}
+      />
     </div>
   );
 };
