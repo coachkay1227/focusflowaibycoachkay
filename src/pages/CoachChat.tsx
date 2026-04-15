@@ -16,12 +16,19 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coach-chat`;
 
+const starterPrompts = [
+  "I feel stuck but I can't explain why.",
+  "Help me figure out what I really want.",
+  "I keep repeating the same patterns.",
+  "I have a big decision to make.",
+];
+
 const CoachChat = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const context = (location.state as { context?: string } | null)?.context || null;
-    const { user } = useAuth();
+  const { user } = useAuth();
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -171,6 +178,7 @@ const CoachChat = () => {
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Go back home"
         >
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
@@ -184,14 +192,29 @@ const CoachChat = () => {
       <div className="relative z-10 flex-1 overflow-y-auto px-6 py-4">
         <div className="max-w-2xl mx-auto space-y-6">
           {messages.length === 0 && !isLoading && (
-            <div className="text-center py-20">
+            <div className="text-center py-16">
               <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-primary/30 flex items-center justify-center">
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
               <h2 className="font-heading text-2xl font-light mb-3">Talk to Coach Kay</h2>
-              <p className="text-muted-foreground max-w-md mx-auto">
+              <p className="text-muted-foreground max-w-md mx-auto mb-8">
                 Share what's on your mind. I'm here to help you see clearly and move with purpose.
               </p>
+
+              {/* Starter prompts */}
+              {user && (
+                <div className="flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
+                  {starterPrompts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      onClick={() => sendMessage(prompt)}
+                      className="px-4 py-2.5 rounded-full border border-border/60 bg-card/30 backdrop-blur-sm text-sm text-foreground/80 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -205,7 +228,7 @@ const CoachChat = () => {
                 }`}
               >
                 {msg.role === "assistant" ? (
-                  <div className="prose prose-sm prose-invert max-w-none [&_p]:text-foreground/90 [&_strong]:text-primary [&_li]:text-foreground/80">
+                  <div className="coach-prose prose prose-sm prose-invert max-w-none [&_p]:text-foreground/90 [&_strong]:text-primary [&_li]:text-foreground/80 [&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_blockquote]:border-primary/30 [&_blockquote]:text-foreground/70">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </div>
                 ) : (
@@ -217,20 +240,23 @@ const CoachChat = () => {
 
           {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="flex justify-start">
-              <div className="bg-card/40 border border-border backdrop-blur-sm rounded-lg p-4">
-                <div className="flex gap-1">
-                  <div
-                    className="w-2 h-2 rounded-full bg-primary/40 animate-bounce"
-                    style={{ animationDelay: "0ms" }}
-                  />
-                  <div
-                    className="w-2 h-2 rounded-full bg-primary/40 animate-bounce"
-                    style={{ animationDelay: "150ms" }}
-                  />
-                  <div
-                    className="w-2 h-2 rounded-full bg-primary/40 animate-bounce"
-                    style={{ animationDelay: "300ms" }}
-                  />
+              <div className="bg-card/40 border border-border backdrop-blur-sm rounded-lg px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground/60 font-mono-label">Coach Kay is thinking</span>
+                  <div className="flex gap-1">
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-primary/50 animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-primary/50 animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-primary/50 animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -254,6 +280,7 @@ const CoachChat = () => {
             disabled={!user}
             className="bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 min-h-[48px] max-h-[120px] resize-none focus:border-primary/40"
             rows={1}
+            aria-label="Message input"
           />
           <Button
             onClick={handleSend}
