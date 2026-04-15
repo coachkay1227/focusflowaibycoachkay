@@ -61,7 +61,7 @@ const CoachKay = () => {
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid items-center gap-12 md:grid-cols-2">
             {/* Photo */}
-            <AnimatedSection direction="left">
+            <AnimatedSection>
               <div className="relative mx-auto max-w-sm">
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/20 blur-lg" />
                 <img
@@ -74,7 +74,7 @@ const CoachKay = () => {
             </AnimatedSection>
 
             {/* Intro */}
-            <AnimatedSection direction="right">
+            <AnimatedSection>
               <p className="mb-2 font-sans text-sm uppercase tracking-widest text-primary">
                 Meet Your Coach
               </p>
