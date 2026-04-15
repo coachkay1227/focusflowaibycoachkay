@@ -6,12 +6,13 @@ import { saveSessionCloud, getRecentSessionsCloud, hasHistoryCloud, type Session
 import { updateModuleProgress, getUserPreferences } from "@/lib/enrollment-store";
 import { resolveTrack, type TrackResult } from "@/lib/track-resolver";
 import { getModule } from "@/lib/modules";
+import { getProgramBySlug } from "@/data/programs";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight } from "lucide-react";
+import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 
@@ -137,6 +138,17 @@ const ResultScreen = () => {
   const recommendedModule = useMemo(() => {
     if (!trackResult?.recommendedModuleIds?.[0]) return null;
     return getModule(trackResult.recommendedModuleIds[0]);
+  }, [trackResult]);
+
+  const recommendedProgram = useMemo(() => {
+    if (!trackResult?.recommendedProgramSlugs?.[0]) return null;
+    return getProgramBySlug(trackResult.recommendedProgramSlugs[0]);
+  }, [trackResult]);
+
+  const challengeLabel = useMemo(() => {
+    if (!trackResult) return "Start a Challenge";
+    const type = trackResult.recommendedChallengeType;
+    return `${type.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase())} Challenge`;
   }, [trackResult]);
 
   if (!answers) return null;
@@ -299,7 +311,7 @@ const ResultScreen = () => {
                     >
                       <span className="font-mono-label text-primary/50 text-xs">Recommended Challenge</span>
                       <h4 className="font-heading text-lg font-light mt-1 group-hover:text-primary transition-colors">
-                        {trackResult.recommendedChallengeType.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase())} Challenge
+                        {challengeLabel}
                       </h4>
                       <p className="text-muted-foreground text-sm mt-1">A structured daily coaching experience matched to your current phase.</p>
                       <span className="inline-flex items-center gap-1 text-primary/60 text-xs mt-2 group-hover:text-primary transition-colors">
@@ -308,16 +320,16 @@ const ResultScreen = () => {
                     </button>
 
                     {/* Recommended program */}
-                    {trackResult.recommendedProgramSlugs?.[0] && (
+                    {recommendedProgram && (
                       <button
-                        onClick={() => navigate(`/programs/${trackResult.recommendedProgramSlugs[0]}`)}
+                        onClick={() => navigate(`/programs/${recommendedProgram.slug}`)}
                         className="w-full text-left p-5 rounded-lg border border-border/50 bg-card/20 hover:border-primary/30 transition-all group"
                       >
                         <span className="font-mono-label text-primary/50 text-xs">Recommended Program</span>
                         <h4 className="font-heading text-lg font-light mt-1 group-hover:text-primary transition-colors">
-                          Explore deeper support
+                          {recommendedProgram.title}
                         </h4>
-                        <p className="text-muted-foreground text-sm mt-1">Structured programs designed for lasting transformation.</p>
+                        <p className="text-muted-foreground text-sm mt-1">{recommendedProgram.tagline}</p>
                         <span className="inline-flex items-center gap-1 text-primary/60 text-xs mt-2 group-hover:text-primary transition-colors">
                           Learn more <ArrowRight className="h-3 w-3" />
                         </span>
@@ -342,32 +354,61 @@ const ResultScreen = () => {
           </AnimatedSection>
 
           {/* CTAs */}
-          <AnimatedSection delay={1300} className="text-center space-y-4">
-            <h3 className="font-heading text-2xl md:text-3xl font-light mb-8">What's your next move?</h3>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
-              <Button
-                onClick={() => navigate("/coach", { state: { context: { ...insight, answers } } })}
-                className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-6 py-4 sm:px-8 sm:py-6"
-              >
-                <MessageCircle className="mr-2 h-5 w-5" />
-                Continue with Coach Kay
-              </Button>
+          <AnimatedSection delay={1300} className="text-center space-y-6">
+            <h3 className="font-heading text-2xl md:text-3xl font-light mb-2">Your path forward</h3>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
+              This pattern won't change on its own — here's where to start.
+            </p>
+
+            {/* Primary CTA — dominant */}
+            <Button
+              onClick={() => navigate("/coach", { state: { context: { ...insight, answers } } })}
+              className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-10 py-6 text-lg shadow-lg shadow-primary/20"
+            >
+              <Zap className="mr-2 h-5 w-5" />
+              Talk to Coach Kay About This
+            </Button>
+
+            {/* Secondary CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap pt-2">
               <Button
                 variant="outline"
-                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4 sm:px-8 sm:py-6"
+                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4"
                 onClick={() => window.open("https://call.coachkayelevates.org/widget/booking/d93xqjlytvCCkndwqJmu", "_blank")}
               >
-                <Calendar className="mr-2 h-5 w-5" />
-                Book a Session with Coach Kay
+                <Calendar className="mr-2 h-4 w-4" />
+                Book a Live Session
               </Button>
-              <Button
-                variant="outline"
-                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4 sm:px-8 sm:py-6"
-                onClick={() => navigate("/challenges")}
+              {trackResult && (
+                <Button
+                  variant="outline"
+                  className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4"
+                  onClick={() => navigate(`/challenges/${trackResult.recommendedChallengeType}`)}
+                >
+                  <Trophy className="mr-2 h-4 w-4" />
+                  {challengeLabel}
+                </Button>
+              )}
+              {recommendedProgram && (
+                <Button
+                  variant="outline"
+                  className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4"
+                  onClick={() => navigate(`/programs/${recommendedProgram.slug}`)}
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  {recommendedProgram.title}
+                </Button>
+              )}
+            </div>
+
+            {/* Soft upsell to full programs */}
+            <div className="pt-4">
+              <button
+                onClick={() => navigate("/modules")}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-4"
               >
-                <Trophy className="mr-2 h-5 w-5" />
-                Start a Challenge
-              </Button>
+                See all programs & pricing →
+              </button>
             </div>
           </AnimatedSection>
         </div>

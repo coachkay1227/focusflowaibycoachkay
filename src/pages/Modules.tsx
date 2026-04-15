@@ -64,6 +64,60 @@ const Modules = () => {
     toast({ title: "Enrolled!", description: "Program added to your dashboard." });
   };
 
+  interface PricingPlan {
+    name: string; price: string; period: string; desc: string;
+    priceId: string | null | undefined; highlight: boolean; apply: boolean;
+  }
+
+  const renderPricingCard = (plan: PricingPlan) => (
+    <div
+      key={plan.name}
+      className={`clarity-card rounded-lg backdrop-blur-sm p-6 flex flex-col border ${
+        plan.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/30"
+      }`}
+    >
+      {plan.highlight && (
+        <span className="font-mono-label text-[10px] tracking-wider text-primary mb-2">MOST POPULAR</span>
+      )}
+      {plan.apply && !plan.highlight && (
+        <span className="font-mono-label text-[10px] tracking-wider text-muted-foreground mb-2">APPLICATION REQUIRED</span>
+      )}
+      <h3 className="font-heading text-lg font-medium">{plan.name}</h3>
+      <div className="mt-2 mb-3">
+        <span className="font-heading text-3xl font-light text-primary">{plan.price}</span>
+        {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+      </div>
+      <p className="text-muted-foreground text-xs leading-relaxed flex-1">{plan.desc}</p>
+      {plan.apply ? (
+        <Button
+          onClick={() => setApplyDialog({ open: true, mode: "application", programName: plan.name })}
+          size="sm"
+          className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
+        >
+          Apply Now
+        </Button>
+      ) : plan.priceId ? (
+        <Button
+          onClick={() => user ? startCheckout(plan.priceId!) : navigate("/auth")}
+          size="sm"
+          className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
+        >
+          {user ? "Get Started" : "Sign In to Start"}
+        </Button>
+      ) : (
+        <Button
+          onClick={() => navigate("/clarity")}
+          variant="outline"
+          size="sm"
+          className="mt-4 border-border hover:border-primary/40"
+        >
+          <Sparkles className="mr-1 h-3 w-3" />
+          Try Free
+        </Button>
+      )}
+    </div>
+  );
+
   const filteredPrograms = activePillar === "all"
     ? [...programs].sort((a, b) => a.order - b.order)
     : getProgramsByPillar(activePillar);
@@ -118,87 +172,61 @@ const Modules = () => {
 
         {/* Pricing */}
         <AnimatedSection delay={100} className="mb-14">
-          <div className="text-center mb-6">
-            <span className="font-mono-label text-primary tracking-[0.2em]">PLANS</span>
+          <div className="text-center mb-8">
+            <span className="font-mono-label text-primary tracking-[0.2em]">YOUR JOURNEY</span>
             <h2 className="font-heading text-2xl md:text-3xl font-light mt-2">
-              Find your level
+              Choose your path
             </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-            {[
-              { name: "Free", price: "$0", period: "", desc: "Clarity Check + Mirror Challenge entry", priceId: null, highlight: false, apply: false },
-              { name: "Monthly Subscriber", price: "$27", period: "/mo", desc: "All modules, coach chat, weekly insights", priceId: STRIPE_TIERS.subscriber?.[0]?.price_id, highlight: false, apply: false },
-              { name: "30-Day F.O.C.U.S. Reset", price: "$297", period: "", desc: "Structured 30-day clarity reset with full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 297)?.price_id, highlight: false, apply: false },
-              { name: "30-Day Intensive", price: "$497", period: "", desc: "4 private sessions (60 min) + full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 497)?.price_id, highlight: true, apply: true },
-              { name: "8-Week Cohort", price: "$997", period: "", desc: "Coach Kay-led group cohort + all modules + community", priceId: STRIPE_TIERS.cohort?.[0]?.price_id, highlight: false, apply: false },
-              { name: "12-Week Mastery", price: "$1,997", period: "", desc: "Deep transformation program — application required", priceId: STRIPE_TIERS.premium?.find(c => c.price === 1997)?.price_id, highlight: false, apply: true },
-            ].map((plan) => (
-              <div
-                key={plan.name}
-                className={`clarity-card rounded-lg backdrop-blur-sm p-6 flex flex-col border ${
-                  plan.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/30"
-                }`}
-              >
-                {plan.highlight && (
-                  <span className="font-mono-label text-[10px] tracking-wider text-primary mb-2">MOST POPULAR</span>
-                )}
-                {plan.apply && !plan.highlight && (
-                  <span className="font-mono-label text-[10px] tracking-wider text-muted-foreground mb-2">APPLICATION REQUIRED</span>
-                )}
-                <h3 className="font-heading text-lg font-medium">{plan.name}</h3>
-                <div className="mt-2 mb-3">
-                  <span className="font-heading text-3xl font-light text-primary">{plan.price}</span>
-                  {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
-                </div>
-                <p className="text-muted-foreground text-xs leading-relaxed flex-1">{plan.desc}</p>
-                {plan.apply ? (
-                  <Button
-                    onClick={() => setApplyDialog({ open: true, mode: "application", programName: plan.name })}
-                    size="sm"
-                    className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
-                  >
-                    Apply Now
-                  </Button>
-                ) : plan.priceId ? (
-                  <Button
-                    onClick={() => user ? startCheckout(plan.priceId!) : navigate("/auth")}
-                    size="sm"
-                    className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
-                  >
-                    {user ? "Get Started" : "Sign In to Start"}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => navigate("/clarity")}
-                    variant="outline"
-                    size="sm"
-                    className="mt-4 border-border hover:border-primary/40"
-                  >
-                    <Sparkles className="mr-1 h-3 w-3" />
-                    Try Free
-                  </Button>
-                )}
-              </div>
-            ))}
+            <p className="text-muted-foreground text-sm mt-2 max-w-md mx-auto">Every transformation starts somewhere. Pick the level that matches where you are right now.</p>
           </div>
 
-          {/* Corporate & Private Coaching */}
-          <div className="mt-6 max-w-5xl mx-auto">
-            <div className="clarity-card rounded-lg backdrop-blur-sm p-6 border border-border bg-card/30 flex flex-col sm:flex-row items-center gap-4">
-              <div className="flex-1 text-center sm:text-left">
-                <h3 className="font-heading text-lg font-medium">Corporate & Private Coaching</h3>
-                <p className="text-muted-foreground text-xs leading-relaxed mt-1">
-                  Custom transformation programs for teams, organizations, or private 1:1 engagements with Coach Kay.
-                </p>
+          <div className="max-w-5xl mx-auto space-y-10">
+            {/* ── Start Here ── */}
+            <div>
+              <h3 className="font-mono-label text-primary/60 tracking-[0.15em] text-xs mb-4">START HERE</h3>
+              <div className="grid sm:grid-cols-1 max-w-md gap-4">
+                {renderPricingCard({ name: "Free", price: "$0", period: "", desc: "Clarity Check + Mirror Challenge entry — no commitment required", priceId: null, highlight: false, apply: false })}
               </div>
-              <Button
-                onClick={() => setApplyDialog({ open: true, mode: "inquiry" })}
-                size="sm"
-                className="bg-card border border-border text-foreground hover:border-primary/40 shrink-0"
-              >
-                <Mail className="mr-1 h-3 w-3" />
-                Contact Coach Kay
-              </Button>
+            </div>
+
+            {/* ── Go Deeper ── */}
+            <div>
+              <h3 className="font-mono-label text-primary/60 tracking-[0.15em] text-xs mb-4">GO DEEPER</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {renderPricingCard({ name: "Monthly Subscriber", price: "$27", period: "/mo", desc: "Ongoing access — all modules, coach chat, weekly insights", priceId: STRIPE_TIERS.subscriber?.[0]?.price_id, highlight: false, apply: false })}
+                {renderPricingCard({ name: "30-Day F.O.C.U.S. Reset", price: "$297", period: "", desc: "Structured 30-day clarity reset with full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 297)?.price_id, highlight: false, apply: false })}
+              </div>
+            </div>
+
+            {/* ── Full Transformation ── */}
+            <div>
+              <h3 className="font-mono-label text-primary/60 tracking-[0.15em] text-xs mb-4">FULL TRANSFORMATION</h3>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {renderPricingCard({ name: "30-Day Intensive", price: "$497", period: "", desc: "4 private sessions (60 min) + full platform access", priceId: STRIPE_TIERS.premium?.find(c => c.price === 497)?.price_id, highlight: true, apply: true })}
+                {renderPricingCard({ name: "8-Week Cohort", price: "$997", period: "", desc: "Coach Kay-led group cohort + all modules + community", priceId: STRIPE_TIERS.cohort?.[0]?.price_id, highlight: false, apply: false })}
+                {renderPricingCard({ name: "12-Week Mastery", price: "$1,997", period: "", desc: "Deep transformation program — application required", priceId: STRIPE_TIERS.premium?.find(c => c.price === 1997)?.price_id, highlight: false, apply: true })}
+              </div>
+            </div>
+
+            {/* ── Custom Solutions ── */}
+            <div>
+              <h3 className="font-mono-label text-primary/60 tracking-[0.15em] text-xs mb-4">CUSTOM SOLUTIONS</h3>
+              <div className="clarity-card rounded-lg backdrop-blur-sm p-6 border border-border bg-card/30 flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="font-heading text-lg font-medium">Corporate & Private Coaching</h3>
+                  <p className="text-muted-foreground text-xs leading-relaxed mt-1">
+                    Custom transformation programs for teams, organizations, or private 1:1 engagements with Coach Kay.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setApplyDialog({ open: true, mode: "inquiry" })}
+                  size="sm"
+                  className="bg-card border border-border text-foreground hover:border-primary/40 shrink-0"
+                >
+                  <Mail className="mr-1 h-3 w-3" />
+                  Contact Coach Kay
+                </Button>
+              </div>
             </div>
           </div>
         </AnimatedSection>
