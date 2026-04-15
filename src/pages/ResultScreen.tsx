@@ -116,6 +116,23 @@ const ResultScreen = () => {
 
     // Update module enrollment progress
     updateModuleProgress(moduleId);
+
+    // Fire GHL webhook for clarity session completion (fire-and-forget)
+    const userEmail = currentSession?.user?.email;
+    if (userEmail && trackResult) {
+      supabase.functions.invoke("ghl-webhook", {
+        body: {
+          event: "clarity_session_complete",
+          payload: {
+            email: userEmail,
+            moduleId,
+            phase: trackResult?.phaseLabel || "unknown",
+            track: trackResult?.recommendedChallengeType || "unknown",
+            insightSummary: insightData?.truth?.slice(0, 200) || "",
+          },
+        },
+      }).catch(() => {});
+    }
   };
 
   const fetchPatterns = async () => {
