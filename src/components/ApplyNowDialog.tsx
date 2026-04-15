@@ -60,6 +60,30 @@ const ApplyNowDialog = ({ open, onOpenChange, mode, programName }: ApplyNowDialo
         title: isApplication ? "Application received!" : "Inquiry sent!",
         description: "Coach Kay will be in touch soon.",
       });
+
+      // Fire confirmation email + GHL webhook (fire-and-forget)
+      const submissionId = crypto.randomUUID();
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "application-received",
+          recipientEmail: email.trim(),
+          idempotencyKey: `app-received-${submissionId}`,
+          templateData: { name: name.trim(), programName: programName || undefined },
+        },
+      }).catch(() => {});
+
+      supabase.functions.invoke("ghl-webhook", {
+        body: {
+          event: isApplication ? "application" : "inquiry",
+          payload: {
+            name: name.trim(),
+            email: email.trim(),
+            organization: organization.trim() || undefined,
+            programName: programName || undefined,
+          },
+        },
+      }).catch(() => {});
+
       onOpenChange(false);
       setName("");
       setEmail("");

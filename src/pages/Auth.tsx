@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { getUserPreferences } from "@/lib/enrollment-store";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
@@ -62,6 +63,8 @@ const Auth = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else if (mode === "signup") {
       toast({ title: "Check your email", description: "We've sent you a verification link. Please confirm your email before signing in." });
+      // Fire welcome email + GHL webhook (fire-and-forget, don't block UX)
+      firePostSignupHooks(email);
       setMode("signin");
     } else {
       // useEffect will handle redirect based on onboarding status
@@ -81,6 +84,25 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  const firePostSignupHooks = useCallback((userEmail: string) => {
+    // Transactional welcome email
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "welcome-to-focusflow",
+        recipientEmail: userEmail,
+        idempotencyKey: `welcome-${userEmail}-${Date.now()}`,
+      },
+    }).catch(() => {});
+
+    // GHL webhook for nurture sequence
+    supabase.functions.invoke("ghl-webhook", {
+      body: {
+        event: "signup",
+        payload: { email: userEmail },
+      },
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
