@@ -1,0 +1,21 @@
+{
+  "name": "FocusFlow AI — Clarity Code by Coach Kay",
+  "short_name": "FocusFlow AI",
+  "description": "See clearly. Move with purpose. Master-certified clarity coaching by Coach Kay.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1520",
+  "theme_color": "#0d1520",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

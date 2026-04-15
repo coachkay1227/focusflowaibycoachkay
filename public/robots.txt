@@ -38,6 +38,29 @@ Allow: /
 Disallow: /admin
 Disallow: /email-preview
 
+User-agent: Yandex
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /result
+
+User-agent: Baiduspider
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: Sogou
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /dashboard
+
 # Social media crawlers
 User-agent: Twitterbot
 Allow: /
@@ -75,6 +98,12 @@ Allow: /
 Disallow: /admin
 Disallow: /profile
 
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /dashboard
+
 User-agent: Amazonbot
 Allow: /
 Disallow: /admin
@@ -83,6 +112,37 @@ User-agent: PerplexityBot
 Allow: /
 Disallow: /admin
 Disallow: /profile
+
+User-agent: CCBot
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: Bytespider
+Allow: /
+Disallow: /admin
+Disallow: /email-preview
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: Cohere-ai
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /dashboard
+
+User-agent: ia_archiver
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /dashboard
 
 # Default
 User-agent: *
