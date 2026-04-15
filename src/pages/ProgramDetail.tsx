@@ -168,6 +168,28 @@ const ProgramDetail = () => {
           ))}
         </div>
 
+        {/* Try Free Clarity Check — shown for paid non-assessment programs */}
+        {program.accessTier !== "free" && program.type !== "assessment" && (
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" /> Not sure yet? Try a free Clarity Check
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Get a personalized insight session — no subscription needed.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/clarity/quick-clarity-check")}
+              className="shrink-0 gap-1.5"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Free Clarity Check
+            </Button>
+          </div>
+        )}
+
         {/* Pricing & CTA */}
         <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6 md:p-8 mb-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
