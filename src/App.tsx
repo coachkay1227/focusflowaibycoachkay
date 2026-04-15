@@ -74,6 +74,7 @@ const App = () => (
             <Route path="/kiosk" element={<Kiosk />} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><EmailPreview /></ProtectedRoute>} />
             <Route path="/sitemap" element={<Sitemap />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           </main>
