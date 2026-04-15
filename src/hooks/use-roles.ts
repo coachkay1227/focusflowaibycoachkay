@@ -16,8 +16,8 @@ export function useRoles() {
 
     const checkRole = async () => {
       try {
-        // 1. Check via has_role RPC (proper RBAC — not in generated types yet)
-        const { data: hasAdminRole, error: roleError } = await (supabase.rpc as any)("has_role", {
+        // 1. Check via has_role RPC (proper RBAC)
+        const { data: hasAdminRole, error: roleError } = await supabase.rpc("has_role", {
           _user_id: user.id,
           _role: "admin",
         });
