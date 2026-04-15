@@ -12,7 +12,7 @@ const navItems = [
   { label: "About", path: "/about", icon: Info, authOnly: false },
 ];
 
-const PRIVATE_ROUTES = ["/admin", "/kiosk", "/email-preview", "/onboarding", "/auth", "/reset-password"];
+const PRIVATE_ROUTES = ["/admin", "/kiosk", "/email-preview", "/onboarding", "/auth", "/reset-password", "/dashboard", "/community", "/coach", "/challenges", "/modules", "/result", "/clarity", "/mirror-challenge", "/programs", "/profile"];
 
 const DesktopNav = () => {
   const navigate = useNavigate();

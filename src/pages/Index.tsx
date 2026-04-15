@@ -137,8 +137,14 @@ const Index = () => {
             onClick={() => navigate("/coach")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
-            Coach Kay
-</button>
+            AI Coach
+          </button>
+          <button
+            onClick={() => navigate("/about")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            About
+          </button>
           <button
             onClick={() => navigate("/community")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
@@ -583,7 +589,10 @@ const Index = () => {
                 Challenges
               </button>
               <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">
-                Coach Kay
+                AI Coach
+              </button>
+              <button onClick={() => navigate("/about")} className="hover:text-foreground transition-colors">
+                About
               </button>
               <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">
                 Community

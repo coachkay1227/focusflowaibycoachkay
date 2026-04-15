@@ -95,7 +95,7 @@ const CoachKay = () => {
                 <Button
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={() => navigate("/kiosk")}
+                  onClick={() => navigate("/clarity")}
                 >
                   Free Clarity Check <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -224,7 +224,7 @@ const CoachKay = () => {
               <Button
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
-                onClick={() => navigate("/kiosk")}
+                onClick={() => navigate("/clarity")}
               >
                 Free Clarity Check <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
