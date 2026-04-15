@@ -1,30 +1,27 @@
 
 
-# Fix Weekly Insights CORS Error
+# Admin Bypass for Content Gating + View Toggle
 
 ## Problem
+As an admin, gated modules still show locked overlays because `AccessGate` only checks your `tier` (currently "free"), not your admin role. You need to see all content unrestricted while also being able to preview what regular users see.
 
-The `_shared/cors.ts` file only allows two origins. The Lovable preview domain (`*.lovableproject.com`) is not in the list, so the browser blocks the edge function response — causing "Failed to send a request to the Edge Function."
+## Plan
 
-## Fix
+### Step 1 — Admin bypasses AccessGate
+Update `src/components/AccessGate.tsx` to import `useRoles` and skip gating when `isAdmin` is true. One line change — admins see everything unlocked.
 
-Update `supabase/functions/_shared/cors.ts` to use `Access-Control-Allow-Origin: *` instead of a restrictive allowlist. This is the standard approach for Supabase edge functions called from web apps, and is safe because all sensitive endpoints already validate JWTs in code.
+### Step 2 — Admin bypasses gating in Modules page
+Update `src/pages/Modules.tsx` line 224: when `isAdmin` is true, set `needsGate = false` so all program cards render ungated.
 
-```typescript
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, stripe-signature, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
+### Step 3 — Add admin view toggle
+Add a small floating toggle in `AccessGate` and `Modules` that only appears for admins — "Admin View" vs "User View". When toggled to "User View", the admin bypass is disabled and you see exactly what a free-tier user sees. This toggle state will be stored in a simple React context or localStorage so it persists across pages.
 
-export function getCorsHeaders(_req?: Request): Record<string, string> {
-  return corsHeaders;
-}
-```
+### Step 4 — Fix "View Plans" button
+Update the `AccessGate` button that says "View Plans" — currently navigates to `/modules` which may be the same page. Change it to scroll to the pricing section on `/modules` using `navigate("/modules#plans")`.
 
-Then redeploy all edge functions that import from `_shared/cors.ts` (all 10 functions).
-
-## Impact
-
-This fixes the Weekly Insights call and also prevents the same CORS issue from affecting any other edge function when accessed from the preview domain or any future custom domain.
+### Files Changed
+- `src/components/AccessGate.tsx` — add admin bypass + toggle
+- `src/pages/Modules.tsx` — add admin bypass + import useRoles
+- `src/contexts/AdminViewContext.tsx` — new, small context for the toggle state
+- `src/App.tsx` — wrap with AdminViewContext provider
 
