@@ -64,7 +64,61 @@ const Modules = () => {
     toast({ title: "Enrolled!", description: "Program added to your dashboard." });
   };
 
-  const filteredPrograms = activePillar === "all"
+  interface PricingPlan {
+    name: string; price: string; period: string; desc: string;
+    priceId: string | null | undefined; highlight: boolean; apply: boolean;
+  }
+
+  const renderPricingCard = (plan: PricingPlan) => (
+    <div
+      key={plan.name}
+      className={`clarity-card rounded-lg backdrop-blur-sm p-6 flex flex-col border ${
+        plan.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/30"
+      }`}
+    >
+      {plan.highlight && (
+        <span className="font-mono-label text-[10px] tracking-wider text-primary mb-2">MOST POPULAR</span>
+      )}
+      {plan.apply && !plan.highlight && (
+        <span className="font-mono-label text-[10px] tracking-wider text-muted-foreground mb-2">APPLICATION REQUIRED</span>
+      )}
+      <h3 className="font-heading text-lg font-medium">{plan.name}</h3>
+      <div className="mt-2 mb-3">
+        <span className="font-heading text-3xl font-light text-primary">{plan.price}</span>
+        {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+      </div>
+      <p className="text-muted-foreground text-xs leading-relaxed flex-1">{plan.desc}</p>
+      {plan.apply ? (
+        <Button
+          onClick={() => setApplyDialog({ open: true, mode: "application", programName: plan.name })}
+          size="sm"
+          className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
+        >
+          Apply Now
+        </Button>
+      ) : plan.priceId ? (
+        <Button
+          onClick={() => user ? startCheckout(plan.priceId!) : navigate("/auth")}
+          size="sm"
+          className={`mt-4 ${plan.highlight ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card border border-border text-foreground hover:border-primary/40"}`}
+        >
+          {user ? "Get Started" : "Sign In to Start"}
+        </Button>
+      ) : (
+        <Button
+          onClick={() => navigate("/clarity")}
+          variant="outline"
+          size="sm"
+          className="mt-4 border-border hover:border-primary/40"
+        >
+          <Sparkles className="mr-1 h-3 w-3" />
+          Try Free
+        </Button>
+      )}
+    </div>
+  );
+
+
     ? [...programs].sort((a, b) => a.order - b.order)
     : getProgramsByPillar(activePillar);
 
