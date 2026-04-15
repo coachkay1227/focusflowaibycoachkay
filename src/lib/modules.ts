@@ -17,6 +17,7 @@ export interface CoachingModule {
   toneMode: "supportive" | "reflective" | "direct" | "strategic";
   questions: ModuleQuestion[];
   duration: string;
+  themes: string[];
 }
 
 import { clarityQuestions } from "@/lib/clarity-engine";
@@ -30,6 +31,7 @@ export const coachingModules: CoachingModule[] = [
     icon: "eye",
     toneMode: "reflective",
     duration: "5 min",
+    themes: ["clarity", "awareness", "entry", "overwhelm"],
     questions: clarityQuestions,
   },
   {
@@ -40,6 +42,7 @@ export const coachingModules: CoachingModule[] = [
     icon: "heart",
     toneMode: "supportive",
     duration: "5 min",
+    themes: ["energy", "emotional", "burnout", "transition", "healing"],
     questions: [
       {
         id: "currentEmotion",
@@ -104,6 +107,7 @@ export const coachingModules: CoachingModule[] = [
     icon: "target",
     toneMode: "strategic",
     duration: "5 min",
+    themes: ["focus", "productivity", "overwhelm", "purpose", "burnout"],
     questions: [
       {
         id: "currentPriority",
@@ -166,6 +170,7 @@ export const coachingModules: CoachingModule[] = [
     icon: "sun",
     toneMode: "reflective",
     duration: "6 min",
+    themes: ["purpose", "identity", "meaning", "reinvention", "seeking"],
     questions: [
       {
         id: "happinessLevel",
@@ -236,6 +241,7 @@ export const coachingModules: CoachingModule[] = [
     icon: "compass",
     toneMode: "direct",
     duration: "5 min",
+    themes: ["identity", "alignment", "reinvention", "transition", "self-trust"],
     questions: [
       {
         id: "goalMisalignment",
