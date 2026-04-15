@@ -16,6 +16,7 @@ import Onboarding from "./pages/Onboarding.tsx";
 import EmailPreview from "./pages/EmailPreview.tsx";
 import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
 import Kiosk from "./pages/Kiosk.tsx";
 import ChatWidget from "./components/ChatWidget.tsx";
 import { AdminViewToggle } from "./components/AccessGate.tsx";
