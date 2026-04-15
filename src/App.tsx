@@ -9,22 +9,19 @@ import { AdminViewProvider } from "@/contexts/AdminViewContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
-import Community from "./pages/Community.tsx";
-import Auth from "./pages/Auth.tsx";
-import ResetPassword from "./pages/ResetPassword.tsx";
-import Onboarding from "./pages/Onboarding.tsx";
-import EmailPreview from "./pages/EmailPreview.tsx";
-import Sitemap from "./pages/Sitemap.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import Unsubscribe from "./pages/Unsubscribe.tsx";
-import EmailUnsubscribe from "./pages/EmailUnsubscribe.tsx";
-import Kiosk from "./pages/Kiosk.tsx";
-import ChatWidget from "./components/ChatWidget.tsx";
-import { AdminViewToggle } from "./components/AccessGate.tsx";
 import PageSkeleton from "./components/PageSkeleton.tsx";
-import DesktopNav from "./components/DesktopNav.tsx";
 
-// Lazy-load heavy pages
+// Lazy-load all pages except Index
+const Community = lazy(() => import("./pages/Community.tsx"));
+const Auth = lazy(() => import("./pages/Auth.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
+const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
+const EmailPreview = lazy(() => import("./pages/EmailPreview.tsx"));
+const Sitemap = lazy(() => import("./pages/Sitemap.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe.tsx"));
+const EmailUnsubscribe = lazy(() => import("./pages/EmailUnsubscribe.tsx"));
+const Kiosk = lazy(() => import("./pages/Kiosk.tsx"));
 const Modules = lazy(() => import("./pages/Modules.tsx"));
 const ProgramDetail = lazy(() => import("./pages/ProgramDetail.tsx"));
 const ClaritySession = lazy(() => import("./pages/ClaritySession.tsx"));
@@ -38,6 +35,13 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.tsx"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers.tsx"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics.tsx"));
 const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
+
+// Lazy-load shell components
+const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
+const DesktopNav = lazy(() => import("./components/DesktopNav.tsx"));
+const AdminViewToggle = lazy(() =>
+  import("./components/AccessGate.tsx").then((m) => ({ default: m.AdminViewToggle }))
+);
 
 const queryClient = new QueryClient();
 
@@ -53,9 +57,9 @@ const App = () => (
           <main id="main-content">
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/auth" element={<Suspense fallback={<PageSkeleton />}><Auth /></Suspense>} />
+            <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
+            <Route path="/onboarding" element={<Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense>} />
             <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Dashboard /></Suspense></ProtectedRoute>} />
             <Route path="/clarity" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense></ProtectedRoute>} />
             <Route path="/clarity/:moduleId" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense></ProtectedRoute>} />
@@ -66,23 +70,23 @@ const App = () => (
             <Route path="/modules" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Modules /></Suspense></ProtectedRoute>} />
             <Route path="/programs/:slug" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense></ProtectedRoute>} />
             <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
-            <Route path="/community" element={<Community />} />
+            <Route path="/community" element={<Suspense fallback={<PageSkeleton />}><Community /></Suspense>} />
             <Route path="/profile" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Profile /></Suspense></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminUsers /></Suspense></ProtectedRoute>} />
             <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAnalytics /></Suspense></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminContent /></Suspense></ProtectedRoute>} />
-            <Route path="/kiosk" element={<Kiosk />} />
-            <Route path="/email-preview" element={<ProtectedRoute requireAdmin><EmailPreview /></ProtectedRoute>} />
-            <Route path="/sitemap" element={<Sitemap />} />
-            <Route path="/unsubscribe" element={<Unsubscribe />} />
-            <Route path="/email-unsubscribe" element={<EmailUnsubscribe />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/kiosk" element={<Suspense fallback={<PageSkeleton />}><Kiosk /></Suspense>} />
+            <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
+            <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
+            <Route path="/unsubscribe" element={<Suspense fallback={<PageSkeleton />}><Unsubscribe /></Suspense>} />
+            <Route path="/email-unsubscribe" element={<Suspense fallback={<PageSkeleton />}><EmailUnsubscribe /></Suspense>} />
+            <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
           </Routes>
           </main>
-          <DesktopNav />
-          <ChatWidget />
-          <AdminViewToggle />
+          <Suspense fallback={null}><DesktopNav /></Suspense>
+          <Suspense fallback={null}><ChatWidget /></Suspense>
+          <Suspense fallback={null}><AdminViewToggle /></Suspense>
           </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
