@@ -18,6 +18,7 @@ import Sitemap from "./pages/Sitemap.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Kiosk from "./pages/Kiosk.tsx";
 import ChatWidget from "./components/ChatWidget.tsx";
+import { AdminViewToggle } from "./components/AccessGate.tsx";
 import PageSkeleton from "./components/PageSkeleton.tsx";
 import DesktopNav from "./components/DesktopNav.tsx";
 
@@ -41,6 +42,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <AdminViewProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -74,9 +76,11 @@ const App = () => (
           </Routes>
           <DesktopNav />
           <ChatWidget />
+          <AdminViewToggle />
           </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
+      </AdminViewProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
