@@ -118,7 +118,7 @@ const Modules = () => {
     </div>
   );
 
-
+  const filteredPrograms = activePillar === "all"
     ? [...programs].sort((a, b) => a.order - b.order)
     : getProgramsByPillar(activePillar);
 
