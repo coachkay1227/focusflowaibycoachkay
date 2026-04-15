@@ -86,14 +86,21 @@ const ResultScreen = () => {
     // Resolve track recommendation
     try {
       const prefs = await getUserPreferences();
+      const answersRecord: Record<string, string> = {};
+      for (const [k, v] of Object.entries(answers)) {
+        answersRecord[k] = typeof v === "string" ? v : JSON.stringify(v);
+      }
       const track = resolveTrack(
-        answers as Record<string, string>,
-        { primaryGoal: prefs?.primaryGoal || undefined, lifeStage: (prefs as Record<string, unknown>)?.lifeStage as string | undefined }
+        answersRecord,
+        { primaryGoal: prefs?.primaryGoal || undefined, lifeStage: undefined }
       );
       setTrackResult(track);
     } catch {
-      // Non-critical — still show results without recommendations
-      const track = resolveTrack(answers as Record<string, string>);
+      const answersRecord: Record<string, string> = {};
+      for (const [k, v] of Object.entries(answers)) {
+        answersRecord[k] = typeof v === "string" ? v : JSON.stringify(v);
+      }
+      const track = resolveTrack(answersRecord);
       setTrackResult(track);
     }
 
