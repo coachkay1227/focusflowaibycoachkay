@@ -15,7 +15,7 @@ const SEOHead = ({
   description,
   path,
   jsonLd,
-  ogImage = `${BASE_URL}/og-image.svg`,
+  ogImage = `${BASE_URL}/og-image.png`,
 }: SEOHeadProps) => {
   const canonical = `${BASE_URL}${path}`;
   const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
