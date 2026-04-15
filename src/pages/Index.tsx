@@ -138,7 +138,7 @@ const Index = () => {
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
             Coach Kay
-141:           </button>
+</button>
           <button
             onClick={() => navigate("/community")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
