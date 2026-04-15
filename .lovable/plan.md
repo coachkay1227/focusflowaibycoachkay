@@ -1,66 +1,42 @@
 
 
-# Performance Optimization Plan
+# Root Cause Analysis & Fix Plan
 
-## Root Cause Analysis
+## Issue 1: Assessments Not Visible in Paid Flows
 
-The Lighthouse report flags 4 issues. Here's the exact root cause of each:
+**Root cause (100% confirmed):** In `ProgramDetail.tsx` line 43, the "Start Session" button only appears when `canStart` is true, which requires `program.type === "assessment"`. However, the CTA rendering logic on line 184-239 checks `!hasAccess` **first**. For paid programs where the user doesn't have the required tier, the entire CTA block shows only the "Subscribe" or "Sign In" button — it never reaches the `canStart` branch that shows "Start Session".
 
-### 1. Render-blocking requests (280ms savings)
-**Root cause**: Line 33 of `index.html` loads Google Fonts via a synchronous `<link rel="stylesheet">`. This blocks first paint until the entire font CSS (and then the font files) download. The chain is: HTML → font CSS → 4 WOFF2 files.
+This means: for any paid assessment, the user sees pricing and details but **no assessment-specific UI** (no "Start Session" button). Even if they had access, gated assessments would hit the `isGated` check first and show "Application Required" or "Cohort Code Required" instead.
 
-**Fix**: Switch to non-blocking font loading using `media="print" onload="this.media='all'"` pattern, or use `rel="preload"` for the font CSS.
+Additionally, all current assessments in `programs.ts` are `accessTier: "free"` — there are no paid assessments yet. So if you're looking at paid programs like "Power Hour Challenge" (type: `challenge`, not `assessment`), there is no assessment to show because it's a challenge, not an assessment. The "Start Session" button only appears for assessment-type programs.
 
-### 2. Max Potential First Input Delay (280ms)
-**Root cause**: The main JS bundle (`index-DZ4_UYaP.js`, 255KB) executes as a single long task. This is the *same* bundle that contains all eagerly-imported pages: `Index`, `Community`, `Auth`, `ResetPassword`, `Onboarding`, `EmailPreview`, `Sitemap`, `NotFound`, `Unsubscribe`, `EmailUnsubscribe`, `Kiosk`, `ChatWidget`, `AccessGate`, `DesktopNav`. These are all statically imported in `App.tsx` (lines 11-25), so they ship in the initial bundle even though most users only visit `/`.
+**Fix:** The CTA logic needs to show a "Start Session" or "Try Assessment" option for assessment-type programs even within paid flows, or clarify that challenges don't have assessments. The cleanest fix is:
+- For paid **assessment** programs where the user lacks access: show a locked preview of the assessment with an upgrade CTA
+- For paid **non-assessment** programs (challenges, courses, etc.): the current behavior is correct — there's no assessment to show
 
-**Fix**: Lazy-load all pages except `Index`. Move `ChatWidget`, `DesktopNav`, and `AdminViewToggle` to lazy imports with idle loading.
+If you want every paid program to have an embedded assessment preview or link to the free Clarity Check, that's a feature addition.
 
-### 3. Unused JavaScript (144 KiB savings)
-**Root cause**: Same as #2 — 58% of `index-DZ4_UYaP.js` is unused on initial load because pages like `Auth`, `Community`, `Kiosk`, `Onboarding`, etc. are eagerly bundled but not rendered on `/`.
+## Issue 2: GHL Webhook Failing
 
-**Fix**: Same lazy-loading fix resolves this.
+**Root cause (100% confirmed from logs):** The `GHL_API_KEY` secret currently contains the GHL SI/API token you provided earlier (not a URL). The `ghl-webhook` function validates that `GHL_API_KEY` is a valid URL (line 33: `new URL(ghlApiKey)`), and since an API token isn't a URL, it fails with `invalid_webhook_url`.
 
-### 4. Cache lifetimes (355 KiB savings)
-**Root cause**: `vercel.json` has no `Cache-Control` headers for static assets. Vite outputs hashed filenames (`index-DZ4_UYaP.js`) which are safe to cache indefinitely, but without explicit headers Vercel serves them with `cache-control: no-cache` or short TTLs.
+The webhook URL you provided (`https://services.leadconnectorhq.com/hooks/WQpTteopklZd5iY7mogH/webhook-trigger/baf9c90d-3170-4452-b019-5a066003980d`) needs to be stored as `GHL_API_KEY`, replacing the current token value.
 
-**Fix**: Add immutable cache headers for `/_assets/*` in `vercel.json`.
+**Fix:** Update the `GHL_API_KEY` secret to contain the webhook URL instead of the API token. If you also need the SI token for other GHL API calls, we'd add a separate `GHL_SI_TOKEN` secret.
 
----
+## Implementation Steps
 
-## Implementation
+### Step 1: Fix GHL Webhook
+- Update `GHL_API_KEY` secret with the webhook URL: `https://services.leadconnectorhq.com/hooks/WQpTteopklZd5iY7mogH/webhook-trigger/baf9c90d-3170-4452-b019-5a066003980d`
+- Re-test the webhook to confirm delivery
 
-### Step 1: Non-blocking Google Fonts in `index.html`
-Replace the synchronous font `<link>` with the print-swap pattern:
-```html
-<link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=..."
-      media="print" onload="this.media='all'" />
-<noscript>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=..." />
-</noscript>
-```
+### Step 2: Clarify Assessment Logic in ProgramDetail
+- Add a section in the paid program detail page that links to the free Clarity Check assessment as a "preview" or "try before you buy" experience
+- For programs with `type === "assessment"` that are behind a paywall, show a locked assessment preview with upgrade CTA
+- For non-assessment programs (challenges, courses, sprints), no change needed — they correctly don't show assessment UI
 
-### Step 2: Lazy-load remaining eager pages in `App.tsx`
-Convert these static imports to `lazy()`:
-- `Community`, `Auth`, `ResetPassword`, `Onboarding`, `EmailPreview`, `Sitemap`, `NotFound`, `Unsubscribe`, `EmailUnsubscribe`, `Kiosk`
-
-Keep `Index` eager (it's the landing page). Wrap `ChatWidget` and `DesktopNav` in a deferred load (e.g., `requestIdleCallback` or `lazy`).
-
-### Step 3: Cache headers in `vercel.json`
-Add a rule for hashed assets:
-```json
-{
-  "source": "/assets/(.*)",
-  "headers": [
-    { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-  ]
-}
-```
-
-### What this does NOT change
-- No design or branding changes
-- No new dependencies
-- No database or edge function changes
+### Step 3: End-to-End Verification
+- Test webhook delivery to GHL
+- Verify each paid program detail page renders correctly
+- Confirm free assessments still show "Start Session"
 
