@@ -11,8 +11,12 @@ export interface TemplateEntry {
 
 import { template as welcomeToFocusflow } from './welcome-to-focusflow.tsx'
 import { template as applicationReceived } from './application-received.tsx'
+import { template as bookOrderPaid } from './book-order-paid.tsx'
+import { template as bookOrderStatusUpdate } from './book-order-status-update.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
   'application-received': applicationReceived,
+  'book-order-paid': bookOrderPaid,
+  'book-order-status-update': bookOrderStatusUpdate,
 }
