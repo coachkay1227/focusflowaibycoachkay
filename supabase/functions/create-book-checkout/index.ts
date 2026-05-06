@@ -128,17 +128,66 @@ serve(async (req) => {
     ];
 
     const origin = req.headers.get("origin") ?? "";
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      customer_email: body.client_email,
-      line_items: lineItems,
-      success_url: `${origin}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/store?cancelled=1`,
-      metadata: { book_order_id: order.id, package_slug: pkg.slug },
-      payment_intent_data: { metadata: { book_order_id: order.id } },
-    });
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        customer_email: body.client_email,
+        line_items: lineItems,
+        success_url: `${origin}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/store?cancelled=1`,
+        metadata: { book_order_id: order.id, package_slug: pkg.slug },
+        payment_intent_data: { metadata: { book_order_id: order.id } },
+      });
+    } catch (e) {
+      // Stripe failed -> the order is unreachable (no session id). Cancel it
+      // so it never becomes a dangling pending_payment row.
+      log("Stripe session create failed, cancelling order", {
+        orderId: order.id,
+        error: e instanceof Error ? e.message : String(e),
+      });
+      await admin
+        .from("book_orders")
+        .update({ status: "cancelled" })
+        .eq("id", order.id)
+        .eq("status", "pending_payment");
+      return new Response(JSON.stringify({ error: "Could not start checkout" }), {
+        status: 502, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
 
-    await admin.from("book_orders").update({ stripe_session_id: session.id }).eq("id", order.id);
+    // Persist stripe_session_id BEFORE returning. Required by the webhook
+    // and verify-book-order to match the session against the right order.
+    const { error: linkErr, data: linked } = await admin
+      .from("book_orders")
+      .update({ stripe_session_id: session.id })
+      .eq("id", order.id)
+      .eq("status", "pending_payment")
+      .is("stripe_session_id", null)
+      .select("id");
+
+    if (linkErr || !linked || linked.length === 0) {
+      // Couldn't attach the session id. Expire the Stripe session and
+      // cancel the order so we never leave the system in a half-paid state.
+      log("Failed to persist stripe_session_id, rolling back", {
+        orderId: order.id,
+        sessionId: session.id,
+        error: linkErr?.message,
+      });
+      try {
+        await stripe.checkout.sessions.expire(session.id);
+      } catch (e) {
+        log("Failed to expire orphan session", { error: String(e) });
+      }
+      await admin
+        .from("book_orders")
+        .update({ status: "cancelled" })
+        .eq("id", order.id)
+        .eq("status", "pending_payment");
+      return new Response(JSON.stringify({ error: "Could not link checkout session" }), {
+        status: 500, headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
 
     log("Session created", { id: session.id, orderId: order.id });
     return new Response(JSON.stringify({ url: session.url }), {
