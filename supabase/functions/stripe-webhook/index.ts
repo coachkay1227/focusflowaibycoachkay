@@ -3,27 +3,10 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { PRODUCT_TIER_MAP } from "../_shared/stripe-config.ts";
+import { readMetaString, UUID_RE } from "./validation.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
-};
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-/**
- * Safely read a string field from a Stripe metadata bag.
- * Returns null when missing, non-string, empty, or longer than 500 chars.
- */
-const readMetaString = (
-  metadata: Stripe.Metadata | null | undefined,
-  key: string,
-): string | null => {
-  if (!metadata || typeof metadata !== "object") return null;
-  const raw = (metadata as Record<string, unknown>)[key];
-  if (typeof raw !== "string") return null;
-  const trimmed = raw.trim();
-  if (trimmed.length === 0 || trimmed.length > 500) return null;
-  return trimmed;
 };
 
 const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
