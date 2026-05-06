@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
-import { LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, User, Shield, LogOut, Info } from "lucide-react";
+import { LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, User, Shield, LogOut, Info, BookMarked } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
@@ -9,10 +9,11 @@ const navItems = [
   { label: "Challenges", path: "/challenges", icon: Trophy, authOnly: false },
   { label: "Coach Kay", path: "/coach", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },
+  { label: "Book Store", path: "/store", icon: BookMarked, authOnly: false },
   { label: "About", path: "/about", icon: Info, authOnly: false },
 ];
 
-const PRIVATE_ROUTES = ["/admin", "/kiosk", "/email-preview", "/onboarding", "/auth", "/reset-password", "/dashboard", "/community", "/coach", "/challenges", "/modules", "/result", "/clarity", "/mirror-challenge", "/programs", "/profile"];
+const PRIVATE_ROUTES = ["/admin", "/kiosk", "/email-preview", "/onboarding", "/auth", "/reset-password", "/dashboard", "/community", "/coach", "/challenges", "/modules", "/result", "/clarity", "/mirror-challenge", "/programs", "/profile", "/store", "/order-success"];
 
 const DesktopNav = () => {
   const navigate = useNavigate();
