@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, Search } from "lucide-react";
+import { Download, Search, X } from "lucide-react";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { StatusBadge } from "@/components/store/StatusBadge";
 import { Input } from "@/components/ui/input";
@@ -42,16 +42,50 @@ interface OrderRow {
 
 const STATUSES = ["pending_payment", "paid", "in_progress", "delivered", "cancelled"];
 const CATEGORIES: Array<BookCategory | "all"> = ["all", "children", "coloring", "nonfiction"];
+const FILTERS_KEY = "admin-orders-filters-v1";
+const PAGE_SIZES = [25, 50, 100, 200];
+
+interface SavedFilters {
+  statusFilter: string;
+  categoryFilter: string;
+  search: string;
+  from: string;
+  to: string;
+  pageSize: number;
+}
+
+const DEFAULT_FILTERS: SavedFilters = {
+  statusFilter: "all",
+  categoryFilter: "all",
+  search: "",
+  from: "",
+  to: "",
+  pageSize: 50,
+};
+
+function loadSavedFilters(): SavedFilters {
+  if (typeof window === "undefined") return DEFAULT_FILTERS;
+  try {
+    const raw = window.localStorage.getItem(FILTERS_KEY);
+    if (!raw) return DEFAULT_FILTERS;
+    return { ...DEFAULT_FILTERS, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULT_FILTERS;
+  }
+}
 
 export default function AdminOrders() {
   const { toast } = useToast();
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [search, setSearch] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const initial = useMemo(loadSavedFilters, []);
+  const [statusFilter, setStatusFilter] = useState<string>(initial.statusFilter);
+  const [categoryFilter, setCategoryFilter] = useState<string>(initial.categoryFilter);
+  const [search, setSearch] = useState(initial.search);
+  const [from, setFrom] = useState(initial.from);
+  const [to, setTo] = useState(initial.to);
+  const [pageSize, setPageSize] = useState<number>(initial.pageSize);
+  const [page, setPage] = useState(1);
   const [drawer, setDrawer] = useState<OrderRow | null>(null);
   const [notes, setNotes] = useState("");
 
@@ -72,6 +106,23 @@ export default function AdminOrders() {
 
   useEffect(() => { load(); }, []);
 
+  // Persist filters
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        FILTERS_KEY,
+        JSON.stringify({ statusFilter, categoryFilter, search, from, to, pageSize }),
+      );
+    } catch {
+      // ignore
+    }
+  }, [statusFilter, categoryFilter, search, from, to, pageSize]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter, categoryFilter, search, from, to, pageSize]);
+
   const filtered = useMemo(() => {
     return orders.filter((o) => {
       if (statusFilter !== "all" && o.status !== statusFilter) return false;
@@ -91,6 +142,28 @@ export default function AdminOrders() {
       return true;
     });
   }, [orders, statusFilter, categoryFilter, search, from, to]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, currentPage, pageSize]);
+
+  const filtersActive =
+    statusFilter !== "all" ||
+    categoryFilter !== "all" ||
+    search !== "" ||
+    from !== "" ||
+    to !== "";
+
+  const clearFilters = () => {
+    setStatusFilter("all");
+    setCategoryFilter("all");
+    setSearch("");
+    setFrom("");
+    setTo("");
+  };
 
   const stats = useMemo(() => {
     const paidStatuses = ["paid", "in_progress", "delivered"];
@@ -119,26 +192,48 @@ export default function AdminOrders() {
   };
 
   const exportCsv = () => {
-    const headers = [
-      "id","created_at","client_name","client_email","client_phone","referral_source",
-      "package_name","package_price","book_purpose","illustration_style","addons_total",
-      "order_total","status","stripe_session_id",
+    const headers: Array<{ key: string; label: string; get: (o: OrderRow) => string | number | null }> = [
+      { key: "id", label: "Order ID", get: (o) => o.id },
+      { key: "created_at", label: "Created At", get: (o) => new Date(o.created_at).toISOString() },
+      { key: "status", label: "Status", get: (o) => STATUS_LABELS[o.status] ?? o.status },
+      { key: "client_name", label: "Client Name", get: (o) => o.client_name },
+      { key: "client_email", label: "Client Email", get: (o) => o.client_email },
+      { key: "client_phone", label: "Client Phone", get: (o) => o.client_phone ?? "" },
+      { key: "referral_source", label: "Referral Source", get: (o) => o.referral_source },
+      { key: "package_slug", label: "Package Slug", get: (o) => o.package_slug },
+      { key: "package_name", label: "Package Name", get: (o) => o.package_name },
+      { key: "package_category", label: "Category", get: (o) => {
+        const cat = findPackage(o.package_slug)?.category;
+        return cat ? CATEGORY_LABELS[cat] : "";
+      } },
+      { key: "package_price_usd", label: "Package Price (USD)", get: (o) => (o.package_price / 100).toFixed(2) },
+      { key: "addons", label: "Add-Ons", get: (o) => Array.isArray(o.addons) ? (o.addons as string[]).join(" | ") : "" },
+      { key: "addons_count", label: "Add-Ons Count", get: (o) => Array.isArray(o.addons) ? o.addons.length : 0 },
+      { key: "addons_total_usd", label: "Add-Ons Total (USD)", get: (o) => (o.addons_total / 100).toFixed(2) },
+      { key: "order_total_usd", label: "Order Total (USD)", get: (o) => (o.order_total / 100).toFixed(2) },
+      { key: "book_purpose", label: "Book Purpose", get: (o) => o.book_purpose },
+      { key: "book_vision", label: "Book Vision", get: (o) => o.book_vision },
+      { key: "characters", label: "Characters", get: (o) => o.characters ?? "" },
+      { key: "illustration_style", label: "Illustration Style", get: (o) => o.illustration_style },
+      { key: "special_requirements", label: "Special Requirements", get: (o) => o.special_requirements ?? "" },
+      { key: "admin_notes", label: "Admin Notes", get: (o) => o.admin_notes ?? "" },
+      { key: "stripe_session_id", label: "Stripe Session ID", get: (o) => o.stripe_session_id ?? "" },
+      { key: "stripe_payment_intent_id", label: "Stripe Payment Intent ID", get: (o) => o.stripe_payment_intent_id ?? "" },
     ];
-    const rows = filtered.map((o) =>
-      headers.map((h) => {
-        const v = (o as unknown as Record<string, unknown>)[h];
-        const s = v == null ? "" : String(v).replace(/"/g, '""');
-        return `"${s}"`;
-      }).join(",")
-    );
-    const csv = [headers.join(","), ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const escape = (v: unknown) => {
+      const s = v == null ? "" : String(v).replace(/"/g, '""').replace(/\r?\n/g, " ");
+      return `"${s}"`;
+    };
+    const rows = filtered.map((o) => headers.map((h) => escape(h.get(o))).join(","));
+    const csv = [headers.map((h) => escape(h.label)).join(","), ...rows].join("\n");
+    const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `book-orders-${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    toast({ title: "Exported", description: `${filtered.length} order(s) exported.` });
   };
 
   const openDrawer = (o: OrderRow) => {
@@ -176,7 +271,7 @@ export default function AdminOrders() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex flex-wrap gap-3 mb-4 items-center">
           <div className="relative flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -219,6 +314,19 @@ export default function AdminOrders() {
             onChange={(e) => setTo(e.target.value)}
             className="w-[160px] bg-background/40 border-border/60"
           />
+          {filtersActive && (
+            <Button
+              onClick={clearFilters}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground gap-1"
+            >
+              <X className="h-3.5 w-3.5" /> Clear
+            </Button>
+          )}
+          <div className="ml-auto text-xs text-muted-foreground">
+            {filtered.length} of {orders.length}
+          </div>
         </div>
 
         {/* Table */}
@@ -242,7 +350,7 @@ export default function AdminOrders() {
                 ) : filtered.length === 0 ? (
                   <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">No orders found.</td></tr>
                 ) : (
-                  filtered.map((o) => {
+                  paginated.map((o) => {
                     const addonCount = Array.isArray(o.addons) ? o.addons.length : 0;
                     return (
                       <tr
@@ -284,6 +392,47 @@ export default function AdminOrders() {
             </table>
           </div>
         </div>
+
+        {/* Pagination */}
+        {!loading && filtered.length > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-4 text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <span>Rows per page</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="h-8 rounded-md border border-border/60 bg-background/40 px-2 text-xs"
+              >
+                {PAGE_SIZES.map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-xs">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="border-border/60"
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="border-border/60"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Drawer */}
