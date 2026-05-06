@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,9 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
   const { user } = useAuth();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [totalPulse, setTotalPulse] = useState(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const {
     register,
@@ -75,6 +79,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
 
   useEffect(() => {
     if (open) {
+      setSubmitError(null);
       reset({
         client_name: "",
         client_email: user?.email ?? "",
@@ -112,6 +117,13 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
     return pkgPrice + addonPrice;
   }, [watchedSlug, watchedAddons]);
 
+  // Brief shimmer pulse whenever the total changes
+  useEffect(() => {
+    setTotalPulse(true);
+    const t = setTimeout(() => setTotalPulse(false), 450);
+    return () => clearTimeout(t);
+  }, [orderTotal]);
+
   const toggleAddon = (slug: string) => {
     const set = new Set(watchedAddons);
     if (set.has(slug)) set.delete(slug);
@@ -121,6 +133,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
 
   const onSubmit = async (data: IntakeFormData) => {
     setSubmitting(true);
+    setSubmitError(null);
     try {
       const { data: res, error } = await supabase.functions.invoke(
         "create-book-checkout",
@@ -132,24 +145,66 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
       window.location.href = url;
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not start checkout";
+      setSubmitError(msg);
       toast({ title: "Checkout failed", description: msg, variant: "destructive" });
       setSubmitting(false);
+      requestAnimationFrame(() => {
+        formRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+      });
     }
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto bg-background border-border/60">
-        <DialogHeader>
-          <DialogTitle className="font-heading text-3xl text-foreground">
-            Book Intake
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Tell us about your vision so we can craft your book with intention.
-          </DialogDescription>
-        </DialogHeader>
+  const onInvalid = () => {
+    requestAnimationFrame(() => {
+      formRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  };
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 mt-4">
+  const errorCount = Object.keys(errors).length;
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!submitting) onOpenChange(v);
+      }}
+    >
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-hidden bg-background border-border/60 p-0">
+        <div className="px-6 pt-6">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-3xl text-foreground">
+              Book Intake
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Tell us about your vision so we can craft your book with intention.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit(onSubmit, onInvalid)}
+          className="relative space-y-10 mt-4 overflow-y-auto px-6 pb-32 sm:pb-6 max-h-[calc(92vh-7rem)]"
+        >
+          {(submitError || errorCount > 0) && (
+            <div
+              role="alert"
+              className="flex items-start gap-3 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 animate-fade-in"
+            >
+              <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-destructive">
+                  {submitError
+                    ? "We couldn't start your checkout"
+                    : `Please review ${errorCount} field${errorCount === 1 ? "" : "s"} below`}
+                </p>
+                {submitError && (
+                  <p className="text-destructive/80 mt-0.5">{submitError}</p>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Section 1 */}
           <section>
             <h3 className={sectionTitle}>1. About You</h3>
@@ -283,7 +338,14 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
               <span className="text-xs uppercase tracking-wider text-muted-foreground">
                 Order Total
               </span>
-              <span className="font-heading text-3xl text-primary">
+              <span
+                key={orderTotal}
+                className={`font-heading text-3xl text-primary transition-all duration-300 ${
+                  totalPulse
+                    ? "scale-110 drop-shadow-[0_0_12px_hsl(var(--primary)/0.5)]"
+                    : "scale-100"
+                }`}
+              >
                 {formatUSD(orderTotal)}
               </span>
             </div>
@@ -315,16 +377,79 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
             </div>
           </section>
 
-          <div className="flex justify-end pt-4 border-t border-border/40">
+          {/* Desktop submit row */}
+          <div className="hidden sm:flex items-center justify-between gap-4 pt-4 border-t border-border/40">
+            <p className="flex items-center gap-2 text-xs text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary/80" />
+              Secure checkout powered by Stripe
+            </p>
             <Button
               type="submit"
               disabled={!agreeRev || !agreeFinal || submitting}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8 min-w-[18rem]"
             >
-              {submitting ? "Redirecting…" : `Proceed to Payment — ${formatUSD(orderTotal)}`}
+              {submitting ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Preparing secure checkout…
+                </span>
+              ) : (
+                <>Proceed to Payment — {formatUSD(orderTotal)}</>
+              )}
             </Button>
           </div>
+
+          {/* Cinematic submitting overlay */}
+          {submitting && (
+            <div
+              aria-live="polite"
+              className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 rounded-md bg-background/80 backdrop-blur-sm animate-fade-in"
+            >
+              <div className="relative h-12 w-12">
+                <span className="absolute inset-0 rounded-full border-2 border-primary/20" />
+                <Loader2 className="absolute inset-0 h-12 w-12 text-primary animate-spin" />
+              </div>
+              <p className="font-heading text-xl text-foreground">
+                Preparing your secure checkout
+              </p>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Do not close this window
+              </p>
+            </div>
+          )}
         </form>
+
+        {/* Sticky mobile total + CTA */}
+        <div className="sm:hidden absolute inset-x-0 bottom-0 z-10 border-t border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4 py-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Total
+            </span>
+            <span
+              key={`m-${orderTotal}`}
+              className={`font-heading text-2xl text-primary transition-all duration-300 ${
+                totalPulse ? "scale-110" : "scale-100"
+              }`}
+            >
+              {formatUSD(orderTotal)}
+            </span>
+          </div>
+          <Button
+            type="button"
+            onClick={() => formRef.current?.requestSubmit()}
+            disabled={!agreeRev || !agreeFinal || submitting}
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+          >
+            {submitting ? (
+              <span className="inline-flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Preparing…
+              </span>
+            ) : (
+              "Proceed to Payment"
+            )}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
