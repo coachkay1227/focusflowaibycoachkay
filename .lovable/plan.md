@@ -1,109 +1,140 @@
-# Book Store Feature Plan
+# Book Store — Detailed Build Plan (v3, premium, no emojis)
 
-Build a self-contained Book Store module that plugs into the existing FocusFlow AI app without touching any existing pages. It reuses the dark navy + gold design system, DM Sans / Cormorant Garamond typography, and the existing Lovable Cloud + Stripe pipeline.
+Builds the Book Store as a fully additive layer on top of FocusFlow AI. No existing page, component, route, auth flow, design token, or nav item is removed or restyled. **No emojis anywhere** — all category and add-on indicators use thin-line Lucide icons rendered in gold to match the existing premium aesthetic.
 
-## 1. Navigation (additive only)
+## 0. Audit notes (verified)
 
-Edit `src/components/DesktopNav.tsx`:
-- Add `{ label: "Book Store", path: "/store", icon: BookMarked, authOnly: false }` to `navItems`.
-- Add `/store`, `/order-success`, `/admin/orders` to `PRIVATE_ROUTES` so the top nav hides on those pages (keeps current convention — those pages render their own back link / brand).
+- Existing nav has Coach Kay → Community → About. Book Store is inserted directly before About per spec.
+- No shared Footer component exists (homepage owns its own footer). Per "do not touch existing pages", Change 8 is dropped to honor the no-touch rule.
+- Stripe secrets present. `stripe-webhook` exists and will be extended with an additive branch only.
+- Project uses DM Sans body + Cormorant Garamond headings; we keep the system font stack (no Inter swap) to stay on-brand.
 
-Edit `src/components/admin/AdminNav.tsx`:
+## 1. Premium visual language (locks "no emoji, no non-premium" rule)
+
+- Category indicators use Lucide icons (gold, 1px stroke, 18px): `BookOpen` (Children), `Palette` (Coloring), `BookMarked` (Non-Fiction).
+- Add-on indicators use Lucide icons: `Megaphone` (Launch Toolkit), `Magnet` (Lead Magnet), `PhoneCall` (Strategy Call).
+- All section eyebrows in tracked uppercase gold DM Sans; all headlines in Cormorant Garamond.
+- Cards: `bg-card` with `border border-border/60`, hover lifts 1px and gains `border-primary/40` (pure CSS).
+- Price uses Cormorant 4xl in gold; turnaround shown as a hairline gold pill (`border border-primary/40 text-primary/90 px-2.5 py-0.5 rounded-full text-xs uppercase tracking-wider`).
+- Bullet rows use a thin Lucide `Check` in gold with cream text — no checkmark emoji.
+- Tabs: minimal text + 1px gold underline on active, no pill backgrounds.
+- Subtle radial gradient + faint grid background reused from existing tokens.
+- Pure CSS animations only (per memory rule).
+
+## 2. Database (single migration)
+
+`book_orders` columns exactly per spec:
+`id uuid pk`, `created_at`, `client_name`, `client_email`, `client_phone null`, `referral_source`, `package_slug`, `package_name`, `package_price int`, `book_purpose`, `book_vision`, `characters null`, `illustration_style`, `special_requirements null`, `addons jsonb default '[]'`, `addons_total int default 0`, `order_total int`, `status text default 'pending_payment'` (check constraint on the 5 allowed values), `stripe_session_id text unique`, `stripe_payment_intent_id null`, `admin_notes null`, `user_id uuid null`.
+
+RLS:
+- SELECT: `auth.uid() = user_id` OR `has_role(auth.uid(),'admin')`.
+- INSERT/UPDATE/DELETE: blocked for end users — only edge functions via service role write.
+
+No `book_packages` table — catalog is static in `src/lib/book-store.ts` and mirrored server-side to prevent price tampering.
+
+## 3. Static catalog — `src/lib/book-store.ts`
+
+Typed exports for `PACKAGES` (9 entries — Children: Mini-Story Starter $499, Storybook Pro $1,250, Premium Legacy $2,500; Coloring: Quick Sketch Starter $297, Etsy Seller Pack $597, Ultimate Creator $1,250; Non-Fiction: Outline+Draft $750, Done-for-You Expert $2,500, Booked & Branded $4,500), `ADDONS` (3 entries: Book Launch Toolkit $397, Lead Magnet Spin-Off $297, VIP Strategy Call $197). Includes `findPackage`, `findAddon`, and Zod intake schema reused on client and server.
+
+## 4. Routes — append to `src/App.tsx`
+
+Lazy-loaded:
+- `/store` → public `Store`
+- `/order-success` → public `OrderSuccess`
+- `/admin/orders` → `ProtectedRoute requireAdmin` → `AdminOrders`
+
+## 5. Navigation — append only
+
+`src/components/DesktopNav.tsx`:
+- Add `{ label: 'Book Store', path: '/store', icon: BookMarked, authOnly: false }` immediately before About.
+- Add `/store`, `/order-success`, `/admin/orders` to `PRIVATE_ROUTES` so the global top nav hides on those pages (each page renders its own minimal back-link header).
+
+`src/components/admin/AdminNav.tsx`:
 - Add an "Orders" link to `/admin/orders`.
 
-No other existing pages are modified.
-
-## 2. Routes (additive in `src/App.tsx`)
-
-Add three lazy-loaded routes:
-- `/store` → public `Store` page
-- `/order-success` → public `OrderSuccess` page (reads `?session_id=...`)
-- `/admin/orders` → `AdminOrders` wrapped in `ProtectedRoute requireAdmin`
-
-## 3. Database (migration)
-
-New `book_packages` table (catalog, admin-managed, publicly readable):
-- `id uuid pk`, `slug text unique`, `category text` (`children` | `coloring` | `nonfiction`), `name text`, `tagline text`, `description text`, `features jsonb`, `price_cents int`, `currency text default 'usd'`, `stripe_price_id text`, `sort_order int`, `active bool default true`, `created_at`, `updated_at`.
-- RLS: `SELECT` allowed to anon + authenticated where `active = true`; all writes blocked (admin manages via Stripe + seed migration / future admin UI).
-
-New `book_orders` table:
-- `id uuid pk`, `user_id uuid null` (guest checkout allowed), `package_id uuid references book_packages`, `stripe_session_id text unique`, `stripe_payment_intent text`, `amount_cents int`, `currency text`, `status text default 'pending'` (`pending` | `paid` | `failed` | `refunded`), `customer_email text`, `intake jsonb` (form responses), `notes text`, `created_at`, `updated_at`.
-- RLS:
-  - `SELECT`: user can read their own (`auth.uid() = user_id`); admins via `has_role(auth.uid(),'admin')`.
-  - `INSERT` / `UPDATE` / `DELETE`: blocked for users — only edge functions using the service role write.
-
-Seed three starter packages (one per tab) so the page renders before Stripe products are wired; `stripe_price_id` left null until the user creates them.
-
-## 4. Edge functions
-
-All deployed automatically; ESM imports per project rule.
-
-**`create-book-checkout`** (`verify_jwt = false`, accepts both auth and guest):
-- Input: `{ packageId: string, intake: {...}, email?: string }` validated with Zod.
-- Looks up `book_packages` row by id (must be `active`, must have `stripe_price_id`).
-- Optionally resolves `user_id` from JWT if present.
-- Inserts `book_orders` row with `status='pending'` and the intake payload via service role.
-- Creates Stripe Checkout session (`mode: 'payment'`) with that `stripe_price_id`, `success_url=${origin}/order-success?session_id={CHECKOUT_SESSION_ID}`, `cancel_url=${origin}/store?checkout=cancelled`, metadata `{ order_id, package_id, supabase_user_id? }`.
-- Updates the order row with `stripe_session_id`. Returns `{ url }`.
-
-**`verify-book-order`** (`verify_jwt = false`):
-- Input: `{ session_id }`. Retrieves Stripe session, if `payment_status === 'paid'` updates the matching order to `status='paid'` and stores `stripe_payment_intent` + `customer_email`. Returns sanitized order summary for the success page.
-
-**Extend `stripe-webhook`** (already in repo): on `checkout.session.completed` for sessions whose metadata contains `order_id`, mark that order row `paid` (idempotent — verify-book-order may have already done it). No changes to existing tier/subscription handling.
-
-## 5. Frontend pages & components (all new files)
+## 6. Pages & components (all new files)
 
 ```
 src/pages/Store.tsx
 src/pages/OrderSuccess.tsx
 src/pages/admin/AdminOrders.tsx
-src/components/store/PackageTabs.tsx
+src/components/store/Hero.tsx
+src/components/store/CategoryTabs.tsx
 src/components/store/PackageCard.tsx
+src/components/store/AddonCard.tsx
 src/components/store/IntakeFormModal.tsx
-src/lib/book-store.ts        // types, category labels, intake schemas
+src/components/store/OrderDetailDrawer.tsx
+src/components/store/StatusBadge.tsx
+src/lib/book-store.ts
 ```
 
 ### `/store`
-- Hero: Cormorant Garamond headline "Coach Kay Book Store", gold underline accent, navy bg, subtle FloatingOrbs (already in project).
-- Tabs (shadcn or simple buttons) for the three categories. Active tab uses gold border + bg `primary/10`.
-- Grid of `PackageCard`s fetched from `book_packages` filtered by category.
-- Each card: name, tagline, price formatted from `price_cents`, feature list (checkmarks), gold "Order Now" CTA → opens `IntakeFormModal`.
+- Hero: gold eyebrow `THE BOOK BUILDER BLUEPRINT`, Cormorant headline "Turn Your Story Into a Published Book", cream subhead per spec, gold CTA button scrolls to packages.
+- Three minimalist category tabs (icon + label) with 1px gold underline on active.
+- 3-column grid (1-col mobile) of `PackageCard`s — name, turnaround pill, gold price, bullet list with thin gold checks, gold "Order This Package" CTA opening `IntakeFormModal` with `defaultPackage=slug`.
+- Add-ons row below: 3 smaller cards with Lucide icon + name + price + description.
 
 ### `IntakeFormModal`
-Built with existing `Dialog` + `react-hook-form` + Zod. Fields per category:
-- **Children's Books**: child's name, age, themes/values, dedication, cover preference, delivery email.
-- **Coloring Books**: theme, target age range, page count preference, custom illustrations notes, delivery email.
-- **Non-Fiction Authority**: author name, niche, working title, book goal, target audience, timeline, delivery email.
-Common fields: full name, email (prefilled from auth if logged in), phone (optional), notes.
-On submit → `supabase.functions.invoke('create-book-checkout', { body })` → `window.location.href = url`.
+- shadcn `Dialog`, dark navy panel, full-screen on mobile.
+- `react-hook-form` + Zod from `src/lib/book-store.ts`.
+- Four sections per spec (About You, Your Book, Add-Ons, Agreement). "Main character(s) or subject" only renders for Children's Book packages.
+- Live order total (USD-formatted) updates as add-ons are toggled.
+- Both required agreement checkboxes gate the gold "Proceed to Payment" button.
+- Submit: `supabase.functions.invoke('create-book-checkout')` → `window.location.href = url`.
 
 ### `/order-success`
-- Reads `session_id`, calls `verify-book-order`, shows confirmation card (package name, amount, "we'll email you within 1 business day"), gold "Back to Store" + "Go Home" buttons.
+- Reads `?session_id=`, calls `verify-book-order`.
+- Pure-CSS animated gold check (SVG stroke draw), Cormorant heading "Your Book Journey Begins", cream subtext per spec, summary card (package, total, email), 4 numbered next steps in cream, two gold buttons → "Return to Dashboard" and "Join Our Community".
 
 ### `/admin/orders`
-- Table of all orders (newest first) via `supabase.from('book_orders').select('*, book_packages(name,category)')`.
-- Filters: status, category, search by email.
-- Row click opens detail drawer showing intake JSON formatted, Stripe session id with link to Stripe dashboard, status badge, internal notes textarea (saves via service-role edge function `update-book-order-notes` — admin-only via `has_role` check inside the function).
-- Uses `AdminNav` shell to match other admin pages.
+- Inside existing AdminNav shell.
+- Top stats row (5 cards): Total Orders, Total Revenue, Pending Payment, In Progress, Delivered.
+- Filters: status, package category, date range, search by name/email.
+- Table columns per spec, status as inline dropdown calling `update-book-order`.
+- Status badges (no emoji): pending_payment → muted, paid → gold, in_progress → cool blue, delivered → emerald, cancelled → destructive — all using existing token classes.
+- Row click opens right-side `Sheet` drawer with full intake fields, Stripe session link, editable `admin_notes`.
+- CSV export built client-side from filtered rows.
 
-## 6. Stripe products
+## 7. Edge functions
 
-After the migration runs, create one Stripe product + price per package using the available Stripe tooling, then update the `book_packages` rows with their `stripe_price_id` (insert tool, since this is data not schema). The plan covers wiring; the user will be asked to confirm the three prices (or supply their own) at implementation time.
+### `create-book-checkout` (`verify_jwt = false` — guest checkout)
+- Zod-validates body using shared schema.
+- Mirrored server-side catalog determines authoritative prices.
+- Inserts `book_orders` row via service role, attaches `user_id` from JWT if present.
+- Creates Stripe Checkout (`mode=payment`) with `price_data` line items (bespoke service work), customer_email pre-filled, metadata `{ book_order_id, package_slug }`, success/cancel URLs per spec.
+- Updates row with `stripe_session_id`. Returns `{ url }`.
 
-## 7. Design tokens
+### `verify-book-order` (`verify_jwt = false`)
+- Body `{ session_id }`. Retrieves Stripe session; if paid, idempotently sets `status='paid'` and `stripe_payment_intent_id`. Returns sanitized summary.
 
-Reuse existing tokens only — `bg-background`, `text-foreground`, `border-border`, `text-primary` (gold), `font-heading` (Cormorant), `font-sans` (DM Sans). No new colors. No external animation libs (per memory rule). Subtle CSS-only fade/slide on tab change.
+### `update-book-order` (`verify_jwt = false`; auth + admin checked in code)
+- Validates JWT via `getClaims`, then `has_role(uid,'admin')`. Body `{ id, status?, admin_notes? }`. Service-role update. Returns row.
 
-## 8. Out of scope (explicit)
+### `stripe-webhook` (existing — additive branch)
+- On `checkout.session.completed`, if `metadata.book_order_id` exists: idempotently mark order `paid`, set `stripe_payment_intent_id`. All existing tier/subscription handling untouched.
 
-- No edits to Index, Kiosk, CoachKay, Modules, Dashboard, ClaritySession, etc.
+## 8. Security
+
+- Zod validation client + server.
+- Server prices win — client-submitted prices are never trusted.
+- RLS blocks direct user writes.
+- Admin actions gated by server-side `has_role`, never a client flag.
+- No publishable Stripe key needed (server-side Checkout redirect only); will note this to user in summary.
+
+## 9. Out of scope / honored constraints
+
+- No edits to Index, Kiosk, CoachKay, Auth, Onboarding, Dashboard, ClaritySession, Modules, ProgramDetail, etc.
 - No changes to existing tiers, `user_access_levels`, or subscription logic.
-- No physical-shipping flow — orders are digital/service deliverables tracked manually by admin.
+- No global Footer change (no shared Footer component exists).
+- No emojis anywhere in UI, copy, or icons.
 
-## Technical notes
+## 10. Implementation order
 
-- Guest checkout supported because intake form already collects email; `book_orders.user_id` is nullable.
-- `verify_jwt = false` on the two new functions requires explicit blocks in `supabase/config.toml`.
-- Webhook already verifies signatures; we only branch on `metadata.order_id` to avoid colliding with existing tier logic.
-- `PackageCard` price formatter: `new Intl.NumberFormat('en-US',{style:'currency',currency}).format(price_cents/100)`.
-- All inputs validated client-side (Zod + react-hook-form) AND server-side (Zod in edge function) per project security rules.
+1. Migration (`book_orders` + RLS).
+2. `src/lib/book-store.ts` catalog + Zod schema.
+3. Edge functions (`create-book-checkout`, `verify-book-order`, `update-book-order`); extend `stripe-webhook`; add the two `verify_jwt = false` blocks to `supabase/config.toml`.
+4. Store page + components + IntakeFormModal.
+5. OrderSuccess page.
+6. AdminOrders page + drawer + CSV export.
+7. Append to DesktopNav, AdminNav, App routes.
+8. Smoke check via curl_edge_functions.

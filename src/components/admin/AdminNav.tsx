@@ -1,12 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, BarChart3, BookOpen, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3, BookOpen, ArrowLeft, ShoppingBag } from "lucide-react";
 
 const navItems = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/content", label: "Content", icon: BookOpen },
+  { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
 ];
 
 export function AdminNav() {

@@ -25,3 +25,9 @@ project_id = "rarawrpajilqqlcxdzpj"
     verify_jwt = true
   [functions.stripe-webhook]
     verify_jwt = false
+  [functions.create-book-checkout]
+    verify_jwt = false
+  [functions.verify-book-order]
+    verify_jwt = false
+  [functions.update-book-order]
+    verify_jwt = false

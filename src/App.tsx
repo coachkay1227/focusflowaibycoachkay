@@ -36,6 +36,9 @@ const AdminUsers = lazy(() => import("./pages/admin/AdminUsers.tsx"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics.tsx"));
 const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const CoachKay = lazy(() => import("./pages/CoachKay.tsx"));
+const Store = lazy(() => import("./pages/Store.tsx"));
+const OrderSuccess = lazy(() => import("./pages/OrderSuccess.tsx"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.tsx"));
 
 // Lazy-load shell components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
@@ -79,6 +82,9 @@ const App = () => (
             <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAnalytics /></Suspense></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminContent /></Suspense></ProtectedRoute>} />
             <Route path="/kiosk" element={<Suspense fallback={<PageSkeleton />}><Kiosk /></Suspense>} />
+            <Route path="/store" element={<Suspense fallback={<PageSkeleton />}><Store /></Suspense>} />
+            <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
+            <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/unsubscribe" element={<Suspense fallback={<PageSkeleton />}><Unsubscribe /></Suspense>} />
