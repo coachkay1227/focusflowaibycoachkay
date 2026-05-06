@@ -449,6 +449,57 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_alert_state: {
+        Row: {
+          last_alert_at: string
+          source: string
+        }
+        Insert: {
+          last_alert_at?: string
+          source: string
+        }
+        Update: {
+          last_alert_at?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      webhook_failures: {
+        Row: {
+          context: Json
+          created_at: string
+          event_id: string | null
+          event_type: string | null
+          id: string
+          message: string | null
+          reason: string
+          source: string
+          stage: string
+        }
+        Insert: {
+          context?: Json
+          created_at?: string
+          event_id?: string | null
+          event_type?: string | null
+          id?: string
+          message?: string | null
+          reason: string
+          source: string
+          stage: string
+        }
+        Update: {
+          context?: Json
+          created_at?: string
+          event_id?: string | null
+          event_type?: string | null
+          id?: string
+          message?: string | null
+          reason?: string
+          source?: string
+          stage?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

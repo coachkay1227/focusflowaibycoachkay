@@ -4,10 +4,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { PRODUCT_TIER_MAP } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
+import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
-const logStep = (step: string, details?: Record<string, unknown>) => {
-  console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
-};
+const SOURCE = "stripe-webhook";
 
 const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
   new Response(JSON.stringify(body), {
@@ -19,6 +18,28 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
+
+  const requestId = crypto.randomUUID();
+  const log = createLogger(SOURCE, requestId);
+  let activeEventId: string | undefined;
+  let activeEventType: string | undefined;
+
+  const fail = async (
+    stage: string,
+    reason: string,
+    extra: { message?: string; context?: Record<string, unknown> } = {},
+  ) => {
+    log.error(stage, { reason, message: extra.message, ctx: extra.context, event_id: activeEventId, event_type: activeEventType });
+    await recordFailureAndMaybeAlert(supabaseClient, log, {
+      source: SOURCE,
+      stage,
+      reason,
+      message: extra.message,
+      eventId: activeEventId,
+      eventType: activeEventType,
+      context: { ...(extra.context ?? {}), request_id: requestId },
+    });
+  };
 
   const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
     apiVersion: "2025-08-27.basil",
@@ -38,7 +59,7 @@ serve(async (req) => {
     let event: Stripe.Event;
 
     if (!webhookSecret) {
-      logStep("ERROR: STRIPE_WEBHOOK_SECRET is not configured");
+      await fail("config", "missing_webhook_secret");
       return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         status: 500,
@@ -46,15 +67,27 @@ serve(async (req) => {
     }
 
     if (!sig) {
-      logStep("ERROR: Missing stripe-signature header");
+      await fail("signature", "missing_signature_header");
       return new Response(JSON.stringify({ error: "Missing signature" }), {
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         status: 400,
       });
     }
 
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    logStep("Webhook signature verified", { type: event.type, id: event.id });
+    try {
+      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    } catch (e) {
+      await fail("signature", "signature_verification_failed", {
+        message: e instanceof Error ? e.message : String(e),
+      });
+      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+    activeEventId = event.id;
+    activeEventType = event.type;
+    log.info("signature_verified", { event_id: event.id, event_type: event.type });
 
     // Idempotency: short-circuit if we've already processed this event id.
     const { error: insertEventErr } = await supabaseClient
@@ -63,32 +96,29 @@ serve(async (req) => {
     if (insertEventErr) {
       // 23505 = unique_violation -> already processed
       if ((insertEventErr as { code?: string }).code === "23505") {
-        logStep("Duplicate event, skipping", { eventId: event.id });
+        log.info("duplicate_event_skipped", { event_id: event.id });
         return new Response(JSON.stringify({ received: true, duplicate: true }), {
           headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
         });
       }
-      logStep("Failed to record event id, continuing", { error: insertEventErr.message });
+      log.warn("event_id_record_failed", { message: insertEventErr.message });
     }
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       if (!session || typeof session.id !== "string") {
-        logStep("Malformed checkout.session payload, ignoring");
+        await fail("session", "malformed_session");
         return ok(req, { received: true, ignored: "malformed_session" });
       }
-      logStep("Checkout session completed", {
-        sessionId: session.id,
-        mode: session.mode,
-        paymentStatus: session.payment_status,
+      log.info("checkout_session_completed", {
+        ctx: { session_id: session.id, mode: session.mode, payment_status: session.payment_status },
       });
 
       // Only process paid sessions
       if (session.payment_status !== "paid" || session.status !== "complete") {
-        logStep("Session not paid/complete, skipping", {
-          paymentStatus: session.payment_status,
-          status: session.status,
+        log.info("session_not_paid_or_complete", {
+          ctx: { payment_status: session.payment_status, status: session.status },
         });
         return ok(req);
       }
@@ -98,7 +128,7 @@ serve(async (req) => {
       const bookOrderId = readMetaString(session.metadata, "book_order_id");
       if (bookOrderId) {
         if (!UUID_RE.test(bookOrderId)) {
-          logStep("Invalid book_order_id metadata, ignoring", { bookOrderId });
+          await fail("book_order", "invalid_book_order_id", { context: { book_order_id: bookOrderId } });
           return ok(req, { received: true, ignored: "invalid_book_order_id" });
         }
         const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
@@ -112,22 +142,22 @@ serve(async (req) => {
           .eq("status", "pending_payment")
           .maybeSingle();
         if (pendingErr) {
-          logStep("Failed to look up pending book order", { error: pendingErr.message });
+          await fail("book_order", "lookup_failed", {
+            message: pendingErr.message,
+            context: { book_order_id: bookOrderId, session_id: session.id },
+          });
           return ok(req, { received: true, ignored: "lookup_failed" });
         }
         if (!pending) {
-          logStep("No pending order matches book_order_id+session, no-op", {
-            bookOrderId,
-            sessionId: session.id,
+          await fail("book_order", "no_pending_match", {
+            context: { book_order_id: bookOrderId, session_id: session.id },
           });
           return ok(req);
         }
         const amountTotal = typeof session.amount_total === "number" ? session.amount_total : null;
         if (amountTotal === null || amountTotal !== pending.order_total) {
-          logStep("Amount mismatch, refusing to mark paid", {
-            bookOrderId,
-            sessionAmount: amountTotal,
-            expected: pending.order_total,
+          await fail("book_order", "amount_mismatch", {
+            context: { book_order_id: bookOrderId, session_amount: amountTotal, expected: pending.order_total },
           });
           return ok(req, { received: true, ignored: "amount_mismatch" });
         }
@@ -139,11 +169,16 @@ serve(async (req) => {
           .eq("status", "pending_payment")
           .select("id, client_email, client_name, package_name, order_total");
         if (bookErr) {
-          logStep("Failed to update book order", { error: bookErr.message });
+          await fail("book_order", "update_failed", {
+            message: bookErr.message,
+            context: { book_order_id: bookOrderId },
+          });
         } else if (!updated || updated.length === 0) {
-          logStep("Book order not in pending_payment state or session mismatch, no-op", { bookOrderId, sessionId: session.id });
+          log.info("book_order_already_processed", {
+            ctx: { book_order_id: bookOrderId, session_id: session.id },
+          });
         } else {
-          logStep("Book order marked paid", { bookOrderId });
+          log.info("book_order_marked_paid", { ctx: { book_order_id: bookOrderId } });
           const order = updated[0];
           if (order.client_email) {
             try {
@@ -164,7 +199,10 @@ serve(async (req) => {
                 },
               });
             } catch (e) {
-              logStep("Failed to send paid email", { error: String(e) });
+              await fail("email", "paid_email_send_failed", {
+                message: e instanceof Error ? e.message : String(e),
+                context: { book_order_id: order.id },
+              });
             }
           }
         }
@@ -174,9 +212,7 @@ serve(async (req) => {
       // Get user ID from metadata
       const userId = readMetaString(session.metadata, "supabase_user_id");
       if (!userId || !UUID_RE.test(userId)) {
-        logStep("No/invalid supabase_user_id in metadata, skipping", {
-          present: !!userId,
-        });
+        log.info("missing_or_invalid_user_id", { ctx: { present: !!userId } });
         return ok(req, { received: true, ignored: "missing_or_invalid_user_id" });
       }
 
@@ -192,65 +228,72 @@ serve(async (req) => {
           productId = (product as { id: string }).id;
         }
       } catch (e) {
-        logStep("Failed to list line items, skipping tier upgrade", { error: String(e) });
+        await fail("subscription", "line_items_unavailable", {
+          message: e instanceof Error ? e.message : String(e),
+          context: { session_id: session.id },
+        });
         return ok(req, { received: true, ignored: "line_items_unavailable" });
       }
 
       if (!productId) {
-        logStep("No product ID found in line items");
+        await fail("subscription", "missing_product_id", { context: { session_id: session.id } });
         return ok(req, { received: true, ignored: "missing_product_id" });
       }
 
       const mappedTier = PRODUCT_TIER_MAP[productId];
       if (!mappedTier) {
-        logStep("Unknown product ID, no tier mapping found, skipping", { productId });
+        await fail("subscription", "unknown_product", { context: { product_id: productId } });
         return ok(req, { received: true, ignored: "unknown_product" });
       }
-      logStep("Upgrading user tier", { userId, productId, tier: mappedTier });
+      log.info("upgrading_user_tier", { ctx: { user_id: userId, product_id: productId, tier: mappedTier } });
 
       const { error: upsertError } = await supabaseClient
         .from("user_access_levels")
         .upsert({ id: userId, tier: mappedTier }, { onConflict: "id" });
 
       if (upsertError) {
-        logStep("Failed to upsert tier", { error: upsertError.message });
+        await fail("subscription", "tier_upsert_failed", {
+          message: upsertError.message,
+          context: { user_id: userId, tier: mappedTier },
+        });
       } else {
-        logStep("Tier upgraded successfully", { userId, tier: mappedTier });
+        log.info("tier_upgraded", { ctx: { user_id: userId, tier: mappedTier } });
       }
     } else if (event.type === "customer.subscription.deleted") {
       // Subscription cancelled — downgrade to free
       const subscription = event.data.object as Stripe.Subscription;
       const userId = readMetaString(subscription?.metadata, "supabase_user_id");
-      logStep("Subscription deleted", { subscriptionId: subscription?.id, userId });
+      log.info("subscription_deleted", { ctx: { subscription_id: subscription?.id, user_id: userId } });
 
       if (!userId || !UUID_RE.test(userId)) {
-        logStep("No/invalid supabase_user_id in subscription metadata, skipping downgrade");
+        log.info("subscription_missing_user_id_skipping");
       } else {
         const { error: downgradeError } = await supabaseClient
           .from("user_access_levels")
           .upsert({ id: userId, tier: "free" }, { onConflict: "id" });
 
         if (downgradeError) {
-          logStep("Failed to downgrade tier", { error: downgradeError.message });
+          await fail("subscription", "downgrade_failed", {
+            message: downgradeError.message,
+            context: { user_id: userId },
+          });
         } else {
-          logStep("User downgraded to free", { userId });
+          log.info("user_downgraded_to_free", { ctx: { user_id: userId } });
         }
       }
     } else if (event.type === "invoice.payment_failed") {
       // Payment failed — log for monitoring (user still has access until period ends)
       const invoice = event.data.object as Stripe.Invoice;
       const customerId = typeof invoice?.customer === "string" ? invoice.customer : null;
-      logStep("Invoice payment failed", {
-        invoiceId: invoice?.id,
-        customerId,
-        attemptCount: invoice?.attempt_count,
+      log.warn("invoice_payment_failed", {
+        ctx: { invoice_id: invoice?.id, customer_id: customerId, attempt_count: invoice?.attempt_count },
       });
     }
 
     return ok(req);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: msg });
+    await fail("unhandled", "exception", { message: msg });
     return new Response(JSON.stringify({ error: msg }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 500,
