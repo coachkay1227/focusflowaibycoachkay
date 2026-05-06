@@ -49,6 +49,24 @@ serve(async (req) => {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     logStep("Webhook signature verified", { type: event.type });
 
+    // Idempotency: short-circuit if we've already processed this event id.
+    const { error: insertEventErr } = await supabaseClient
+      .from("processed_stripe_events")
+      .insert({ event_id: event.id, event_type: event.type });
+    if (insertEventErr) {
+      // 23505 = unique_violation -> already processed
+      if ((insertEventErr as { code?: string }).code === "23505") {
+        logStep("Duplicate event, skipping", { eventId: event.id });
+        return new Response(JSON.stringify({ received: true, duplicate: true }), {
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      logStep("Failed to record event id, continuing", { error: insertEventErr.message });
+    }
+
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       logStep("Checkout session completed", {
@@ -69,14 +87,26 @@ serve(async (req) => {
       // book order as paid (idempotent) and exit. Does not touch tier logic.
       const bookOrderId = session.metadata?.book_order_id;
       if (bookOrderId) {
+        if (!UUID_RE.test(bookOrderId)) {
+          logStep("Invalid book_order_id metadata, ignoring", { bookOrderId });
+          return new Response(JSON.stringify({ received: true, ignored: "invalid_book_order_id" }), {
+            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+            status: 200,
+          });
+        }
         const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
-        const { error: bookErr } = await supabaseClient
+        // Match on session id too: ensures we only update the order this session created.
+        const { data: updated, error: bookErr } = await supabaseClient
           .from("book_orders")
           .update({ status: "paid", stripe_payment_intent_id: pi })
           .eq("id", bookOrderId)
-          .eq("status", "pending_payment");
+          .eq("stripe_session_id", session.id)
+          .eq("status", "pending_payment")
+          .select("id");
         if (bookErr) {
           logStep("Failed to update book order", { error: bookErr.message });
+        } else if (!updated || updated.length === 0) {
+          logStep("Book order not in pending_payment state or session mismatch, no-op", { bookOrderId, sessionId: session.id });
         } else {
           logStep("Book order marked paid", { bookOrderId });
         }
@@ -87,7 +117,7 @@ serve(async (req) => {
 
       // Get user ID from metadata
       const userId = session.metadata?.supabase_user_id;
-      if (!userId) {
+      if (!userId || !UUID_RE.test(userId)) {
         logStep("No supabase_user_id in metadata, skipping");
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
