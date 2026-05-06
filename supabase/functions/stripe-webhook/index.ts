@@ -102,8 +102,11 @@ serve(async (req) => {
       });
 
       // Only process paid sessions
-      if (session.payment_status !== "paid") {
-        logStep("Payment not completed, skipping");
+      if (session.payment_status !== "paid" || session.status !== "complete") {
+        logStep("Session not paid/complete, skipping", {
+          paymentStatus: session.payment_status,
+          status: session.status,
+        });
         return ok(req);
       }
 
@@ -116,7 +119,35 @@ serve(async (req) => {
           return ok(req, { received: true, ignored: "invalid_book_order_id" });
         }
         const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
-        // Match on session id too: ensures we only update the order this session created.
+        // Cross-check amount before flipping to paid: prevents a tampered
+        // metadata id from upgrading a different-priced order.
+        const { data: pending, error: pendingErr } = await supabaseClient
+          .from("book_orders")
+          .select("id, order_total")
+          .eq("id", bookOrderId)
+          .eq("stripe_session_id", session.id)
+          .eq("status", "pending_payment")
+          .maybeSingle();
+        if (pendingErr) {
+          logStep("Failed to look up pending book order", { error: pendingErr.message });
+          return ok(req, { received: true, ignored: "lookup_failed" });
+        }
+        if (!pending) {
+          logStep("No pending order matches book_order_id+session, no-op", {
+            bookOrderId,
+            sessionId: session.id,
+          });
+          return ok(req);
+        }
+        const amountTotal = typeof session.amount_total === "number" ? session.amount_total : null;
+        if (amountTotal === null || amountTotal !== pending.order_total) {
+          logStep("Amount mismatch, refusing to mark paid", {
+            bookOrderId,
+            sessionAmount: amountTotal,
+            expected: pending.order_total,
+          });
+          return ok(req, { received: true, ignored: "amount_mismatch" });
+        }
         const { data: updated, error: bookErr } = await supabaseClient
           .from("book_orders")
           .update({ status: "paid", stripe_payment_intent_id: pi })
