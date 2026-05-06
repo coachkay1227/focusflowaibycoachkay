@@ -102,13 +102,36 @@ serve(async (req) => {
           .eq("id", bookOrderId)
           .eq("stripe_session_id", session.id)
           .eq("status", "pending_payment")
-          .select("id");
+          .select("id, client_email, client_name, package_name, order_total");
         if (bookErr) {
           logStep("Failed to update book order", { error: bookErr.message });
         } else if (!updated || updated.length === 0) {
           logStep("Book order not in pending_payment state or session mismatch, no-op", { bookOrderId, sessionId: session.id });
         } else {
           logStep("Book order marked paid", { bookOrderId });
+          const order = updated[0];
+          if (order.client_email) {
+            try {
+              const totalStr = typeof order.order_total === "number"
+                ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(order.order_total / 100)
+                : undefined;
+              await supabaseClient.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: "book-order-paid",
+                  recipientEmail: order.client_email,
+                  idempotencyKey: `book-order-paid-${order.id}`,
+                  templateData: {
+                    name: order.client_name,
+                    packageName: order.package_name,
+                    orderTotal: totalStr,
+                    orderId: order.id,
+                  },
+                },
+              });
+            } catch (e) {
+              logStep("Failed to send paid email", { error: String(e) });
+            }
+          }
         }
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

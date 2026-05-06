@@ -57,6 +57,14 @@ serve(async (req) => {
     }
 
     const { id, ...patch } = parsed.data;
+
+    // Capture previous status to detect transitions
+    const { data: prev } = await admin
+      .from("book_orders")
+      .select("status")
+      .eq("id", id)
+      .maybeSingle();
+
     const { data, error } = await admin
       .from("book_orders")
       .update(patch)
@@ -68,6 +76,37 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 500, headers: { ...cors, "Content-Type": "application/json" },
       });
+    }
+
+    // Fire status-update email when status actually changed.
+    // Skip "paid" — that's already emailed by the Stripe webhook.
+    const newStatus = data.status as string;
+    const prevStatus = (prev?.status as string | undefined) ?? null;
+    if (
+      newStatus &&
+      newStatus !== prevStatus &&
+      newStatus !== "pending_payment" &&
+      newStatus !== "paid" &&
+      data.client_email
+    ) {
+      try {
+        await admin.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "book-order-status-update",
+            recipientEmail: data.client_email,
+            idempotencyKey: `book-order-status-${data.id}-${newStatus}`,
+            templateData: {
+              name: data.client_name,
+              packageName: data.package_name,
+              status: newStatus,
+              orderId: data.id,
+              note: data.admin_notes ?? undefined,
+            },
+          },
+        });
+      } catch (e) {
+        console.error("[update-book-order] status email failed", e);
+      }
     }
 
     return new Response(JSON.stringify(data), {
