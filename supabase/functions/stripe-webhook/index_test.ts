@@ -4,12 +4,13 @@ import {
   evaluateBookOrderEligibility,
   readMetaString,
   UUID_RE,
+  type SessionLike,
 } from "./validation.ts";
 
 const VALID_ID = "11111111-1111-4111-8111-111111111111";
 const OTHER_ID = "22222222-2222-4222-8222-222222222222";
 
-const baseSession = {
+const baseSession: SessionLike = {
   payment_status: "paid",
   status: "complete",
   amount_total: 4900,
