@@ -65,6 +65,26 @@ serve(async (req) => {
         });
       }
 
+      // Book Store branch: if metadata carries a book_order_id, mark the
+      // book order as paid (idempotent) and exit. Does not touch tier logic.
+      const bookOrderId = session.metadata?.book_order_id;
+      if (bookOrderId) {
+        const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
+        const { error: bookErr } = await supabaseClient
+          .from("book_orders")
+          .update({ status: "paid", stripe_payment_intent_id: pi })
+          .eq("id", bookOrderId)
+          .eq("status", "pending_payment");
+        if (bookErr) {
+          logStep("Failed to update book order", { error: bookErr.message });
+        } else {
+          logStep("Book order marked paid", { bookOrderId });
+        }
+        return new Response(JSON.stringify({ received: true }), {
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+
       // Get user ID from metadata
       const userId = session.metadata?.supabase_user_id;
       if (!userId) {
