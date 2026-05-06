@@ -1,80 +1,109 @@
+# Book Store Feature Plan
 
+Build a self-contained Book Store module that plugs into the existing FocusFlow AI app without touching any existing pages. It reuses the dark navy + gold design system, DM Sans / Cormorant Garamond typography, and the existing Lovable Cloud + Stripe pipeline.
 
-# Full-Site Audit: Issues Found & Fixes Needed
+## 1. Navigation (additive only)
 
-## Critical CSS/Layout Issues
+Edit `src/components/DesktopNav.tsx`:
+- Add `{ label: "Book Store", path: "/store", icon: BookMarked, authOnly: false }` to `navItems`.
+- Add `/store`, `/order-success`, `/admin/orders` to `PRIVATE_ROUTES` so the top nav hides on those pages (keeps current convention — those pages render their own back link / brand).
 
-### 1. Kiosk Page — Conflicting `relative` + `absolute` positioning
-**File:** `src/pages/Kiosk.tsx`, lines 42 and 92
-- The brand div (line 42) has `className="relative z-10 absolute top-8 left-8"` — `relative` and `absolute` conflict. The `relative` wins, so the brand is NOT pinned to the top-left; it's in normal document flow inside a flex-center container, causing overlap with the main content.
-- Same issue on the credential line (line 92): `className="relative z-10 absolute bottom-8 text-center"` — not actually pinned to the bottom.
-- **Fix:** Remove `relative` from both divs. Use only `absolute` (or `fixed`) so they pin correctly. The parent already has `relative`.
+Edit `src/components/admin/AdminNav.tsx`:
+- Add an "Orders" link to `/admin/orders`.
 
-### 2. Coach Kay About Page — "Free Clarity Check" CTA links to `/kiosk` instead of `/clarity`
-**File:** `src/pages/CoachKay.tsx`, lines 99 and 229
-- Both CTA buttons navigate to `/kiosk` (the kiosk display screen with a QR code), not `/clarity` (the actual clarity session). A first-time visitor clicking "Free Clarity Check" lands on a display-only kiosk page.
-- **Fix:** Change both `navigate("/kiosk")` to `navigate("/clarity")`.
+No other existing pages are modified.
 
-### 3. Homepage Nav — "Coach Kay" link goes to `/coach` (Chat) instead of `/about`
-**File:** `src/pages/Index.tsx`, lines 137-141
-- The "Coach Kay" button in the homepage nav navigates to `/coach` (the Coach Chat page), not `/about` (the About/Bio page). This is confusing because there's a separate "About" link right next to it.
-- **Fix:** Either rename the "Coach Kay" nav link to "Chat" (since it goes to the chat) or redirect it to `/about`. Since DesktopNav already has "Coach Kay" pointing to `/coach` and "About" pointing to `/about`, the homepage should match. Rename to "Chat" or "AI Coach" to differentiate.
+## 2. Routes (additive in `src/App.tsx`)
 
-### 4. Homepage Footer — "Coach Kay" link also goes to `/coach`
-**File:** `src/pages/Index.tsx`, line 585-586
-- Footer repeats the same mislabeled link. Should either say "Chat" or link to `/about`.
-- **Fix:** Add an "About" link in the footer, and rename the existing link to "AI Coach" or "Chat".
+Add three lazy-loaded routes:
+- `/store` → public `Store` page
+- `/order-success` → public `OrderSuccess` page (reads `?session_id=...`)
+- `/admin/orders` → `AdminOrders` wrapped in `ProtectedRoute requireAdmin`
 
-### 5. Dashboard page — no top padding for DesktopNav
-**File:** `src/pages/Dashboard.tsx`
-- Dashboard has its own nav but the global `DesktopNav` also renders on `/dashboard`. The DesktopNav is `fixed top-0` with `h-14`, but Dashboard's content starts from the top without a `pt-14` spacer. This means the DesktopNav overlaps Dashboard's own nav bar.
-- **Fix:** Since Dashboard renders its own nav, add `/dashboard` to the `PRIVATE_ROUTES` array in `DesktopNav.tsx` to hide the global nav on that page. Same check needed for other pages with custom headers.
+## 3. Database (migration)
 
-### 6. Pages missing top padding under DesktopNav
-Pages that render under the global DesktopNav (Modules, Challenges, Community, CoachChat, ProgramDetail, CoachKay, MirrorChallenge, Profile, ResultScreen) need `pt-14` on their main content wrapper so content doesn't hide behind the fixed 56px nav.
-- **Affected pages with their own header bars** that will overlap: Modules, Challenges, Community, CoachChat, ResultScreen, MirrorChallenge. These all have `py-6` header sections that sit at `top: 0` and will be hidden behind the `DesktopNav`.
-- **Fix:** Add these paths to `PRIVATE_ROUTES` in DesktopNav to suppress the global nav, since they all have their own back-button headers. OR add `pt-14` padding. The cleaner fix is to suppress the DesktopNav for pages that have custom navigation headers.
+New `book_packages` table (catalog, admin-managed, publicly readable):
+- `id uuid pk`, `slug text unique`, `category text` (`children` | `coloring` | `nonfiction`), `name text`, `tagline text`, `description text`, `features jsonb`, `price_cents int`, `currency text default 'usd'`, `stripe_price_id text`, `sort_order int`, `active bool default true`, `created_at`, `updated_at`.
+- RLS: `SELECT` allowed to anon + authenticated where `active = true`; all writes blocked (admin manages via Stripe + seed migration / future admin UI).
 
-### 7. CoachKay About Page — no padding for DesktopNav
-**File:** `src/pages/CoachKay.tsx`
-- The About page does NOT have a back-button header; it relies on the global DesktopNav. But its hero section starts at `pt-24` which should be sufficient on desktop. However, on pages where DesktopNav shows, the nav overlaps the first 56px. `pt-24` = 96px, which clears the 56px nav. This is fine.
+New `book_orders` table:
+- `id uuid pk`, `user_id uuid null` (guest checkout allowed), `package_id uuid references book_packages`, `stripe_session_id text unique`, `stripe_payment_intent text`, `amount_cents int`, `currency text`, `status text default 'pending'` (`pending` | `paid` | `failed` | `refunded`), `customer_email text`, `intake jsonb` (form responses), `notes text`, `created_at`, `updated_at`.
+- RLS:
+  - `SELECT`: user can read their own (`auth.uid() = user_id`); admins via `has_role(auth.uid(),'admin')`.
+  - `INSERT` / `UPDATE` / `DELETE`: blocked for users — only edge functions using the service role write.
 
-## Navigation & Routing Issues
+Seed three starter packages (one per tab) so the page renders before Stripe products are wired; `stripe_price_id` left null until the user creates them.
 
-### 8. DesktopNav suppresses on `/` but no other page has its own nav-hiding logic
-- Pages like `/community`, `/coach`, `/challenges`, `/modules`, `/result` all have their own back-button headers PLUS the DesktopNav renders on top. This creates double navigation on desktop.
-- **Fix:** Add these page-level routes to `PRIVATE_ROUTES` or create a list of routes that use custom headers to suppress DesktopNav.
+## 4. Edge functions
 
-### 9. QR Code links to wrong URL
-**File:** `src/components/QRCodeDisplay.tsx`, line 130
-- Default URL is `https://focusflowelevation-hub.com/clarity` — this appears to be a custom domain. Need to verify this is correct or update to the actual published URL.
-- The QR code generator is a simplified implementation that produces a valid-looking pattern but may not be scannable.
-- **Fix:** Update the default URL to the actual published site (`https://focusflowaibycoachkay.lovable.app/clarity`) or confirm the custom domain is set up.
+All deployed automatically; ESM imports per project rule.
 
-## Functional Issues
+**`create-book-checkout`** (`verify_jwt = false`, accepts both auth and guest):
+- Input: `{ packageId: string, intake: {...}, email?: string }` validated with Zod.
+- Looks up `book_packages` row by id (must be `active`, must have `stripe_price_id`).
+- Optionally resolves `user_id` from JWT if present.
+- Inserts `book_orders` row with `status='pending'` and the intake payload via service role.
+- Creates Stripe Checkout session (`mode: 'payment'`) with that `stripe_price_id`, `success_url=${origin}/order-success?session_id={CHECKOUT_SESSION_ID}`, `cancel_url=${origin}/store?checkout=cancelled`, metadata `{ order_id, package_id, supabase_user_id? }`.
+- Updates the order row with `stripe_session_id`. Returns `{ url }`.
 
-### 10. MobileNav renders on homepage AND inside other pages
-- The homepage (Index.tsx) includes `<MobileNav />` in its nav. Other pages (Community, Modules, Challenges, etc.) also include `<MobileNav />`. But MobileNav is NOT in the global DesktopNav component — it's only for mobile. This is fine since DesktopNav is `hidden md:flex` and MobileNav is `md:hidden`.
+**`verify-book-order`** (`verify_jwt = false`):
+- Input: `{ session_id }`. Retrieves Stripe session, if `payment_status === 'paid'` updates the matching order to `status='paid'` and stores `stripe_payment_intent` + `customer_email`. Returns sanitized order summary for the success page.
 
-### 11. Profile page has `fixed` header but no DesktopNav suppression
-**File:** `src/pages/Profile.tsx`, line 104
-- Profile has its own fixed header at `top-0` which will collide with DesktopNav on desktop.
-- **Fix:** Add `/profile` to the suppression list.
+**Extend `stripe-webhook`** (already in repo): on `checkout.session.completed` for sessions whose metadata contains `order_id`, mark that order row `paid` (idempotent — verify-book-order may have already done it). No changes to existing tier/subscription handling.
 
-## Summary of Changes
+## 5. Frontend pages & components (all new files)
 
-| # | File | Fix |
-|---|------|-----|
-| 1 | `Kiosk.tsx` | Remove `relative` from brand and credential divs (keep `absolute`) |
-| 2 | `CoachKay.tsx` | Change `navigate("/kiosk")` to `navigate("/clarity")` (2 places) |
-| 3 | `Index.tsx` | Rename "Coach Kay" nav link to "AI Coach" or change target to `/about` |
-| 4 | `Index.tsx` | Add "About" link in footer, rename "Coach Kay" to "AI Coach" |
-| 5-8 | `DesktopNav.tsx` | Expand `PRIVATE_ROUTES` to include all pages with custom headers: `/dashboard`, `/community`, `/coach`, `/challenges`, `/modules`, `/result`, `/clarity`, `/mirror-challenge`, `/programs`, `/profile` |
-| 9 | `QRCodeDisplay.tsx` | Update default URL to actual published site |
+```
+src/pages/Store.tsx
+src/pages/OrderSuccess.tsx
+src/pages/admin/AdminOrders.tsx
+src/components/store/PackageTabs.tsx
+src/components/store/PackageCard.tsx
+src/components/store/IntakeFormModal.tsx
+src/lib/book-store.ts        // types, category labels, intake schemas
+```
 
-## Technical Details
+### `/store`
+- Hero: Cormorant Garamond headline "Coach Kay Book Store", gold underline accent, navy bg, subtle FloatingOrbs (already in project).
+- Tabs (shadcn or simple buttons) for the three categories. Active tab uses gold border + bg `primary/10`.
+- Grid of `PackageCard`s fetched from `book_packages` filtered by category.
+- Each card: name, tagline, price formatted from `price_cents`, feature list (checkmarks), gold "Order Now" CTA → opens `IntakeFormModal`.
 
-- The `PRIVATE_ROUTES` expansion in DesktopNav is the cleanest fix. Pages with back-button headers already provide their own navigation, so doubling up with the fixed nav bar creates overlap. By suppressing DesktopNav on these pages, we eliminate the double-nav issue across the board.
-- The Kiosk CSS fix is straightforward: `relative` cancels `absolute` positioning, so the brand and credential elements sit in flow instead of pinning to corners.
-- The CoachKay `/kiosk` links are a clear routing bug — `/kiosk` is a display-only page for physical events, not a user-facing entry point.
+### `IntakeFormModal`
+Built with existing `Dialog` + `react-hook-form` + Zod. Fields per category:
+- **Children's Books**: child's name, age, themes/values, dedication, cover preference, delivery email.
+- **Coloring Books**: theme, target age range, page count preference, custom illustrations notes, delivery email.
+- **Non-Fiction Authority**: author name, niche, working title, book goal, target audience, timeline, delivery email.
+Common fields: full name, email (prefilled from auth if logged in), phone (optional), notes.
+On submit → `supabase.functions.invoke('create-book-checkout', { body })` → `window.location.href = url`.
 
+### `/order-success`
+- Reads `session_id`, calls `verify-book-order`, shows confirmation card (package name, amount, "we'll email you within 1 business day"), gold "Back to Store" + "Go Home" buttons.
+
+### `/admin/orders`
+- Table of all orders (newest first) via `supabase.from('book_orders').select('*, book_packages(name,category)')`.
+- Filters: status, category, search by email.
+- Row click opens detail drawer showing intake JSON formatted, Stripe session id with link to Stripe dashboard, status badge, internal notes textarea (saves via service-role edge function `update-book-order-notes` — admin-only via `has_role` check inside the function).
+- Uses `AdminNav` shell to match other admin pages.
+
+## 6. Stripe products
+
+After the migration runs, create one Stripe product + price per package using the available Stripe tooling, then update the `book_packages` rows with their `stripe_price_id` (insert tool, since this is data not schema). The plan covers wiring; the user will be asked to confirm the three prices (or supply their own) at implementation time.
+
+## 7. Design tokens
+
+Reuse existing tokens only — `bg-background`, `text-foreground`, `border-border`, `text-primary` (gold), `font-heading` (Cormorant), `font-sans` (DM Sans). No new colors. No external animation libs (per memory rule). Subtle CSS-only fade/slide on tab change.
+
+## 8. Out of scope (explicit)
+
+- No edits to Index, Kiosk, CoachKay, Modules, Dashboard, ClaritySession, etc.
+- No changes to existing tiers, `user_access_levels`, or subscription logic.
+- No physical-shipping flow — orders are digital/service deliverables tracked manually by admin.
+
+## Technical notes
+
+- Guest checkout supported because intake form already collects email; `book_orders.user_id` is nullable.
+- `verify_jwt = false` on the two new functions requires explicit blocks in `supabase/config.toml`.
+- Webhook already verifies signatures; we only branch on `metadata.order_id` to avoid colliding with existing tier logic.
+- `PackageCard` price formatter: `new Intl.NumberFormat('en-US',{style:'currency',currency}).format(price_cents/100)`.
+- All inputs validated client-side (Zod + react-hook-form) AND server-side (Zod in edge function) per project security rules.
