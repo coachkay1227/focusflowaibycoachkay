@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      book_orders: {
+        Row: {
+          addons: Json
+          addons_total: number
+          admin_notes: string | null
+          book_purpose: string
+          book_vision: string
+          characters: string | null
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          created_at: string
+          id: string
+          illustration_style: string
+          order_total: number
+          package_name: string
+          package_price: number
+          package_slug: string
+          referral_source: string
+          special_requirements: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          addons?: Json
+          addons_total?: number
+          admin_notes?: string | null
+          book_purpose: string
+          book_vision: string
+          characters?: string | null
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          created_at?: string
+          id?: string
+          illustration_style: string
+          order_total: number
+          package_name: string
+          package_price: number
+          package_slug: string
+          referral_source: string
+          special_requirements?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          addons?: Json
+          addons_total?: number
+          admin_notes?: string | null
+          book_purpose?: string
+          book_vision?: string
+          characters?: string | null
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          created_at?: string
+          id?: string
+          illustration_style?: string
+          order_total?: number
+          package_name?: string
+          package_price?: number
+          package_slug?: string
+          referral_source?: string
+          special_requirements?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       challenge_enrollments: {
         Row: {
           challenge_type: string
