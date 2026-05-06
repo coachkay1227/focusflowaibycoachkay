@@ -8,6 +8,30 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Safely read a string field from a Stripe metadata bag.
+ * Returns null when missing, non-string, empty, or longer than 500 chars.
+ */
+const readMetaString = (
+  metadata: Stripe.Metadata | null | undefined,
+  key: string,
+): string | null => {
+  if (!metadata || typeof metadata !== "object") return null;
+  const raw = (metadata as Record<string, unknown>)[key];
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (trimmed.length === 0 || trimmed.length > 500) return null;
+  return trimmed;
+};
+
+const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
+  new Response(JSON.stringify(body), {
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    status: 200,
+  });
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -47,7 +71,7 @@ serve(async (req) => {
     }
 
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    logStep("Webhook signature verified", { type: event.type });
+    logStep("Webhook signature verified", { type: event.type, id: event.id });
 
     // Idempotency: short-circuit if we've already processed this event id.
     const { error: insertEventErr } = await supabaseClient
@@ -65,10 +89,12 @@ serve(async (req) => {
       logStep("Failed to record event id, continuing", { error: insertEventErr.message });
     }
 
-    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
+      if (!session || typeof session.id !== "string") {
+        logStep("Malformed checkout.session payload, ignoring");
+        return ok(req, { received: true, ignored: "malformed_session" });
+      }
       logStep("Checkout session completed", {
         sessionId: session.id,
         mode: session.mode,
@@ -78,21 +104,16 @@ serve(async (req) => {
       // Only process paid sessions
       if (session.payment_status !== "paid") {
         logStep("Payment not completed, skipping");
-        return new Response(JSON.stringify({ received: true }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return ok(req);
       }
 
       // Book Store branch: if metadata carries a book_order_id, mark the
       // book order as paid (idempotent) and exit. Does not touch tier logic.
-      const bookOrderId = session.metadata?.book_order_id;
+      const bookOrderId = readMetaString(session.metadata, "book_order_id");
       if (bookOrderId) {
         if (!UUID_RE.test(bookOrderId)) {
           logStep("Invalid book_order_id metadata, ignoring", { bookOrderId });
-          return new Response(JSON.stringify({ received: true, ignored: "invalid_book_order_id" }), {
-            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-            status: 200,
-          });
+          return ok(req, { received: true, ignored: "invalid_book_order_id" });
         }
         const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
         // Match on session id too: ensures we only update the order this session created.
@@ -133,51 +154,64 @@ serve(async (req) => {
             }
           }
         }
-        return new Response(JSON.stringify({ received: true }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return ok(req);
       }
 
       // Get user ID from metadata
-      const userId = session.metadata?.supabase_user_id;
+      const userId = readMetaString(session.metadata, "supabase_user_id");
       if (!userId || !UUID_RE.test(userId)) {
-        logStep("No supabase_user_id in metadata, skipping");
-        return new Response(JSON.stringify({ received: true }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        logStep("No/invalid supabase_user_id in metadata, skipping", {
+          present: !!userId,
         });
+        return ok(req, { received: true, ignored: "missing_or_invalid_user_id" });
       }
 
       // Retrieve line items to get the product ID
-      const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
-      const priceData = lineItems.data[0]?.price;
-      const productId = priceData?.product as string;
+      let productId: string | null = null;
+      try {
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const priceData = lineItems.data?.[0]?.price;
+        const product = priceData?.product;
+        if (typeof product === "string" && product.length > 0) {
+          productId = product;
+        } else if (product && typeof product === "object" && typeof (product as { id?: unknown }).id === "string") {
+          productId = (product as { id: string }).id;
+        }
+      } catch (e) {
+        logStep("Failed to list line items, skipping tier upgrade", { error: String(e) });
+        return ok(req, { received: true, ignored: "line_items_unavailable" });
+      }
 
       if (!productId) {
         logStep("No product ID found in line items");
-        return new Response(JSON.stringify({ received: true }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return ok(req, { received: true, ignored: "missing_product_id" });
       }
 
-      const tier = PRODUCT_TIER_MAP[productId] || "subscriber";
-      logStep("Upgrading user tier", { userId, productId, tier });
+      const mappedTier = PRODUCT_TIER_MAP[productId];
+      if (!mappedTier) {
+        logStep("Unknown product ID, no tier mapping found, skipping", { productId });
+        return ok(req, { received: true, ignored: "unknown_product" });
+      }
+      logStep("Upgrading user tier", { userId, productId, tier: mappedTier });
 
       const { error: upsertError } = await supabaseClient
         .from("user_access_levels")
-        .upsert({ id: userId, tier }, { onConflict: "id" });
+        .upsert({ id: userId, tier: mappedTier }, { onConflict: "id" });
 
       if (upsertError) {
         logStep("Failed to upsert tier", { error: upsertError.message });
       } else {
-        logStep("Tier upgraded successfully", { userId, tier });
+        logStep("Tier upgraded successfully", { userId, tier: mappedTier });
       }
     } else if (event.type === "customer.subscription.deleted") {
       // Subscription cancelled — downgrade to free
       const subscription = event.data.object as Stripe.Subscription;
-      const userId = subscription.metadata?.supabase_user_id;
-      logStep("Subscription deleted", { subscriptionId: subscription.id, userId });
+      const userId = readMetaString(subscription?.metadata, "supabase_user_id");
+      logStep("Subscription deleted", { subscriptionId: subscription?.id, userId });
 
-      if (userId) {
+      if (!userId || !UUID_RE.test(userId)) {
+        logStep("No/invalid supabase_user_id in subscription metadata, skipping downgrade");
+      } else {
         const { error: downgradeError } = await supabaseClient
           .from("user_access_levels")
           .upsert({ id: userId, tier: "free" }, { onConflict: "id" });
@@ -187,24 +221,19 @@ serve(async (req) => {
         } else {
           logStep("User downgraded to free", { userId });
         }
-      } else {
-        logStep("No supabase_user_id in subscription metadata, skipping downgrade");
       }
     } else if (event.type === "invoice.payment_failed") {
       // Payment failed — log for monitoring (user still has access until period ends)
       const invoice = event.data.object as Stripe.Invoice;
-      const customerId = invoice.customer as string;
+      const customerId = typeof invoice?.customer === "string" ? invoice.customer : null;
       logStep("Invoice payment failed", {
-        invoiceId: invoice.id,
+        invoiceId: invoice?.id,
         customerId,
-        attemptCount: invoice.attempt_count,
+        attemptCount: invoice?.attempt_count,
       });
     }
 
-    return new Response(JSON.stringify({ received: true }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      status: 200,
-    });
+    return ok(req);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: msg });
