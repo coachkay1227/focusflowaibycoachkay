@@ -121,7 +121,7 @@ class FakeBookOrders {
 function processWebhook(
   events: FakeProcessedEvents,
   orders: FakeBookOrders,
-  event: { id: string; session: typeof baseSession },
+  event: { id: string; session: SessionLike },
 ) {
   // 1. Idempotency gate
   const ins = events.insert(event.id);
