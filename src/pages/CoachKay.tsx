@@ -50,8 +50,8 @@ const CoachKay = () => {
           name: "Kenza Alaoui",
           alternateName: "Coach Kay",
           jobTitle: "AI & Life Transformation Coach",
-          url: "https://focusflowelevation-hub.com/about",
-          image: "https://focusflowelevation-hub.com/coach-kay.jpeg",
+          url: "https://coachkayai.life/about",
+          image: "https://coachkayai.life/coach-kay.jpeg",
         }}
       />
 

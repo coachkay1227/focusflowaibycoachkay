@@ -154,4 +154,4 @@ Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /result
 
-Sitemap: https://focusflowelevation-hub.com/sitemap.xml
+Sitemap: https://coachkayai.life/sitemap.xml

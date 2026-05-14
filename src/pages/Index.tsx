@@ -39,7 +39,7 @@ const Index = () => {
             "@context": "https://schema.org",
             "@type": "ProfessionalService",
             name: "FocusFlow AI by Coach Kay",
-            url: "https://focusflowelevation-hub.com",
+            url: "https://coachkayai.life",
             description: "Master-certified clarity coaching powered by the F.O.C.U.S. framework",
             serviceType: "Life Coaching",
             provider: {
@@ -54,7 +54,7 @@ const Index = () => {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "FocusFlow AI",
-            url: "https://focusflowelevation-hub.com",
+            url: "https://coachkayai.life",
           },
           {
             "@context": "https://schema.org",
