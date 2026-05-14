@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { getUserPreferences } from "@/lib/enrollment-store";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,6 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const intendedFrom = (location.state as { from?: string } | null)?.from;
   const { signIn, signUp, resetPassword, user } = useAuth();
   const { toast } = useToast();
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
@@ -26,12 +28,14 @@ const Auth = () => {
       getUserPreferences().then((prefs) => {
         if (!prefs || !prefs.onboardingCompleted) {
           navigate("/onboarding");
+        } else if (intendedFrom && intendedFrom !== "/auth") {
+          navigate(intendedFrom);
         } else {
           navigate("/dashboard");
         }
       });
     }
-  }, [user, navigate]);
+  }, [user, navigate, intendedFrom]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

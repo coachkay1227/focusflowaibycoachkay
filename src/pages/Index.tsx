@@ -13,17 +13,13 @@ import MobileNav from "@/components/MobileNav";
 const Index = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const [phase, setPhase] = useState(0);
+  // Start fully visible so hero content appears immediately above the fold
+  // (no animation gating). Transitions still apply on subsequent re-renders.
+  const [phase, setPhase] = useState(4);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(1), 100),
-      setTimeout(() => setPhase(2), 400),
-      setTimeout(() => setPhase(3), 700),
-      setTimeout(() => setPhase(4), 1000),
-    ];
-    return () => timers.forEach(clearTimeout);
+    setPhase(4);
   }, []);
 
   useMouseGlow(containerRef);
@@ -39,7 +35,7 @@ const Index = () => {
             "@context": "https://schema.org",
             "@type": "ProfessionalService",
             name: "FocusFlow AI by Coach Kay",
-            url: "https://focusflowelevation-hub.com",
+            url: "https://coachkayai.life",
             description: "Master-certified clarity coaching powered by the F.O.C.U.S. framework",
             serviceType: "Life Coaching",
             provider: {
@@ -54,7 +50,7 @@ const Index = () => {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "FocusFlow AI",
-            url: "https://focusflowelevation-hub.com",
+            url: "https://coachkayai.life",
           },
           {
             "@context": "https://schema.org",
@@ -150,12 +146,6 @@ const Index = () => {
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
             Community
-          </button>
-          <button
-            onClick={() => navigate("/about")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            About
           </button>
           <Button
             onClick={() => navigate("/clarity")}
