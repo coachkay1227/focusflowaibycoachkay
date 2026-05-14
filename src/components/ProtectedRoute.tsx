@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 
@@ -12,16 +12,17 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/auth");
+      navigate("/auth", { state: { from: location.pathname + location.search } });
       return;
     }
     if (!rolesLoading && requireAdmin && !isAdmin) {
       navigate("/dashboard");
     }
-  }, [user, authLoading, isAdmin, rolesLoading, requireAdmin, navigate]);
+  }, [user, authLoading, isAdmin, rolesLoading, requireAdmin, navigate, location]);
 
   if (authLoading || rolesLoading) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
