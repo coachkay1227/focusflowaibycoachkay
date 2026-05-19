@@ -16,7 +16,9 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/auth", { state: { from: location.pathname + location.search } });
+      const returnTo = location.pathname + location.search;
+      try { sessionStorage.setItem("auth:returnTo", returnTo); } catch { /* noop */ }
+      navigate("/auth", { state: { from: returnTo } });
       return;
     }
     if (!rolesLoading && requireAdmin && !isAdmin) {
