@@ -83,7 +83,7 @@ const ProgramDetail = () => {
           <ArrowLeft className="h-4 w-4" /> Programs
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">Focus</span>Flow AI
+          <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>
         </div>
         <MobileNav />
       </div>
