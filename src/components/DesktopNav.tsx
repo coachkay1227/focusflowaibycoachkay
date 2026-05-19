@@ -29,10 +29,10 @@ const DesktopNav = () => {
   return (
     <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-14 items-center justify-between px-8 bg-background/80 backdrop-blur-md border-b border-border/40">
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/")} aria-label="FocusFlow AI — Home"
         className="font-heading text-lg font-light hover:opacity-80 transition-opacity"
       >
-        <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>
+        <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
       </button>
 
       <div className="flex items-center gap-1">

@@ -82,8 +82,8 @@ const ProgramDetail = () => {
         <button onClick={() => navigate("/modules")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Programs
         </button>
-        <div className="font-heading text-lg font-light">
-          <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>
+        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
+          <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
         </div>
         <MobileNav />
       </div>
