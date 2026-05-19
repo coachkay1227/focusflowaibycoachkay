@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info } from "lucide-react";
+import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info, Sparkles } from "lucide-react";
 
 const navItems = [
+  { label: "Start Session", path: "/clarity", icon: Sparkles, authOnly: false, primary: true },
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
   { label: "Modules", path: "/modules", icon: BookOpen, authOnly: false },
   { label: "Challenges", path: "/challenges", icon: Trophy, authOnly: false },
@@ -61,6 +62,8 @@ const MobileNav = () => {
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                       active
                         ? "bg-primary/10 text-primary"
+                        : item.primary
+                        ? "bg-primary/10 text-primary hover:bg-primary/20"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >

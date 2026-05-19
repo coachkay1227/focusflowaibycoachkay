@@ -69,7 +69,12 @@ const Onboarding = () => {
     });
     await Promise.all(selectedModules.map((id) => enrollInModule(id)));
     setSaving(false);
-    navigate("/dashboard");
+    let returnTo: string | null = null;
+    try {
+      returnTo = sessionStorage.getItem("auth:returnTo");
+      if (returnTo) sessionStorage.removeItem("auth:returnTo");
+    } catch { /* noop */ }
+    navigate(returnTo && returnTo !== "/auth" ? returnTo : "/dashboard");
   };
 
   const canProceed =

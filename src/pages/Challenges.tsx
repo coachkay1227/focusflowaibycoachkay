@@ -75,9 +75,23 @@ const Challenges = () => {
 
   useEffect(() => {
     if (user) {
-      getChallengeEnrollments().then(setEnrollments);
+      getChallengeEnrollments().then(async (current) => {
+        setEnrollments(current);
+        // Auto-enroll any pending challenge stored before sign-in
+        let pending: string | null = null;
+        try { pending = sessionStorage.getItem("pending:challenge"); } catch { /* noop */ }
+        if (pending && !current.find((e) => e.challengeType === pending)) {
+          try {
+            await enrollInChallenge(pending);
+            const refreshed = await getChallengeEnrollments();
+            setEnrollments(refreshed);
+            toast({ title: "Enrolled!", description: "Your challenge is now on your dashboard." });
+          } catch { /* enrollInChallenge already surfaces error */ }
+        }
+        try { sessionStorage.removeItem("pending:challenge"); } catch { /* noop */ }
+      });
     }
-  }, [user]);
+  }, [user, toast]);
 
   useMouseGlow(containerRef);
 
@@ -86,15 +100,34 @@ const Challenges = () => {
   const handleEnroll = async (type: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
-      navigate("/auth");
+      try {
+        sessionStorage.setItem("auth:returnTo", "/challenges");
+        sessionStorage.setItem("pending:challenge", type);
+      } catch { /* noop */ }
+      navigate("/auth", { state: { from: "/challenges" } });
       return;
     }
     setEnrolling(type);
-    await enrollInChallenge(type);
-    const updated = await getChallengeEnrollments();
-    setEnrollments(updated);
-    setEnrolling(null);
-    toast({ title: "Enrolled!", description: "Challenge added to your dashboard." });
+    // Optimistic update so the badge appears immediately
+    const optimistic: ChallengeEnrollment = {
+      id: `optimistic-${type}`,
+      challengeType: type,
+      status: "enrolled",
+      enrolledAt: new Date().toISOString(),
+      completedAt: null,
+    };
+    setEnrollments((prev) => [optimistic, ...prev.filter((e) => e.challengeType !== type)]);
+    try {
+      await enrollInChallenge(type);
+      const updated = await getChallengeEnrollments();
+      setEnrollments(updated);
+      toast({ title: "Enrolled!", description: "Challenge added to your dashboard." });
+    } catch {
+      // Roll back optimistic update; enrollInChallenge already showed a destructive toast
+      setEnrollments((prev) => prev.filter((e) => e.id !== optimistic.id));
+    } finally {
+      setEnrolling(null);
+    }
   };
 
   const togglePreview = (type: string, e: React.MouseEvent) => {
@@ -207,7 +240,7 @@ const Challenges = () => {
                     )}
                     {!user && (
                       <button
-                        onClick={() => navigate("/auth")}
+                        onClick={(e) => handleEnroll(challenge.type, e)}
                         className="text-xs text-muted-foreground/50 hover:text-primary transition-colors ml-auto"
                       >
                         Sign in to enroll
