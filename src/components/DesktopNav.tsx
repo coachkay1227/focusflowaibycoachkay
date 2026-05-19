@@ -5,7 +5,8 @@ import { LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, User, Shield, 
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
-  { label: "Modules", path: "/modules", icon: BookOpen, authOnly: false },
+  { label: "Pathways", path: "/programs", icon: BookOpen, authOnly: false },
+  { label: "Work With Me", path: "/programs", icon: BookMarked, authOnly: false },
   { label: "Challenges", path: "/challenges", icon: Trophy, authOnly: false },
   { label: "Coach Kay", path: "/coach", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },

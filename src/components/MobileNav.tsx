@@ -7,7 +7,8 @@ import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOu
 const navItems = [
   { label: "Start Session", path: "/clarity", icon: Sparkles, authOnly: false, primary: true },
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
-  { label: "Modules", path: "/modules", icon: BookOpen, authOnly: false },
+  { label: "Pathways", path: "/programs", icon: BookOpen, authOnly: false },
+  { label: "Work With Me", path: "/programs", icon: BookOpen, authOnly: false },
   { label: "Challenges", path: "/challenges", icon: Trophy, authOnly: false },
   { label: "Coach Kay", path: "/coach", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },

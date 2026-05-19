@@ -118,10 +118,16 @@ const Index = () => {
             </button>
           )}
           <button
-            onClick={() => navigate("/modules")}
+            onClick={() => navigate("/programs")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
           >
-            Modules
+            Pathways
+          </button>
+          <button
+            onClick={() => navigate("/programs")}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+          >
+            Work With Me
           </button>
           <button
             onClick={() => navigate("/challenges")}
@@ -236,8 +242,8 @@ const Index = () => {
             transition: "all 0.6s ease-out",
           }}
         >
-          A clarity experience that helps you cut through the noise, identify your patterns, and take your
-          next bold step.
+          A guided clarity experience across Personal, Business, and AI transformation — built by Master
+          Certified Life Coach Kay.
         </p>
 
         {/* CTA */}
@@ -255,7 +261,7 @@ const Index = () => {
             className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform text-base px-8 py-6"
           >
             <Sparkles className="mr-2 h-5 w-5" />
-            Begin Your Clarity Check
+            Start Your Clarity Check
           </Button>
           <Button
             onClick={() => {
@@ -309,8 +315,8 @@ const Index = () => {
             {[
               "Master Certified Life Coach",
               "600+ Coaching Hours",
-              "Accredited Training",
-              "Clarity Code Creator",
+              "3 Transformation Paths",
+              "Founding Cohort Waitlist Open",
             ].map((cred, i) => (
               <div key={cred} className="flex items-center gap-4 md:gap-8">
                 <span className="font-mono-label text-[11px] tracking-wider text-primary/90 opacity-70">{cred}</span>
@@ -597,7 +603,7 @@ const Index = () => {
             className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform text-base px-10 py-6"
           >
             <Sparkles className="mr-2 h-5 w-5" />
-            Begin Your Clarity Check
+            Start Your Clarity Check
           </Button>
         </AnimatedSection>
       </section>
