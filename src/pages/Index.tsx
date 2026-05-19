@@ -185,10 +185,10 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] px-6 text-center">
+      <section className="relative z-10 flex flex-col items-center justify-center min-h-[70vh] px-6 pt-4 md:pt-8 text-center">
         {/* Gold line */}
         <div
-          className="mb-12"
+          className="mb-8"
           style={{
             width: "min(80vw, 400px)",
             height: 1,
@@ -313,7 +313,7 @@ const Index = () => {
               "Clarity Code Creator",
             ].map((cred, i) => (
               <div key={cred} className="flex items-center gap-4 md:gap-8">
-                <span className="font-mono-label text-[11px] tracking-wider text-primary/70">{cred}</span>
+                <span className="font-mono-label text-[11px] tracking-wider text-primary/90 opacity-70">{cred}</span>
                 {i < 3 && <span className="hidden md:inline text-primary/20">|</span>}
               </div>
             ))}
