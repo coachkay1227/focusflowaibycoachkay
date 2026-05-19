@@ -8,19 +8,41 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Mail, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, Mail, Lock, Sparkles, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+function getStoredReturnTo(): string | null {
+  try {
+    const v = sessionStorage.getItem("auth:returnTo");
+    return v && v !== "/auth" ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredReturnTo() {
+  try { sessionStorage.removeItem("auth:returnTo"); } catch { /* noop */ }
+}
 
 const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const intendedFrom = (location.state as { from?: string } | null)?.from;
+  const intendedFrom =
+    (location.state as { from?: string } | null)?.from || getStoredReturnTo();
   const { signIn, signUp, resetPassword, user } = useAuth();
   const { toast } = useToast();
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "signup-success">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Persist any intent passed via router state so it survives reloads / email confirmation tab
+  useEffect(() => {
+    const fromState = (location.state as { from?: string } | null)?.from;
+    if (fromState && fromState !== "/auth") {
+      try { sessionStorage.setItem("auth:returnTo", fromState); } catch { /* noop */ }
+    }
+  }, [location.state]);
 
   // Redirect if already signed in
   useEffect(() => {
@@ -29,8 +51,10 @@ const Auth = () => {
         if (!prefs || !prefs.onboardingCompleted) {
           navigate("/onboarding");
         } else if (intendedFrom && intendedFrom !== "/auth") {
+          clearStoredReturnTo();
           navigate(intendedFrom);
         } else {
+          clearStoredReturnTo();
           navigate("/dashboard");
         }
       });
@@ -66,10 +90,9 @@ const Auth = () => {
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else if (mode === "signup") {
-      toast({ title: "Check your email", description: "We've sent you a verification link. Please confirm your email before signing in." });
       // Fire welcome email + GHL webhook (fire-and-forget, don't block UX)
       firePostSignupHooks(email);
-      setMode("signin");
+      setMode("signup-success");
     } else {
       // useEffect will handle redirect based on onboarding status
     }
@@ -122,6 +145,43 @@ const Auth = () => {
       </div>
 
       <div className="relative z-10 w-full max-w-md">
+        {mode === "signup-success" ? (
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-primary" />
+            </div>
+            <h1
+              className="font-heading text-3xl md:text-4xl font-light"
+              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+            >
+              Check your inbox
+            </h1>
+            <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
+              We sent a confirmation link to <span className="text-foreground">{email}</span>.
+              Click it to verify your account, then come back here to sign in.
+            </p>
+            {intendedFrom && intendedFrom !== "/auth" && (
+              <p className="text-xs text-muted-foreground/70 mt-3">
+                You'll be returned to <span className="text-primary/80">{intendedFrom}</span> after signing in.
+              </p>
+            )}
+            <div className="mt-8 space-y-3">
+              <Button
+                onClick={() => setMode("signin")}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6"
+              >
+                I confirmed — Sign me in
+              </Button>
+              <button
+                onClick={() => { setMode("signup"); setEmail(""); setPassword(""); }}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Use a different email
+              </button>
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Header */}
         <div className="text-center mb-10">
           <div className="w-14 h-14 mx-auto mb-6 rounded-full border border-primary/30 flex items-center justify-center">
@@ -243,6 +303,8 @@ const Auth = () => {
             </button>
           )}
         </div>
+        </>
+        )}
       </div>
     </div>
   );
