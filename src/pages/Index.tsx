@@ -106,7 +106,7 @@ const Index = () => {
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
         <div className="font-heading text-xl md:text-2xl font-light tracking-wide text-foreground">
-          <span className="text-primary">Focus</span>Flow AI
+          <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>
         </div>
         <div className="flex items-center gap-6">
           {user && (
@@ -570,7 +570,7 @@ const Index = () => {
         <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
             <div className="font-heading text-lg font-light">
-              <span className="text-primary">Focus</span>Flow AI{" "}
+              <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>{" "}
               <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">

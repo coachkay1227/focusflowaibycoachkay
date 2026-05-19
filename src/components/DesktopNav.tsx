@@ -32,7 +32,7 @@ const DesktopNav = () => {
         onClick={() => navigate("/")}
         className="font-heading text-lg font-light hover:opacity-80 transition-opacity"
       >
-        <span className="text-primary">Focus</span>Flow AI
+        <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>
       </button>
 
       <div className="flex items-center gap-1">
