@@ -41,7 +41,7 @@ const Kiosk = () => {
       {/* Brand */}
       <div className="z-10 absolute top-8 left-8">
         <div className="font-heading text-xl font-light tracking-wide text-foreground">
-          <span className="text-primary">Focus</span>Flow
+          <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow</span>
           <span className="text-muted-foreground/40 text-sm ml-2">by Coach Kay</span>
         </div>
       </div>
