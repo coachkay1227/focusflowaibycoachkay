@@ -400,9 +400,14 @@ const Index = () => {
                   {item.name}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">{item.desc}</p>
-                <span className="mt-4 inline-block font-mono-label text-[10px] tracking-wider text-primary/70 border border-primary/20 rounded-full px-3 py-1 self-start">
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="mt-4 inline-block font-mono-label tracking-wider text-muted-foreground border border-border/60 rounded-full px-3 py-1 self-start uppercase transition-colors duration-200 hover:text-primary hover:border-primary/60"
+                  style={{ fontSize: "0.65rem" }}
+                >
                   {item.tag}
-                </span>
+                </button>
               </div>
             </AnimatedSection>
           ))}
