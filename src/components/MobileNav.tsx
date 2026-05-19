@@ -45,9 +45,10 @@ const MobileNav = () => {
 
       {/* Slide-in panel */}
       <div
-        className={`fixed top-0 right-0 z-[56] h-full w-full bg-background transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 z-[56] h-full w-full transform transition-transform duration-300 ease-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ backgroundColor: "hsl(var(--background))" }}
       >
         <div className="flex flex-col h-full pt-20 px-6 pb-8">
           <nav className="flex-1 space-y-1">
