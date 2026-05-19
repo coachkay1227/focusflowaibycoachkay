@@ -70,8 +70,8 @@ const Dashboard = () => {
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
-        <div className="font-heading text-xl font-light cursor-pointer" onClick={() => navigate("/")}>
-          <span className="text-primary font-medium">Focus</span><span className="text-foreground font-light">Flow AI</span>
+        <div className="font-heading text-xl font-light cursor-pointer" onClick={() => navigate("/")} role="img" aria-label="FocusFlow AI">
+          <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
         </div>
         <div className="flex items-center gap-4">
           {isAdmin && (
