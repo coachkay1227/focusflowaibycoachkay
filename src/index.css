@@ -275,3 +275,21 @@
   left: 0;
   top: 0;
 }
+
+/* Button hover micro-interactions — transform + filter only (no layout thrash) */
+.bg-primary {
+  transition: transform 0.2s ease, filter 0.2s ease;
+  will-change: transform, filter;
+}
+.bg-primary:hover {
+  transform: scale(1.02);
+  filter: brightness(1.08);
+}
+
+button[class*="ghost"]:hover,
+button[class*="outline"]:hover,
+a[class*="ghost"]:hover,
+a[class*="outline"]:hover {
+  transform: scale(1.01);
+  transition: transform 0.2s ease;
+}
