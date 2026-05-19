@@ -356,7 +356,7 @@ const Index = () => {
               title: "MAC Type Assessment",
               desc: "Discover your mindset, action, and coaching style type.",
               cta: "Take the Assessment",
-              to: "/clarity",
+              to: "/assessment",
               primary: false,
             },
             {

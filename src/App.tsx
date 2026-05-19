@@ -39,6 +39,7 @@ const CoachKay = lazy(() => import("./pages/CoachKay.tsx"));
 const Store = lazy(() => import("./pages/Store.tsx"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess.tsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.tsx"));
+const Assessment = lazy(() => import("./pages/Assessment.tsx"));
 
 // Lazy-load shell components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Dashboard /></Suspense></ProtectedRoute>} />
             <Route path="/clarity" element={<Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense>} />
             <Route path="/clarity/:moduleId" element={<Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense>} />
+            <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><Assessment /></Suspense>} />
             <Route path="/result" element={<Suspense fallback={<PageSkeleton />}><ResultScreen /></Suspense>} />
             <Route path="/mirror-challenge" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
             <Route path="/challenges" element={<Suspense fallback={<PageSkeleton />}><Challenges /></Suspense>} />
