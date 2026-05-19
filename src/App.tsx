@@ -65,13 +65,13 @@ const App = () => (
             <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
             <Route path="/onboarding" element={<Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense>} />
             <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Dashboard /></Suspense></ProtectedRoute>} />
-            <Route path="/clarity" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense></ProtectedRoute>} />
-            <Route path="/clarity/:moduleId" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense></ProtectedRoute>} />
-            <Route path="/result" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ResultScreen /></Suspense></ProtectedRoute>} />
+            <Route path="/clarity" element={<Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense>} />
+            <Route path="/clarity/:moduleId" element={<Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense>} />
+            <Route path="/result" element={<Suspense fallback={<PageSkeleton />}><ResultScreen /></Suspense>} />
             <Route path="/mirror-challenge" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
-            <Route path="/challenges" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Challenges /></Suspense></ProtectedRoute>} />
+            <Route path="/challenges" element={<Suspense fallback={<PageSkeleton />}><Challenges /></Suspense>} />
             <Route path="/challenges/:type" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
-            <Route path="/modules" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Modules /></Suspense></ProtectedRoute>} />
+            <Route path="/modules" element={<Suspense fallback={<PageSkeleton />}><Modules /></Suspense>} />
             <Route path="/programs/:slug" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense></ProtectedRoute>} />
             <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
             <Route path="/community" element={<Suspense fallback={<PageSkeleton />}><Community /></Suspense>} />
