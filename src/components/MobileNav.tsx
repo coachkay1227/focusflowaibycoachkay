@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info, Sparkles } from "lucide-react";
@@ -35,21 +36,23 @@ const MobileNav = () => {
         {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
-      {/* Overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[55] bg-black/80 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      {createPortal(
+        <>
+          {/* Overlay */}
+          {open && (
+            <div
+              className="fixed inset-0 z-[9998] bg-black/80 backdrop-blur-sm"
+              onClick={() => setOpen(false)}
+            />
+          )}
 
-      {/* Slide-in panel */}
-      <div
-        className={`fixed top-0 right-0 z-[56] h-full w-full transform transition-transform duration-300 ease-out ${
-          open ? "translate-x-0" : "translate-x-full"
-        }`}
-        style={{ backgroundColor: "hsl(var(--background))" }}
-      >
+          {/* Slide-in panel */}
+          <div
+            className={`fixed top-0 right-0 z-[9999] h-full w-full transform transition-transform duration-300 ease-out ${
+              open ? "translate-x-0" : "translate-x-full pointer-events-none"
+            }`}
+            style={{ backgroundColor: "hsl(var(--background))" }}
+          >
         <div className="flex flex-col h-full pt-20 px-6 pb-8">
           <nav className="flex-1 space-y-1">
             {navItems
@@ -95,7 +98,10 @@ const MobileNav = () => {
             )}
           </div>
         </div>
-      </div>
+          </div>
+        </>,
+        document.body
+      )}
     </div>
   );
 };
