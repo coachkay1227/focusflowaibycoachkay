@@ -327,6 +327,75 @@ const Index = () => {
         </AnimatedSection>
       </section>
 
+      {/* Start Here — Free */}
+      <section className="relative z-10 py-16 md:py-20 px-6">
+        <AnimatedSection className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="font-mono-label text-primary tracking-[0.2em]">START HERE — FREE</span>
+            <h2
+              className="font-heading text-3xl md:text-5xl font-light mt-4"
+              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+            >
+              Find Your Path in 5 Minutes.
+            </h2>
+          </div>
+        </AnimatedSection>
+
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {
+              label: "01 · CLARITY",
+              title: "F.O.C.U.S. Clarity Check",
+              desc: "Answer 6 questions. Get your personalized clarity report.",
+              cta: "Take the Check",
+              to: "/clarity",
+              primary: true,
+            },
+            {
+              label: "02 · ASSESSMENT",
+              title: "MAC Type Assessment",
+              desc: "Discover your mindset, action, and coaching style type.",
+              cta: "Take the Assessment",
+              to: "/clarity",
+              primary: false,
+            },
+            {
+              label: "03 · DOWNLOAD",
+              title: "4/90/1 Business Planner",
+              desc: "A free download to map your next 90 days of business growth.",
+              cta: "Download Free",
+              to: "/programs",
+              primary: false,
+            },
+          ].map((item, i) => (
+            <AnimatedSection key={item.title} delay={i * 100}>
+              <div className="clarity-card h-full rounded-lg border border-border bg-card/40 backdrop-blur-sm p-5 flex flex-col">
+                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
+                  {item.label}
+                </span>
+                <h3 className="font-heading text-lg font-medium text-foreground mt-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mt-2 flex-1">{item.desc}</p>
+                <Button
+                  onClick={() => navigate(item.to)}
+                  size="sm"
+                  variant={item.primary ? "default" : "outline"}
+                  className={
+                    item.primary
+                      ? "mt-4 bg-primary text-primary-foreground hover:bg-primary/90 self-start"
+                      : "mt-4 border-border hover:border-primary/40 text-foreground hover:text-primary self-start"
+                  }
+                >
+                  {item.cta}
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </section>
+
+
+
       {/* F.O.C.U.S. Framework */}
       <section id="how-it-works" className="relative z-10 py-24 md:py-32 px-6">
         <AnimatedSection className="max-w-6xl mx-auto">
