@@ -1,106 +1,91 @@
-## Naming — LOCKED
+## Reset
 
-Public-facing names (no legacy/repurposed terms):
-
-**Free / Entry**
-- Clarity Check
-- Personality + Drive Assessment
-- 90-Day Growth Planner ← (was "4/90/1 Planner")
-- Personal Breakthrough Call ← (was "Personal Clarity Session")
-- Business Breakthrough Call
-- AI Strategy Call
-
-**Core (paid)**
-- 30-Day Personal Reset
-- 30-Day Business Reset
-- 30-Day AI Reset
-- 90-Day Personal Transformation
-- 90-Day Business Transformation
-- 90-Day AI Transformation
-
-**Premium**
-- 6-Month Private Coaching
-- Founding Members Waitlist
-
-All other legacy names (F.O.C.U.S. Clarity Check, MAC Type, Power Hour, Lead the Room, Mirror Challenge, 4/90/1, etc.) are retired from public surfaces. They may persist as internal IP/vault content only.
+Pausing the 14-SKU repackaging build. Focus = conversion audit of the live homepage + apply your 5 fixes. No code changes until you approve below.
 
 ---
 
-## Phase 1 — Frontend rewrite
+## Part 1 — System trace (what's actually happening today)
 
-### `src/data/programs.ts`
-- `Duration` union: replace `"8week" | "12week"` → `"30day" | "90day" | "6month"`.
-- Retire from public catalog (move to `programs-archived.ts`, mark `public: false`):
-  - Sugar Reset 8-Week, 30-Day Hydration Reset, 7-Day MAC Fitness, 8-Week AI Transformation, 12-Week Mastery, Mirror Challenge, Lead the Room, Cultivating Growth Mindset, Power Hour.
-- Add/replace with the 14 entries above using fresh names, fresh slugs, fresh taglines.
-- Map each to F.O.C.U.S. pillar + Path (Personal / Business / AI).
+### Current hero — `src/pages/Index.tsx` lines 193–297
 
-### `src/pages/Index.tsx`
-- "3 Paths to Transformation" → 3 paths × 4 tiers (Entry → 30-Day → 90-Day → 6-Month).
-- "Start Here — Free" grid: Clarity Check, Personality + Drive Assessment, 90-Day Growth Planner, 3 Breakthrough/Strategy Calls.
+| Layer | What's shipped | Disconnect |
+|---|---|---|
+| Eyebrow | "Clarity Code by Coach Kay" | Brand label, zero promise |
+| **H1** | "See clearly. Move with purpose." | Vague poetry — no audience, no pain, no outcome, no timeframe |
+| Subtitle | "A guided clarity experience across Personal, Business, and AI transformation…" | Three audiences = nobody feels addressed |
+| **CTAs above fold** | (1) "Start Your Clarity Check" → `/clarity` (2) "How It Works" scroll | Two competing CTAs |
+| **Desktop nav** | Dashboard, Pathways, Work With Me, Challenges, AI Coach, About, Community, Start Session, Sign In | **9 exits before the headline is read** |
+| Tertiary | "Meet Coach Kay — Your Clarity Guide" link | A 3rd CTA |
+| **Proof** | None above fold | Zero trust signal |
+| **Risk reversal** | Nowhere on page | #1 objection ("what if it doesn't work?") unaddressed |
+| **Friction** | `/clarity` runs 6 Q's, never captures email | High intent required; no email → no remarketing |
 
-### `src/pages/Modules.tsx`
-- Rewrite pricing cards to match new SKU set.
+### Bug found in the trace (not the user's request, but blocking polish)
+Console at `/programs`: *"Encountered two children with the same key."* Source: `src/components/MobileNav.tsx` lines 10–11 — two items use `path="/programs"` ("Pathways" and "Work With Me"), and React keys are `item.path`. Cheap fix when we touch nav (key on `label`, or merge into one item).
 
-### `src/pages/Assessment.tsx`
-- Rebrand header from "MAC TYPE ASSESSMENT" → "PERSONALITY + DRIVE ASSESSMENT" (logic + scoring stays).
-
-### `public/sitemap.xml` + `src/pages/Sitemap.tsx`
-- Update URLs to new slugs; remove retired pages.
-
-### Copy scrub
-- Global find/replace: "8-Week", "12-Week", "F.O.C.U.S. Clarity Check", "MAC Type Assessment", "4/90/1", "Mirror Challenge", "Lead the Room", "Power Hour" → new names or remove.
+### The disconnect (root cause)
+The homepage is built like a **brand site** (cinematic, atmospheric, multi-pillar). The 5 fixes are **direct-response** patterns (one promise, one button, one proof, no escape). The two are opposites. To apply the fixes we need to convert the hero from "experience" to "offer" — without nuking the brand vibe below the fold.
 
 ---
 
-## Phase 2 — Stripe + Supabase
+## Part 2 — The 5 fixes mapped to code
 
-### Stripe (decisions still needed — see below)
-Retire/archive: `prod_UGHVIcGfn5LEoU` (8-Week Cohort), `prod_UGHqGWOM8Iqo3K` (12-Week Mastery), `prod_UGHpmJnJVVhIef` (30-Day Intensive — duplicate).
+### Fix 1 — Headline swap
+Replace `<h1>` at lines 219–234. Formula: **For [audience] struggling with [pain], get [outcome] in [timeframe].**
 
-Create new products (pricing TBD):
-1. 30-Day Personal Reset
-2. 30-Day Business Reset
-3. 30-Day AI Reset
-4. 90-Day Personal Transformation
-5. 90-Day Business Transformation
-6. 90-Day AI Transformation
-7. 6-Month Private Coaching (one shared SKU or 3 per-path?)
+Inputs I need from you:
+- **Audience** — Overwhelmed coaches? Solopreneur founders? High-achieving women?
+- **Pain** — Scattered focus? Decision fatigue? No clear next step?
+- **Outcome** — Deep focus blocks? One clear move? Unstuck in minutes?
+- **Timeframe** — Today? Under 10 minutes? This week?
 
-Keep: `prod_UFpARkX0OxZg51` Subscriber $27/mo, `prod_UGHWgMWBPbxXjH` 30-Day F.O.C.U.S. Reset $297 (re-label as "30-Day Personal Reset" if pricing matches).
+If you say "just pick" I'll ship:
+> **For overwhelmed coaches and founders: get your next clear move in under 10 minutes — no planner, no overwhelm.**
 
-### Code updates
-- `src/lib/stripe-tiers.ts`: rewrite `STRIPE_TIERS` with new product/price IDs and names.
-- `supabase/functions/_shared/stripe-config.ts`: rewrite `PRODUCT_TIER_MAP` + `PRICE_MODE_MAP`.
+### Fix 2 — One CTA above the fold
+- Remove "How It Works" button (lines 266–276)
+- Remove "Meet Coach Kay" tertiary link (lines 280–297) → move below fold
+- Strip desktop nav above the hero: hide Pathways / Work With Me / Challenges / AI Coach / About / Community on first viewport. Keep only logo + Sign In + the single CTA. (Mobile nav stays as-is via burger menu.)
+- Rename the CTA from "Start Your Clarity Check" → **"Get My Clarity Code →"** (lines 258–265)
 
-### Supabase migration
-- Add `elevation` value to `access_tier` enum (or fold 6-Month into `premium` — decision needed).
-- Update `cohort_registrations.cohort_name` default → `'Founding Members Waitlist'`.
+### Fix 3 — Instant proof under CTA
+New 1-line strip inserted between CTA (line 277) and the "Meet Coach Kay" block. Pick one:
+- (a) **Counter**: "Used by 143 founders to break decision loops" — *need real number; what should I use? "early beta users"?*
+- (b) **Quote**: "[short testimonial] — [Name, role]" — *do you have a real one?*
+- (c) **Honest default**: "Trusted by early-access founders and coaches rebuilding their focus." (vague but not fake)
+
+### Fix 4 — Kill friction
+Today `/clarity` = 6 questions → AI insight → result, with **no email ever captured**. Two routes:
+- **A — Email-gate the result (recommended)**: user finishes the 6 Q's → "Enter name + email to unlock your Clarity Code" → save to `cohort_registrations` (table + RLS already allow anon insert ✅) → show result.
+- **B — Email-first modal**: capture before Q1. Higher capture, lower completion.
+
+A wins because the magic happens first, ask comes when value is felt.
+Files: `src/pages/ClaritySession.tsx` + `src/pages/ResultScreen.tsx`. No backend migration needed.
+
+### Fix 5 — Risk reversal
+You don't sell anything on the homepage today (the offer is a free clarity check), so a money-back guarantee doesn't fit at the hero. Use **friction-reversal** instead, right under the proof line:
+> ⚡ *Takes 90 seconds. No signup. No card. Just clarity.*
+
+The 7-day "Unstuck Guarantee" gets reserved for the paid pricing pages when repackaging resumes.
 
 ---
 
-## Phase 3 — Backend / vault
+## Part 3 — Scope
 
-- `src/data/programs-archived.ts`: house retired programs flagged `vault: true, public: false`.
-- Backend-only IP stays accessible to enrolled clients via `ProgramDetail` gating.
+**Files touched (max 3):**
+- `src/pages/Index.tsx` — hero rewrite (Fixes 1, 2, 3, 5) + cheap MobileNav duplicate-key fix
+- `src/pages/ClaritySession.tsx` — email gate before result (Fix 4)
+- `src/pages/ResultScreen.tsx` — insert into `cohort_registrations` (Fix 4)
 
----
-
-## Memory updates
-- `mem://billing/monetization-strategy` — new SKU set
-- `mem://strategy/access-paths` — 3 paths × 4 tiers
-- `mem://tech/program-catalog` — new public/vault split
+**Not touched:** Stripe, Supabase migrations, design tokens, the rest of the homepage below the hero, MobileNav layout (only the duplicate path).
 
 ---
 
-## Decisions still needed before build
+## Decisions I need before building
 
-1. **Pricing** for the 6 new products (30-Day Business/AI Reset, 3× 90-Day, 6-Month).
-2. **6-Month Private Coaching**: one shared SKU or one per path (Personal/Business/AI)?
-3. **90-Day & 6-Month billing**: one-time PIF, installment (3× / 6× monthly), or both?
-4. **`elevation` tier**: new enum value for 6-Month, or fold into `premium`?
-5. **Free Breakthrough/Strategy Calls**: actually free (Calendly) or paid intro ($–$$)?
-6. **Confirm retirements** fully removed from public site (data preserved in DB): Sugar Reset, Hydration, MAC Fitness, Mirror Challenge, Lead the Room, Cultivating Growth Mindset, Power Hour.
-7. **Founding Members Waitlist** — keep current `cohort_registrations` table or rename?
+1. **Headline inputs** — give me audience / pain / outcome / timeframe, or say "just pick" and I ship the default above.
+2. **Proof line** — (a) real number, (b) real quote, or (c) honest default?
+3. **Friction fix** — confirm A (email-gate the result) over B (email-first modal)?
+4. **Desktop nav above hero** — full hide until scroll, or keep just logo + Sign In + the single CTA?
 
-Once you answer these 7, I build straight through Phase 1 → 2 → 3.
+Answer those 4 and I ship the hero + clarity flow in one pass.
