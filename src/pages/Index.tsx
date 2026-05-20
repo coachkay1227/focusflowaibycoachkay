@@ -308,7 +308,7 @@ const Index = () => {
               title: "4/90/1 Business Planner",
               desc: "A free download to map your next 90 days of business growth.",
               cta: "Download Free",
-              to: "/programs",
+              to: "/modules",
               primary: false,
             },
           ].map((item, i) => (
