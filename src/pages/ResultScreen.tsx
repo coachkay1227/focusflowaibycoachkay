@@ -99,6 +99,8 @@ const ResultScreen = () => {
       (authSession?.user?.user_metadata?.name as string | undefined) ||
       undefined;
     if (recipientEmail) {
+      setEmailStatus("sending");
+      setSentToEmail(recipientEmail);
       supabase.functions
         .invoke("send-transactional-email", {
           body: {
@@ -113,7 +115,20 @@ const ResultScreen = () => {
             },
           },
         })
-        .catch((err) => console.warn("clarity-code email send failed", err));
+        .then(({ error }) => {
+          if (error) {
+            console.warn("clarity-code email send failed", error);
+            setEmailStatus("failed");
+          } else {
+            setEmailStatus("sent");
+          }
+        })
+        .catch((err) => {
+          console.warn("clarity-code email send failed", err);
+          setEmailStatus("failed");
+        });
+    } else {
+      setEmailStatus("skipped");
     }
 
     // Resolve track recommendation
