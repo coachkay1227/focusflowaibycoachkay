@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 interface Offer {
   title: string;
@@ -83,7 +84,13 @@ const GROUPS: Group[] = [
 ];
 
 export default function PricingSection() {
-  const navigate = useNavigate();
+  const [applyOpen, setApplyOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState<string | undefined>(undefined);
+
+  const openApply = (programName: string) => {
+    setSelectedProgram(programName);
+    setApplyOpen(true);
+  };
 
   return (
     <section className="relative z-10 py-24 md:py-32 px-6">
@@ -127,7 +134,7 @@ export default function PricingSection() {
                     </p>
                     <button
                       type="button"
-                      onClick={() => navigate("/apply")}
+                      onClick={() => openApply(offer.title)}
                       className="mt-6 w-full bg-primary text-primary-foreground rounded-lg py-3 text-sm font-medium hover:bg-primary/90 transition-colors"
                     >
                       {offer.cta}
@@ -139,6 +146,12 @@ export default function PricingSection() {
           </div>
         ))}
       </div>
+      <ApplyNowDialog
+        open={applyOpen}
+        onOpenChange={setApplyOpen}
+        mode="application"
+        programName={selectedProgram}
+      />
     </section>
   );
 }
