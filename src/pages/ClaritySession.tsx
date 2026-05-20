@@ -58,18 +58,26 @@ const ClaritySession = () => {
     e.preventDefault();
     if (!gateEmail.trim() || !pendingAnswers) return;
     setGateSubmitting(true);
+    const email = gateEmail.trim().toLowerCase();
+    const firstName = gateName.trim() || null;
     try {
       await supabase.from("cohort_registrations").insert({
-        email: gateEmail.trim().toLowerCase(),
-        first_name: gateName.trim() || null,
+        email,
+        first_name: firstName,
         cohort_name: "Clarity Code — Free Check",
         source: resolvedModuleId,
       });
     } catch (err) {
-      // Non-blocking — still let them see their result
       console.warn("cohort_registrations insert failed", err);
     }
-    navigate("/result", { state: { answers: pendingAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
+    navigate("/result", {
+      state: {
+        answers: pendingAnswers as unknown as ClarityAnswers,
+        moduleId: resolvedModuleId,
+        guestEmail: email,
+        guestName: firstName,
+      },
+    });
   };
 
   const goNext = () => {
