@@ -179,6 +179,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cohort_registrations: {
+        Row: {
+          cohort_name: string
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          source: string | null
+        }
+        Insert: {
+          cohort_name?: string
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          source?: string | null
+        }
+        Update: {
+          cohort_name?: string
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          source?: string | null
+        }
+        Relationships: []
+      }
       content_settings: {
         Row: {
           custom_tagline: string | null
