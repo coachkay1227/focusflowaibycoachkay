@@ -6,14 +6,18 @@ import { getModule } from "@/lib/modules";
 import type { ModuleQuestion } from "@/lib/modules";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, Zap } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const ClaritySession = () => {
   const navigate = useNavigate();
   const { moduleId } = useParams<{ moduleId?: string }>();
+  const { toast } = useToast();
   
   // Get questions from module or default
   const resolvedModuleId = moduleId || "clarity-check";
@@ -25,6 +29,11 @@ const ClaritySession = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [animState, setAnimState] = useState<"enter" | "exit" | "idle">("enter");
   const [textValue, setTextValue] = useState("");
+  const [showGate, setShowGate] = useState(false);
+  const [pendingAnswers, setPendingAnswers] = useState<Record<string, string> | null>(null);
+  const [gateName, setGateName] = useState("");
+  const [gateEmail, setGateEmail] = useState("");
+  const [gateSubmitting, setGateSubmitting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const question = questions[currentStep];
@@ -32,6 +41,36 @@ const ClaritySession = () => {
   const canProceed = question.type === "options" ? !!answers[question.id] : textValue.trim().length > 0;
 
   useMouseGlow(containerRef);
+
+  const finishSession = (finalAnswers: Record<string, string>) => {
+    // Auth users skip the gate — they've already given us their email
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
+      } else {
+        setPendingAnswers(finalAnswers);
+        setShowGate(true);
+      }
+    });
+  };
+
+  const submitGate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!gateEmail.trim() || !pendingAnswers) return;
+    setGateSubmitting(true);
+    try {
+      await supabase.from("cohort_registrations").insert({
+        email: gateEmail.trim().toLowerCase(),
+        first_name: gateName.trim() || null,
+        cohort_name: "Clarity Code — Free Check",
+        source: resolvedModuleId,
+      });
+    } catch (err) {
+      // Non-blocking — still let them see their result
+      console.warn("cohort_registrations insert failed", err);
+    }
+    navigate("/result", { state: { answers: pendingAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
+  };
 
   const goNext = () => {
     if (!canProceed) return;
@@ -41,7 +80,7 @@ const ClaritySession = () => {
     if (currentStep === questions.length - 1) {
       const finalAnswers = { ...answers };
       if (question.type === "text") finalAnswers[question.id] = textValue;
-      navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
+      finishSession(finalAnswers);
       return;
     }
     setAnimState("exit");
@@ -74,7 +113,7 @@ const ClaritySession = () => {
     setTimeout(() => {
       if (currentStep === questions.length - 1) {
         const finalAnswers = { ...answers, [question.id]: value };
-        navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
+        finishSession(finalAnswers);
         return;
       }
       setAnimState("exit");
@@ -165,6 +204,57 @@ const ClaritySession = () => {
           )}
         </div>
       </div>
+
+      {/* Email gate — shown after final answer for anon users */}
+      {showGate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-6">
+          <form
+            onSubmit={submitGate}
+            className="w-full max-w-md rounded-xl border border-primary/30 bg-card/95 backdrop-blur-md p-8 shadow-2xl"
+          >
+            <div className="flex items-center gap-2 font-mono-label text-primary tracking-[0.2em] text-xs mb-3">
+              <Sparkles className="h-4 w-4" />
+              ONE LAST STEP
+            </div>
+            <h3 className="font-heading text-2xl md:text-3xl font-light leading-tight mb-2">
+              Your Clarity Code is ready.
+            </h3>
+            <p className="text-muted-foreground text-sm mb-6">
+              Enter your email and I'll unlock it now — and send you a copy you can come back to.
+            </p>
+            <div className="space-y-3">
+              <Input
+                type="text"
+                placeholder="First name (optional)"
+                value={gateName}
+                onChange={(e) => setGateName(e.target.value)}
+                className="bg-background/50 border-border"
+              />
+              <Input
+                type="email"
+                required
+                autoFocus
+                placeholder="you@email.com"
+                value={gateEmail}
+                onChange={(e) => setGateEmail(e.target.value)}
+                className="bg-background/50 border-border"
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={gateSubmitting || !gateEmail.trim()}
+              className="w-full mt-5 bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base"
+            >
+              {gateSubmitting ? "Unlocking..." : "Unlock My Clarity Code"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <div className="mt-4 flex items-center justify-center gap-2 font-mono-label text-muted-foreground/60 text-[10px] tracking-[0.15em]">
+              <Zap className="h-3 w-3" />
+              NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
