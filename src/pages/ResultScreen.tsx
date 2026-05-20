@@ -12,9 +12,10 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap } from "lucide-react";
+import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap, Mail, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 interface InsightResult {
   truth: string;
@@ -44,6 +45,9 @@ const ResultScreen = () => {
   const [patterns, setPatterns] = useState<PatternResult | null>(null);
   const [loadingPatterns, setLoadingPatterns] = useState(false);
   const [trackResult, setTrackResult] = useState<TrackResult | null>(null);
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "skipped" | "failed">("idle");
+  const [sentToEmail, setSentToEmail] = useState<string | null>(null);
+  const [applyOpen, setApplyOpen] = useState(false);
 
   useEffect(() => {
     if (!answers) {
@@ -95,6 +99,8 @@ const ResultScreen = () => {
       (authSession?.user?.user_metadata?.name as string | undefined) ||
       undefined;
     if (recipientEmail) {
+      setEmailStatus("sending");
+      setSentToEmail(recipientEmail);
       supabase.functions
         .invoke("send-transactional-email", {
           body: {
@@ -109,7 +115,20 @@ const ResultScreen = () => {
             },
           },
         })
-        .catch((err) => console.warn("clarity-code email send failed", err));
+        .then(({ error }) => {
+          if (error) {
+            console.warn("clarity-code email send failed", error);
+            setEmailStatus("failed");
+          } else {
+            setEmailStatus("sent");
+          }
+        })
+        .catch((err) => {
+          console.warn("clarity-code email send failed", err);
+          setEmailStatus("failed");
+        });
+    } else {
+      setEmailStatus("skipped");
     }
 
     // Resolve track recommendation
@@ -223,6 +242,7 @@ const ResultScreen = () => {
         <MobileNav />
       </div>
 
+
       {!ready ? (
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[80vh] px-6">
           <div className="text-center">
@@ -250,6 +270,81 @@ const ResultScreen = () => {
               This isn't a diagnosis. It's a mirror. Read slowly. Let it land.
             </p>
           </AnimatedSection>
+
+          {emailStatus !== "idle" && emailStatus !== "skipped" && (
+            <AnimatedSection delay={100} className="mb-10">
+              <div
+                className={`clarity-card rounded-lg border p-6 backdrop-blur-sm ${
+                  emailStatus === "sent"
+                    ? "border-primary/30 bg-primary/5"
+                    : emailStatus === "failed"
+                    ? "border-destructive/30 bg-destructive/5"
+                    : "border-border bg-card/30"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  {emailStatus === "sent" ? (
+                    <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                  ) : (
+                    <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className="font-mono-label text-primary/70 tracking-[0.15em] text-xs">
+                      {emailStatus === "sent"
+                        ? "Clarity Code Emailed"
+                        : emailStatus === "failed"
+                        ? "Email Couldn't Send"
+                        : "Sending Your Clarity Code…"}
+                    </span>
+                    <p className="text-foreground/80 text-sm mt-1">
+                      {emailStatus === "sent" && sentToEmail && (
+                        <>
+                          We just sent your personalized Clarity Code to{" "}
+                          <span className="text-primary">{sentToEmail}</span>. Check your inbox (and spam, just in case).
+                        </>
+                      )}
+                      {emailStatus === "sending" && "Hold tight — your Clarity Code is on its way to your inbox."}
+                      {emailStatus === "failed" &&
+                        "Your report is right here on this page. We couldn't email a copy — you can still take your next step below."}
+                    </p>
+
+                    {emailStatus === "sent" && (
+                      <div className="mt-5">
+                        <p className="font-mono-label text-primary/60 tracking-[0.15em] text-xs mb-3">
+                          Your Next Move
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <Button
+                            onClick={() => setApplyOpen(true)}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                          >
+                            <Calendar className="h-4 w-4" />
+                            Book a coaching call
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              navigate(
+                                trackResult
+                                  ? `/challenges/${trackResult.recommendedChallengeType}`
+                                  : "/challenges"
+                              )
+                            }
+                            className="border-primary/30 hover:bg-primary/10"
+                          >
+                            <Trophy className="h-4 w-4" />
+                            Join a challenge
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          )}
+
+
 
           <div className="space-y-8">
             {sections.map((section, i) => (
@@ -459,6 +554,8 @@ const ResultScreen = () => {
           </AnimatedSection>
         </div>
       )}
+
+      <ApplyNowDialog open={applyOpen} onOpenChange={setApplyOpen} mode="inquiry" programName="1:1 Coaching with Coach Kay" />
     </div>
   );
 };
