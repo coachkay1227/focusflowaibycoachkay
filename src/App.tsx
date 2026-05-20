@@ -78,6 +78,7 @@ const App = () => (
             <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
             <Route path="/community" element={<Suspense fallback={<PageSkeleton />}><Community /></Suspense>} />
             <Route path="/about" element={<Suspense fallback={<PageSkeleton />}><CoachKay /></Suspense>} />
+            <Route path="/coach-kay" element={<Suspense fallback={<PageSkeleton />}><CoachKay /></Suspense>} />
             <Route path="/profile" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Profile /></Suspense></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminUsers /></Suspense></ProtectedRoute>} />
