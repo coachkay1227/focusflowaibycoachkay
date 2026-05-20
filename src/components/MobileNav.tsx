@@ -8,7 +8,6 @@ const navItems = [
   { label: "Start Session", path: "/clarity", icon: Sparkles, authOnly: false, primary: true },
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
   { label: "Pathways", path: "/programs", icon: BookOpen, authOnly: false },
-  { label: "Work With Me", path: "/programs", icon: BookOpen, authOnly: false },
   { label: "Challenges", path: "/challenges", icon: Trophy, authOnly: false },
   { label: "Coach Kay", path: "/coach", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },
@@ -62,7 +61,7 @@ const MobileNav = () => {
                 const active = location.pathname === item.path;
                 return (
                   <button
-                    key={item.path}
+                    key={item.label}
                     onClick={() => go(item.path)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                       active
