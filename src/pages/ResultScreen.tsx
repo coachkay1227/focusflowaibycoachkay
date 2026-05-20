@@ -554,6 +554,8 @@ const ResultScreen = () => {
           </AnimatedSection>
         </div>
       )}
+
+      <ApplyNowDialog open={applyOpen} onOpenChange={setApplyOpen} mode="inquiry" programName="1:1 Coaching with Coach Kay" />
     </div>
   );
 };
