@@ -12,9 +12,10 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap } from "lucide-react";
+import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap, Mail, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 interface InsightResult {
   truth: string;
