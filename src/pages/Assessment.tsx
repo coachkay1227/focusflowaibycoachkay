@@ -360,7 +360,7 @@ const Assessment = () => {
                 Take the Clarity Check
               </Button>
               <Button
-                onClick={() => navigate("/programs")}
+                onClick={() => navigate("/modules")}
                 size="lg"
                 variant="outline"
                 className="border-border hover:border-primary/40 text-foreground hover:text-primary"
