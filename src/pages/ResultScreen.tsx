@@ -33,9 +33,11 @@ const ResultScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const state = location.state as { answers: ClarityAnswers; moduleId?: string } | undefined;
+  const state = location.state as { answers: ClarityAnswers; moduleId?: string; guestEmail?: string; guestName?: string | null } | undefined;
   const answers = state?.answers;
   const moduleId = state?.moduleId || "clarity-check";
+  const guestEmail = state?.guestEmail;
+  const guestName = state?.guestName ?? null;
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [insight, setInsight] = useState<InsightResult | null>(null);
@@ -84,6 +86,32 @@ const ResultScreen = () => {
     };
     saveSessionCloud(session);
 
+    // Email the Clarity Code to the recipient (anon gate email, or authed user email)
+    const { data: { session: authSession } } = await supabase.auth.getSession();
+    const recipientEmail = guestEmail || authSession?.user?.email;
+    const recipientName =
+      guestName ||
+      (authSession?.user?.user_metadata?.full_name as string | undefined) ||
+      (authSession?.user?.user_metadata?.name as string | undefined) ||
+      undefined;
+    if (recipientEmail) {
+      supabase.functions
+        .invoke("send-transactional-email", {
+          body: {
+            templateName: "clarity-code-result",
+            recipientEmail,
+            idempotencyKey: `clarity-code-${session.id}`,
+            templateData: {
+              name: recipientName,
+              truth: insightData.truth,
+              pattern: insightData.pattern,
+              action: insightData.action,
+            },
+          },
+        })
+        .catch((err) => console.warn("clarity-code email send failed", err));
+    }
+
     // Resolve track recommendation
     let resolvedTrack: TrackResult | null = null;
     try {
@@ -107,7 +135,7 @@ const ResultScreen = () => {
     }
 
     // Fetch patterns only for authenticated users (requires JWT)
-    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    const currentSession = authSession;
     if (currentSession) {
       const hasHist = await hasHistoryCloud();
       if (hasHist) {
