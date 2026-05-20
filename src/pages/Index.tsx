@@ -7,7 +7,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sparkles, ArrowRight, User, LogOut } from "lucide-react";
+import { Sparkles, ArrowRight, User, LogOut, Zap } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 
 const Index = () => {
@@ -103,65 +103,20 @@ const Index = () => {
         FOCUSFLOW AI
       </div>
 
-      {/* Navigation */}
+      {/* Navigation — minimal hero bar: logo + Sign In + single CTA */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
         <div className="font-heading text-xl md:text-2xl font-light tracking-wide text-foreground" role="img" aria-label="FocusFlow AI">
           <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
         </div>
-        <div className="flex items-center gap-6">
-          {user && (
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block font-medium"
-            >
-              Dashboard
-            </button>
-          )}
-          <button
-            onClick={() => navigate("/programs")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            Pathways
-          </button>
-          <button
-            onClick={() => navigate("/programs")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            Work With Me
-          </button>
-          <button
-            onClick={() => navigate("/challenges")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            Challenges
-          </button>
-          <button
-            onClick={() => navigate("/coach")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            AI Coach
-          </button>
-          <button
-            onClick={() => navigate("/about")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            About
-          </button>
-          <button
-            onClick={() => navigate("/community")}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-          >
-            Community
-          </button>
-          <Button
-            onClick={() => navigate("/clarity")}
-            size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex"
-          >
-            Start Session
-          </Button>
+        <div className="flex items-center gap-4">
           {user ? (
-            <div className="flex items-center gap-3">
+            <>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block font-medium"
+              >
+                Dashboard
+              </button>
               <Avatar className="h-8 w-8 border border-primary/30 hidden md:flex">
                 <AvatarImage src={user.user_metadata?.avatar_url || user.user_metadata?.picture} />
                 <AvatarFallback className="bg-primary/10 text-primary text-xs">
@@ -175,7 +130,7 @@ const Index = () => {
               >
                 <LogOut className="h-4 w-4" />
               </button>
-            </div>
+            </>
           ) : (
             <Button
               onClick={() => navigate("/auth")}
@@ -186,6 +141,13 @@ const Index = () => {
               <User className="h-4 w-4 mr-1" /> Sign In
             </Button>
           )}
+          <Button
+            onClick={() => navigate("/clarity")}
+            size="sm"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex"
+          >
+            Get My Clarity Code
+          </Button>
           <MobileNav />
         </div>
       </nav>
@@ -216,7 +178,7 @@ const Index = () => {
           Clarity Code by Coach Kay
         </div>
 
-        {/* Headline */}
+        {/* Headline — direct-response: audience + pain + outcome + timeframe */}
         <h1
           className="font-heading text-4xl md:text-6xl lg:text-7xl font-light leading-tight max-w-4xl"
           style={{
@@ -228,9 +190,9 @@ const Index = () => {
             textShadow: "0 0 40px hsl(43 75% 52% / 0.15)",
           }}
         >
-          See clearly.
+          For high-achievers stuck in decision loops:
           <br />
-          <span className="text-primary">Move with purpose.</span>
+          <span className="text-primary">get one clear next move in 90 seconds.</span>
         </h1>
 
         {/* Subtitle */}
@@ -242,13 +204,12 @@ const Index = () => {
             transition: "all 0.6s ease-out",
           }}
         >
-          A guided clarity experience across Personal, Business, and AI transformation — built by Master
-          Certified Life Coach Kay.
+          No planner. No journal. No coaching call. Six honest questions and a personalized Clarity Code from Master Certified Coach Kay.
         </p>
 
-        {/* CTA */}
+        {/* Single CTA */}
         <div
-          className="mt-10 flex flex-col sm:flex-row gap-4"
+          className="mt-10 flex justify-center"
           style={{
             opacity: phase >= 3 ? 1 : 0,
             transform: phase >= 3 ? "translateY(0) scale(1)" : "translateY(15px) scale(0.95)",
@@ -258,53 +219,35 @@ const Index = () => {
           <Button
             onClick={() => navigate("/clarity")}
             size="lg"
-            className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform text-base px-8 py-6"
+            className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform text-base px-10 py-7"
           >
             <Sparkles className="mr-2 h-5 w-5" />
-            Start Your Clarity Check
-          </Button>
-          <Button
-            onClick={() => {
-              document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            variant="outline"
-            size="lg"
-            className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all text-base px-8 py-6"
-          >
-            How It Works
-            <ArrowRight className="ml-2 h-4 w-4" />
+            Get My Clarity Code
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
 
-        {/* Meet Coach Kay link */}
-        <div
-          className="mt-8"
+        {/* Proof line */}
+        <p
+          className="mt-6 text-sm text-foreground/70 max-w-md text-center"
           style={{
             opacity: phase >= 4 ? 1 : 0,
             transition: "opacity 0.8s ease-out",
           }}
         >
-          <button
-            onClick={() => navigate("/about")}
-            className="inline-flex items-center gap-2 text-sm text-primary/80 hover:text-primary transition-colors group"
-          >
-            <span className="h-8 w-8 rounded-full border border-primary/30 flex items-center justify-center group-hover:border-primary/60 transition-colors">
-              <User className="h-4 w-4" />
-            </span>
-            Meet Coach Kay — Your Clarity Guide
-            <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </div>
+          Trusted by early-access founders and coaches rebuilding their focus.
+        </p>
 
-        {/* Ambient badge */}
+        {/* Friction reversal */}
         <div
-          className="mt-8 font-mono-label text-muted-foreground/50"
+          className="mt-4 inline-flex items-center gap-2 font-mono-label text-primary/80 tracking-[0.15em] text-xs"
           style={{
             opacity: phase >= 4 ? 1 : 0,
             transition: "opacity 1s ease-out",
           }}
         >
-          5-minute guided session · No sign-up required · Personalized clarity report
+          <Zap className="h-3.5 w-3.5" />
+          Takes 90 seconds · No signup · No card · Just clarity
         </div>
       </section>
 
