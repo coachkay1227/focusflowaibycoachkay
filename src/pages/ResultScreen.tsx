@@ -45,6 +45,9 @@ const ResultScreen = () => {
   const [patterns, setPatterns] = useState<PatternResult | null>(null);
   const [loadingPatterns, setLoadingPatterns] = useState(false);
   const [trackResult, setTrackResult] = useState<TrackResult | null>(null);
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "skipped" | "failed">("idle");
+  const [sentToEmail, setSentToEmail] = useState<string | null>(null);
+  const [applyOpen, setApplyOpen] = useState(false);
 
   useEffect(() => {
     if (!answers) {
