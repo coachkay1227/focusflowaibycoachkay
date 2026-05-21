@@ -297,8 +297,8 @@ const Index = () => {
             },
             {
               label: "02 · ASSESSMENT",
-              title: "MAC Type Assessment",
-              desc: "Discover your mindset, action, and coaching style type.",
+              title: "Business Clarity Assessment",
+              desc: "Discover how your mindset, action, and character drive your business.",
               cta: "Take the Assessment",
               to: "/assessment",
               primary: false,

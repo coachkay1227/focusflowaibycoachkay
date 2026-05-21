@@ -225,8 +225,8 @@ const Assessment = () => {
       className="relative min-h-screen overflow-hidden grain-overlay grid-overlay"
     >
       <SEOHead
-        title="MAC Type Assessment — FocusFlow AI"
-        description="Discover your Mind, Action, and Character type with Coach Kay's proprietary MAC Type Assessment. 18 questions. A personalized coaching profile."
+        title="Business Clarity Assessment — FocusFlow AI"
+        description="Discover how your Mind, Action, and Character drive your business decisions. 18 questions. A personalized clarity profile from Coach Kay."
         path="/assessment"
       />
       <div className="mouse-glow" />
@@ -243,7 +243,7 @@ const Assessment = () => {
             {step === 0 && !done ? "Home" : "Back"}
           </button>
           <span className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">
-            MAC TYPE ASSESSMENT
+            BUSINESS CLARITY ASSESSMENT
           </span>
         </div>
 
@@ -302,7 +302,7 @@ const Assessment = () => {
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {step === total - 1 ? "Reveal My MAC Type" : "Continue"}
+                {step === total - 1 ? "Reveal My Clarity Profile" : "Continue"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
@@ -312,7 +312,7 @@ const Assessment = () => {
         {done && result && (
           <div className="animate-fade-in">
             <span className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">
-              YOUR MAC TYPE
+              YOUR CLARITY PROFILE
             </span>
             <h1
               className="font-heading text-5xl md:text-7xl font-light mt-3 text-primary"
