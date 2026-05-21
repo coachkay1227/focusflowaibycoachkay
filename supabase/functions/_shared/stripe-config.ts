@@ -1,4 +1,10 @@
-/** Centralized Stripe product/price configuration for all edge functions */
+/** Centralized Stripe product/price configuration for all edge functions.
+ *  NOTE: All entries below are LEGACY public SKUs (8-Week Cohort, 30-Day
+ *  F.O.C.U.S., 30-Day Intensive, 12-Week Mastery). They are NOT sold
+ *  publicly anymore — the new public offers (30-/90-Day Resets, 6-Month
+ *  Partnership) route through ApplyNowDialog. These mappings remain so
+ *  historical customers, webhook idempotency, and customer-portal flows
+ *  continue to work for existing subscribers. */
 
 export const PRODUCT_TIER_MAP: Record<string, string> = {
   "prod_UFpARkX0OxZg51": "subscriber",

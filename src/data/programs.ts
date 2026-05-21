@@ -1800,7 +1800,7 @@ export const programs: Program[] = [
 
   {
     id: "kpi-roi-tracker",
-    title: "KPI Dashboard & ROI Tracker",
+    title: "AI Transformation Starter Kit",
     slug: "kpi-roi-tracker",
     pillar: "S",
     pillarFull: "Support",
@@ -1822,9 +1822,9 @@ export const programs: Program[] = [
     ],
     transformation:
       "You lead your transformation with data — and you can prove the ROI of your growth to yourself, your funders, and your community.",
-    accessTier: "premium",
-    price: 197,
-    priceDisplay: "$197",
+    accessTier: "free",
+    price: 0,
+    priceDisplay: "Free",
 
     cohortCode: false,
     tags: ["data", "kpi", "roi", "tracking", "ai", "impact"],
