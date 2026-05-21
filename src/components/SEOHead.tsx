@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { globalGraph } from "@/lib/seo-schema";
 
 const BASE_URL = "https://coachkayai.life";
 
@@ -8,6 +9,8 @@ interface SEOHeadProps {
   path: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   ogImage?: string;
+  /** Inject sitewide Person + Organization + WebSite graph. Default: true. */
+  injectGlobalGraph?: boolean;
 }
 
 const SEOHead = ({
@@ -16,9 +19,11 @@ const SEOHead = ({
   path,
   jsonLd,
   ogImage = `${BASE_URL}/og-image.png`,
+  injectGlobalGraph = true,
 }: SEOHeadProps) => {
   const canonical = `${BASE_URL}${path}`;
-  const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+  const pageSchemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+  const schemas = injectGlobalGraph ? [globalGraph(), ...pageSchemas] : pageSchemas;
 
   return (
     <Helmet>
