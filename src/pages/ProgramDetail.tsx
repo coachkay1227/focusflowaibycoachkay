@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
-import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms } from "@/data/programs";
+import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms, getReplacementOffer } from "@/data/programs";
 import { enrollInModule } from "@/lib/enrollment-store";
 import { STRIPE_TIERS } from "@/lib/stripe-tiers";
 import { TIER_RANK, TIER_LABELS } from "@/lib/tier-constants";
@@ -11,9 +12,9 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import MobileNav from "@/components/MobileNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight, CreditCard } from "lucide-react";
+import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight, CreditCard, Download } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 const ProgramDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -22,8 +23,18 @@ const ProgramDetail = () => {
   const { tier } = useAccessLevel();
   const { startCheckout } = useSubscription();
   const [enrolling, setEnrolling] = useState(false);
+  const [applyOpen, setApplyOpen] = useState(false);
 
   const program = slug ? getProgramBySlug(slug) : undefined;
+  const replacement = program ? getReplacementOffer(program) : undefined;
+
+  // Retired programs: redirect to closest current offer after a beat
+  useEffect(() => {
+    if (program?.visibility === "retired" && replacement) {
+      const t = setTimeout(() => navigate(`/programs/${replacement.slug}`, { replace: true }), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [program, replacement, navigate]);
 
   if (!program) {
     return (
@@ -38,10 +49,39 @@ const ProgramDetail = () => {
     );
   }
 
+  // Retired: contextual replacement screen
+  if (program.visibility === "retired") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <span className="font-mono-label text-primary/70 tracking-[0.2em] text-xs">PROGRAM UPDATED</span>
+          <h1 className="font-heading text-2xl md:text-3xl font-light mt-3 mb-3">{program.title} has evolved</h1>
+          <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+            This program is no longer offered as a standalone purchase. Its core curriculum now lives inside{" "}
+            <span className="text-foreground">{replacement?.title ?? "our current transformation paths"}</span>.
+          </p>
+          {replacement ? (
+            <Button onClick={() => navigate(`/programs/${replacement.slug}`)} className="gap-2">
+              See {replacement.title} <ArrowRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button onClick={() => navigate("/modules")} className="gap-2">
+              View transformation paths <ArrowRight className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const pillar = FOCUS_PILLARS[program.pillar];
   const hasAccess = program.accessTier === "free" || (user && TIER_RANK[tier] >= TIER_RANK[program.accessTier]);
   const canStart = program.type === "assessment";
   const recommended = getRecommendedPrograms(program.id, 3);
+  const isBackend = program.visibility === "backend";
+  const isLeadMagnet = program.visibility === "lead_magnet";
+  const isPublicOffer = program.visibility === "public";
+  const backendParent = isBackend ? getReplacementOffer(program) : undefined;
 
   const handleEnroll = async () => {
     if (!user) { navigate("/auth"); return; }
@@ -195,15 +235,35 @@ const ProgramDetail = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="text-3xl font-heading font-light text-foreground">
-                {program.priceDisplay}
+                {isBackend ? "Included with enrollment" : program.priceDisplay}
               </div>
               {program.paymentPlan && (
                 <p className="text-sm text-muted-foreground mt-1">{program.paymentPlan.label}</p>
               )}
+              {isBackend && backendParent && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Part of <span className="text-primary">{backendParent.title}</span>
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
-              {!hasAccess ? (
+              {isPublicOffer ? (
+                <Button onClick={() => setApplyOpen(true)} className="gap-2">
+                  <Sparkles className="h-4 w-4" /> Apply for {program.title}
+                </Button>
+              ) : isLeadMagnet ? (
+                <Button onClick={() => navigate(canStart ? `/clarity/${program.id}` : "/clarity")} className="gap-2">
+                  <Download className="h-4 w-4" /> {program.price === 0 ? "Get it free" : "Start now"}
+                </Button>
+              ) : isBackend && backendParent ? (
+                <>
+                  <Button onClick={() => setApplyOpen(true)} className="gap-2">
+                    <Sparkles className="h-4 w-4" /> Apply for {backendParent.title}
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center">Unlocked when you enroll in the parent offer</p>
+                </>
+              ) : !hasAccess ? (
                 <>
                   {user ? (
                     <Button
@@ -285,6 +345,12 @@ const ProgramDetail = () => {
           </div>
         )}
       </main>
+      <ApplyNowDialog
+        open={applyOpen}
+        onOpenChange={setApplyOpen}
+        mode="application"
+        programName={isBackend && backendParent ? backendParent.title : program.title}
+      />
     </div>
   );
 };
