@@ -501,17 +501,25 @@ const ResultScreen = () => {
               This pattern won't change on its own — here's where to start.
             </p>
 
-            {/* Primary CTA — dominant */}
+            {/* Primary CTA — apply for the 30-Day Personal Reset */}
             <Button
-              onClick={() => navigate("/coach", { state: { context: { ...insight, answers } } })}
+              onClick={() => setApplyOpen(true)}
               className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-10 py-6 text-lg shadow-lg shadow-primary/20"
             >
-              <Zap className="mr-2 h-5 w-5" />
-              Talk to Coach Kay About This
+              <Sparkles className="mr-2 h-5 w-5" />
+              Apply for the 30-Day Personal Reset
             </Button>
 
             {/* Secondary CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap pt-2">
+              <Button
+                variant="outline"
+                className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4"
+                onClick={() => navigate("/coach", { state: { context: { ...insight, answers } } })}
+              >
+                <Zap className="mr-2 h-4 w-4" />
+                Talk to Coach Kay
+              </Button>
               <Button
                 variant="outline"
                 className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4"
@@ -548,14 +556,14 @@ const ResultScreen = () => {
                 onClick={() => navigate("/modules")}
                 className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-4"
               >
-                See all programs & pricing →
+                Explore all transformation paths →
               </button>
             </div>
           </AnimatedSection>
         </div>
       )}
 
-      <ApplyNowDialog open={applyOpen} onOpenChange={setApplyOpen} mode="inquiry" programName="1:1 Coaching with Coach Kay" />
+      <ApplyNowDialog open={applyOpen} onOpenChange={setApplyOpen} mode="application" programName="30-Day Personal Reset" />
     </div>
   );
 };
