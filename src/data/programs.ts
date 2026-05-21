@@ -123,7 +123,7 @@ export const programs: Program[] = [
 
   {
     id: "mac-type-assessment",
-    title: "MAC Type Assessment",
+    title: "Business Clarity Assessment",
     slug: "mac-type-assessment",
     pillar: "F",
     pillarFull: "Foundation",
