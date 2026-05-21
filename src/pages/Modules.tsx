@@ -11,6 +11,7 @@ import { useAdminView } from "@/contexts/AdminViewContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
+import { webPage, breadcrumb } from "@/lib/seo-schema";
 import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
@@ -63,16 +64,28 @@ const Modules = () => {
     ? allPublic
     : getProgramsByPath(activePath);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "FocusFlow Coaching Programs",
-    itemListElement: filteredPrograms.map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      item: { "@type": "Course", name: p.title, description: p.description },
-    })),
-  };
+  const jsonLd = [
+    webPage("/modules", "Transformation Paths", "CollectionPage"),
+    breadcrumb(
+      [
+        { name: "Home", path: "/" },
+        { name: "Paths", path: "/modules" },
+      ],
+      "/modules"
+    ),
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "@id": "https://coachkayai.life/modules#itemlist",
+      name: "FocusFlow Coaching Programs",
+      itemListElement: filteredPrograms.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://coachkayai.life/programs/${p.slug}`,
+        item: { "@type": "Course", name: p.title, description: p.description },
+      })),
+    },
+  ];
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">

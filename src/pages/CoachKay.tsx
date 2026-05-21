@@ -4,6 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Award, Users, BookOpen } from "lucide-react";
 import coachKayImg from "@/assets/coach-kay.jpeg";
+import { webPage, breadcrumb, PERSON_ID } from "@/lib/seo-schema";
 
 const testimonials = [
   {
@@ -43,16 +44,17 @@ const CoachKay = () => {
       <SEOHead
         title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
         description="Kenza Alaoui (Coach Kay) is an emotionally intelligent, pattern-aware life coach who blends AI technology with deep human insight to help you find clarity."
-        path="/about"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Person",
-          name: "Kenza Alaoui",
-          alternateName: "Coach Kay",
-          jobTitle: "AI & Life Transformation Coach",
-          url: "https://coachkayai.life/about",
-          image: "https://coachkayai.life/coach-kay.jpeg",
-        }}
+        path="/coach-kay"
+        jsonLd={[
+          webPage("/coach-kay", "Coach Kay", "AboutPage"),
+          breadcrumb(
+            [
+              { name: "Home", path: "/" },
+              { name: "Coach Kay", path: "/coach-kay" },
+            ],
+            "/coach-kay"
+          ),
+        ]}
       />
 
       {/* Hero */}

@@ -4,6 +4,7 @@ import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
+import { webPage, breadcrumb } from "@/lib/seo-schema";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Sparkles, ExternalLink, Users, BookOpen, MessageCircle, Calendar } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
@@ -42,7 +43,21 @@ const Community = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title="The Elevation Hub — FocusFlow Community" description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support." path="/community" jsonLd={{ "@context": "https://schema.org", "@type": "Organization", name: "FocusFlow Elevation Hub", description: "A coaching community for clarity seekers, led by Master Certified Life Coach Kay.", url: "https://coachkayai.life/community" }} />
+      <SEOHead
+        title="The Elevation Hub — FocusFlow Community"
+        description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."
+        path="/community"
+        jsonLd={[
+          webPage("/community", "Community"),
+          breadcrumb(
+            [
+              { name: "Home", path: "/" },
+              { name: "Community", path: "/community" },
+            ],
+            "/community"
+          ),
+        ]}
+      />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
