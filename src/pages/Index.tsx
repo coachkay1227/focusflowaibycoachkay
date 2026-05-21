@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, ArrowRight, User, LogOut, Zap } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
+import { getPublicPrograms } from "@/data/programs";
+import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -32,27 +34,9 @@ const Index = () => {
         description="See clearly. Move with purpose. Master-certified clarity coaching that helps you cut through mental fog, identify patterns, and take meaningful action."
         path="/"
         jsonLd={[
-          {
-            "@context": "https://schema.org",
-            "@type": "ProfessionalService",
-            name: "FocusFlow AI by Coach Kay",
-            url: "https://coachkayai.life",
-            description: "Master-certified clarity coaching powered by the F.O.C.U.S. framework",
-            serviceType: "Life Coaching",
-            provider: {
-              "@type": "Person",
-              name: "Coach Kay",
-              jobTitle: "Master Certified Life Coach",
-              description: "Master Certified Life Coach with 600+ hours of client coaching. Creator of the Clarity Code framework and F.O.C.U.S. methodology.",
-            },
-            areaServed: "Worldwide",
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: "FocusFlow AI",
-            url: "https://coachkayai.life",
-          },
+          webPage("/", "Home"),
+          breadcrumb([{ name: "Home", path: "/" }], "/"),
+          offerCatalog(getPublicPrograms()),
           {
             "@context": "https://schema.org",
             "@type": "FAQPage",

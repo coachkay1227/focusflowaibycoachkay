@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -77,7 +77,7 @@ const App = () => (
             <Route path="/programs/:slug" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense></ProtectedRoute>} />
             <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
             <Route path="/community" element={<Suspense fallback={<PageSkeleton />}><Community /></Suspense>} />
-            <Route path="/about" element={<Suspense fallback={<PageSkeleton />}><CoachKay /></Suspense>} />
+            <Route path="/about" element={<Navigate to="/coach-kay" replace />} />
             <Route path="/coach-kay" element={<Suspense fallback={<PageSkeleton />}><CoachKay /></Suspense>} />
             <Route path="/profile" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Profile /></Suspense></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense></ProtectedRoute>} />

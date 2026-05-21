@@ -8,6 +8,7 @@ import { enrollInModule } from "@/lib/enrollment-store";
 import { STRIPE_TIERS } from "@/lib/stripe-tiers";
 import { TIER_RANK, TIER_LABELS } from "@/lib/tier-constants";
 import SEOHead from "@/components/SEOHead";
+import { programSchema } from "@/lib/seo-schema";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import MobileNav from "@/components/MobileNav";
 import { Badge } from "@/components/ui/badge";
@@ -91,20 +92,7 @@ const ProgramDetail = () => {
     toast.success("Enrolled! Added to your dashboard.");
   };
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Course",
-    name: program.title,
-    description: program.description,
-    provider: { "@type": "Organization", name: "FocusFlow AI" },
-    ...(program.price > 0 && {
-      offers: {
-        "@type": "Offer",
-        price: program.price.toFixed(2),
-        priceCurrency: "USD",
-      },
-    }),
-  };
+  const jsonLd = programSchema(program);
 
   return (
     <div className="relative min-h-screen overflow-hidden grain-overlay">
