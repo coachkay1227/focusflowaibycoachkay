@@ -7,6 +7,8 @@ import { PackageCard } from "@/components/store/PackageCard";
 import { AddonCard } from "@/components/store/AddonCard";
 import { IntakeFormModal } from "@/components/store/IntakeFormModal";
 import { ADDONS, PACKAGES, type BookCategory } from "@/lib/book-store";
+import SEOHead from "@/components/SEOHead";
+import { webPage, breadcrumb } from "@/lib/seo-schema";
 
 const ADDON_ICONS = [Megaphone, Magnet, PhoneCall];
 
@@ -30,6 +32,21 @@ export default function Store() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead
+        title="Book Store — The Book Builder Blueprint | FocusFlow AI"
+        description="Turn your story into a published book. Children's books, coloring books, and non-fiction packages crafted with Coach Kay's Book Builder Blueprint."
+        path="/store"
+        jsonLd={[
+          webPage("/store", "Book Store", "CollectionPage"),
+          breadcrumb(
+            [
+              { name: "Home", path: "/" },
+              { name: "Book Store", path: "/store" },
+            ],
+            "/store"
+          ),
+        ]}
+      />
       {/* Subtle grid backdrop */}
       <div
         aria-hidden
