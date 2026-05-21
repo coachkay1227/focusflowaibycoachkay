@@ -118,6 +118,8 @@ export const programs: Program[] = [
     isGated: false,
     isNew: false,
     wrdLink: true,
+    path: "personal",
+    visibility: "lead_magnet",
     order: 1,
   },
 
@@ -156,6 +158,8 @@ export const programs: Program[] = [
     isGated: false,
     isNew: false,
     wrdLink: true,
+    path: "business",
+    visibility: "lead_magnet",
     order: 2,
   },
 
@@ -198,6 +202,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "personal",
+    visibility: "backend",
     order: 10,
   },
 
@@ -236,6 +242,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "personal",
+    visibility: "backend",
     order: 11,
   },
 
@@ -274,6 +282,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "personal",
+    visibility: "backend",
     order: 12,
   },
 
@@ -312,6 +322,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "personal",
+    visibility: "backend",
     order: 13,
   },
 
@@ -350,6 +362,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "personal",
+    visibility: "backend",
     order: 14,
   },
 
@@ -388,6 +402,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 15,
   },
 
@@ -426,6 +442,8 @@ export const programs: Program[] = [
     isGated: false,
     isNew: false,
     wrdLink: true,
+    path: "shared",
+    visibility: "retired",
     order: 16,
   },
 
@@ -464,6 +482,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "personal",
+    visibility: "backend",
     order: 17,
   },
 
@@ -502,6 +522,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "personal",
+    visibility: "backend",
     order: 18,
   },
 
@@ -540,6 +562,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "personal",
+    visibility: "backend",
     order: 19,
   },
 
@@ -578,6 +602,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "personal",
+    visibility: "backend",
     order: 20,
   },
 
@@ -616,6 +642,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "personal",
+    visibility: "backend",
     order: 21,
   },
 
@@ -658,6 +686,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "business",
+    visibility: "backend",
     order: 30,
   },
 
@@ -696,6 +726,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "business",
+    visibility: "backend",
     order: 31,
   },
 
@@ -734,6 +766,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "business",
+    visibility: "backend",
     order: 32,
   },
 
@@ -772,6 +806,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "business",
+    visibility: "backend",
     order: 33,
   },
 
@@ -810,6 +846,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "business",
+    visibility: "backend",
     order: 34,
   },
 
@@ -848,6 +886,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "business",
+    visibility: "backend",
     order: 35,
   },
 
@@ -886,6 +926,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "personal",
+    visibility: "retired",
     order: 36,
   },
 
@@ -928,6 +970,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 40,
   },
 
@@ -966,6 +1010,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 41,
   },
 
@@ -1004,6 +1050,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 42,
   },
 
@@ -1042,6 +1090,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 43,
   },
 
@@ -1080,6 +1130,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 44,
   },
 
@@ -1118,6 +1170,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "shared",
+    visibility: "backend",
     order: 45,
   },
 
@@ -1160,6 +1214,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "shared",
+    visibility: "backend",
     order: 50,
   },
 
@@ -1198,6 +1254,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 51,
   },
 
@@ -1236,6 +1294,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 52,
   },
 
@@ -1274,6 +1334,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 53,
   },
 
@@ -1312,6 +1374,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 54,
   },
 
@@ -1350,6 +1414,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: true,
+    path: "shared",
+    visibility: "backend",
     order: 55,
   },
 
@@ -1388,6 +1454,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 56,
   },
 
@@ -1426,6 +1494,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 57,
   },
 
@@ -1464,6 +1534,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 58,
   },
 
@@ -1506,6 +1578,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: true,
     wrdLink: false,
+    path: "ai",
+    visibility: "retired",
     order: 60,
   },
 
@@ -1544,6 +1618,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "ai",
+    visibility: "backend",
     order: 61,
   },
 
@@ -1582,6 +1658,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "ai",
+    visibility: "backend",
     order: 62,
   },
 
@@ -1620,6 +1698,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "ai",
+    visibility: "backend",
     order: 63,
   },
 
@@ -1658,6 +1738,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "ai",
+    visibility: "backend",
     order: 64,
   },
 
@@ -1696,6 +1778,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "ai",
+    visibility: "backend",
     order: 65,
   },
 
@@ -1734,6 +1818,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: true,
     wrdLink: false,
+    path: "ai",
+    visibility: "lead_magnet",
     order: 66,
   },
 
@@ -1779,6 +1865,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "ai",
+    visibility: "retired",
     order: 100,
   },
 
@@ -1819,6 +1907,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "business",
+    visibility: "retired",
     order: 101,
   },
 
@@ -1862,6 +1952,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "retired",
     order: 102,
   },
 
@@ -1900,6 +1992,8 @@ export const programs: Program[] = [
     isGated: true,
     isNew: false,
     wrdLink: false,
+    path: "shared",
+    visibility: "backend",
     order: 70,
   },
 ];
