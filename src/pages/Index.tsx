@@ -305,8 +305,8 @@ const Index = () => {
             },
             {
               label: "03 · DOWNLOAD",
-              title: "4/90/1 Business Planner",
-              desc: "A free download to map your next 90 days of business growth.",
+              title: "AI Transformation Starter Kit",
+              desc: "A free download to kickstart your AI-powered business transformation.",
               cta: "Download Free",
               to: "/modules",
               primary: false,
