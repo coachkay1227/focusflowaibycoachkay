@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import ApplyNowDialog from "@/components/ApplyNowDialog";
 
 type Dimension = "M" | "A" | "C";
 
@@ -154,6 +155,7 @@ const Assessment = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
   const [animState, setAnimState] = useState<"enter" | "exit" | "idle">("enter");
+  const [applyOpen, setApplyOpen] = useState(false);
 
   const total = questions.length;
   const current = questions[step];
@@ -352,20 +354,20 @@ const Assessment = () => {
 
             <div className="mt-12 flex flex-col sm:flex-row gap-3">
               <Button
-                onClick={() => navigate("/clarity")}
+                onClick={() => setApplyOpen(true)}
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Sparkles className="mr-2 h-4 w-4" />
-                Take the Clarity Check
+                Apply for the 30-Day Business Reset
               </Button>
               <Button
-                onClick={() => navigate("/modules")}
+                onClick={() => navigate("/programs/30-day-business-reset")}
                 size="lg"
                 variant="outline"
                 className="border-border hover:border-primary/40 text-foreground hover:text-primary"
               >
-                Explore Pathways
+                See the Business Path
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button
@@ -380,6 +382,12 @@ const Assessment = () => {
           </div>
         )}
       </div>
+      <ApplyNowDialog
+        open={applyOpen}
+        onOpenChange={setApplyOpen}
+        mode="application"
+        programName="30-Day Business Reset"
+      />
     </div>
   );
 };

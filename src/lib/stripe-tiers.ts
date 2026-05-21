@@ -18,11 +18,15 @@ export const STRIPE_TIERS: Partial<Record<AccessTier, TierConfig[]>> = {
       interval: "month",
     },
   ],
+  // LEGACY — these price IDs are NOT sold publicly anymore. They remain
+  // in Stripe and in this map so historical customers, webhook idempotency,
+  // and the customer portal continue to work. The new public offers
+  // (30-/90-Day Resets + 6-Month Partnership) route through ApplyNowDialog.
   cohort: [
     {
       price_id: "price_1THkwQBReje0oFcL8i3WGwS0",
       product_id: "prod_UGHVIcGfn5LEoU",
-      name: "8-Week Life Transformation Cohort",
+      name: "8-Week Life Transformation Cohort (legacy)",
       price: 997,
       interval: "one_time",
     },
@@ -31,21 +35,21 @@ export const STRIPE_TIERS: Partial<Record<AccessTier, TierConfig[]>> = {
     {
       price_id: "price_1THkx7BReje0oFcLRrF38PA8",
       product_id: "prod_UGHWgMWBPbxXjH",
-      name: "30-Day F.O.C.U.S. Reset",
+      name: "30-Day F.O.C.U.S. Reset (legacy)",
       price: 297,
       interval: "one_time",
     },
     {
       price_id: "price_1THlFpBReje0oFcLuNY16veh",
       product_id: "prod_UGHpmJnJVVhIef",
-      name: "30-Day Intensive",
+      name: "30-Day Intensive (legacy)",
       price: 497,
       interval: "one_time",
     },
     {
       price_id: "price_1THlGgBReje0oFcLu5PGmZih",
       product_id: "prod_UGHqGWOM8Iqo3K",
-      name: "12-Week Mastery Program",
+      name: "12-Week Mastery Program (legacy)",
       price: 1997,
       interval: "one_time",
     },

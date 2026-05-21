@@ -308,7 +308,7 @@ const Index = () => {
               title: "AI Transformation Starter Kit",
               desc: "A free download to kickstart your AI-powered business transformation.",
               cta: "Download Free",
-              to: "/modules",
+              to: "/programs/kpi-roi-tracker",
               primary: false,
             },
           ].map((item, i) => (
