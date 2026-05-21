@@ -14,6 +14,15 @@ export type Audience = "general" | "reentry" | "corporate" | "youth" | "nonprofi
 export type ProgramType = "assessment" | "challenge" | "course" | "sprint" | "reset" | "workshop";
 export type Duration = "5min" | "1day" | "2day" | "5day" | "7day" | "8day" | "30day" | "8week" | "12week";
 
+export type PublicPath = "personal" | "business" | "ai" | "shared";
+export type Visibility = "public" | "backend" | "lead_magnet" | "retired";
+
+export const PUBLIC_PATHS: Record<Exclude<PublicPath, "shared">, { label: string; tagline: string }> = {
+  personal: { label: "Personal", tagline: "Clarity, identity, and inner-work transformation." },
+  business: { label: "Business", tagline: "Strategy, execution, and leadership transformation." },
+  ai: { label: "Full AI", tagline: "Use AI to compound clarity, decisions, and growth." },
+};
+
 export interface PaymentPlan {
   installments: number;
   amountPerInstallment: number;
@@ -47,6 +56,12 @@ export interface Program {
   isNew: boolean;
   wrdLink: boolean;
   order: number;
+  /** Which public transformation path this maps to. */
+  path: PublicPath;
+  /** Where this program is allowed to surface across the site. */
+  visibility: Visibility;
+  /** For backend programs: which public paid offer unlocks it. */
+  parentOfferId?: string;
 }
 
 export const FOCUS_PILLARS: Record<FocusPillar, { full: string; color: string; description: string }> = {
