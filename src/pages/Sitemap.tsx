@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { ArrowLeft } from "lucide-react";
-import { programs, FOCUS_PILLARS, type FocusPillar } from "@/data/programs";
+import { getPublicPrograms, getBackendPrograms, PUBLIC_PATHS, type PublicPath } from "@/data/programs";
 
 const coreLinks = [
   { path: "/", label: "Home" },
@@ -16,7 +16,7 @@ const coreLinks = [
   { path: "/auth", label: "Sign In / Sign Up" },
 ];
 
-const pillars: FocusPillar[] = ["F", "O", "C", "U", "S"];
+const paths: PublicPath[] = ["personal", "business", "ai"];
 
 const Sitemap = () => (
   <div className="relative min-h-screen overflow-hidden grain-overlay">
@@ -47,16 +47,16 @@ const Sitemap = () => (
         </ul>
       </section>
 
-      {pillars.map((p) => {
-        const meta = FOCUS_PILLARS[p];
-        const pillarPrograms = programs.filter((prog) => prog.pillar === p);
+      {paths.map((p) => {
+        const meta = PUBLIC_PATHS[p];
+        const pathPrograms = getPublicPrograms().filter((prog) => prog.path === p || prog.path === "shared");
         return (
           <section key={p} className="mb-10">
-            <h2 className="font-heading text-xl font-light mb-4" style={{ color: meta.color }}>
-              {p} — {meta.full} ({pillarPrograms.length} programs)
+            <h2 className="font-heading text-xl font-light mb-4 text-primary">
+              {meta.label} Path ({pathPrograms.length})
             </h2>
             <ul className="space-y-2">
-              {pillarPrograms.map((prog) => (
+              {pathPrograms.map((prog) => (
                 <li key={prog.id}>
                   <Link
                     to={`/programs/${prog.slug}`}
@@ -65,7 +65,7 @@ const Sitemap = () => (
                     {prog.title}
                   </Link>
                   <span className="text-xs text-muted-foreground ml-2">
-                    {prog.durationLabel} · {prog.type}
+                    {prog.durationLabel} · {prog.priceDisplay}
                   </span>
                 </li>
               ))}
@@ -73,6 +73,15 @@ const Sitemap = () => (
           </section>
         );
       })}
+
+      <section className="mb-10">
+        <h2 className="font-heading text-xl font-light mb-4 text-muted-foreground">
+          Backend Curriculum ({getBackendPrograms().length})
+        </h2>
+        <p className="text-xs text-muted-foreground/70">
+          Backend modules are available inside the dashboard for enrolled clients.
+        </p>
+      </section>
     </div>
   </div>
 );
