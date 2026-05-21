@@ -2014,8 +2014,182 @@ export const programs: Program[] = [
 ];
 
 // ─────────────────────────────────────────────
+// PUBLIC PAID OFFERS (source of truth for catalog visibility)
+// These mirror src/components/PricingSection.tsx and are the only
+// catalog items the public Modules page should expose as buyable.
+// ─────────────────────────────────────────────
+
+const PUBLIC_OFFERS: Program[] = [
+  {
+    id: "offer-30-day-personal-reset",
+    title: "30-Day Personal Reset",
+    slug: "30-day-personal-reset",
+    pillar: "F", pillarFull: "Foundation",
+    type: "reset", category: "30-Day Reset",
+    duration: "30day", durationLabel: "30 days",
+    tagline: "Private 30-day transformation for clarity, confidence, and forward movement.",
+    description: "A private 30-day transformation experience for clarity, confidence, mindset, habits, and forward movement. Best for people who feel stuck, overwhelmed, or ready for a personal reset.",
+    coachNote: "Most people don't need a new plan — they need a real reset. That's what this is.",
+    whatYouGet: ["Private coaching container with Coach Kay", "Daily Foundation & Uplift modules", "Personalized clarity check-ins", "Identity & habit reset rituals", "Direct access for accountability"],
+    transformation: "You leave the month clearer, lighter, and operating from a stronger sense of self.",
+    accessTier: "premium", price: 297, priceDisplay: "$297",
+    cohortCode: false, tags: ["personal", "reset", "30-day", "clarity", "identity"],
+    audience: ["general", "reentry"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 200, path: "personal", visibility: "public",
+  },
+  {
+    id: "offer-30-day-business-reset",
+    title: "30-Day Business Reset",
+    slug: "30-day-business-reset",
+    pillar: "O", pillarFull: "Opportunity",
+    type: "reset", category: "30-Day Reset",
+    duration: "30day", durationLabel: "30 days",
+    tagline: "Focused 30-day business reset for clarity, structure, and stronger execution.",
+    description: "A focused 30-day business transformation experience for entrepreneurs, coaches, and founders who need clarity, structure, stronger execution, and better decision-making.",
+    coachNote: "Your business doesn't need more tactics — it needs a 30-day reset on what you focus on, what you execute, and what you stop tolerating.",
+    whatYouGet: ["Private coaching container", "4/90/1 planning week + execution rhythm", "Opportunity-pillar weekly modules", "Decision-making frameworks", "Direct accountability access"],
+    transformation: "You finish the month with sharper offers, cleaner execution, and a business you actually want to lead.",
+    accessTier: "premium", price: 497, priceDisplay: "$497",
+    cohortCode: false, tags: ["business", "reset", "30-day", "execution", "strategy"],
+    audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 201, path: "business", visibility: "public",
+  },
+  {
+    id: "offer-30-day-ai-reset",
+    title: "30-Day AI Reset",
+    slug: "30-day-ai-reset",
+    pillar: "S", pillarFull: "Support",
+    type: "reset", category: "30-Day Reset",
+    duration: "30day", durationLabel: "30 days",
+    tagline: "Guided 30-day AI reset for clarity, productivity, and growth.",
+    description: "A guided 30-day AI transformation experience to help you use AI more intentionally in your life or business for clarity, productivity, systems, and growth.",
+    coachNote: "AI without intention is just another distraction. This reset teaches you to use it on purpose.",
+    whatYouGet: ["Private coaching container", "AI workflow templates and prompts", "Systems & execution modules", "KPI / ROI tracking starter", "Direct accountability access"],
+    transformation: "You stop dabbling and start operating with AI as a true thinking partner.",
+    accessTier: "premium", price: 997, priceDisplay: "$997",
+    cohortCode: false, tags: ["ai", "reset", "30-day", "systems", "productivity"],
+    audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 202, path: "ai", visibility: "public",
+  },
+  {
+    id: "offer-90-day-personal",
+    title: "90-Day Personal Transformation",
+    slug: "90-day-personal-transformation",
+    pillar: "F", pillarFull: "Foundation",
+    type: "course", category: "90-Day Transformation",
+    duration: "12week", durationLabel: "90 days",
+    tagline: "Deeper private coaching for sustainable life change.",
+    description: "A deeper private coaching experience for personal growth, emotional clarity, confidence, accountability, and sustainable life change.",
+    coachNote: "Three months is where real identity shifts compound. This is the container for that work.",
+    whatYouGet: ["12 weeks of private coaching", "Full Foundation + Create curriculum", "Uplift habit installation", "Mid-program identity reset", "Direct text & call access"],
+    transformation: "You become the version of yourself you've been circling for years.",
+    accessTier: "premium", price: 997, priceDisplay: "$997",
+    cohortCode: false, tags: ["personal", "90-day", "transformation", "identity"],
+    audience: ["general", "reentry"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 210, path: "personal", visibility: "public",
+  },
+  {
+    id: "offer-90-day-business",
+    title: "90-Day Business Transformation",
+    slug: "90-day-business-transformation",
+    pillar: "C", pillarFull: "Create",
+    type: "course", category: "90-Day Transformation",
+    duration: "12week", durationLabel: "90 days",
+    tagline: "Private transformation for sharper offers, leadership, and momentum.",
+    description: "A private transformation container for entrepreneurs and professionals who want sharper offers, cleaner execution, stronger leadership, and business momentum.",
+    coachNote: "You don't need more — you need 90 days of clean, coached execution on what already matters.",
+    whatYouGet: ["12 weeks private coaching", "Opportunity + Create curriculum", "Leadership & accountability modules", "Offer / positioning intensive", "Direct text & call access"],
+    transformation: "You finish the quarter leading a business that finally feels aligned and is producing aligned results.",
+    accessTier: "premium", price: 1497, priceDisplay: "$1,497",
+    cohortCode: false, tags: ["business", "90-day", "leadership", "execution"],
+    audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 211, path: "business", visibility: "public",
+  },
+  {
+    id: "offer-90-day-ai",
+    title: "90-Day Full AI Transformation",
+    slug: "90-day-full-ai-transformation",
+    pillar: "S", pillarFull: "Support",
+    type: "course", category: "90-Day Transformation",
+    duration: "12week", durationLabel: "90 days",
+    tagline: "Premium private coaching to integrate AI into your workflow and growth strategy.",
+    description: "A premium private coaching and strategy experience for people ready to integrate AI into their workflow, business, decision-making, and growth strategy.",
+    coachNote: "AI is the leverage of the decade. This is how you wire it into how you actually think, decide, and execute.",
+    whatYouGet: ["12 weeks private coaching", "AI workflow architecture", "Decision systems & dashboards", "Custom prompt + agent library", "Direct text & call access"],
+    transformation: "You operate as an AI-leveraged human — faster decisions, sharper systems, compounding output.",
+    accessTier: "premium", price: 2497, priceDisplay: "$2,497",
+    cohortCode: false, tags: ["ai", "90-day", "transformation", "systems", "strategy"],
+    audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 212, path: "ai", visibility: "public",
+  },
+  {
+    id: "offer-6-month-partnership",
+    title: "6-Month Private Transformation Partnership",
+    slug: "6-month-private-partnership",
+    pillar: "S", pillarFull: "Support",
+    type: "course", category: "Private Partnership",
+    duration: "12week", durationLabel: "6 months",
+    tagline: "High-touch private coaching across personal, business, and AI-powered execution.",
+    description: "A high-touch private coaching experience for clients who want long-term support, deeper transformation, and personalized guidance across personal growth, business evolution, and AI-powered execution.",
+    coachNote: "This is the container for the people who are done playing small and want a real partner for the next chapter.",
+    whatYouGet: ["6 months private coaching", "Unlimited curriculum access", "Personal + Business + AI integration", "Quarterly strategy intensives", "Priority direct access"],
+    transformation: "You build a 6-month track record of clean decisions, real execution, and the identity to sustain it.",
+    accessTier: "premium", price: 3997, priceDisplay: "$3,997",
+    cohortCode: false, tags: ["partnership", "6-month", "private", "integrated"],
+    audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
+    order: 220, path: "shared", visibility: "public",
+  },
+];
+
+// Append public offers to the main catalog
+programs.push(...PUBLIC_OFFERS);
+
+// ─────────────────────────────────────────────
 // HELPER FUNCTIONS
 // ─────────────────────────────────────────────
+
+/** All items intended for the public Modules page (paid offers + lead magnets). */
+export function getPublicPrograms(): Program[] {
+  return programs
+    .filter((p) => p.visibility === "public" || p.visibility === "lead_magnet")
+    .sort((a, b) => a.order - b.order);
+}
+
+/** Public items filtered to a single transformation path. Includes shared items. */
+export function getProgramsByPath(path: PublicPath | "all"): Program[] {
+  const pub = getPublicPrograms();
+  if (path === "all") return pub;
+  return pub.filter((p) => p.path === path || p.path === "shared");
+}
+
+/** Backend curriculum items — only shown to enrolled users inside the dashboard. */
+export function getBackendPrograms(): Program[] {
+  return programs.filter((p) => p.visibility === "backend").sort((a, b) => a.order - b.order);
+}
+
+/** Items removed from public surfaces. */
+export function getRetiredPrograms(): Program[] {
+  return programs.filter((p) => p.visibility === "retired");
+}
+
+/** Map a retired or backend program to the closest current public offer for redirects. */
+export function getReplacementOffer(program: Program): Program | undefined {
+  // Direct mapping for known retired SKUs
+  const map: Record<string, string> = {
+    "8-week-ai-transformation": "offer-30-day-ai-reset",
+    "30-day-focus-intensive": "offer-30-day-business-reset",
+    "12-week-mastery": "offer-90-day-business",
+    "sugar-reset": "offer-30-day-personal-reset",
+    "lead-the-room-ai": "offer-30-day-ai-reset",
+    "discover-energy-patterns": "clarity-check",
+  };
+  const targetId = map[program.id] ?? (
+    program.path === "ai" ? "offer-30-day-ai-reset" :
+    program.path === "business" ? "offer-30-day-business-reset" :
+    "offer-30-day-personal-reset"
+  );
+  return getProgramById(targetId);
+}
 
 export function getProgramsByPillar(pillar: FocusPillar): Program[] {
   return programs.filter((p) => p.pillar === pillar).sort((a, b) => a.order - b.order);
