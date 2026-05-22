@@ -74,7 +74,10 @@ const App = () => (
             <Route path="/challenges" element={<Suspense fallback={<PageSkeleton />}><Challenges /></Suspense>} />
             <Route path="/challenges/:type" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
             <Route path="/modules" element={<Suspense fallback={<PageSkeleton />}><Modules /></Suspense>} />
-            <Route path="/programs/:slug" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense></ProtectedRoute>} />
+            <Route path="/programs/:slug" element={<Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense>} />
+            {/* Public-facing AI doorway — points to the AI Transformation Starter Kit */}
+            <Route path="/starter-kit" element={<Navigate to="/programs/kpi-roi-tracker" replace />} />
+            <Route path="/ai-starter-kit" element={<Navigate to="/programs/kpi-roi-tracker" replace />} />
             <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
             <Route path="/community" element={<Suspense fallback={<PageSkeleton />}><Community /></Suspense>} />
             <Route path="/about" element={<Navigate to="/coach-kay" replace />} />

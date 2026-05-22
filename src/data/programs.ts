@@ -2195,6 +2195,63 @@ export function getProgramsByPillar(pillar: FocusPillar): Program[] {
   return programs.filter((p) => p.pillar === pillar).sort((a, b) => a.order - b.order);
 }
 
+// ─────────────────────────────────────────────
+// BACKEND → PUBLIC OFFER MAPPING
+// Defines the LOWEST-tier paid offer that unlocks each backend module.
+// 6-Month Partnership unlocks everything by default.
+// 90-Day offers unlock their corresponding 30-Day offer's modules + their own deeper set.
+// ─────────────────────────────────────────────
+
+/** Per-module overrides take priority over the pillar/path heuristic. */
+const PARENT_OFFER_OVERRIDES: Record<string, string> = {
+  // Personal Reset additions (shared alignment + habit basics)
+  "alignment-accelerator": "offer-30-day-personal-reset",
+  "productive-habits-5-days": "offer-30-day-personal-reset",
+  "radiant-morning-rituals": "offer-30-day-personal-reset",
+  "mindful-mornings": "offer-30-day-personal-reset",
+  "habit-mastery-challenge": "offer-30-day-personal-reset",
+  "mastering-consistency": "offer-30-day-personal-reset",
+  // Business Reset additions (shared accountability + 4-90-1)
+  "accountability-as-skill": "offer-30-day-business-reset",
+  "4-90-1-challenge": "offer-30-day-business-reset",
+  "integrity-alignment-challenge": "offer-30-day-business-reset",
+  // AI Reset additions (selected execution / system modules)
+  "system-success-sprint": "offer-30-day-ai-reset",
+  "deep-work-mastery": "offer-30-day-ai-reset",
+  "faster-execution-challenge": "offer-30-day-ai-reset",
+  "faster-learning-skills": "offer-30-day-ai-reset",
+  // 90-Day Personal (deeper C identity work)
+  "confidence-wealth-building": "offer-90-day-personal",
+  "say-do-identity-sprint": "offer-90-day-personal",
+  "unshakable-self-assurance": "offer-90-day-personal",
+  // 90-Day Business (deeper leadership + select systems)
+  "personal-growth-leadership": "offer-90-day-business",
+  "transform-skilled-leader": "offer-90-day-business",
+  "think-smarter-challenge": "offer-90-day-business",
+  // 90-Day Full AI (business execution + KPI layer)
+  "kpi-roi-tracker": "offer-90-day-ai",
+  "art-of-getting-ahead": "offer-90-day-ai",
+};
+
+/** Returns the public offer ID that unlocks a given backend program. */
+export function getParentOfferId(program: Program): string {
+  if (PARENT_OFFER_OVERRIDES[program.id]) return PARENT_OFFER_OVERRIDES[program.id];
+  // Pillar-based default
+  switch (program.pillar) {
+    case "F": return "offer-30-day-personal-reset"; // Foundation → Personal
+    case "U": return "offer-30-day-personal-reset"; // Uplift (habits) → Personal
+    case "O": return "offer-30-day-business-reset"; // Opportunity → Business
+    case "C": return "offer-90-day-personal";       // Create (identity/leadership) → 90-Day Personal
+    case "S": return "offer-30-day-ai-reset";       // Support (systems/AI) → AI Reset
+    default:  return "offer-30-day-personal-reset";
+  }
+}
+
+/** All backend modules unlocked by a given public offer ID. */
+export function getBackendModulesForOffer(offerId: string): Program[] {
+  return getBackendPrograms().filter((p) => getParentOfferId(p) === offerId);
+}
+
 export function getProgramsByTier(tier: AccessTier): Program[] {
   return programs.filter((p) => p.accessTier === tier).sort((a, b) => a.order - b.order);
 }
