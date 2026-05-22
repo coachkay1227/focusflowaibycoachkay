@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useMouseGlow } from "@/hooks/use-mouse-glow";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { clarityQuestions, type ClarityAnswers } from "@/lib/clarity-engine";
 import { getModule } from "@/lib/modules";
 import type { ModuleQuestion } from "@/lib/modules";
+import { useRoles } from "@/hooks/use-roles";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -17,13 +18,35 @@ import { useToast } from "@/hooks/use-toast";
 const ClaritySession = () => {
   const navigate = useNavigate();
   const { moduleId } = useParams<{ moduleId?: string }>();
+  const [searchParams] = useSearchParams();
+  const { isAdmin } = useRoles();
   const { toast } = useToast();
-  
-  // Get questions from module or default
+
+  // Hard redirects: do NOT silently fall back to the default quiz on unknown/foreign moduleIds.
+  useEffect(() => {
+    if (!moduleId) return;
+    if (moduleId === "clarity-check") return; // canonical personal flow
+    if (moduleId === "mac-type-assessment") {
+      navigate("/assessment", { replace: true });
+      return;
+    }
+    if (moduleId === "kpi-roi-tracker") {
+      navigate("/starter-kit", { replace: true });
+      return;
+    }
+    const mod = getModule(moduleId);
+    // Only allow modules that exist AND ship custom questions; everything else → back to /clarity
+    if (!mod || mod.questions.length === 0) {
+      navigate("/clarity", { replace: true });
+    }
+  }, [moduleId, navigate]);
+
+  // Resolve module + questions (after guard above, moduleId is always valid or undefined)
   const resolvedModuleId = moduleId || "clarity-check";
   const mod = getModule(resolvedModuleId);
-  const questions: ModuleQuestion[] = (mod && mod.questions.length > 0) ? mod.questions : clarityQuestions;
-  const moduleTitle = mod?.title || "Clarity Check";
+  const questions: ModuleQuestion[] =
+    mod && mod.questions.length > 0 ? mod.questions : clarityQuestions;
+  const moduleTitle = mod?.title || "Personal Clarity Check";
 
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -41,6 +64,25 @@ const ClaritySession = () => {
   const canProceed = question.type === "options" ? !!answers[question.id] : textValue.trim().length > 0;
 
   useMouseGlow(containerRef);
+
+  // Admin-only preview: ?preview=1 prefills answers with the first option of each question
+  // and immediately routes to the result screen — no public exposure.
+  useEffect(() => {
+    if (!isAdmin) return;
+    if (searchParams.get("preview") !== "1") return;
+    const prefilled: Record<string, string> = {};
+    for (const q of questions) {
+      if (q.type === "options" && q.options && q.options.length > 0) {
+        prefilled[q.id] = q.options[0].value;
+      } else {
+        prefilled[q.id] = "Preview answer — admin dev mode.";
+      }
+    }
+    navigate("/result", {
+      state: { answers: prefilled as unknown as ClarityAnswers, moduleId: resolvedModuleId },
+      replace: true,
+    });
+  }, [isAdmin, searchParams, questions, navigate, resolvedModuleId]);
 
   const finishSession = (finalAnswers: Record<string, string>) => {
     // Auth users skip the gate — they've already given us their email
