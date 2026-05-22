@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMouseGlow } from "@/hooks/use-mouse-glow";
+import { useRoles } from "@/hooks/use-roles";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -147,6 +148,8 @@ function topCode(counts: Record<string, number>, fallback: string): string {
 
 const Assessment = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { isAdmin } = useRoles();
   const containerRef = useRef<HTMLDivElement>(null);
   useMouseGlow(containerRef);
 
@@ -156,6 +159,18 @@ const Assessment = () => {
   const [done, setDone] = useState(false);
   const [animState, setAnimState] = useState<"enter" | "exit" | "idle">("enter");
   const [applyOpen, setApplyOpen] = useState(false);
+
+  // Admin-only quick preview — instantly fill answers and reveal the result panel.
+  useEffect(() => {
+    if (!isAdmin) return;
+    if (searchParams.get("preview") !== "1") return;
+    const prefilled: Record<string, string> = {};
+    for (const q of questions) {
+      prefilled[q.id] = q.options[0]?.value ?? "";
+    }
+    setAnswers(prefilled);
+    setDone(true);
+  }, [isAdmin, searchParams, questions]);
 
   const total = questions.length;
   const current = questions[step];

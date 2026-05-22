@@ -40,6 +40,7 @@ const Store = lazy(() => import("./pages/Store.tsx"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess.tsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.tsx"));
 const Assessment = lazy(() => import("./pages/Assessment.tsx"));
+const StarterKit = lazy(() => import("./pages/StarterKit.tsx"));
 
 // Lazy-load shell components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
@@ -75,9 +76,9 @@ const App = () => (
             <Route path="/challenges/:type" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><MirrorChallenge /></Suspense></ProtectedRoute>} />
             <Route path="/modules" element={<Suspense fallback={<PageSkeleton />}><Modules /></Suspense>} />
             <Route path="/programs/:slug" element={<Suspense fallback={<PageSkeleton />}><ProgramDetail /></Suspense>} />
-            {/* Public-facing AI doorway — points to the AI Transformation Starter Kit */}
-            <Route path="/starter-kit" element={<Navigate to="/programs/kpi-roi-tracker" replace />} />
-            <Route path="/ai-starter-kit" element={<Navigate to="/programs/kpi-roi-tracker" replace />} />
+            {/* Public-facing AI doorway — dedicated free starter-kit flow (NOT the clarity quiz) */}
+            <Route path="/starter-kit" element={<Suspense fallback={<PageSkeleton />}><StarterKit /></Suspense>} />
+            <Route path="/ai-starter-kit" element={<Navigate to="/starter-kit" replace />} />
             <Route path="/coach" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><CoachChat /></Suspense></ProtectedRoute>} />
             <Route path="/community" element={<Suspense fallback={<PageSkeleton />}><Community /></Suspense>} />
             <Route path="/about" element={<Navigate to="/coach-kay" replace />} />

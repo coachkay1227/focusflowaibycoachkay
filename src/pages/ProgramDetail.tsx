@@ -29,6 +29,19 @@ const ProgramDetail = () => {
   const program = slug ? getProgramBySlug(slug) : undefined;
   const replacement = program ? getReplacementOffer(program) : undefined;
 
+  // Per-lead-magnet routing — never route to a generic clarity fallback
+  const leadMagnetTarget = (slug?: string): string => {
+    switch (slug) {
+      case "mac-type-assessment":
+        return "/assessment";
+      case "kpi-roi-tracker":
+        return "/starter-kit";
+      case "focus-clarity-check":
+      default:
+        return "/clarity";
+    }
+  };
+
   // Retired programs: redirect to closest current offer after a beat
   useEffect(() => {
     if (program?.visibility === "retired" && replacement) {
@@ -210,7 +223,7 @@ const ProgramDetail = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate("/clarity/quick-clarity-check")}
+              onClick={() => navigate("/clarity")}
               className="shrink-0 gap-1.5"
             >
               <Sparkles className="h-3.5 w-3.5" /> Free Clarity Check
@@ -241,7 +254,7 @@ const ProgramDetail = () => {
                   <Sparkles className="h-4 w-4" /> Apply for {program.title}
                 </Button>
               ) : isLeadMagnet ? (
-                <Button onClick={() => navigate(canStart ? `/clarity/${program.id}` : "/clarity")} className="gap-2">
+                <Button onClick={() => navigate(leadMagnetTarget(program.slug))} className="gap-2">
                   <Download className="h-4 w-4" /> {program.price === 0 ? "Get it free" : "Start now"}
                 </Button>
               ) : isBackend && backendParent ? (
@@ -293,7 +306,7 @@ const ProgramDetail = () => {
                 </Button>
               ) : canStart ? (
                 <div className="flex gap-3">
-                  <Button onClick={() => navigate(`/clarity/${program.id}`)} className="gap-2">
+                  <Button onClick={() => navigate(leadMagnetTarget(program.slug))} className="gap-2">
                     <Sparkles className="h-4 w-4" /> Start Session
                   </Button>
                   {user && (
