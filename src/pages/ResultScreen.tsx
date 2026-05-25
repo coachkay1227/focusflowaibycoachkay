@@ -91,43 +91,34 @@ const ResultScreen = () => {
     };
     saveSessionCloud(session);
 
-    // Email the Clarity Code to the recipient (anon gate email, or authed user email)
+    // Email the Clarity Code. We only email authenticated users so the
+    // server-side wrapper can resolve the recipient from the verified user
+    // session — preventing the email endpoint from being abused to spam
+    // arbitrary addresses.
     const { data: { session: authSession } } = await supabase.auth.getSession();
-    const recipientEmail = guestEmail || authSession?.user?.email;
-    const recipientName =
-      guestName ||
-      (authSession?.user?.user_metadata?.full_name as string | undefined) ||
-      (authSession?.user?.user_metadata?.name as string | undefined) ||
-      undefined;
+    const recipientEmail = authSession?.user?.email;
     if (recipientEmail) {
       setEmailStatus("sending");
       setSentToEmail(recipientEmail);
       supabase.functions
-        .invoke("send-transactional-email", {
+        .invoke("client-notify", {
           body: {
-            templateName: "clarity-code-result",
-            recipientEmail,
-            idempotencyKey: `clarity-code-${session.id}`,
-            templateData: {
-              name: recipientName,
-              truth: insightData.truth,
-              pattern: insightData.pattern,
-              action: insightData.action,
+            action: "clarity_complete",
+            data: {
+              sessionId: session.id,
+              moduleId,
+              insight: {
+                truth: insightData.truth,
+                pattern: insightData.pattern,
+                action: insightData.action,
+              },
             },
           },
         })
         .then(({ error }) => {
-          if (error) {
-            console.warn("clarity-code email send failed", error);
-            setEmailStatus("failed");
-          } else {
-            setEmailStatus("sent");
-          }
+          setEmailStatus(error ? "failed" : "sent");
         })
-        .catch((err) => {
-          console.warn("clarity-code email send failed", err);
-          setEmailStatus("failed");
-        });
+        .catch(() => setEmailStatus("failed"));
     } else {
       setEmailStatus("skipped");
     }
@@ -166,22 +157,8 @@ const ResultScreen = () => {
     // Update module enrollment progress
     updateModuleProgress(moduleId);
 
-    // Fire GHL webhook for clarity session completion (fire-and-forget)
-    const userEmail = currentSession?.user?.email;
-    if (userEmail) {
-      supabase.functions.invoke("ghl-webhook", {
-        body: {
-          event: "clarity_session_complete",
-          payload: {
-            email: userEmail,
-            moduleId,
-            phase: resolvedTrack?.phaseLabel || "unknown",
-            track: resolvedTrack?.recommendedChallengeType || "unknown",
-            insightSummary: insightData?.truth?.slice(0, 200) || "",
-          },
-        },
-      }).catch(() => {});
-    }
+    // Clarity-session GHL webhook is fired by the client-notify wrapper
+    // above (server-side, with the user identity verified).
   };
 
   const fetchPatterns = async () => {

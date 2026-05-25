@@ -1,9 +1,36 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
+// Auth: this function MUST only be invoked server-side using the service_role
+// key. It proxies arbitrary payloads to an external CRM webhook, so allowing
+// anonymous browser callers (with the public anon key) would let anyone on
+// the internet inject fake CRM events.
+function decodeJwtRole(authHeader: string | null): string | null {
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const token = authHeader.slice("Bearer ".length);
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    const payload = JSON.parse(
+      atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    return typeof payload?.role === "string" ? payload.role : null;
+  } catch {
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
+  }
+
+  const callerRole = decodeJwtRole(req.headers.get("Authorization"));
+  if (callerRole !== "service_role") {
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 
   try {
