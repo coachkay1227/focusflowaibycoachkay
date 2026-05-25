@@ -209,6 +209,116 @@ serve(async (req) => {
         return ok(req);
       }
 
+      // AI Business Audit branch ($47 one-time, prod_U91GXGNgo01tYp).
+      // Runs BEFORE the user_id requirement so guest checkouts also work.
+      // Creates a business_audits row + a 90-day magic-link token, then
+      // fires the audit-purchase-confirmation email. Idempotency is
+      // guaranteed by both processed_stripe_events AND the UNIQUE
+      // constraint on business_audits.stripe_session_id.
+      try {
+        const liForAudit = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const productRef = liForAudit.data?.[0]?.price?.product;
+        const productIdForAudit = typeof productRef === "string"
+          ? productRef
+          : (productRef && typeof productRef === "object" && typeof (productRef as { id?: unknown }).id === "string")
+            ? (productRef as { id: string }).id
+            : null;
+
+        if (productIdForAudit === "prod_U91GXGNgo01tYp") {
+          const auditUserId = readMetaString(session.metadata, "supabase_user_id");
+          const customerEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const customerName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+
+          const { data: existing } = await supabaseClient
+            .from("business_audits")
+            .select("id")
+            .eq("stripe_session_id", session.id)
+            .maybeSingle();
+
+          if (existing?.id) {
+            log.info("audit_already_created", { ctx: { audit_id: existing.id, session_id: session.id } });
+            return ok(req, { received: true, audit_created: false, audit_id: existing.id });
+          }
+
+          const { data: inserted, error: insertErr } = await supabaseClient
+            .from("business_audits")
+            .insert({
+              user_id: auditUserId && UUID_RE.test(auditUserId) ? auditUserId : null,
+              guest_email: customerEmail || null,
+              guest_name: customerName,
+              stripe_session_id: session.id,
+              intake: {},
+            })
+            .select("id")
+            .single();
+
+          if (insertErr || !inserted?.id) {
+            await fail("audit", "audit_insert_failed", {
+              message: insertErr?.message,
+              context: { session_id: session.id },
+            });
+            return ok(req, { received: true, ignored: "audit_insert_failed" });
+          }
+
+          const token = `aud_${crypto.randomUUID().replace(/-/g, "")}${crypto.randomUUID().replace(/-/g, "")}`;
+          const { error: tokenErr } = await supabaseClient
+            .from("audit_tokens")
+            .insert({
+              token,
+              audit_id: inserted.id,
+              email: customerEmail || "",
+            });
+          if (tokenErr) {
+            await fail("audit", "audit_token_insert_failed", {
+              message: tokenErr.message,
+              context: { audit_id: inserted.id },
+            });
+          }
+
+          // Magic link uses the request origin if available, falling back to live host.
+          const origin = req.headers.get("origin") || "https://coachkayai.life";
+          const magicLink = `${origin}/audit/intake?token=${encodeURIComponent(token)}`;
+
+          if (customerEmail) {
+            try {
+              await supabaseClient.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: "audit-purchase-confirmation",
+                  recipientEmail: customerEmail,
+                  idempotencyKey: `audit-confirm-${inserted.id}`,
+                  templateData: {
+                    name: customerName,
+                    audit_id: inserted.id,
+                    token,
+                    magic_link: magicLink,
+                  },
+                },
+              });
+            } catch (e) {
+              await fail("email", "audit_confirm_email_failed", {
+                message: e instanceof Error ? e.message : String(e),
+                context: { audit_id: inserted.id },
+              });
+            }
+          }
+
+          log.info("audit_purchase_processed", {
+            ctx: { audit_id: inserted.id, session_id: session.id, has_user: !!auditUserId },
+          });
+          return ok(req, { received: true, audit_created: true, audit_id: inserted.id });
+        }
+      } catch (e) {
+        await fail("audit", "audit_branch_exception", {
+          message: e instanceof Error ? e.message : String(e),
+          context: { session_id: session.id },
+        });
+        // fall through to default behavior
+      }
+
       // Get user ID from metadata
       const userId = readMetaString(session.metadata, "supabase_user_id");
       if (!userId || !UUID_RE.test(userId)) {
