@@ -347,6 +347,39 @@ export type Database = {
         }
         Relationships: []
       }
+      mac_assessments: {
+        Row: {
+          ai_insight: Json | null
+          answers: Json
+          code: string
+          created_at: string
+          guest_email: string | null
+          guest_name: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          ai_insight?: Json | null
+          answers: Json
+          code: string
+          created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          ai_insight?: Json | null
+          answers?: Json
+          code?: string
+          created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       module_enrollments: {
         Row: {
           completed_at: string | null
@@ -413,6 +446,39 @@ export type Database = {
           created_at?: string | null
           display_name?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      starter_kit_reports: {
+        Row: {
+          bottleneck: string
+          business_type: string
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          report: Json
+          user_id: string | null
+        }
+        Insert: {
+          bottleneck: string
+          business_type: string
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          report: Json
+          user_id?: string | null
+        }
+        Update: {
+          bottleneck?: string
+          business_type?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          report?: Json
+          user_id?: string | null
         }
         Relationships: []
       }
