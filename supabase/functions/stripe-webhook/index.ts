@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -242,6 +242,12 @@ serve(async (req) => {
 
       const mappedTier = PRODUCT_TIER_MAP[productId];
       if (!mappedTier) {
+        // One-time non-tier products (AI Business Audit, Strategy Intensive)
+        // don't change the buyer's access level. Acknowledge silently.
+        if (NO_TIER_PRODUCTS.has(productId)) {
+          log.info("one_time_product_no_tier_change", { ctx: { product_id: productId, user_id: userId } });
+          return ok(req, { received: true, no_tier_change: true });
+        }
         await fail("subscription", "unknown_product", { context: { product_id: productId } });
         return ok(req, { received: true, ignored: "unknown_product" });
       }
