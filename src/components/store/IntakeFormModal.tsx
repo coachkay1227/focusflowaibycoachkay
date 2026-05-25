@@ -471,6 +471,19 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
             </Button>
           </div>
 
+          {/* Trust + policy footer */}
+          <p className="text-[11px] text-muted-foreground/80 leading-relaxed text-center pt-2">
+            By submitting you agree that work begins on intake approval and all
+            sales are final once production starts. Questions? Email{" "}
+            <a
+              href="mailto:Hello@coachkayelevates.org"
+              className="text-primary hover:underline"
+            >
+              Hello@coachkayelevates.org
+            </a>
+            .
+          </p>
+
           {/* Cinematic submitting overlay */}
           {submitting && (
             <div
