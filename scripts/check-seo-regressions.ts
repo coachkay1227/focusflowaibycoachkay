@@ -56,6 +56,17 @@ const NOINDEX: string[] = [
 // Routes intentionally skipped (Navigate redirects — no rendered page).
 const SKIP = new Set<string>(["/about", "/ai-starter-kit"]);
 
+// Routes behind `<ProtectedRoute requireAdmin>` — unreachable by crawlers, so SEOHead
+// is not required. Still must NOT appear in sitemap.xml. Update if you add admin pages.
+const ADMIN_EXEMPT = new Set<string>([
+  "/admin",
+  "/admin/users",
+  "/admin/analytics",
+  "/admin/content",
+  "/admin/orders",
+  "/email-preview",
+]);
+
 interface RouteEntry {
   path: string;
   component: string;
@@ -171,10 +182,10 @@ function main() {
   for (const r of routes) {
     if (SKIP.has(r.path)) continue;
     if (r.component === "__navigate__") continue;
-    if (!indexable.has(r.path) && !noindex.has(r.path)) {
+    if (!indexable.has(r.path) && !noindex.has(r.path) && !ADMIN_EXEMPT.has(r.path)) {
       errors.push(
         `Route "${r.path}" (${r.component}) is not classified in scripts/check-seo-regressions.ts. ` +
-        `Add it to INDEXABLE or NOINDEX so the SEO contract is explicit.`
+        `Add it to INDEXABLE, NOINDEX, or ADMIN_EXEMPT so the SEO contract is explicit.`
       );
     }
   }
@@ -182,6 +193,13 @@ function main() {
   // Per-route component checks.
   for (const r of routes) {
     if (SKIP.has(r.path) || r.component === "__navigate__") continue;
+    if (ADMIN_EXEMPT.has(r.path)) {
+      // Still guard: admin pages must never leak into the sitemap.
+      if (sitemap.has(r.path)) {
+        errors.push(`Admin-exempt route "${r.path}" is listed in ${SITEMAP_FILE} — remove it.`);
+      }
+      continue;
+    }
     if (!indexable.has(r.path) && !noindex.has(r.path)) continue;
 
     const file = resolveComponentFile(r.component, appSrc);
