@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { AdminPreviewToggle } from "@/components/admin/AdminPreviewToggle";
 import { Users, CreditCard, Zap, Trophy, UserPlus, BookOpen, Target, Clock } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -138,6 +139,8 @@ const AdminDashboard = () => {
             );
           })}
         </div>
+
+        <AdminPreviewToggle />
 
         <AnimatedSection delay={100} className="mt-10">
           <h2 className="font-heading text-xl font-light mb-4">Recent Signups</h2>

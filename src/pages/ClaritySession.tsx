@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import RetiredScreen from "@/components/RetiredScreen";
+import { isAdminPreviewArmed } from "@/lib/admin-preview";
 
 /**
  * Legacy /clarity/:moduleId slugs that should no longer render their own quiz.
@@ -128,6 +129,9 @@ const ClaritySession = () => {
   useEffect(() => {
     if (!isAdmin) return;
     if (searchParams.get("preview") !== "1") return;
+    // Hardened: ?preview=1 only works when admin preview mode is explicitly
+    // armed for this tab via the Admin Dashboard toggle.
+    if (!isAdminPreviewArmed()) return;
     const prefilled: Record<string, string> = {};
     for (const q of questions) {
       if (q.type === "options" && q.options && q.options.length > 0) {

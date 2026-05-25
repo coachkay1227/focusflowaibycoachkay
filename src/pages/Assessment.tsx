@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
 import { trackEvent, trackCta } from "@/lib/analytics";
+import { isAdminPreviewArmed } from "@/lib/admin-preview";
 
 type Dimension = "M" | "A" | "C";
 
@@ -165,6 +166,9 @@ const Assessment = () => {
   useEffect(() => {
     if (!isAdmin) return;
     if (searchParams.get("preview") !== "1") return;
+    // Hardened: ?preview=1 only works when admin preview mode is explicitly
+    // armed for this tab via the Admin Dashboard toggle.
+    if (!isAdminPreviewArmed()) return;
     const prefilled: Record<string, string> = {};
     for (const q of questions) {
       prefilled[q.id] = q.options[0]?.value ?? "";
