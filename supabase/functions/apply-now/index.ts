@@ -137,6 +137,45 @@ serve(async (req) => {
       console.log("[apply-now] Configure RESEND_API_KEY to enable actual sending.");
     }
 
+    // Server-side fan-out: applicant confirmation email + CRM webhook.
+    // These previously ran from the browser, which required leaving the
+    // send-transactional-email and ghl-webhook endpoints open to anon
+    // callers. Running them here lets us lock those endpoints down to
+    // service-role only.
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL");
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (supabaseUrl && serviceKey) {
+        const admin = createClient(supabaseUrl, serviceKey, {
+          auth: { persistSession: false },
+        });
+        const submissionId = crypto.randomUUID();
+        await Promise.allSettled([
+          admin.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "application-received",
+              recipientEmail: email,
+              idempotencyKey: `app-received-${submissionId}`,
+              templateData: { name, programName: programName || undefined },
+            },
+          }),
+          admin.functions.invoke("ghl-webhook", {
+            body: {
+              event: type === "application" ? "application" : "inquiry",
+              payload: {
+                name,
+                email,
+                organization: organization || undefined,
+                programName: programName || undefined,
+              },
+            },
+          }),
+        ]);
+      }
+    } catch (e) {
+      console.warn("[apply-now] follow-up notifications failed", e);
+    }
+
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
