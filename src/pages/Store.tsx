@@ -135,8 +135,8 @@ export default function Store() {
               position: i + 1,
               item: {
                 "@type": "Product",
-                name: p.title,
-                description: p.tagline ?? p.title,
+                name: p.name,
+                description: p.audience ?? p.bullets[0] ?? p.name,
                 category: CATEGORY_LABELS[p.category],
                 url: `https://coachkayai.life/store#${p.slug}`,
               },
