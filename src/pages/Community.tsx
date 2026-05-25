@@ -45,7 +45,7 @@ const Community = () => {
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
       <SEOHead
         title="The Elevation Hub — FocusFlow Community"
-        description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."
+        description="Join the Focus Flow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."
         path="/community"
         jsonLd={[
           webPage("/community", "Community"),
@@ -153,7 +153,7 @@ const Community = () => {
               </div>
             ))}
             <p className="text-center text-xs text-muted-foreground/50 mt-2">
-              Member testimonials from the FocusFlow Elevation Hub
+              Member testimonials from the Focus Flow Elevation Hub
             </p>
           </div>
         </AnimatedSection>
