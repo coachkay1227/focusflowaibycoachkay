@@ -10,6 +10,12 @@ Disallow: /profile
 Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /result
+Disallow: /reset-password
+Disallow: /order-success
+Disallow: /unsubscribe
+Disallow: /email-unsubscribe
+Disallow: /coach
+Disallow: /mirror-challenge
 
 User-agent: Googlebot-Image
 Allow: /
@@ -22,6 +28,12 @@ Disallow: /profile
 Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /result
+Disallow: /reset-password
+Disallow: /order-success
+Disallow: /unsubscribe
+Disallow: /email-unsubscribe
+Disallow: /coach
+Disallow: /mirror-challenge
 
 User-agent: Slurp
 Allow: /
@@ -153,5 +165,11 @@ Disallow: /profile
 Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /result
+Disallow: /reset-password
+Disallow: /order-success
+Disallow: /unsubscribe
+Disallow: /email-unsubscribe
+Disallow: /coach
+Disallow: /mirror-challenge
 
 Sitemap: https://coachkayai.life/sitemap.xml
