@@ -140,6 +140,8 @@ const AdminDashboard = () => {
           })}
         </div>
 
+        <AdminPreviewToggle />
+
         <AnimatedSection delay={100} className="mt-10">
           <h2 className="font-heading text-xl font-light mb-4">Recent Signups</h2>
           <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm overflow-hidden">
