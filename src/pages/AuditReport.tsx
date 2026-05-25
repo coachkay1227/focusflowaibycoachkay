@@ -305,7 +305,10 @@ const AuditReport = () => {
           </div>
           <div className="mt-6 no-print">
             {route.opening_soon ? (
-              <Button disabled className="bg-primary text-primary-foreground">{route.label}</Button>
+              <BuildStudioWaitlist
+                slug={nbm.offer_slug}
+                defaultEmail={(audit.guest_email ?? "") as string}
+              />
             ) : route.external ? (
               <a href={route.href} target="_blank" rel="noreferrer noopener"
                  className="inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
