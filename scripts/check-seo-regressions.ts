@@ -26,6 +26,8 @@ const INDEXABLE: string[] = [
   "/community",
   "/coach-kay",
   "/store",
+  "/rent-an-agent",
+  "/advisory",
 ];
 
 // Routes that MUST be noindex (SEOHead present with noIndex={true}). Not expected in sitemap.
