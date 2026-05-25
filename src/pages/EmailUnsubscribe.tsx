@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 
 type Status = "loading" | "valid" | "already" | "invalid" | "success" | "error";
@@ -46,6 +47,12 @@ const EmailUnsubscribe = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SEOHead
+        title="Unsubscribe — FocusFlow AI"
+        description="Confirm unsubscribing from FocusFlow AI emails. Manage your communication preferences for coaching updates, weekly insights, and transactional notifications."
+        path="/email-unsubscribe"
+        noIndex
+      />
       <div className="max-w-md w-full text-center space-y-6">
         <h1 className="text-2xl font-heading font-bold text-foreground">
           <span className="text-primary">Focus</span>
