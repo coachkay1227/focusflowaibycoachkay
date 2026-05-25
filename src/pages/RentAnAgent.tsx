@@ -59,7 +59,7 @@ const RentAnAgent = () => {
     }
   };
 
-  const startCheckout = async (priceId: string, tierName: string) => {
+  const startCheckout = async (priceId: string, tierName: string, successPath?: string) => {
     if (!user) {
       toast({ title: "Sign in to subscribe", description: "Create an account so we can attach your subscription." });
       navigate(`/auth?next=${encodeURIComponent("/rent-an-agent")}`);
@@ -70,7 +70,7 @@ const RentAnAgent = () => {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           priceId,
-          successPath: `/order-success?tier=${encodeURIComponent(tierName)}`,
+          successPath: successPath ?? `/order-success?tier=${encodeURIComponent(tierName)}`,
           cancelPath: "/rent-an-agent?checkout=cancelled",
         },
       });
@@ -176,7 +176,7 @@ const RentAnAgent = () => {
           <Button
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit")}
+            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
             disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
           >
             {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Start with $47 AI Audit"}
@@ -350,7 +350,7 @@ const RentAnAgent = () => {
           <Button
             size="lg"
             className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit")}
+            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
             disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
           >
             {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Get my $47 audit"}
