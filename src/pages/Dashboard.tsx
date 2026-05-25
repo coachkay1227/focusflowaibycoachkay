@@ -20,6 +20,29 @@ import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useRoles } from "@/hooks/use-roles";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+const AUDIT_OFFER_NAMES: Record<string, string> = {
+  focusflow_30: "FocusFlow 30-Day",
+  focusflow_90: "FocusFlow 90-Day",
+  focusflow_6mo: "FocusFlow 6-Month",
+  rent_agent_starter: "Rent-an-Agent Starter",
+  rent_agent_pro: "Rent-an-Agent Pro",
+  advisory: "Advisory Consultation",
+  build_studio_landing: "Build Studio — Landing Page",
+  build_studio_site: "Build Studio — Business Site",
+  build_studio_dashboard: "Build Studio — Dashboard",
+  focus_flow_elevation_hub: "Focus Flow Elevation Hub (Community)",
+};
+
+type AuditRow = {
+  id: string;
+  created_at: string;
+  generated_at: string | null;
+  recommended_offer: string | null;
+  report: unknown;
+  intake: unknown;
+};
 
 const statusColors: Record<string, string> = {
   enrolled: "bg-secondary text-secondary-foreground",
@@ -38,6 +61,7 @@ const Dashboard = () => {
   const [challengeEnrollments, setChallengeEnrollments] = useState<ChallengeEnrollment[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [audits, setAudits] = useState<AuditRow[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,6 +79,12 @@ const Dashboard = () => {
       getModuleEnrollments().then(setModuleEnrollments),
       getChallengeEnrollments().then(setChallengeEnrollments),
       getRecentSessionsCloud(5).then(setRecentSessions),
+      supabase
+        .from("business_audits")
+        .select("id, created_at, generated_at, recommended_offer, report, intake")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .then(({ data }) => setAudits((data as AuditRow[]) ?? [])),
     ]).finally(() => setLoading(false));
   }, [user, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -255,6 +285,72 @@ const Dashboard = () => {
             {/* Weekly Insights */}
             <AnimatedSection delay={400}>
               <WeeklyInsights />
+            </AnimatedSection>
+
+            {/* AI Business Audits */}
+            <AnimatedSection delay={450}>
+              <h2 className="font-heading text-2xl font-light flex items-center gap-3 mb-2">
+                <Sparkles className="h-5 w-5 text-primary" /> Your AI Business Audits
+              </h2>
+              {audits.length === 0 ? (
+                <div className="clarity-card rounded-lg border border-primary/30 bg-primary/5 backdrop-blur-sm p-8 text-center">
+                  <h3 className="font-heading text-xl font-light mb-2">Get Your AI Business Audit</h3>
+                  <p className="text-muted-foreground mb-5 max-w-xl mx-auto text-sm">
+                    A personalized $47 diagnostic of your business with a 7-day action plan and your next best move — generated in under 2 minutes.
+                  </p>
+                  <Button onClick={() => navigate("/rent-an-agent")} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    Take the Audit <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground mb-6">Your purchased audits and their reports</p>
+                  <div className="space-y-3">
+                    {audits.map((a) => {
+                      const hasReport = !!a.report;
+                      const intakeEmpty =
+                        !a.intake ||
+                        (typeof a.intake === "object" && Object.keys(a.intake as object).length === 0);
+                      const offerName = a.recommended_offer
+                        ? AUDIT_OFFER_NAMES[a.recommended_offer] ?? "—"
+                        : "—";
+                      let label: string;
+                      if (hasReport) {
+                        label = `Audit from ${new Date(a.generated_at ?? a.created_at).toLocaleDateString()}`;
+                      } else if (intakeEmpty) {
+                        label = `Audit purchased ${new Date(a.created_at).toLocaleDateString()} — intake pending`;
+                      } else {
+                        label = "Audit in progress";
+                      }
+                      const [btnLabel, btnHref] = hasReport
+                        ? ["View Report", `/audit/report/${a.id}`]
+                        : intakeEmpty
+                          ? ["Complete Intake", `/audit/intake?audit_id=${a.id}`]
+                          : ["Generation Failed — Retry", `/audit/intake?audit_id=${a.id}&retry=1`];
+                      return (
+                        <div
+                          key={a.id}
+                          className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                        >
+                          <div className="min-w-0">
+                            <h4 className="font-heading text-base font-light">{label}</h4>
+                            {hasReport && (
+                              <p className="text-xs text-muted-foreground mt-1">Next best move: {offerName}</p>
+                            )}
+                          </div>
+                          <Button
+                            size="sm"
+                            onClick={() => navigate(btnHref)}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
+                          >
+                            {btnLabel}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </AnimatedSection>
           </div>
         )}
