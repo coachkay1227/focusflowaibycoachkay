@@ -48,18 +48,17 @@ function extractClarityModuleIds(): string[] {
 function extractPublicProgramSlugs(): string[] {
   const src = readFileSync(resolve("src/data/programs.ts"), "utf8");
   const slugs: string[] = [];
-  // Each program block contains both `slug: "..."` and `visibility: "..."`.
-  // Split on a sentinel that appears once per program: a line starting with `    id:`.
-  const blocks = src.split(/\n  \{\n(?=    id:)/);
+  // Split source into per-program blocks using top-level `    id: "..."` as sentinel.
+  const blocks = src.split(/(?=\n    id:\s*")/);
   for (const block of blocks) {
-    const slugMatch = block.match(/\n    slug:\s*"([^"]+)"/);
-    const visMatch = block.match(/\n    visibility:\s*"([^"]+)"/);
+    const slugMatch = block.match(/\bslug:\s*"([^"]+)"/);
+    const visMatch = block.match(/\bvisibility:\s*"([^"]+)"/);
     if (!slugMatch || !visMatch) continue;
     if (visMatch[1] === "public" || visMatch[1] === "lead_magnet") {
       slugs.push(slugMatch[1]);
     }
   }
-  return slugs;
+  return Array.from(new Set(slugs));
 }
 
 function buildEntries(): SitemapEntry[] {
