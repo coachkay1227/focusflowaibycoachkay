@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/book-store";
 import { trackEvent } from "@/lib/analytics";
+import { TIER_LABELS, type AccessTier } from "@/lib/tier-constants";
 
 interface OrderSummary {
   package_name: string;
@@ -15,12 +16,15 @@ interface OrderSummary {
 export default function OrderSuccess() {
   const [params] = useSearchParams();
   const sessionId = params.get("session_id");
+  const tierParam = params.get("tier");
   const [summary, setSummary] = useState<OrderSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"loading" | "book" | "non_book">("loading");
 
   useEffect(() => {
     if (!sessionId) {
-      setError("Missing session id");
+      // No session id — likely a non-book flow (e.g. legacy redirect).
+      setMode("non_book");
       return;
     }
     (async () => {
@@ -28,8 +32,14 @@ export default function OrderSuccess() {
         const { data, error } = await supabase.functions.invoke("verify-book-order", {
           body: { session_id: sessionId },
         });
-        if (error) throw error;
+        if (error || !data || !(data as OrderSummary).package_name) {
+          // No matching book_orders row — treat as a non-book checkout
+          // (Rent-an-Agent subscription, AI Audit, Strategy Intensive, etc.)
+          setMode("non_book");
+          return;
+        }
         setSummary(data as OrderSummary);
+        setMode("book");
         void trackEvent(
           "studio_checkout_paid",
           {
@@ -40,10 +50,69 @@ export default function OrderSuccess() {
           "studio"
         );
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not verify order");
+        // Treat verification failure as a non-book order rather than a hard error.
+        setMode("non_book");
       }
     })();
   }, [sessionId]);
+
+  const tierLabel =
+    tierParam && (TIER_LABELS as Record<string, string>)[tierParam]
+      ? TIER_LABELS[tierParam as AccessTier]
+      : null;
+
+  if (mode === "non_book") {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
+        <SEOHead
+          title="Payment Confirmed — FocusFlow AI"
+          description="Thank you — your purchase is confirmed. Coach Kay's team will be in touch shortly with next steps."
+          path="/order-success"
+          noIndex
+        />
+        <div className="max-w-2xl w-full text-center">
+          <div className="mx-auto mb-8 h-20 w-20 rounded-full border-2 border-primary flex items-center justify-center animate-in zoom-in-50 duration-500">
+            <Check className="h-10 w-10 text-primary" strokeWidth={2} />
+          </div>
+          <h1 className="font-heading text-4xl sm:text-5xl text-foreground mb-4">
+            Payment Confirmed
+          </h1>
+          <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+            {tierLabel
+              ? `Welcome to ${tierLabel}. Your access has been unlocked and Coach Kay's team will follow up within 24 hours.`
+              : "Thank you for your purchase. Coach Kay's team will follow up within 24 hours with next steps."}
+          </p>
+          <div className="rounded-lg border border-border/60 bg-card/50 p-6 mb-10 text-left max-w-md mx-auto">
+            <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-3">
+              What happens next
+            </h2>
+            <ol className="space-y-3 text-sm text-foreground/85">
+              {[
+                "Check your inbox for your receipt.",
+                "Coach Kay's team reviews your account.",
+                "You'll receive a personal welcome within 24 hours.",
+              ].map((step, i) => (
+                <li key={step} className="flex items-start gap-3">
+                  <span className="h-6 w-6 rounded-full border border-primary/50 text-primary text-xs flex items-center justify-center font-medium shrink-0">
+                    {i + 1}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link to="/dashboard">Go to Dashboard</Link>
+            </Button>
+            <Button asChild variant="outline" className="border-primary/40 text-primary hover:bg-primary/10">
+              <Link to="/community">Join Our Community</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
