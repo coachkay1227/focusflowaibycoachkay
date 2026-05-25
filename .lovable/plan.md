@@ -1,70 +1,60 @@
-## Why you can't find the Studio
+## Goal
+Work through the 7 security checklist items you pasted. The Lovable + Supabase scanners currently report **zero open findings**, and recent work already locked down edge functions, RLS, and PII. So this pass focuses on the gaps that remain: HTTP security headers, an input-validation audit, and documenting the few patterns that are intentionally as-is.
 
-The desktop nav is hidden on every "app" route (`/community`, `/dashboard`, `/clarity`, `/programs`, etc.) because those are in `PRIVATE_ROUTES`. So once a user is logged in and browsing the app, there is literally no link to `/store` anywhere. Mobile nav has it, homepage does not, and authenticated app shell does not.
+## What I'll do
 
-That is the #1 blocker to "launch ready" — the page works, but nobody can reach it.
+### 1. Add HTTP security headers (main gap)
+There is no `public/_headers` file today. I'll add one so the published site (Lovable hosting / Netlify-style) sends:
+- `Content-Security-Policy` — allow self, Google Fonts, Supabase project origin (`*.supabase.co`), Stripe (`js.stripe.com`, `api.stripe.com`, `checkout.stripe.com`), and inline styles (required by Vite/Tailwind runtime). `frame-ancestors 'none'`.
+- `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()`
+- `X-XSS-Protection: 0` (modern best practice — rely on CSP)
 
-## Plan to make the Studio fully launch-ready
+I'll keep CSP report-only friendly by starting permissive enough for Stripe Checkout + Google Fonts + the Supabase functions origin, then note in chat what to tighten later.
 
-### 1. Add visible entry points (highest priority)
-- Add a **Studio** link to the authenticated app shell (Dashboard header / sidebar) so logged-in users can reach `/store` from `/community`, `/dashboard`, `/programs`, etc.
-- Add a **Studio** teaser card/section on `Index.tsx` (homepage) with a CTA → `/store`.
-- Add a **Studio** link in the Dashboard quick-actions area.
-- Keep the existing DesktopNav (public) and MobileNav entries as-is.
+### 2. Input-validation audit (no behavior change unless a gap is found)
+Confirm Zod (or equivalent) is applied at every user-input boundary:
+- `src/components/store/IntakeFormModal.tsx` — already uses Zod ✓
+- `src/lib/book-store.ts` — already uses Zod ✓
+- `src/pages/Auth.tsx`, `src/pages/ResetPassword.tsx`, `src/components/ApplyNowDialog.tsx`, `src/pages/ClaritySession.tsx`, `src/pages/StarterKit.tsx`, `src/pages/CoachChat.tsx`, admin modals — read each and add a Zod schema + `.trim()` + length cap **only where missing**. No UI redesign.
+- Server-side: confirm each edge function that takes a body parses with Zod and returns 400 on failure. Patch any that don't.
+Codebase grep already confirms **no `dangerouslySetInnerHTML`, `eval`, or `innerHTML` writes** anywhere — nothing to fix for XSS sinks.
 
-### 2. Sitemap + SEO
-- Add `/store` to `scripts/generate-sitemap.ts` with `priority: 0.9`.
-- Add `<title>`, meta description, and JSON-LD `Product` schema for each lane on `Store.tsx`.
-- Add OG image for social shares of `/store`.
+### 3. Auth token storage — keep Supabase default, document why
+The checklist asks for HttpOnly cookies for JWTs. The Supabase JS SDK stores the session in `localStorage` by design; switching to HttpOnly cookies requires running an SSR proxy (Next.js / custom Node server) which this Vite SPA does not have. The accepted mitigations stay in place:
+- Short access-token TTL + refresh rotation (Supabase default)
+- RLS on every table (already enforced)
+- HSTS + strict CSP (added in step 1) to block token theft via injected scripts
+I'll record this as an accepted risk in `@security-memory` rather than ripping out the SDK.
 
-### 3. Stripe end-to-end smoke test (live mode)
-- Verify `STRIPE_SECRET_KEY` is live (not test) via the Stripe tool.
-- Run one real $497 Mini-Story Starter checkout → confirm `book_orders` row + webhook fulfillment + confirmation email.
-- Verify `order-success` page renders correctly post-payment.
+### 4. RLS / edge-function permission re-review
+Walk every table's policies (already pasted in context) and every function in `supabase/functions/*` to confirm:
+- No table is missing INSERT/UPDATE/DELETE coverage where it should be locked down.
+- Each function either calls `getClaims()` or is intentionally public (webhooks with signature verification, analytics ping, `clarity-insight` guest flow).
+Fix anything that drifted; otherwise document the intentional public surfaces in security memory.
 
-### 4. Inquiry flow verification (Autism lane)
-- Submit one Autism & Social Stories inquiry → confirm `apply-now` edge fn delivers email to Coach Kay's inbox.
-- Add an admin view row in `AdminOrders` (or new `AdminInquiries`) so inquiries don't get lost.
+### 5. Static vuln sweep
+- `bun audit` / `npm audit` style scan via the dependency tool — report and patch high/critical.
+- Grep for: `http://` external calls, open redirects (`window.location = userInput`), unsanitized `target="_blank"` without `rel="noopener noreferrer"`, exposed secrets in client code (env grep already shows only the public `VITE_SUPABASE_PUBLISHABLE_KEY` and URL — both safe to ship).
 
-### 5. Analytics completion
-- Wire the remaining 4 events that were specced but not yet fired: `studio_package_view`, `studio_intake_submit`, `studio_checkout_started`, `studio_checkout_paid`, `studio_inquiry_submitted`.
-- Add a simple funnel view in `AdminAnalytics` (lane → package → intake → paid).
+### 6. Update `@security-memory`
+Record:
+- Security headers baseline and which third-party origins are allow-listed and why
+- Token-in-localStorage as an accepted SPA constraint with the mitigations listed
+- Public-by-design surfaces (analytics insert, cohort registration insert, `clarity-insight` guest flow, Stripe webhook, GHL webhook)
+So future scans don't re-flag them.
 
-### 6. Content & trust polish
-- Confirm all 5 lanes have: hero copy, 3+ packages, "best-fit buyer" line, delivery timeline, and at least one testimonial or social proof block. Flag any lane missing these.
-- Add FAQ section (refund policy, delivery time, revisions, rights/ownership).
-- Add a footer trust row (Stripe badge, money-back guarantee, contact email).
+## What I won't change
+- The Supabase auth SDK's storage mechanism (would require SSR).
+- Form UX or copy — validation tightening only.
+- Any business logic.
 
-### 7. Error & empty states
-- Add error boundary around `Store.tsx` so a catalog parse error doesn't blank the page.
-- Add loading skeletons for the lane tabs and intake modal.
-- Handle Stripe checkout failure with a toast + retry CTA (currently silent on some paths).
+## Files I expect to touch
+- `public/_headers` (new)
+- A handful of form components and edge functions **only if** I find a missing Zod schema
+- `mem://security/security-memory` (new/updated)
 
-### 8. Mobile QA pass
-- Test all 5 lanes + intake modal + inquiry submit at 375px width.
-- Test checkout redirect on iOS Safari (Stripe sometimes blocks popups).
-
-### 9. Legal / operational
-- Confirm Terms, Privacy, and Refund Policy pages exist and are linked from the intake modal footer.
-- Confirm Coach Kay's email inbox for `apply-now` inquiries is monitored.
-
-### 10. Final pre-launch checklist (verification, not new work)
-- Run `tests/assessment-flows.spec.ts` + add a `tests/studio-flows.spec.ts` covering: lane navigation, paid intake → Stripe redirect, Autism inquiry → success state.
-- Confirm sitemap regenerates on `prebuild`.
-- Publish.
-
-### Technical scope summary
-| Area | Files touched |
-|------|---------------|
-| Entry points | `src/components/AppShell.tsx` (or wherever auth nav lives), `src/pages/Index.tsx`, `src/pages/Dashboard.tsx` |
-| SEO | `scripts/generate-sitemap.ts`, `src/pages/Store.tsx` (Helmet + JSON-LD) |
-| Analytics | `src/pages/Store.tsx`, `src/components/store/IntakeFormModal.tsx`, `src/lib/analytics.ts` |
-| Admin | `src/pages/admin/AdminOrders.tsx` (inquiries tab) |
-| Tests | new `tests/studio-flows.spec.ts` |
-| Polish | `src/pages/Store.tsx` (FAQ, trust row, error boundary) |
-
-No DB migrations. No edge function changes (Stripe + inquiry paths already verified healthy in prior audit).
-
----
-
-**Want me to do all 10, or pick a subset?** My recommendation: do **1, 3, 4, 6, 9** first (the true launch blockers), then ship, then follow up with 2, 5, 7, 8, 10.
+Approve and I'll implement.
