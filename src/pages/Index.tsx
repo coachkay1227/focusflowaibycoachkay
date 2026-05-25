@@ -526,6 +526,12 @@ const Index = () => {
               <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">
                 AI Coach
               </button>
+              <button onClick={() => navigate("/rent-an-agent")} className="hover:text-foreground transition-colors">
+                Rent-an-Agent
+              </button>
+              <button onClick={() => navigate("/advisory")} className="hover:text-foreground transition-colors">
+                Advisory
+              </button>
               <button onClick={() => navigate("/about")} className="hover:text-foreground transition-colors">
                 About
               </button>

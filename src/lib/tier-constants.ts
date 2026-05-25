@@ -5,7 +5,8 @@ export const TIER_RANK: Record<AccessTier, number> = {
   subscriber: 1,
   cohort: 2,
   premium: 3,
-  corporate: 4,
+  rent_agent: 4,
+  corporate: 5,
 };
 
 export const TIER_LABELS: Record<AccessTier, string> = {
@@ -13,5 +14,6 @@ export const TIER_LABELS: Record<AccessTier, string> = {
   subscriber: "Subscriber",
   cohort: "Cohort Member",
   premium: "Premium",
+  rent_agent: "Rent-an-Agent",
   corporate: "Corporate",
 };
