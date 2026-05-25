@@ -10,7 +10,7 @@ project_id = "rarawrpajilqqlcxdzpj"
   [functions.coach-chat]
     verify_jwt = false
   [functions.ghl-webhook]
-    verify_jwt = false
+    verify_jwt = true
   [functions.handle-email-suppression]
     verify_jwt = false
   [functions.handle-email-unsubscribe]
@@ -22,6 +22,8 @@ project_id = "rarawrpajilqqlcxdzpj"
   [functions.process-email-queue]
     verify_jwt = true
   [functions.send-transactional-email]
+    verify_jwt = true
+  [functions.client-notify]
     verify_jwt = true
   [functions.stripe-webhook]
     verify_jwt = false
