@@ -206,7 +206,7 @@ const ResultScreen = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title="Your Clarity Report — FocusFlow AI" description="Review your personalized clarity insights, patterns, and action steps from your session with Coach Kay." path="/result" />
+      <SEOHead title="Your Clarity Report — FocusFlow AI" description="Review your personalized clarity insights, patterns, and action steps from your session with Coach Kay." path="/result" noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
