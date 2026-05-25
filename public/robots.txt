@@ -14,9 +14,9 @@ Disallow: /reset-password
 Disallow: /order-success
 Disallow: /unsubscribe
 Disallow: /email-unsubscribe
-Disallow: /coach
+Disallow: /coach$
 Disallow: /mirror-challenge
-Disallow: /sitemap
+Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
 
@@ -35,9 +35,9 @@ Disallow: /reset-password
 Disallow: /order-success
 Disallow: /unsubscribe
 Disallow: /email-unsubscribe
-Disallow: /coach
+Disallow: /coach$
 Disallow: /mirror-challenge
-Disallow: /sitemap
+Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
 
@@ -175,9 +175,9 @@ Disallow: /reset-password
 Disallow: /order-success
 Disallow: /unsubscribe
 Disallow: /email-unsubscribe
-Disallow: /coach
+Disallow: /coach$
 Disallow: /mirror-challenge
-Disallow: /sitemap
+Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
 
