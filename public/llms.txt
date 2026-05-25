@@ -1,0 +1,20 @@
+# FocusFlow AI — Clarity Code by Coach Kay
+
+> Master-certified clarity coaching by Coach Kay. AI-guided clarity sessions, programs, and the Story, Legacy & Publishing Studio to help you see clearly and move with purpose.
+
+## Pages
+
+- [Home](/): Overview of FocusFlow AI and Coach Kay's clarity coaching approach.
+- [Clarity Session](/clarity): One-question AI-guided clarity session that delivers a personalized insight.
+- [Assessment](/assessment): Clarity assessment to identify where you're stuck and what to do next.
+- [Programs](/programs): Coaching programs built on the F.O.C.U.S. pillars.
+- [Studio](/store): Story, Legacy & Publishing Studio — books, packages, and inquiry lanes (including Autism & Social Stories).
+- [Dashboard](/dashboard): Authenticated user dashboard with clarity score, streaks, and enrolled programs.
+- [Community](/community): FocusFlow Elevation Hub community access.
+- [Pricing](/pricing): Plans, tiers, and one-time purchases.
+- [Login](/login): Sign in to your account.
+- [Signup](/signup): Create a new account.
+
+## About
+
+FocusFlow AI is Coach Kay's clarity coaching platform. It combines AI-guided sessions, structured programs, and a publishing studio to help people get unstuck, make decisions, and build a legacy.
