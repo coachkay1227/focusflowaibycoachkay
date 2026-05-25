@@ -112,23 +112,13 @@ const Auth = () => {
     }
   };
 
-  const firePostSignupHooks = useCallback((userEmail: string) => {
-    // Transactional welcome email
-    supabase.functions.invoke("send-transactional-email", {
-      body: {
-        templateName: "welcome-to-focusflow",
-        recipientEmail: userEmail,
-        idempotencyKey: `welcome-${userEmail}-${Date.now()}`,
-      },
-    }).catch(() => {});
-
-    // GHL webhook for nurture sequence
-    supabase.functions.invoke("ghl-webhook", {
-      body: {
-        event: "signup",
-        payload: { email: userEmail },
-      },
-    }).catch(() => {});
+  const firePostSignupHooks = useCallback((_userEmail: string) => {
+    // Welcome email + nurture webhook are dispatched server-side. The
+    // authenticated client-notify wrapper resolves the recipient from the
+    // verified user session so callers cannot target arbitrary addresses.
+    supabase.functions
+      .invoke("client-notify", { body: { action: "welcome" } })
+      .catch(() => {});
   }, []);
 
   return (
