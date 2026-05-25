@@ -521,7 +521,7 @@ const Assessment = () => {
                   title={insight.archetype_name}
                   subtitle={`Your M.A.C. code: ${result.code} · ${MIND_LABELS[result.mind]} · ${ACTION_LABELS[result.action]} · ${CHARACTER_LABELS[result.character]}`}
                   generatedAt={generatedAt}
-                  userEmail={authedEmail ?? gateEmail.trim().toLowerCase() || undefined}
+                  userEmail={authedEmail ?? (gateEmail.trim().toLowerCase() || undefined)}
                   onEmail={authedEmail ? handleEmailReport : undefined}
                   sections={[
                     { heading: `Mind · ${MIND_LABELS[result.mind]}`, body: insight.mind },
