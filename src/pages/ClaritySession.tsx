@@ -283,6 +283,7 @@ const ClaritySession = () => {
           className={`w-full max-w-2xl ${animState === "enter" ? "animate-question-enter" : animState === "exit" ? "animate-question-exit" : ""}`}
           style={{ willChange: "transform, opacity" }}
         >
+          <h1 className="sr-only">{moduleTitle} — Clarity Session with Coach Kay</h1>
           <span className="font-mono-label text-primary/60 tracking-[0.2em]">{question.label}</span>
 
           <h2
