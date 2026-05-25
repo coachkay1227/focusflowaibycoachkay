@@ -44,6 +44,41 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_tokens: {
+        Row: {
+          audit_id: string
+          claimed_by_user_id: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          token: string
+        }
+        Insert: {
+          audit_id: string
+          claimed_by_user_id?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          token: string
+        }
+        Update: {
+          audit_id?: string
+          claimed_by_user_id?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_tokens_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "business_audits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       book_orders: {
         Row: {
           addons: Json
@@ -118,6 +153,45 @@ export type Database = {
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      business_audits: {
+        Row: {
+          created_at: string
+          generated_at: string | null
+          guest_email: string | null
+          guest_name: string | null
+          id: string
+          intake: Json
+          recommended_offer: string | null
+          report: Json | null
+          stripe_session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string | null
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          intake?: Json
+          recommended_offer?: string | null
+          report?: Json | null
+          stripe_session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string | null
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          intake?: Json
+          recommended_offer?: string | null
+          report?: Json | null
+          stripe_session_id?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -628,6 +702,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_audit_token: {
+        Args: { p_token: string; p_user_id: string }
+        Returns: string
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -635,6 +713,27 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      get_audit_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          created_at: string
+          generated_at: string | null
+          guest_email: string | null
+          guest_name: string | null
+          id: string
+          intake: Json
+          recommended_offer: string | null
+          report: Json | null
+          stripe_session_id: string | null
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "business_audits"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_user_tier: {
         Args: { _user_id: string }
