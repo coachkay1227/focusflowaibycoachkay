@@ -97,12 +97,29 @@ const AuditIntake = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [data, setData] = useState<IntakeState>(defaultState);
   const [submitting, setSubmitting] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  const isRetry = searchParams.get("retry") === "1";
 
+  // Resume support: when the audit row already has intake data
+  // (Dashboard "Complete Intake" or "Retry" CTAs), pre-populate the form
+  // so the user doesn't lose work and can regenerate without retyping.
   useEffect(() => {
-    if (audit?.guest_name && !data.business_name) {
-      // pre-fill nothing sensitive; leave fields for the buyer to complete
+    if (!audit || hydrated) return;
+    const existing = (audit.intake ?? {}) as Partial<IntakeState> & {
+      current_tools?: unknown;
+    };
+    const hasAny = Object.keys(existing).length > 0;
+    if (hasAny) {
+      setData((d) => ({
+        ...d,
+        ...existing,
+        current_tools: Array.isArray(existing.current_tools)
+          ? (existing.current_tools as string[])
+          : d.current_tools,
+      }));
     }
-  }, [audit]); // eslint-disable-line react-hooks/exhaustive-deps
+    setHydrated(true);
+  }, [audit, hydrated]);
 
   const progress = useMemo(() => (step === 1 ? 33 : step === 2 ? 66 : 100), [step]);
 
@@ -171,8 +188,13 @@ const AuditIntake = () => {
       <div className="max-w-3xl mx-auto px-6 py-10">
         <header className="mb-8">
           <span className="font-mono-label text-primary tracking-[0.2em] text-xs">$47 AI BUSINESS AUDIT</span>
-          <h1 className="font-heading text-3xl md:text-4xl font-light text-primary mt-2">Tell us about your business</h1>
+          <h1 className="font-heading text-3xl md:text-4xl font-light text-primary mt-2">
+            {isRetry ? "Retry your audit" : audit.report ? "Update your audit" : audit.intake && Object.keys(audit.intake).length > 0 ? "Resume your intake" : "Tell us about your business"}
+          </h1>
           <p className="text-muted-foreground mt-2">Step {step} of 3 · ~5–7 minutes</p>
+          {(isRetry || (audit.intake && Object.keys(audit.intake).length > 0)) && (
+            <p className="mt-2 text-xs text-primary/80">Your previous answers have been pre-filled — edit anything, then regenerate.</p>
+          )}
           <div className="mt-4 h-2 w-full rounded-full bg-card/40 overflow-hidden">
             <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
           </div>
