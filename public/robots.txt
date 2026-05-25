@@ -16,6 +16,9 @@ Disallow: /unsubscribe
 Disallow: /email-unsubscribe
 Disallow: /coach
 Disallow: /mirror-challenge
+Disallow: /sitemap
+Disallow: /kiosk
+Disallow: /auth
 
 User-agent: Googlebot-Image
 Allow: /
@@ -34,6 +37,9 @@ Disallow: /unsubscribe
 Disallow: /email-unsubscribe
 Disallow: /coach
 Disallow: /mirror-challenge
+Disallow: /sitemap
+Disallow: /kiosk
+Disallow: /auth
 
 User-agent: Slurp
 Allow: /
@@ -171,5 +177,8 @@ Disallow: /unsubscribe
 Disallow: /email-unsubscribe
 Disallow: /coach
 Disallow: /mirror-challenge
+Disallow: /sitemap
+Disallow: /kiosk
+Disallow: /auth
 
 Sitemap: https://coachkayai.life/sitemap.xml
