@@ -261,6 +261,17 @@ const Assessment = () => {
         title="Business Clarity Assessment — FocusFlow AI"
         description="Discover how your Mind, Action, and Character drive your business decisions. 18 questions. A personalized clarity profile from Coach Kay."
         path="/assessment"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "Business Clarity Assessment (M.A.C. Type)",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          url: "https://coachkayai.life/assessment",
+          description: "18-question Mind/Action/Character business clarity assessment delivering a personalized leadership profile.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          creator: { "@type": "Person", name: "Coach Kay" },
+        }}
       />
       <div className="mouse-glow" />
       <FloatingOrbs />
