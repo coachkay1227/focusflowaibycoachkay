@@ -281,6 +281,34 @@ const AdminAnalytics = () => {
             </div>
           </AnimatedSection>
         </div>
+
+        <AnimatedSection delay={250}>
+          <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6 mt-6">
+            <h3 className="font-heading text-lg font-light mb-1">Studio Funnel</h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Story, Legacy &amp; Publishing Studio — lifetime events. Inquiry
+              submissions also trigger an email to Coach Kay&apos;s team.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {STUDIO_EVENTS.map((s) => {
+                const stat = studioStats.find((x) => x.event === s.event);
+                return (
+                  <div
+                    key={s.event}
+                    className="rounded-md border border-border/40 bg-background/30 p-4"
+                  >
+                    <div className="font-mono-label text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {s.label}
+                    </div>
+                    <div className="font-heading text-2xl font-light text-primary mt-1">
+                      {stat?.count ?? 0}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </AnimatedSection>
       </div>
     </div>
   );
