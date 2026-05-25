@@ -49,7 +49,8 @@ export function useAuditAccess(auditId?: string, token?: string) {
           p_token: token,
         } as never);
         if (e) throw e;
-        const row = Array.isArray(data) ? data[0] : (data ?? null);
+        const d: unknown = data;
+        const row = Array.isArray(d) ? (d[0] ?? null) : (d ?? null);
         if (row) {
           setAudit(row as unknown as AuditRow);
           setLoading(false);
