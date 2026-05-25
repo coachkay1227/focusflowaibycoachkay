@@ -101,7 +101,7 @@ serve(async (req) => {
 
     const { data: order } = await admin
       .from("book_orders")
-      .select("package_name, order_total, client_email, status")
+      .select("package_name, order_total, status")
       .eq("stripe_session_id", session.id)
       .maybeSingle();
 
