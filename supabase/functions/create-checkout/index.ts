@@ -36,7 +36,14 @@ serve(async (req) => {
     // callers can pass human-readable context (e.g. ?tier=...).
     const safePath = (p: unknown, fallback: string): string =>
       typeof p === "string" && /^\/[A-Za-z0-9/_\-?=&%.,():~ ]*$/.test(p) ? p : fallback;
-    const successUrl = `${req.headers.get("origin")}${safePath(successPath, "/dashboard?checkout=success")}`;
+    const rawSuccess = safePath(successPath, "/dashboard?checkout=success");
+    // Ensure Stripe substitutes its session id into the redirect so the
+    // success page can verify/inspect the order. Preserve any existing
+    // query string with `&`, otherwise start one with `?`.
+    const successWithSession = rawSuccess.includes("session_id=")
+      ? rawSuccess
+      : `${rawSuccess}${rawSuccess.includes("?") ? "&" : "?"}session_id={CHECKOUT_SESSION_ID}`;
+    const successUrl = `${req.headers.get("origin")}${successWithSession}`;
     const cancelUrl = `${req.headers.get("origin")}${safePath(cancelPath, "/modules?checkout=cancelled")}`;
 
     // Validate priceId against known prices
