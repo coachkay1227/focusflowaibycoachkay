@@ -29,8 +29,13 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { email: user.email });
 
-    const { priceId } = await req.json();
+    const { priceId, successPath, cancelPath } = await req.json();
     if (!priceId) throw new Error("priceId is required");
+    // Restrict redirect targets to same-origin internal paths.
+    const safePath = (p: unknown, fallback: string): string =>
+      typeof p === "string" && /^\/[A-Za-z0-9/_\-?=&]*$/.test(p) ? p : fallback;
+    const successUrl = `${req.headers.get("origin")}${safePath(successPath, "/dashboard?checkout=success")}`;
+    const cancelUrl = `${req.headers.get("origin")}${safePath(cancelPath, "/modules?checkout=cancelled")}`;
 
     // Validate priceId against known prices
     const mode = PRICE_MODE_MAP[priceId];
@@ -55,8 +60,8 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode,
-      success_url: `${req.headers.get("origin")}/dashboard?checkout=success`,
-      cancel_url: `${req.headers.get("origin")}/modules?checkout=cancelled`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: { supabase_user_id: user.id },
     };
 
