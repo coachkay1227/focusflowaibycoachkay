@@ -600,7 +600,13 @@ export type Database = {
       }
     }
     Enums: {
-      access_tier: "free" | "subscriber" | "cohort" | "premium" | "corporate"
+      access_tier:
+        | "free"
+        | "subscriber"
+        | "cohort"
+        | "premium"
+        | "corporate"
+        | "rent_agent"
       app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
@@ -729,7 +735,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      access_tier: ["free", "subscriber", "cohort", "premium", "corporate"],
+      access_tier: [
+        "free",
+        "subscriber",
+        "cohort",
+        "premium",
+        "corporate",
+        "rent_agent",
+      ],
       app_role: ["admin", "moderator", "user"],
     },
   },

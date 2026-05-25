@@ -15,12 +15,12 @@ export const PRODUCT_TIER_MAP: Record<string, string> = {
   "prod_UGHpmJnJVVhIef": "premium",
   "prod_UGHqGWOM8Iqo3K": "premium",
   // Rent-an-Agent — Founding + Standard, Starter → Dream Team (all grant `premium`)
-  "prod_UI3bHaM3iNOTJd": "premium", // Starter Founding $297/mo
-  "prod_UI3bn3UaV9XD4q": "premium", // Starter Standard $497/mo
-  "prod_UI3bhmlY2kgDcK": "premium", // Pro/Growth Founding $697/mo
-  "prod_UI3bH83UkOhFdF": "premium", // Pro/Growth Standard $997/mo
-  "prod_UI3bP0P7W0fAiZ": "premium", // Dream Team Founding $997/mo
-  "prod_UI3beYm5zLDjDR": "premium", // Dream Team Standard $1497/mo
+  "prod_UI3bHaM3iNOTJd": "rent_agent", // Starter Founding $297/mo
+  "prod_UI3bn3UaV9XD4q": "rent_agent", // Starter Standard $497/mo
+  "prod_UI3bhmlY2kgDcK": "rent_agent", // Pro/Growth Founding $697/mo
+  "prod_UI3bH83UkOhFdF": "rent_agent", // Pro/Growth Standard $997/mo
+  "prod_UI3bP0P7W0fAiZ": "rent_agent", // Dream Team Founding $997/mo
+  "prod_UI3beYm5zLDjDR": "rent_agent", // Dream Team Standard $1497/mo
 };
 
 /** One-time purchase products that do NOT change the buyer's access tier.
@@ -49,4 +49,4 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   "price_1Tb41vBReje0oFcLjxGozG2X": "payment",      // AI Strategy Intensive $497
 };
 
-export const PROTECTED_TIERS = ["cohort", "premium", "corporate"];
+export const PROTECTED_TIERS = ["cohort", "premium", "rent_agent", "corporate"];

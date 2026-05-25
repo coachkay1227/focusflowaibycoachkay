@@ -18,6 +18,14 @@ export const STRIPE_TIERS: Partial<Record<AccessTier, TierConfig[]>> = {
       interval: "month",
     },
   ],
+  rent_agent: [
+    { price_id: "price_1Tb3ZzBReje0oFcLQFSaEnr4", product_id: "prod_UI3bHaM3iNOTJd", name: "Rent-an-Agent · Starter (Founding)", price: 297, interval: "month" },
+    { price_id: "price_1Tb3bHBReje0oFcLkVgjsUl0", product_id: "prod_UI3bn3UaV9XD4q", name: "Rent-an-Agent · Starter", price: 497, interval: "month" },
+    { price_id: "price_1Tb3blBReje0oFcLw6tk3kcg", product_id: "prod_UI3bhmlY2kgDcK", name: "Rent-an-Agent · Pro (Founding)", price: 697, interval: "month" },
+    { price_id: "price_1Tb3c4BReje0oFcLInI8JGZv", product_id: "prod_UI3bH83UkOhFdF", name: "Rent-an-Agent · Pro", price: 997, interval: "month" },
+    { price_id: "price_1Tb3wwBReje0oFcLLlE6CDGO", product_id: "prod_UI3bP0P7W0fAiZ", name: "Rent-an-Agent · Dream Team (Founding)", price: 997, interval: "month" },
+    { price_id: "price_1Tb40yBReje0oFcLIciRVQSD", product_id: "prod_UI3beYm5zLDjDR", name: "Rent-an-Agent · Dream Team", price: 1497, interval: "month" },
+  ],
   // LEGACY — these price IDs are NOT sold publicly anymore. They remain
   // in Stripe and in this map so historical customers, webhook idempotency,
   // and the customer portal continue to work. The new public offers
