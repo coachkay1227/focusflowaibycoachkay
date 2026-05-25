@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { generateReport } from "../_shared/generate-report.ts";
 
 const SYSTEM_PROMPT = `You are Coach Kay — an emotionally intelligent, pattern-aware, purpose-driven life coach. You are warm but direct. You see people deeply and speak truth with care.
 
@@ -76,67 +77,30 @@ serve(async (req) => {
       .map(([key, value]) => `${key}: ${value}`)
       .join("\n");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
+    const result = await generateReport({
+      systemPrompt: SYSTEM_PROMPT,
+      userPrompt: `Module: ${moduleId || "clarity-check"}\n\nHere are my answers:\n${userMessage}`,
+      toolName: "suggest_insight",
+      toolSchema: {
+        type: "object",
+        properties: {
+          truth: { type: "string", description: "The Truth section - what's really going on" },
+          pattern: { type: "string", description: "The Pattern section - what keeps showing up" },
+          action: { type: "string", description: "The Action section - the next move" },
+        },
+        required: ["truth", "pattern", "action"],
+        additionalProperties: false,
       },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Module: ${moduleId || "clarity-check"}\n\nHere are my answers:\n${userMessage}` },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "suggest_insight",
-              description: "Return the three clarity insight sections",
-              parameters: {
-                type: "object",
-                properties: {
-                  truth: { type: "string", description: "The Truth section - what's really going on" },
-                  pattern: { type: "string", description: "The Pattern section - what keeps showing up" },
-                  action: { type: "string", description: "The Action section - the next move" },
-                },
-                required: ["truth", "pattern", "action"],
-                additionalProperties: false,
-              },
-            },
-          },
-        ],
-        tool_choice: { type: "function", function: { name: "suggest_insight" } },
-      }),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limited. Please try again in a moment." }), {
-          status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds." }), {
-          status: 402, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
-      }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      throw new Error("AI gateway error");
+    if (!result.ok) {
+      return new Response(JSON.stringify({ error: result.error }), {
+        status: result.status ?? 500,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
-    const data = await response.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    
-    if (!toolCall) {
-      throw new Error("No tool call in response");
-    }
-
-    const insight = JSON.parse(toolCall.function.arguments);
-
-    return new Response(JSON.stringify(insight), {
+    return new Response(JSON.stringify(result.data), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
