@@ -251,11 +251,14 @@ const ClaritySession = () => {
         path={moduleId ? `/clarity/${moduleId}` : "/clarity"}
         jsonLd={{
           "@context": "https://schema.org",
-          "@type": "Service",
+          "@type": "WebApplication",
           name: moduleTitle,
-          provider: { "@type": "Person", name: "Coach Kay", jobTitle: "Master Certified Life Coach" },
-          description: `Guided self-reflection session: ${moduleTitle}`,
+          applicationCategory: "LifestyleApplication",
+          operatingSystem: "Web",
           url: `https://coachkayai.life/clarity/${resolvedModuleId}`,
+          description: `Interactive clarity assessment: ${moduleTitle}. Answer reflective questions and receive personalized AI-guided insights from Coach Kay.`,
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          creator: { "@type": "Person", name: "Coach Kay" },
         }}
       />
       <div className="mouse-glow" />
@@ -283,6 +286,7 @@ const ClaritySession = () => {
           className={`w-full max-w-2xl ${animState === "enter" ? "animate-question-enter" : animState === "exit" ? "animate-question-exit" : ""}`}
           style={{ willChange: "transform, opacity" }}
         >
+          <h1 className="sr-only">{moduleTitle} — Clarity Session with Coach Kay</h1>
           <span className="font-mono-label text-primary/60 tracking-[0.2em]">{question.label}</span>
 
           <h2

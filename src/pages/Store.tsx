@@ -126,6 +126,22 @@ export default function Store() {
             ],
             "/store"
           ),
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "Story, Legacy & Publishing Studio Packages",
+            itemListElement: PACKAGES.map((p, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item: {
+                "@type": "Product",
+                name: p.name,
+                description: p.audience ?? p.bullets[0] ?? p.name,
+                category: CATEGORY_LABELS[p.category],
+                url: `https://coachkayai.life/store#${p.slug}`,
+              },
+            })),
+          },
         ]}
       />
       <div
