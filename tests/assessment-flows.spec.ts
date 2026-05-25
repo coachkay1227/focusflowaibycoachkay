@@ -116,4 +116,10 @@ test.describe("Clarity route guards", () => {
     await page.goto("/result");
     await expect(page).toHaveURL(/\/clarity$/);
   });
+
+  test("legacy /clarity/emotional-reset shows 'has evolved' then redirects to /clarity", async ({ page }) => {
+    await page.goto("/clarity/emotional-reset");
+    await expect(page.getByText(/Emotional Reset has evolved/i)).toBeVisible();
+    await expect(page).toHaveURL(/\/clarity$/);
+  });
 });
