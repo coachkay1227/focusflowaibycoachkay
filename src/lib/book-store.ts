@@ -1,14 +1,24 @@
 import { z } from "zod";
 
-export type BookCategory = "children" | "coloring" | "nonfiction";
+export type BookCategory =
+  | "storybooks"
+  | "legacy"
+  | "authority"
+  | "creator"
+  | "autism";
 
 export interface BookPackage {
   slug: string;
   category: BookCategory;
   name: string;
+  /** Cents. 0 for inquiry-only / custom-quote packages. */
   priceCents: number;
   turnaround: string;
   bullets: string[];
+  /** When true, the package is custom-quote and bypasses Stripe checkout. */
+  inquiryOnly?: boolean;
+  /** Optional audience caption shown under the package name. */
+  audience?: string;
 }
 
 export interface BookAddon {
@@ -19,18 +29,21 @@ export interface BookAddon {
 }
 
 export const CATEGORY_LABELS: Record<BookCategory, string> = {
-  children: "Children's Books",
-  coloring: "Coloring Books",
-  nonfiction: "Non-Fiction Books",
+  storybooks: "Storybooks & Gifts",
+  legacy: "Legacy & Family",
+  authority: "Expert / Authority",
+  creator: "Creator / Seller",
+  autism: "Autism & Social Stories",
 };
 
 export const PACKAGES: BookPackage[] = [
   {
     slug: "children-mini-story-starter",
-    category: "children",
+    category: "storybooks",
     name: "Mini-Story Starter",
-    priceCents: 49900,
+    priceCents: 49700,
     turnaround: "5–7 Days",
+    audience: "Personal gifts",
     bullets: [
       "Custom 800-word story",
       "5 AI illustrations",
@@ -40,10 +53,11 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "children-storybook-pro",
-    category: "children",
+    category: "storybooks",
     name: "The Storybook Pro",
     priceCents: 125000,
     turnaround: "10–14 Days",
+    audience: "Children's books",
     bullets: [
       "1,000–1,500 word story",
       "10+ custom AI illustrations",
@@ -53,24 +67,26 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "children-premium-legacy",
-    category: "children",
+    category: "legacy",
     name: "The Premium Legacy Book",
     priceCents: 250000,
     turnaround: "2–3 Weeks",
+    audience: "Elders, memoirs & heirloom volumes",
     bullets: [
-      "Custom character creation",
+      "Custom characters or family cast",
       "Hardcover + paperback formatting",
       "1:1 concept consult",
       "Done-for-you KDP upload",
-      "Social media promo kit",
+      "Heirloom-quality finish",
     ],
   },
   {
     slug: "coloring-quick-sketch",
-    category: "coloring",
+    category: "creator",
     name: "Quick Sketch Starter",
     priceCents: 29700,
     turnaround: "5–7 Days",
+    audience: "Etsy & digital creators",
     bullets: [
       "25 AI-generated coloring pages",
       "Themed to your niche",
@@ -80,10 +96,11 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "coloring-etsy-seller",
-    category: "coloring",
+    category: "creator",
     name: "The Etsy Seller Pack",
     priceCents: 59700,
     turnaround: "10–14 Days",
+    audience: "Etsy sellers",
     bullets: [
       "30–50 AI-generated pages",
       "Cover + Etsy-ready mockups",
@@ -93,10 +110,11 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "coloring-ultimate-creator",
-    category: "coloring",
+    category: "creator",
     name: "Ultimate Creator Package",
     priceCents: 125000,
     turnaround: "2–3 Weeks",
+    audience: "Multi-platform creators",
     bullets: [
       "Activity pages, mazes, and word finds",
       "Upload support for Etsy + KDP",
@@ -106,10 +124,11 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "nonfiction-outline-draft",
-    category: "nonfiction",
+    category: "authority",
     name: "Outline + Draft Only",
     priceCents: 75000,
     turnaround: "7–10 Days",
+    audience: "Experts & founders",
     bullets: [
       "Custom book outline",
       "AI-generated first draft (10–15k words)",
@@ -119,10 +138,11 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "nonfiction-expert-book",
-    category: "nonfiction",
+    category: "authority",
     name: "Done-for-You Expert Book",
     priceCents: 250000,
     turnaround: "4–5 Weeks",
+    audience: "Industry leaders",
     bullets: [
       "Complete ghostwritten book (15–25k words)",
       "Edited and formatted for KDP",
@@ -132,16 +152,33 @@ export const PACKAGES: BookPackage[] = [
   },
   {
     slug: "nonfiction-booked-branded",
-    category: "nonfiction",
+    category: "authority",
     name: "Booked & Branded Package",
     priceCents: 450000,
     turnaround: "5–6 Weeks",
+    audience: "Founders & speakers",
     bullets: [
       "Everything in the Expert Book package",
       "Branded Canva promo templates",
       "3 email launch sequences",
       "Lead magnet workbook spin-off",
       "1:1 coaching call: How to Leverage Your Book",
+    ],
+  },
+  {
+    slug: "autism-social-story-custom",
+    category: "autism",
+    name: "Autism & Social Stories",
+    priceCents: 0,
+    turnaround: "Custom Scope",
+    audience: "Parents, clinics & educators",
+    inquiryOnly: true,
+    bullets: [
+      "Custom, affirming social narratives",
+      "Eases transitions, routines & regulation",
+      "Highly visual, deeply personal",
+      "School- and therapy-aligned concepts",
+      "Single stories or bundled programs",
     ],
   },
 ];
