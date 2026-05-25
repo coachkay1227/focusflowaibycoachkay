@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -274,17 +274,54 @@ serve(async (req) => {
       if (!userId || !UUID_RE.test(userId)) {
         log.info("subscription_missing_user_id_skipping");
       } else {
-        const { error: downgradeError } = await supabaseClient
+        // Read current tier before mutating. Manually elevated tiers
+        // (cohort, premium, rent_agent, corporate) must NEVER be silently
+        // downgraded when an unrelated subscription ends.
+        const { data: current, error: readErr } = await supabaseClient
           .from("user_access_levels")
-          .upsert({ id: userId, tier: "free" }, { onConflict: "id" });
+          .select("tier")
+          .eq("id", userId)
+          .maybeSingle();
 
-        if (downgradeError) {
-          await fail("subscription", "downgrade_failed", {
-            message: downgradeError.message,
+        if (readErr) {
+          await fail("subscription", "tier_read_failed", {
+            message: readErr.message,
             context: { user_id: userId },
           });
+        } else if (current && PROTECTED_TIERS.includes(current.tier)) {
+          // Only `rent_agent` is subscription-tied; allow it to downgrade
+          // (it's the subscription that just ended). All other PROTECTED
+          // tiers represent manual elevation and must be preserved.
+          if (current.tier === "rent_agent") {
+            const { error: downgradeError } = await supabaseClient
+              .from("user_access_levels")
+              .upsert({ id: userId, tier: "free" }, { onConflict: "id" });
+            if (downgradeError) {
+              await fail("subscription", "downgrade_failed", {
+                message: downgradeError.message,
+                context: { user_id: userId, from_tier: current.tier },
+              });
+            } else {
+              log.info("rent_agent_downgraded_to_free", { ctx: { user_id: userId } });
+            }
+          } else {
+            log.info("protected_tier_downgrade_skipped", {
+              ctx: { user_id: userId, current_tier: current.tier, reason: "manual_elevation_preserved" },
+            });
+          }
         } else {
-          log.info("user_downgraded_to_free", { ctx: { user_id: userId } });
+          // Free / subscriber / unknown — safe to set free.
+          const { error: downgradeError } = await supabaseClient
+            .from("user_access_levels")
+            .upsert({ id: userId, tier: "free" }, { onConflict: "id" });
+          if (downgradeError) {
+            await fail("subscription", "downgrade_failed", {
+              message: downgradeError.message,
+              context: { user_id: userId, from_tier: current?.tier ?? null },
+            });
+          } else {
+            log.info("user_downgraded_to_free", { ctx: { user_id: userId, from_tier: current?.tier ?? null } });
+          }
         }
       }
     } else if (event.type === "invoice.payment_failed") {
