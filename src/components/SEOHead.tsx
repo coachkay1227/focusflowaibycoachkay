@@ -11,6 +11,8 @@ interface SEOHeadProps {
   ogImage?: string;
   /** Inject sitewide Person + Organization + WebSite graph. Default: true. */
   injectGlobalGraph?: boolean;
+  /** When true, emits <meta name="robots" content="noindex, nofollow"> for private/utility pages. */
+  noIndex?: boolean;
 }
 
 const SEOHead = ({
@@ -20,16 +22,19 @@ const SEOHead = ({
   jsonLd,
   ogImage = `${BASE_URL}/og-image.png`,
   injectGlobalGraph = true,
+  noIndex = false,
 }: SEOHeadProps) => {
   const canonical = `${BASE_URL}${path}`;
   const pageSchemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
-  const schemas = injectGlobalGraph ? [globalGraph(), ...pageSchemas] : pageSchemas;
+  // Suppress sitewide graph on noindex pages — keeps Google's knowledge graph anchored on indexable URLs.
+  const schemas = injectGlobalGraph && !noIndex ? [globalGraph(), ...pageSchemas] : pageSchemas;
 
   return (
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />
+      {noIndex && <meta name="robots" content="noindex, nofollow" />}
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />

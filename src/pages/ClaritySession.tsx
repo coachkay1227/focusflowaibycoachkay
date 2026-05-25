@@ -245,7 +245,19 @@ const ClaritySession = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title={`${moduleTitle} — FocusFlow AI`} description="Begin your guided clarity check. Answer honest questions and receive personalized insights about your patterns and potential." path="/clarity" jsonLd={{ "@context": "https://schema.org", "@type": "Service", name: "Clarity Session", provider: { "@type": "Person", name: "Coach Kay", jobTitle: "Master Certified Life Coach" }, description: "Guided self-reflection session" }} />
+      <SEOHead
+        title={`${moduleTitle} — FocusFlow AI`}
+        description={`Begin the ${moduleTitle} clarity check. Answer honest questions and receive personalized insights about your patterns, blockers, and next clear action.`}
+        path={moduleId ? `/clarity/${moduleId}` : "/clarity"}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: moduleTitle,
+          provider: { "@type": "Person", name: "Coach Kay", jobTitle: "Master Certified Life Coach" },
+          description: `Guided self-reflection session: ${moduleTitle}`,
+          url: `https://coachkayai.life/clarity/${resolvedModuleId}`,
+        }}
+      />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
