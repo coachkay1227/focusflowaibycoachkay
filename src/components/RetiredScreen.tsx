@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 
 interface RetiredScreenProps {
   /** What the user thought they were opening (e.g. "Emotional Reset"). */
@@ -29,6 +30,7 @@ const RetiredScreen = ({
   delayMs = 2500,
 }: RetiredScreenProps) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (!delayMs) return;
@@ -38,6 +40,13 @@ const RetiredScreen = ({
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <SEOHead
+        title={`${legacyName} has moved — FocusFlow AI`}
+        description={`The ${legacyName} questionnaire has evolved and now lives inside ${redirectLabel}. You'll be redirected automatically.`}
+        path={pathname}
+        noIndex
+        injectGlobalGraph={false}
+      />
       <FloatingOrbs />
       <div className="relative z-10 max-w-md text-center">
         <span className="font-mono-label text-primary/70 tracking-[0.2em] text-xs">
