@@ -90,18 +90,24 @@ test.describe("AI Transformation Starter Kit (/starter-kit)", () => {
 test.describe("Clarity route guards", () => {
   test("/clarity/mac-type-assessment redirects to /assessment", async ({ page }) => {
     await page.goto("/clarity/mac-type-assessment");
+    // Unified "has evolved" screen first…
+    await expect(page.getByText(/has evolved/i)).toBeVisible();
+    // …then auto-redirects to the canonical Business assessment.
     await expect(page).toHaveURL(/\/assessment$/);
     await expect(page.getByText("BUSINESS CLARITY ASSESSMENT")).toBeVisible();
   });
 
   test("/clarity/kpi-roi-tracker redirects to /starter-kit", async ({ page }) => {
     await page.goto("/clarity/kpi-roi-tracker");
+    await expect(page.getByText(/has evolved/i)).toBeVisible();
     await expect(page).toHaveURL(/\/starter-kit$/);
     await expect(page.getByText("AI TRANSFORMATION · STARTER KIT")).toBeVisible();
   });
 
   test("unknown moduleId redirects to canonical /clarity (no silent fallback)", async ({ page }) => {
     await page.goto("/clarity/this-module-does-not-exist");
+    // Shows the unified retired screen, not a silent rerender of the default quiz.
+    await expect(page.getByText(/no longer part of the public catalog/i)).toBeVisible();
     await expect(page).toHaveURL(/\/clarity$/);
     await expect(page.getByText("Personal Clarity Check", { exact: false })).toBeVisible();
   });
