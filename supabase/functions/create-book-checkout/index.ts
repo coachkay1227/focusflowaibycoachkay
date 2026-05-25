@@ -44,6 +44,12 @@ serve(async (req) => {
         status: 400, headers: { ...cors, "Content-Type": "application/json" },
       });
     }
+    if (pkg.inquiryOnly || pkg.priceCents <= 0) {
+      return new Response(
+        JSON.stringify({ error: "This package is custom-quote only and cannot be checked out." }),
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
+      );
+    }
     const addons = body.addons
       .map((s) => findAddon(s))
       .filter((a): a is NonNullable<typeof a> => !!a);
