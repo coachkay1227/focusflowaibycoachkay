@@ -180,5 +180,10 @@ Disallow: /mirror-challenge
 Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
+# Retired clarity module slugs — render RetiredScreen, must not be re-crawled
+Disallow: /clarity/emotional-reset
+Disallow: /clarity/focus-flow
+Disallow: /clarity/purpose-happiness
+Disallow: /clarity/goal-shift
 
 Sitemap: https://coachkayai.life/sitemap.xml
