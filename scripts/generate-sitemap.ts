@@ -33,6 +33,15 @@ const staticEntries: SitemapEntry[] = [
 ];
 
 // --- Dynamic: clarity modules from src/lib/modules.ts ---
+// Legacy/retired clarity slugs that render the RetiredScreen — must NOT be
+// indexed. Mirrors LEGACY_CLARITY_REDIRECTS in src/pages/ClaritySession.tsx.
+const RETIRED_CLARITY_IDS = new Set<string>([
+  "emotional-reset",
+  "focus-flow",
+  "purpose-happiness",
+  "goal-shift",
+]);
+
 function extractClarityModuleIds(): string[] {
   const src = readFileSync(resolve("src/lib/modules.ts"), "utf8");
   // Find the coachingModules array and pull top-level `id: "..."` per module entry.
