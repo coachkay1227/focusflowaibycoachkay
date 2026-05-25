@@ -22,7 +22,7 @@ const Advisory = () => {
     lane: "",
   });
 
-  const startCheckout = async (priceId: string, name: string) => {
+  const startCheckout = async (priceId: string, name: string, successPath?: string) => {
     if (!user) {
       toast({ title: "Sign in to continue", description: "Create an account so we can attach your purchase." });
       navigate(`/auth?next=${encodeURIComponent("/advisory")}`);
@@ -33,7 +33,7 @@ const Advisory = () => {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           priceId,
-          successPath: `/order-success?tier=${encodeURIComponent(name)}`,
+          successPath: successPath ?? `/order-success?tier=${encodeURIComponent(name)}`,
           cancelPath: "/advisory?checkout=cancelled",
         },
       });
@@ -224,7 +224,7 @@ const Advisory = () => {
           <Button
             size="lg"
             className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit")}
+            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
             disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
           >
             {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Take the $47 audit"}
