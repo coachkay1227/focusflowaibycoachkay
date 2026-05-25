@@ -6,10 +6,14 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, ArrowRight, Sparkles, Zap } from "lucide-react";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
 import { trackEvent, trackCta } from "@/lib/analytics";
 import { isAdminPreviewArmed } from "@/lib/admin-preview";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import ReportView from "@/components/reports/ReportView";
 
 type Dimension = "M" | "A" | "C";
 
@@ -152,6 +156,7 @@ const Assessment = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAdmin } = useRoles();
+  const { toast } = useToast();
   const containerRef = useRef<HTMLDivElement>(null);
   useMouseGlow(containerRef);
 
@@ -161,6 +166,20 @@ const Assessment = () => {
   const [done, setDone] = useState(false);
   const [animState, setAnimState] = useState<"enter" | "exit" | "idle">("enter");
   const [applyOpen, setApplyOpen] = useState(false);
+  const [showGate, setShowGate] = useState(false);
+  const [gateName, setGateName] = useState("");
+  const [gateEmail, setGateEmail] = useState("");
+  const [authedEmail, setAuthedEmail] = useState<string | null>(null);
+  const [elaborating, setElaborating] = useState(false);
+  const [insight, setInsight] = useState<{
+    archetype_name: string;
+    mind: string;
+    action: string;
+    character: string;
+    strength: string;
+    growth_edge: string;
+  } | null>(null);
+  const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
 
   // Admin-only quick preview — instantly fill answers and reveal the result panel.
   useEffect(() => {
@@ -251,6 +270,89 @@ const Assessment = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done]);
+
+  // On completion: if authed, call mac-elaborate directly. Otherwise show email gate.
+  useEffect(() => {
+    if (!done || !result || insight || elaborating) return;
+    let cancelled = false;
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      if (session?.user?.email) {
+        setAuthedEmail(session.user.email);
+        await runElaborate(null, null);
+      } else {
+        setShowGate(true);
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [done]);
+
+  const runElaborate = async (email: string | null, name: string | null) => {
+    if (!result) return;
+    setElaborating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("mac-elaborate", {
+        body: {
+          code: result.code,
+          answers,
+          email: email ?? undefined,
+          name: name ?? undefined,
+        },
+      });
+      if (error) throw error;
+      if (data?.insight) {
+        setInsight(data.insight);
+        setGeneratedAt(new Date());
+      } else {
+        throw new Error("No insight returned");
+      }
+    } catch (err) {
+      console.error("mac-elaborate failed", err);
+      toast({
+        title: "Couldn't generate your report",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setElaborating(false);
+    }
+  };
+
+  const submitGate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = gateEmail.trim().toLowerCase();
+    if (!email) return;
+    const name = gateName.trim() || null;
+    setShowGate(false);
+    // Best-effort lead capture parity
+    void supabase
+      .from("cohort_registrations")
+      .insert({
+        email,
+        first_name: name,
+        cohort_name: "M.A.C. Assessment",
+        source: "assessment",
+      })
+      .then(() => undefined, () => undefined);
+    await runElaborate(email, name);
+  };
+
+  const handleEmailReport = async () => {
+    const recipient = authedEmail ?? gateEmail.trim().toLowerCase();
+    if (!recipient) throw new Error("No recipient");
+    // Placeholder: full Resend template wiring deferred until domain is verified.
+    // We attempt client-notify; if it fails (e.g. anon), surface a friendly error
+    // via the caller's toast handler.
+    const { error } = await supabase.functions.invoke("client-notify", {
+      body: {
+        action: "clarity_complete",
+        data: { source: "mac-assessment", code: result?.code },
+      },
+    });
+    if (error) throw error;
+  };
 
   return (
     <div
@@ -369,32 +471,70 @@ const Assessment = () => {
               {CHARACTER_LABELS[result.character]}
             </p>
 
-            <div className="mt-10 space-y-6">
-              <div className="clarity-card rounded-lg border border-border bg-card/40 backdrop-blur-sm p-6">
-                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
-                  MIND — {MIND_LABELS[result.mind]}
-                </span>
-                <p className="text-foreground/90 mt-2 leading-relaxed">{MIND_DESC[result.mind]}</p>
-              </div>
-              <div className="clarity-card rounded-lg border border-border bg-card/40 backdrop-blur-sm p-6">
-                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
-                  ACTION — {ACTION_LABELS[result.action]}
-                </span>
-                <p className="text-foreground/90 mt-2 leading-relaxed">
-                  {ACTION_DESC[result.action]}
+            {/* Loading shimmer while AI elaborates */}
+            {elaborating && !insight && (
+              <div className="mt-10 space-y-4">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="h-24 rounded-lg border border-border bg-card/30 backdrop-blur-sm animate-pulse"
+                  />
+                ))}
+                <p className="text-center text-sm text-muted-foreground">
+                  Coach Kay is reading your profile…
                 </p>
               </div>
-              <div className="clarity-card rounded-lg border border-border bg-card/40 backdrop-blur-sm p-6">
-                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
-                  CHARACTER — {CHARACTER_LABELS[result.character]}
-                </span>
-                <p className="text-foreground/90 mt-2 leading-relaxed">
-                  {CHAR_DESC[result.character]}
-                </p>
-              </div>
-            </div>
+            )}
 
-            <div className="mt-12 flex flex-col sm:flex-row gap-3">
+            {/* Fallback static cards if AI failed (insight null & not loading & not gated) */}
+            {!elaborating && !insight && !showGate && (
+              <div className="mt-10 space-y-6">
+                <div className="clarity-card rounded-lg border border-border bg-card/40 backdrop-blur-sm p-6">
+                  <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
+                    MIND — {MIND_LABELS[result.mind]}
+                  </span>
+                  <p className="text-foreground/90 mt-2 leading-relaxed">{MIND_DESC[result.mind]}</p>
+                </div>
+                <div className="clarity-card rounded-lg border border-border bg-card/40 backdrop-blur-sm p-6">
+                  <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
+                    ACTION — {ACTION_LABELS[result.action]}
+                  </span>
+                  <p className="text-foreground/90 mt-2 leading-relaxed">
+                    {ACTION_DESC[result.action]}
+                  </p>
+                </div>
+                <div className="clarity-card rounded-lg border border-border bg-card/40 backdrop-blur-sm p-6">
+                  <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
+                    CHARACTER — {CHARACTER_LABELS[result.character]}
+                  </span>
+                  <p className="text-foreground/90 mt-2 leading-relaxed">
+                    {CHAR_DESC[result.character]}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* AI-generated full report */}
+            {insight && generatedAt && (
+              <div className="mt-10">
+                <ReportView
+                  title={insight.archetype_name}
+                  subtitle={`Your M.A.C. code: ${result.code} · ${MIND_LABELS[result.mind]} · ${ACTION_LABELS[result.action]} · ${CHARACTER_LABELS[result.character]}`}
+                  generatedAt={generatedAt}
+                  userEmail={authedEmail ?? (gateEmail.trim().toLowerCase() || undefined)}
+                  onEmail={authedEmail ? handleEmailReport : undefined}
+                  sections={[
+                    { heading: `Mind · ${MIND_LABELS[result.mind]}`, body: insight.mind },
+                    { heading: `Action · ${ACTION_LABELS[result.action]}`, body: insight.action },
+                    { heading: `Character · ${CHARACTER_LABELS[result.character]}`, body: insight.character },
+                    { heading: "Your Strength", body: insight.strength },
+                    { heading: "Your Growth Edge", body: insight.growth_edge },
+                  ]}
+                />
+              </div>
+            )}
+
+            <div className="mt-12 flex flex-col sm:flex-row gap-3 no-print">
               <Button
                 onClick={() => {
                   trackCta("apply_business_reset", "business", { code: result?.code });
@@ -427,6 +567,57 @@ const Assessment = () => {
           </div>
         )}
       </div>
+
+      {/* Email gate for anonymous users — mirrors ClaritySession.tsx pattern */}
+      {showGate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-6">
+          <form
+            onSubmit={submitGate}
+            className="w-full max-w-md rounded-xl border border-primary/30 bg-card/95 backdrop-blur-md p-8 shadow-2xl"
+          >
+            <div className="flex items-center gap-2 font-mono-label text-primary tracking-[0.2em] text-xs mb-3">
+              <Sparkles className="h-4 w-4" />
+              ONE LAST STEP
+            </div>
+            <h3 className="font-heading text-2xl md:text-3xl font-light leading-tight mb-2">
+              Your M.A.C. report is ready.
+            </h3>
+            <p className="text-muted-foreground text-sm mb-6">
+              Enter your email and Coach Kay will generate your personalized archetype reading now.
+            </p>
+            <div className="space-y-3">
+              <Input
+                type="text"
+                placeholder="First name (optional)"
+                value={gateName}
+                onChange={(e) => setGateName(e.target.value)}
+                className="bg-background/50 border-border"
+              />
+              <Input
+                type="email"
+                required
+                autoFocus
+                placeholder="you@email.com"
+                value={gateEmail}
+                onChange={(e) => setGateEmail(e.target.value)}
+                className="bg-background/50 border-border"
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={!gateEmail.trim()}
+              className="w-full mt-5 bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base"
+            >
+              Unlock My Report
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <div className="mt-4 flex items-center justify-center gap-2 font-mono-label text-muted-foreground/60 text-[10px] tracking-[0.15em]">
+              <Zap className="h-3 w-3" />
+              NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
+            </div>
+          </form>
+        </div>
+      )}
       <ApplyNowDialog
         open={applyOpen}
         onOpenChange={setApplyOpen}
