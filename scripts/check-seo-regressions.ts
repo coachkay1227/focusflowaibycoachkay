@@ -46,6 +46,9 @@ const NOINDEX: string[] = [
   "/sitemap",
   "/unsubscribe",
   "/email-unsubscribe",
+  "/audit/landing",
+  "/audit/intake",
+  "/audit/report/:id",
   "*", // NotFound
 ];
 
