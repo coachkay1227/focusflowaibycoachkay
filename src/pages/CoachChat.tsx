@@ -162,6 +162,7 @@ const CoachChat = () => {
         title="Talk to Coach Kay — Personalized Clarity Coaching"
         description="Chat with Coach Kay for personalized clarity insights. Get real coaching, challenge your thinking, and unlock deeper self-awareness."
         path="/coach"
+        noIndex
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Service",
