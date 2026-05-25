@@ -77,6 +77,7 @@ function buildEntries(): SitemapEntry[] {
   const entries: SitemapEntry[] = staticEntries.map((e) => ({ ...e, lastmod: TODAY }));
 
   for (const id of extractClarityModuleIds()) {
+    if (RETIRED_CLARITY_IDS.has(id)) continue;
     entries.push({
       path: `/clarity/${id}`,
       lastmod: TODAY,
