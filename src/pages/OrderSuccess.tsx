@@ -6,7 +6,8 @@ import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/book-store";
 import { trackEvent } from "@/lib/analytics";
-import { TIER_LABELS, type AccessTier } from "@/lib/tier-constants";
+import { TIER_LABELS } from "@/lib/tier-constants";
+import type { AccessTier } from "@/hooks/use-access-level";
 
 interface OrderSummary {
   package_name: string;
