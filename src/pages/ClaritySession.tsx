@@ -15,6 +15,50 @@ import { ArrowRight, ArrowLeft, Sparkles, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
+import RetiredScreen from "@/components/RetiredScreen";
+
+/**
+ * Legacy /clarity/:moduleId slugs that should no longer render their own quiz.
+ * Each maps to the canonical current flow + a friendly destination label.
+ */
+const LEGACY_CLARITY_REDIRECTS: Record<
+  string,
+  { legacyName: string; redirectTo: string; redirectLabel: string; reason?: string }
+> = {
+  // Old standalone modules — now folded into the Personal Clarity Check
+  "emotional-reset": {
+    legacyName: "Emotional Reset",
+    redirectTo: "/clarity",
+    redirectLabel: "the Personal Clarity Check",
+  },
+  "focus-flow": {
+    legacyName: "Focus Flow",
+    redirectTo: "/clarity",
+    redirectLabel: "the Personal Clarity Check",
+  },
+  "purpose-happiness": {
+    legacyName: "Purpose & Happiness",
+    redirectTo: "/clarity",
+    redirectLabel: "the Personal Clarity Check",
+  },
+  "goal-shift": {
+    legacyName: "Goal Shift",
+    redirectTo: "/clarity",
+    redirectLabel: "the Personal Clarity Check",
+  },
+  // Business assessment slug — moved to its own route
+  "mac-type-assessment": {
+    legacyName: "M.A.C. Type Assessment",
+    redirectTo: "/assessment",
+    redirectLabel: "the Business Clarity Assessment",
+  },
+  // AI starter slug — moved to the Starter Kit
+  "kpi-roi-tracker": {
+    legacyName: "KPI & ROI Tracker",
+    redirectTo: "/starter-kit",
+    redirectLabel: "the AI Transformation Starter Kit",
+  },
+};
 
 const ClaritySession = () => {
   const navigate = useNavigate();
@@ -23,24 +67,22 @@ const ClaritySession = () => {
   const { isAdmin } = useRoles();
   const { toast } = useToast();
 
-  // Hard redirects: do NOT silently fall back to the default quiz on unknown/foreign moduleIds.
-  useEffect(() => {
-    if (!moduleId) return;
-    if (moduleId === "clarity-check") return; // canonical personal flow
-    if (moduleId === "mac-type-assessment") {
-      navigate("/assessment", { replace: true });
-      return;
-    }
-    if (moduleId === "kpi-roi-tracker") {
-      navigate("/starter-kit", { replace: true });
-      return;
-    }
-    const mod = getModule(moduleId);
-    // Only allow modules that exist AND ship custom questions; everything else → back to /clarity
-    if (!mod || mod.questions.length === 0) {
-      navigate("/clarity", { replace: true });
-    }
-  }, [moduleId, navigate]);
+  // Decide up-front whether this URL should show the unified "has evolved"
+  // retired screen instead of running a quiz. Renders are predictable —
+  // no silent in-place fallbacks to the default Personal quiz.
+  const legacyRedirect =
+    moduleId && moduleId !== "clarity-check"
+      ? LEGACY_CLARITY_REDIRECTS[moduleId] ?? null
+      : null;
+
+  const isUnknownModule =
+    !!moduleId &&
+    moduleId !== "clarity-check" &&
+    !legacyRedirect &&
+    (() => {
+      const mod = getModule(moduleId);
+      return !mod || mod.questions.length === 0;
+    })();
 
   // Resolve module + questions (after guard above, moduleId is always valid or undefined)
   const resolvedModuleId = moduleId || "clarity-check";
@@ -65,6 +107,21 @@ const ClaritySession = () => {
   const canProceed = question.type === "options" ? !!answers[question.id] : textValue.trim().length > 0;
 
   useMouseGlow(containerRef);
+
+  // Render the unified retired screen for legacy / unknown slugs.
+  if (legacyRedirect) {
+    return <RetiredScreen {...legacyRedirect} />;
+  }
+  if (isUnknownModule) {
+    return (
+      <RetiredScreen
+        legacyName="That assessment"
+        redirectTo="/clarity"
+        redirectLabel="the Personal Clarity Check"
+        reason="The link you followed is no longer part of the public catalog. Here's the current entry point."
+      />
+    );
+  }
 
   // Admin-only preview: ?preview=1 prefills answers with the first option of each question
   // and immediately routes to the result screen — no public exposure.
