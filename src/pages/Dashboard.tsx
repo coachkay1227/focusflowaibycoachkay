@@ -79,6 +79,7 @@ const Dashboard = () => {
           )}
           <button onClick={() => navigate("/modules")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">Modules</button>
           <button onClick={() => navigate("/challenges")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">Challenges</button>
+          <button onClick={() => navigate("/store")} className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block font-medium">Studio</button>
           <Avatar className="h-8 w-8 border border-primary/30">
             <AvatarImage src={user?.user_metadata?.avatar_url || user?.user_metadata?.picture} />
             <AvatarFallback className="bg-primary/10 text-primary text-xs">

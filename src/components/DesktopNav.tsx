@@ -8,7 +8,7 @@ const navItems = [
   { label: "Paths", path: "/modules", icon: BookOpen, authOnly: false },
   { label: "Coach Kay", path: "/coach-kay", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },
-  { label: "Book Store", path: "/store", icon: BookMarked, authOnly: false },
+  { label: "Studio", path: "/store", icon: BookMarked, authOnly: false },
   { label: "About", path: "/about", icon: Info, authOnly: false },
 ];
 
