@@ -33,3 +33,7 @@ project_id = "rarawrpajilqqlcxdzpj"
     verify_jwt = false
   [functions.update-book-order]
     verify_jwt = false
+  [functions.mac-elaborate]
+    verify_jwt = false
+  [functions.generate-starter-report]
+    verify_jwt = false
