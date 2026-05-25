@@ -9,7 +9,6 @@ import { trackEvent } from "@/lib/analytics";
 interface OrderSummary {
   package_name: string;
   order_total: number;
-  client_email: string;
 }
 
 export default function OrderSuccess() {
@@ -77,8 +76,8 @@ export default function OrderSuccess() {
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-muted-foreground">Confirmation Sent To</dt>
-                <dd className="text-foreground">{summary.client_email}</dd>
+                <dt className="text-muted-foreground">Confirmation</dt>
+                <dd className="text-foreground">Check your inbox</dd>
               </div>
             </dl>
           </div>
