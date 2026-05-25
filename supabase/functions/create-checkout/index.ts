@@ -31,9 +31,11 @@ serve(async (req) => {
 
     const { priceId, successPath, cancelPath } = await req.json();
     if (!priceId) throw new Error("priceId is required");
-    // Restrict redirect targets to same-origin internal paths.
+    // Restrict redirect targets to same-origin internal paths. Allows
+    // percent-encoded query strings and common URL-safe punctuation so
+    // callers can pass human-readable context (e.g. ?tier=...).
     const safePath = (p: unknown, fallback: string): string =>
-      typeof p === "string" && /^\/[A-Za-z0-9/_\-?=&]*$/.test(p) ? p : fallback;
+      typeof p === "string" && /^\/[A-Za-z0-9/_\-?=&%.,():~ ]*$/.test(p) ? p : fallback;
     const successUrl = `${req.headers.get("origin")}${safePath(successPath, "/dashboard?checkout=success")}`;
     const cancelUrl = `${req.headers.get("origin")}${safePath(cancelPath, "/modules?checkout=cancelled")}`;
 
