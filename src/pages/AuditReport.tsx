@@ -339,3 +339,69 @@ const AuditReport = () => {
 };
 
 export default AuditReport;
+
+// ---------- Build Studio waitlist (inline) ----------
+function BuildStudioWaitlist({ slug, defaultEmail }: { slug: string; defaultEmail: string }) {
+  const [email, setEmail] = useState(defaultEmail);
+  const [name, setName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const submit = async () => {
+    const clean = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
+      toast.error("Please enter a valid email");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from("cohort_registrations").insert({
+        email: clean,
+        first_name: name.trim() || null,
+        cohort_name: `build_studio:${slug}`,
+        source: "build_studio_waitlist",
+      });
+      if (error) throw error;
+      setDone(true);
+      toast.success("You're on the Build Studio waitlist");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Couldn't join waitlist");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <div className="rounded-md border border-primary/40 bg-primary/10 p-4 text-sm text-primary">
+        ✓ You're on the list — we'll email you the moment F.O.C.U.S. Build Studio opens.
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-md border border-primary/30 bg-primary/5 p-4">
+      <div className="font-heading text-sm text-primary mb-2">
+        Build Studio opens soon — be the first to know
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Input
+          type="text"
+          placeholder="First name (optional)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="sm:max-w-[160px]"
+        />
+        <Input
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Button onClick={submit} disabled={submitting} className="bg-primary text-primary-foreground">
+          {submitting ? "Joining…" : "Notify me"}
+        </Button>
+      </div>
+    </div>
+  );
+}
