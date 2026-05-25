@@ -20,6 +20,17 @@ function getStoredReturnTo(): string | null {
   }
 }
 
+function getNextFromQuery(search: string): string | null {
+  try {
+    const next = new URLSearchParams(search).get("next");
+    if (!next || next === "/auth") return null;
+    // Only same-origin internal paths
+    return /^\/[A-Za-z0-9/_\-?=&%.,():~ ]*$/.test(next) ? next : null;
+  } catch {
+    return null;
+  }
+}
+
 function clearStoredReturnTo() {
   try { sessionStorage.removeItem("auth:returnTo"); } catch { /* noop */ }
 }
@@ -28,7 +39,9 @@ const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const intendedFrom =
-    (location.state as { from?: string } | null)?.from || getStoredReturnTo();
+    (location.state as { from?: string } | null)?.from ||
+    getNextFromQuery(location.search) ||
+    getStoredReturnTo();
   const { signIn, signUp, resetPassword, user } = useAuth();
   const { toast } = useToast();
   const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "signup-success">("signin");
@@ -39,10 +52,12 @@ const Auth = () => {
   // Persist any intent passed via router state so it survives reloads / email confirmation tab
   useEffect(() => {
     const fromState = (location.state as { from?: string } | null)?.from;
-    if (fromState && fromState !== "/auth") {
-      try { sessionStorage.setItem("auth:returnTo", fromState); } catch { /* noop */ }
+    const fromQuery = getNextFromQuery(location.search);
+    const target = fromState || fromQuery;
+    if (target && target !== "/auth") {
+      try { sessionStorage.setItem("auth:returnTo", target); } catch { /* noop */ }
     }
-  }, [location.state]);
+  }, [location.state, location.search]);
 
   // Redirect if already signed in
   useEffect(() => {

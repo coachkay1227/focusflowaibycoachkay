@@ -20,7 +20,7 @@ interface AdminUser {
   created_at: string | null;
 }
 
-const tierOptions: AccessTier[] = ["free", "subscriber", "cohort", "premium", "corporate"];
+const tierOptions: AccessTier[] = ["free", "subscriber", "cohort", "premium", "rent_agent", "corporate"];
 
 const AdminUsers = () => {
   const navigate = useNavigate();
