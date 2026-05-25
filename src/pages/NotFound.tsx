@@ -1,6 +1,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import SEOHead from "@/components/SEOHead";
 import { programs } from "@/data/programs";
 
 const featured = programs.filter((p) => p.isFeatured).slice(0, 3);
@@ -14,6 +15,12 @@ const NotFound = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <SEOHead
+        title="Page Not Found — FocusFlow AI"
+        description="The page you're looking for doesn't exist. Return to FocusFlow AI to explore clarity coaching, programs, and free assessments by Coach Kay."
+        path="/404"
+        noIndex
+      />
       <FloatingOrbs />
       <div className="relative z-10 text-center max-w-lg">
         <div className="font-heading text-6xl font-light text-primary mb-4">404</div>

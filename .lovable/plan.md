@@ -1,60 +1,50 @@
-## Goal
-Work through the 7 security checklist items you pasted. The Lovable + Supabase scanners currently report **zero open findings**, and recent work already locked down edge functions, RLS, and PII. So this pass focuses on the gaps that remain: HTTP security headers, an input-validation audit, and documenting the few patterns that are intentionally as-is.
+## Diagnosis
 
-## What I'll do
+The site already has `react-helmet-async` + a `SEOHead` component that sets per-page title/description/canonical/OG, and the scanner does execute JS (it correctly picked up `/clarity/clarity-check`'s unique title). So most of the "duplicate" findings are stale — they were captured before SEOHead was rolled out. But there are **real bugs and gaps** to fix:
 
-### 1. Add HTTP security headers (main gap)
-There is no `public/_headers` file today. I'll add one so the published site (Lovable hosting / Netlify-style) sends:
-- `Content-Security-Policy` — allow self, Google Fonts, Supabase project origin (`*.supabase.co`), Stripe (`js.stripe.com`, `api.stripe.com`, `checkout.stripe.com`), and inline styles (required by Vite/Tailwind runtime). `frame-ancestors 'none'`.
-- `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()`
-- `X-XSS-Protection: 0` (modern best practice — rely on CSP)
+1. `ClaritySession.tsx` always passes `path="/clarity"`, so every `/clarity/:moduleId` page emits canonical = `/clarity` — Google sees them all as dupes of the index.
+2. `/auth`, `/sitemap`, `/reset-password`, `/onboarding`, `/dashboard`, `/profile`, `/coach`, `/mirror-challenge`, `/challenges/:type`, `/result`, `/order-success`, `/unsubscribe`, `/email-unsubscribe`, all `/admin/*` should send `noindex, nofollow` (login/private/utility pages).
+3. `public/sitemap.xml` currently lists `/auth` — should be removed (the generator's static list includes it).
+4. JSON-LD coverage is thin: only Index has a full graph; `/coach-kay` lacks Person, `/programs/:slug` lacks Course/Service, no BreadcrumbList anywhere.
+5. A couple of pages may render `SEOHead` only after data-load / auth — scanner can capture the loading-state head. We'll mount SEOHead at the top of those components so it ships on first paint.
 
-I'll keep CSP report-only friendly by starting permissive enough for Stripe Checkout + Google Fonts + the Supabase functions origin, then note in chat what to tighten later.
+H1s: I spot-checked the 11 pages flagged as missing H1 (`Modules`, `CoachKay`, `Community`, `Store`, `Assessment`, `Challenges`, `StarterKit`, `Auth`, `Sitemap`) — they all DO render an `<h1>` in JSX today. That part of the report is stale; nothing to change in code. We'll just mark those findings fixed after a rescan.
 
-### 2. Input-validation audit (no behavior change unless a gap is found)
-Confirm Zod (or equivalent) is applied at every user-input boundary:
-- `src/components/store/IntakeFormModal.tsx` — already uses Zod ✓
-- `src/lib/book-store.ts` — already uses Zod ✓
-- `src/pages/Auth.tsx`, `src/pages/ResetPassword.tsx`, `src/components/ApplyNowDialog.tsx`, `src/pages/ClaritySession.tsx`, `src/pages/StarterKit.tsx`, `src/pages/CoachChat.tsx`, admin modals — read each and add a Zod schema + `.trim()` + length cap **only where missing**. No UI redesign.
-- Server-side: confirm each edge function that takes a body parses with Zod and returns 400 on failure. Patch any that don't.
-Codebase grep already confirms **no `dangerouslySetInnerHTML`, `eval`, or `innerHTML` writes** anywhere — nothing to fix for XSS sinks.
+## Plan
 
-### 3. Auth token storage — keep Supabase default, document why
-The checklist asks for HttpOnly cookies for JWTs. The Supabase JS SDK stores the session in `localStorage` by design; switching to HttpOnly cookies requires running an SSR proxy (Next.js / custom Node server) which this Vite SPA does not have. The accepted mitigations stay in place:
-- Short access-token TTL + refresh rotation (Supabase default)
-- RLS on every table (already enforced)
-- HSTS + strict CSP (added in step 1) to block token theft via injected scripts
-I'll record this as an accepted risk in `@security-memory` rather than ripping out the SDK.
+### 1. Extend `SEOHead`
+- Add `noIndex?: boolean` prop → emits `<meta name="robots" content="noindex, nofollow">`.
+- No other API changes.
 
-### 4. RLS / edge-function permission re-review
-Walk every table's policies (already pasted in context) and every function in `supabase/functions/*` to confirm:
-- No table is missing INSERT/UPDATE/DELETE coverage where it should be locked down.
-- Each function either calls `getClaims()` or is intentionally public (webhooks with signature verification, analytics ping, `clarity-insight` guest flow).
-Fix anything that drifted; otherwise document the intentional public surfaces in security memory.
+### 2. Fix per-route canonical + noindex (one-line per page)
+- `ClaritySession.tsx`: build `path` as `/clarity/${moduleId ?? "clarity-check"}` (or `/clarity` only when no module). Make `title` include the module name (already does).
+- Add `noIndex` on: `Auth`, `ResetPassword`, `Onboarding`, `Dashboard`, `Profile`, `CoachChat`, `MirrorChallenge`, `ResultScreen`, `OrderSuccess`, `Unsubscribe`, `EmailUnsubscribe`, `Sitemap`, and all `admin/*` pages that render `SEOHead`. Add SEOHead where missing on admin pages (just for the noindex tag).
+- Move `<SEOHead>` to render before any loading guard on pages where it currently lives below an early-return.
 
-### 5. Static vuln sweep
-- `bun audit` / `npm audit` style scan via the dependency tool — report and patch high/critical.
-- Grep for: `http://` external calls, open redirects (`window.location = userInput`), unsanitized `target="_blank"` without `rel="noopener noreferrer"`, exposed secrets in client code (env grep already shows only the public `VITE_SUPABASE_PUBLISHABLE_KEY` and URL — both safe to ship).
+### 3. Sitemap + robots
+- `scripts/generate-sitemap.ts`: drop `/auth` and `/sitemap` from the static route list (private/utility pages).
+- `public/robots.txt`: ensure `Disallow: /auth`, `/reset-password`, `/dashboard`, `/profile`, `/coach`, `/onboarding`, `/admin/`, `/order-success`, `/email-unsubscribe`, `/unsubscribe`, `/result`, `/mirror-challenge`, `/sitemap` are listed (already partially there from earlier task — verify).
 
-### 6. Update `@security-memory`
-Record:
-- Security headers baseline and which third-party origins are allow-listed and why
-- Token-in-localStorage as an accepted SPA constraint with the mitigations listed
-- Public-by-design surfaces (analytics insert, cohort registration insert, `clarity-insight` guest flow, Stripe webhook, GHL webhook)
-So future scans don't re-flag them.
+### 4. JSON-LD coverage
+- `/coach-kay`: add `Person` schema (name, jobTitle "Master Certified Life Coach", sameAs social links if present, image).
+- `/programs/:slug`: add `Course` schema (name, description, provider Person Coach Kay, offers price/currency from program data) per program.
+- `/store`: `ItemList` of products.
+- `/modules`: `ItemList` of modules.
+- `/coach-kay` + key marketing pages: add `BreadcrumbList`.
+- Keep `globalGraph()` (Organization + WebSite + Person) inlined sitewide via SEOHead — already does this.
 
-## What I won't change
-- The Supabase auth SDK's storage mechanism (would require SSR).
-- Form UX or copy — validation tightening only.
-- Any business logic.
+### 5. Mark scanner findings fixed
+After the edits, batch-call `seo--update_findings` for: canonical, duplicate-title, duplicate-description, H1, JSON-LD, and noindex findings, with one-line explanations each.
 
-## Files I expect to touch
-- `public/_headers` (new)
-- A handful of form components and edge functions **only if** I find a missing Zod schema
-- `mem://security/security-memory` (new/updated)
+## Files to touch
+- `src/components/SEOHead.tsx` (add `noIndex` prop)
+- `src/pages/ClaritySession.tsx` (dynamic path)
+- `src/pages/{Auth,ResetPassword,Onboarding,Dashboard,Profile,CoachChat,MirrorChallenge,ResultScreen,OrderSuccess,Unsubscribe,EmailUnsubscribe,Sitemap}.tsx` (noIndex)
+- `src/pages/admin/*.tsx` (add SEOHead with noIndex where missing)
+- `src/pages/CoachKay.tsx`, `ProgramDetail.tsx`, `Store.tsx`, `Modules.tsx` (richer JSON-LD)
+- `scripts/generate-sitemap.ts` (drop /auth, /sitemap)
+- `public/robots.txt` (verify disallow list)
+
+No backend, no database, no business-logic changes.
 
 Approve and I'll implement.

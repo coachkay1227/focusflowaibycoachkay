@@ -64,7 +64,7 @@ const Dashboard = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
-      <SEOHead title="Dashboard — FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" />
+      <SEOHead title="Dashboard — FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />
 

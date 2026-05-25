@@ -55,18 +55,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://coachkayai.life/auth</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://coachkayai.life/sitemap</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://coachkayai.life/clarity/clarity-check</loc>
     <lastmod>2026-05-25</lastmod>
     <changefreq>monthly</changefreq>

@@ -22,6 +22,7 @@ const Sitemap = () => (
   <div className="relative min-h-screen overflow-hidden grain-overlay">
     <FloatingOrbs />
     <SEOHead
+      noIndex
       title="Sitemap — FocusFlow AI"
       description="Browse all pages and programs on FocusFlow AI, your clarity coaching platform by Coach Kay."
       path="/sitemap"

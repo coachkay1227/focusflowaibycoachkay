@@ -14,7 +14,10 @@ interface SitemapEntry {
   priority?: string;
 }
 
-// --- Static public routes (mirrors <Route> entries in src/App.tsx) ---
+// --- Static public routes (mirrors indexable <Route> entries in src/App.tsx) ---
+// /auth, /sitemap, /reset-password, /onboarding, /dashboard, /profile, /coach, /result,
+// /mirror-challenge, /order-success, /unsubscribe, /email-unsubscribe and /admin/* are
+// intentionally excluded — they're noindex utility/private pages.
 const staticEntries: SitemapEntry[] = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/modules", priority: "0.9", changefreq: "weekly" },
@@ -25,8 +28,6 @@ const staticEntries: SitemapEntry[] = [
   { path: "/assessment", priority: "0.8", changefreq: "monthly" },
   { path: "/challenges", priority: "0.7", changefreq: "monthly" },
   { path: "/starter-kit", priority: "0.8", changefreq: "monthly" },
-  { path: "/auth", priority: "0.4", changefreq: "monthly" },
-  { path: "/sitemap", priority: "0.3", changefreq: "monthly" },
 ];
 
 // --- Dynamic: clarity modules from src/lib/modules.ts ---

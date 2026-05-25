@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/book-store";
 import { trackEvent } from "@/lib/analytics";
@@ -46,6 +47,12 @@ export default function OrderSuccess() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
+      <SEOHead
+        title="Order Confirmed — FocusFlow AI"
+        description="Thank you for your FocusFlow AI order. We've received your intake and Coach Kay's team will be in touch within 24 hours with next steps."
+        path="/order-success"
+        noIndex
+      />
       <div className="max-w-2xl w-full text-center">
         <div className="mx-auto mb-8 h-20 w-20 rounded-full border-2 border-primary flex items-center justify-center animate-in zoom-in-50 duration-500">
           <Check className="h-10 w-10 text-primary" strokeWidth={2} />
