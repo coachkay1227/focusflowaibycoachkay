@@ -1,0 +1,1 @@
+ALTER TYPE public.access_tier ADD VALUE IF NOT EXISTS 'rent_agent';
