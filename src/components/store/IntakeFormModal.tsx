@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { trackEvent } from "@/lib/analytics";
 import {
   ADDONS,
   BOOK_PURPOSES,
@@ -138,6 +139,16 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
   const onSubmit = async (data: IntakeFormData) => {
     setSubmitting(true);
     setSubmitError(null);
+    void trackEvent(
+      "studio_intake_submit",
+      {
+        slug: data.package_slug,
+        addons: data.addons,
+        order_total_cents: orderTotal,
+        inquiry: isInquiry,
+      },
+      selectedPackage?.category ?? null
+    );
     try {
       if (isInquiry) {
         const { error: inqErr } = await supabase.functions.invoke("apply-now", {
@@ -164,6 +175,11 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
           },
         });
         if (inqErr) throw inqErr;
+        void trackEvent(
+          "studio_inquiry_submitted",
+          { slug: data.package_slug, package_name: selectedPackage?.name },
+          selectedPackage?.category ?? null
+        );
         toast({
           title: "Inquiry received",
           description: "Coach Kay's team will follow up by email shortly.",
@@ -179,10 +195,23 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
       if (error) throw error;
       const url = (res as { url?: string })?.url;
       if (!url) throw new Error("Checkout URL missing");
+      void trackEvent(
+        "studio_checkout_started",
+        {
+          slug: data.package_slug,
+          order_total_cents: orderTotal,
+        },
+        selectedPackage?.category ?? null
+      );
       window.location.href = url;
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not start checkout";
       setSubmitError(msg);
+      void trackEvent(
+        "studio_checkout_failed",
+        { slug: data.package_slug, message: msg, inquiry: isInquiry },
+        selectedPackage?.category ?? null
+      );
       toast({ title: "Checkout failed", description: msg, variant: "destructive" });
       setSubmitting(false);
       requestAnimationFrame(() => {
@@ -441,6 +470,19 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
               )}
             </Button>
           </div>
+
+          {/* Trust + policy footer */}
+          <p className="text-[11px] text-muted-foreground/80 leading-relaxed text-center pt-2">
+            By submitting you agree that work begins on intake approval and all
+            sales are final once production starts. Questions? Email{" "}
+            <a
+              href="mailto:Hello@coachkayelevates.org"
+              className="text-primary hover:underline"
+            >
+              Hello@coachkayelevates.org
+            </a>
+            .
+          </p>
 
           {/* Cinematic submitting overlay */}
           {submitting && (

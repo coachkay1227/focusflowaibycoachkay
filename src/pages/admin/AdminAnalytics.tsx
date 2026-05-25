@@ -19,12 +19,28 @@ interface TierStat {
   count: number;
 }
 
+interface StudioStat {
+  event: string;
+  count: number;
+}
+
+const STUDIO_EVENTS: { event: string; label: string }[] = [
+  { event: "studio_lane_view", label: "Lane Views" },
+  { event: "studio_intake_open", label: "Intake Opened" },
+  { event: "studio_intake_submit", label: "Intake Submitted" },
+  { event: "studio_checkout_started", label: "Checkout Started" },
+  { event: "studio_checkout_paid", label: "Checkout Paid" },
+  { event: "studio_inquiry_submitted", label: "Inquiries Submitted" },
+  { event: "studio_checkout_failed", label: "Checkout Failed" },
+];
+
 const AdminAnalytics = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin, loading: rolesLoading } = useRoles();
   const [moduleStats, setModuleStats] = useState<ModuleStat[]>([]);
   const [tierStats, setTierStats] = useState<TierStat[]>([]);
+  const [studioStats, setStudioStats] = useState<StudioStat[]>([]);
   const [avgSessions, setAvgSessions] = useState(0);
   const [challengeCompletion, setChallengeCompletion] = useState({ total: 0, completed: 0 });
   const [loading, setLoading] = useState(true);
@@ -99,6 +115,21 @@ const AdminAnalytics = () => {
         const totalChallenges = challenges?.length ?? 0;
         const completedChallenges = challenges?.filter((c) => (c.current_day ?? 0) >= 7).length ?? 0;
         setChallengeCompletion({ total: totalChallenges, completed: completedChallenges });
+
+        const { data: studioEvents } = await supabase
+          .from("analytics_events")
+          .select("event")
+          .in(
+            "event",
+            STUDIO_EVENTS.map((s) => s.event)
+          );
+        const studioCounts: Record<string, number> = {};
+        studioEvents?.forEach((e) => {
+          studioCounts[e.event] = (studioCounts[e.event] || 0) + 1;
+        });
+        setStudioStats(
+          STUDIO_EVENTS.map((s) => ({ event: s.event, count: studioCounts[s.event] ?? 0 }))
+        );
       } catch (error) {
         // Analytics fetch failed
       } finally {
@@ -250,6 +281,34 @@ const AdminAnalytics = () => {
             </div>
           </AnimatedSection>
         </div>
+
+        <AnimatedSection delay={250}>
+          <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6 mt-6">
+            <h3 className="font-heading text-lg font-light mb-1">Studio Funnel</h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Story, Legacy &amp; Publishing Studio — lifetime events. Inquiry
+              submissions also trigger an email to Coach Kay&apos;s team.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {STUDIO_EVENTS.map((s) => {
+                const stat = studioStats.find((x) => x.event === s.event);
+                return (
+                  <div
+                    key={s.event}
+                    className="rounded-md border border-border/40 bg-background/30 p-4"
+                  >
+                    <div className="font-mono-label text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {s.label}
+                    </div>
+                    <div className="font-heading text-2xl font-light text-primary mt-1">
+                      {stat?.count ?? 0}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </AnimatedSection>
       </div>
     </div>
   );

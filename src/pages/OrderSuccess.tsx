@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/book-store";
+import { trackEvent } from "@/lib/analytics";
 
 interface OrderSummary {
   package_name: string;
@@ -29,6 +30,15 @@ export default function OrderSuccess() {
         });
         if (error) throw error;
         setSummary(data as OrderSummary);
+        void trackEvent(
+          "studio_checkout_paid",
+          {
+            session_id: sessionId,
+            package_name: (data as OrderSummary | null)?.package_name,
+            order_total_cents: (data as OrderSummary | null)?.order_total,
+          },
+          "studio"
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not verify order");
       }
