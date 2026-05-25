@@ -41,7 +41,14 @@ interface OrderRow {
 }
 
 const STATUSES = ["pending_payment", "paid", "in_progress", "delivered", "cancelled"];
-const CATEGORIES: Array<BookCategory | "all"> = ["all", "children", "coloring", "nonfiction"];
+const CATEGORIES: Array<BookCategory | "all"> = [
+  "all",
+  "storybooks",
+  "legacy",
+  "authority",
+  "creator",
+  "autism",
+];
 const FILTERS_KEY = "admin-orders-filters-v1";
 const PAGE_SIZES = [25, 50, 100, 200];
 

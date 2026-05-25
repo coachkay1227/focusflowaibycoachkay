@@ -1,11 +1,13 @@
-import { BookOpen, Palette, BookMarked, type LucideIcon } from "lucide-react";
+import { BookOpen, Scroll, Award, Palette, HeartHandshake, type LucideIcon } from "lucide-react";
 import type { BookCategory } from "@/lib/book-store";
 import { CATEGORY_LABELS } from "@/lib/book-store";
 
 const ICONS: Record<BookCategory, LucideIcon> = {
-  children: BookOpen,
-  coloring: Palette,
-  nonfiction: BookMarked,
+  storybooks: BookOpen,
+  legacy: Scroll,
+  authority: Award,
+  creator: Palette,
+  autism: HeartHandshake,
 };
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
 }
 
 export function CategoryTabs({ active, onChange }: Props) {
-  const cats: BookCategory[] = ["children", "coloring", "nonfiction"];
+  const cats: BookCategory[] = ["storybooks", "legacy", "authority", "creator", "autism"];
   return (
     <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-8 border-b border-border/40 mb-12">
       {cats.map((c) => {

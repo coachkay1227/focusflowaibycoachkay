@@ -105,7 +105,11 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
   const agreeFinal = watch("agree_final_sale");
 
   const selectedPackage = findPackage(watchedSlug);
-  const isChildren = selectedPackage?.category === "children";
+  const isStorybook =
+    selectedPackage?.category === "storybooks" ||
+    selectedPackage?.category === "legacy" ||
+    selectedPackage?.category === "autism";
+  const isInquiry = !!selectedPackage?.inquiryOnly;
 
   const orderTotal = useMemo(() => {
     const pkg = findPackage(watchedSlug);
@@ -135,6 +139,39 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
     setSubmitting(true);
     setSubmitError(null);
     try {
+      if (isInquiry) {
+        const { error: inqErr } = await supabase.functions.invoke("apply-now", {
+          body: {
+            type: "inquiry",
+            name: data.client_name,
+            email: data.client_email,
+            programName: selectedPackage?.name ?? "Studio Inquiry",
+            message: [
+              `Package: ${selectedPackage?.name}`,
+              `Purpose: ${data.book_purpose}`,
+              data.book_title ? `Title idea: ${data.book_title}` : null,
+              `Vision: ${data.book_vision}`,
+              data.characters ? `Characters / Subject: ${data.characters}` : null,
+              `Illustration style: ${data.illustration_style}`,
+              data.special_requirements
+                ? `Notes: ${data.special_requirements}`
+                : null,
+              data.client_phone ? `Phone: ${data.client_phone}` : null,
+              `Source: ${data.referral_source}`,
+            ]
+              .filter(Boolean)
+              .join("\n"),
+          },
+        });
+        if (inqErr) throw inqErr;
+        toast({
+          title: "Inquiry received",
+          description: "Coach Kay's team will follow up by email shortly.",
+        });
+        setSubmitting(false);
+        onOpenChange(false);
+        return;
+      }
       const { data: res, error } = await supabase.functions.invoke(
         "create-book-checkout",
         { body: data }
@@ -274,7 +311,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
                   <p className="text-xs text-destructive mt-1">{errors.book_vision.message}</p>
                 )}
               </div>
-              {isChildren && (
+              {isStorybook && (
                 <div className="sm:col-span-2">
                   <Label className={labelCls}>Main character(s) or subject</Label>
                   <Input className={inputCls} {...register("characters")} />
@@ -381,7 +418,9 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
           <div className="hidden sm:flex items-center justify-between gap-4 pt-4 border-t border-border/40">
             <p className="flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-primary/80" />
-              Secure checkout powered by Stripe
+              {isInquiry
+                ? "Custom-quote inquiry — no payment now"
+                : "Secure checkout powered by Stripe"}
             </p>
             <Button
               type="submit"
@@ -391,10 +430,14 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
               {submitting ? (
                 <span className="inline-flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Preparing secure checkout…
+                  {isInquiry ? "Sending inquiry…" : "Preparing secure checkout…"}
                 </span>
               ) : (
-                <>Proceed to Payment — {formatUSD(orderTotal)}</>
+                <>
+                  {isInquiry
+                    ? "Request Custom Quote"
+                    : `Proceed to Payment — ${formatUSD(orderTotal)}`}
+                </>
               )}
             </Button>
           </div>
@@ -410,7 +453,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
                 <Loader2 className="absolute inset-0 h-12 w-12 text-primary animate-spin" />
               </div>
               <p className="font-heading text-xl text-foreground">
-                Preparing your secure checkout
+                {isInquiry ? "Sending your inquiry" : "Preparing your secure checkout"}
               </p>
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 Do not close this window
@@ -443,10 +486,10 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
             {submitting ? (
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Preparing…
+                {isInquiry ? "Sending…" : "Preparing…"}
               </span>
             ) : (
-              "Proceed to Payment"
+              isInquiry ? "Request Custom Quote" : "Proceed to Payment"
             )}
           </Button>
         </div>

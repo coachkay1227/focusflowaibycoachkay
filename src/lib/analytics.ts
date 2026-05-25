@@ -11,7 +11,17 @@ import { supabase } from "@/integrations/supabase/client";
  * the funnel `path` matters (personal / business / ai).
  */
 
-export type FunnelPath = "personal" | "business" | "ai" | "unknown";
+export type FunnelPath =
+  | "personal"
+  | "business"
+  | "ai"
+  | "studio"
+  | "storybooks"
+  | "legacy"
+  | "authority"
+  | "creator"
+  | "autism"
+  | "unknown";
 
 const SESSION_KEY = "ff_analytics_session_id";
 
