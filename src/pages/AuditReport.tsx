@@ -152,10 +152,6 @@ const AuditReport = () => {
     else toast.error("Couldn't link audit — make sure you're signed in");
   };
 
-  // Build Studio waitlist (inline, only renders when the recommended
-  // next-best-move is a build_studio_* slug).
-  const isBuildStudio = nbm.offer_slug.startsWith("build_studio_");
-
   const pillars = ["foundation", "opportunity", "create", "uplift", "support"] as const;
   const pillarLabels = { foundation: "Foundation", opportunity: "Opportunity", create: "Create", uplift: "Uplift", support: "Support" };
 
