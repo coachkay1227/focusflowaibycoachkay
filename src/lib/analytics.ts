@@ -40,13 +40,15 @@ export async function trackEvent(
   try {
     const { data } = await supabase.auth.getSession();
     const userId = data.session?.user?.id ?? null;
-    await supabase.from("analytics_events").insert({
-      event,
-      path: path ?? (properties.path as FunnelPath | undefined) ?? null,
-      session_id: getSessionId(),
-      user_id: userId,
-      properties,
-    });
+    await supabase.from("analytics_events").insert([
+      {
+        event,
+        path: path ?? (properties.path as FunnelPath | undefined) ?? undefined,
+        session_id: getSessionId(),
+        user_id: userId ?? undefined,
+        properties: properties as never,
+      },
+    ]);
   } catch {
     // analytics must never break UX
   }
