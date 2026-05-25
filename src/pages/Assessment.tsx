@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
+import { trackEvent, trackCta } from "@/lib/analytics";
 
 type Dimension = "M" | "A" | "C";
 
@@ -236,6 +237,17 @@ const Assessment = () => {
     result = { mind, action, character, code: `${mind}-${action}-${character}` };
   }
 
+  // Fire `assessment_completed` exactly once when the result becomes available.
+  useEffect(() => {
+    if (!done || !result) return;
+    void trackEvent(
+      "assessment_completed",
+      { code: result.code, mind: result.mind, action: result.action, character: result.character },
+      "business"
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [done]);
+
   return (
     <div
       ref={containerRef}
@@ -369,7 +381,10 @@ const Assessment = () => {
 
             <div className="mt-12 flex flex-col sm:flex-row gap-3">
               <Button
-                onClick={() => setApplyOpen(true)}
+                onClick={() => {
+                  trackCta("apply_business_reset", "business", { code: result?.code });
+                  setApplyOpen(true);
+                }}
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >

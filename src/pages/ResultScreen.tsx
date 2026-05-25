@@ -16,6 +16,7 @@ import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compa
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
+import { trackCta } from "@/lib/analytics";
 
 interface InsightResult {
   truth: string;
@@ -503,7 +504,10 @@ const ResultScreen = () => {
 
             {/* Primary CTA — apply for the 30-Day Personal Reset */}
             <Button
-              onClick={() => setApplyOpen(true)}
+              onClick={() => {
+                trackCta("apply_personal_reset", "personal", { moduleId });
+                setApplyOpen(true);
+              }}
               className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-10 py-6 text-lg shadow-lg shadow-primary/20"
             >
               <Sparkles className="mr-2 h-5 w-5" />

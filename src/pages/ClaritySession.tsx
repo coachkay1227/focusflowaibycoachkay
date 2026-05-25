@@ -14,6 +14,7 @@ import SEOHead from "@/components/SEOHead";
 import { ArrowRight, ArrowLeft, Sparkles, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { trackEvent } from "@/lib/analytics";
 
 const ClaritySession = () => {
   const navigate = useNavigate();
@@ -85,6 +86,12 @@ const ClaritySession = () => {
   }, [isAdmin, searchParams, questions, navigate, resolvedModuleId]);
 
   const finishSession = (finalAnswers: Record<string, string>) => {
+    // Funnel: clarity (Personal Clarity Check) completed
+    void trackEvent(
+      "clarity_completed",
+      { moduleId: resolvedModuleId, questionCount: questions.length },
+      "personal"
+    );
     // Auth users skip the gate — they've already given us their email
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {

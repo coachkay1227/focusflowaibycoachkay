@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, CheckCircle2, Download, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { trackEvent, trackCta } from "@/lib/analytics";
 
 const StarterKit = () => {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ const StarterKit = () => {
         /* ignore */
       }
       setSent(true);
+      void trackEvent("starter_kit_submitted", { email: email.trim().toLowerCase() }, "ai");
       toast({ title: "You're in.", description: "Check your inbox — the kit is on its way." });
     } catch (err) {
       toast({
@@ -166,7 +168,13 @@ const StarterKit = () => {
               Check your inbox (and spam, just in case).
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={() => navigate("/programs/30-day-ai-reset")} className="gap-2">
+              <Button
+                onClick={() => {
+                  trackCta("see_ai_reset", "ai");
+                  navigate("/programs/30-day-ai-reset");
+                }}
+                className="gap-2"
+              >
                 <Sparkles className="h-4 w-4" /> See the 30-Day AI Reset
               </Button>
               <Button variant="outline" onClick={() => navigate("/")}>
