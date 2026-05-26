@@ -114,6 +114,12 @@ const Index = () => {
               >
                 Studio
               </button>
+              <button
+                onClick={() => navigate("/faq")}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+              >
+                FAQ
+              </button>
               <Button
                 onClick={() => navigate("/auth")}
                 variant="ghost"

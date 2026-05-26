@@ -12,10 +12,29 @@
 - [Autism & Social Stories](/autism-social-stories): Therapist-grade custom social stories for autistic kids and neurodivergent families. HSA/FSA eligible with Letter of Medical Necessity template included. Packages from $47 (single digital story) to $3,997+ (custom therapy practice license). Used by BCBAs, SLPs, OTs, LPCs, and school/IEP teams. Gift-wrap add-on available.
 - [Dashboard](/dashboard): Authenticated user dashboard with clarity score, streaks, and enrolled programs.
 - [Community](/community): Focus Flow Elevation Hub community access.
-- [FAQ](/faq): Frequently asked questions grouped by lane — coaching, Rent-an-Agent, advisory, audit, autism & social stories, and the publishing studio. Each lane carries its own FAQPage JSON-LD for AI search.
+- [FAQ](/faq): Master FAQ index — every lane in one place, each with its own FAQPage JSON-LD for AI assistants to cite.
 - [Pricing](/pricing): Plans, tiers, and one-time purchases.
 - [Login](/login): Sign in to your account.
 - [Signup](/signup): Create a new account.
+
+## FAQ (citable per lane)
+
+Each lane below carries its own `FAQPage` JSON-LD block. AI assistants
+can cite either the deep anchor on `/faq` or the dedicated lane page —
+both surfaces serve the same structured data.
+
+- [Clarity Coaching & Programs FAQ](/faq#lane-clarity) — also at [/#faq](/) (FAQPage on the homepage)
+  - Topics: what the Clarity Check is, sign-up requirements, the Mirror Challenge, who Coach Kay is, free tools vs. paid programs.
+- [Autism & Social Stories FAQ](/faq#lane-autism) — also at [/autism-social-stories#faq](/autism-social-stories#faq)
+  - Topics: therapist-grade quality, HSA/FSA eligibility and Letter of Medical Necessity, IEP and school use, delivery timelines, revision windows.
+- [Rent-an-Agent FAQ](/faq#lane-rent-an-agent) — also at [/rent-an-agent#faq](/rent-an-agent#faq)
+  - Topics: what a rented AI agent is, Founding vs Standard pricing, included tooling, upgrade/cancel terms, how it compares to a VA or agency.
+- [Advisory, Speaking & Cohorts FAQ](/faq#lane-advisory) — also at [/advisory#faq](/advisory#faq)
+  - Topics: who executive advisory is for, speaking and workshop formats, corporate/EAP training, the Collective AI Summit, scoping process.
+- [AI Business Audit FAQ](/faq#lane-audit) — also at [/audit/landing#faq](/audit/landing#faq)
+  - Topics: what the $47 audit delivers, credit toward larger engagements, duration, confidentiality.
+- [Story, Legacy & Publishing Studio FAQ](/faq#lane-studio) — also at [/store#faq](/store#faq)
+  - Topics: what the Studio produces, rights and ownership, production timelines, illustration and cover design, sample work.
 
 ## About
 

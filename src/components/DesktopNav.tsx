@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
-import { LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, User, Shield, LogOut, Info, BookMarked, Bot, Briefcase } from "lucide-react";
+import { LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, User, Shield, LogOut, Info, BookMarked, Bot, Briefcase, HelpCircle } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
@@ -11,6 +11,7 @@ const navItems = [
   { label: "Coach Kay", path: "/coach-kay", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },
   { label: "Studio", path: "/store", icon: BookMarked, authOnly: false },
+  { label: "FAQ", path: "/faq", icon: HelpCircle, authOnly: false },
   { label: "About", path: "/about", icon: Info, authOnly: false },
 ];
 
