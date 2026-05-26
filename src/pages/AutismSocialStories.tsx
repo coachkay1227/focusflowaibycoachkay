@@ -16,10 +16,16 @@ const inquiryPackages = AUTISM_DISPLAY.filter((p) => p.inquiryOnly);
 
 function useReveal() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(true);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (typeof IntersectionObserver === "undefined") return;
+    // Only animate cards that start below the fold; in-view cards stay visible.
+    const rect = el.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (inView) return;
+    setShown(false);
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { setShown(true); obs.disconnect(); } },
       { threshold: 0.15 },
