@@ -12,7 +12,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap, Mail, CheckCircle2 } from "lucide-react";
+import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap, Mail, CheckCircle2, Share2, Copy, Quote } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
@@ -51,6 +51,7 @@ const ResultScreen = () => {
   const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "skipped" | "failed">("idle");
   const [sentToEmail, setSentToEmail] = useState<string | null>(null);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!answers) {
@@ -188,6 +189,37 @@ const ResultScreen = () => {
     const type = trackResult.recommendedChallengeType;
     return `${type.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase())} Challenge`;
   }, [trackResult]);
+
+  // Mirror the user's own words back at them — premium clarity tools always do this.
+  const mirroredAnswers = useMemo(() => {
+    if (!answers) return [];
+    const items: { label: string; value: string }[] = [];
+    if (answers.triedSoFar?.trim()) items.push({ label: "What you've tried", value: answers.triedSoFar.trim() });
+    if (answers.holdingBack?.trim()) items.push({ label: "What's really in the way", value: answers.holdingBack.trim() });
+    if (answers.clarityWouldChange?.trim()) items.push({ label: "What clarity would change first", value: answers.clarityWouldChange.trim() });
+    return items;
+  }, [answers]);
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/clarity?ref=share`;
+    const text = "I just took the Clarity Check by Coach Kay — 5 minutes, no sign-up. It cut through more than I expected.";
+    if (typeof navigator !== "undefined" && (navigator as Navigator).share) {
+      try {
+        await (navigator as Navigator).share({ title: "Clarity Check by Coach Kay", text, url });
+        return;
+      } catch {
+        // user dismissed — fall through to copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setCopied(true);
+      toast({ title: "Link copied", description: "Send it to someone who needs clarity." });
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast({ title: "Couldn't copy", description: "Long-press the link to share it manually." });
+    }
+  };
 
   if (!answers) return null;
 
