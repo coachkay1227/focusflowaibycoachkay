@@ -2,38 +2,50 @@ import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Award, Users, BookOpen } from "lucide-react";
+import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart } from "lucide-react";
 import coachKayImg from "@/assets/coach-kay.jpeg";
 import { webPage, breadcrumb, PERSON_ID } from "@/lib/seo-schema";
+import MobileNav from "@/components/MobileNav";
 
 const testimonials = [
   {
-    name: "Amira J.",
-    text: "Coach Kay helped me see patterns I'd been blind to for years. In three sessions, I made more progress than in two years of journaling alone.",
-    role: "Entrepreneur",
+    name: "Sheila",
+    text: "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone — I knew exactly which one thing to protect every morning.",
+    role: "Cohort Member · Reset 30",
+    pillar: "F · FOCUS",
   },
   {
-    name: "David T.",
-    text: "She doesn't sugarcoat — and that's exactly what I needed. Direct, warm, and genuinely invested in my growth.",
-    role: "Tech Lead",
+    name: "Starr",
+    text: "Coach Kay made AI feel like a journal that actually answers back. The Clarity Check named the pattern I'd been dancing around for years in one paragraph. That's when I stopped second-guessing and started building.",
+    role: "Life Coaching Client · Transformation 90",
+    pillar: "C · CLARITY  ·  U · UPLEVEL",
   },
   {
-    name: "Sarah M.",
-    text: "The Clarity Session was a turning point. I finally understood why I kept self-sabotaging and got a clear action plan to move forward.",
-    role: "Marketing Director",
+    name: "Buzz",
+    text: "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own — not one I rented from a YouTube video.",
+    role: "Founder · AI Simplified Track",
+    pillar: "O · OWNERSHIP  ·  S · SUSTAIN",
   },
   {
-    name: "Marcus L.",
-    text: "I've worked with coaches before, but Coach Kay is different. She sees beneath the surface and asks the questions no one else will.",
-    role: "Creative Director",
+    name: "Renee",
+    text: "Forward Focus met my family where we were after my brother came home. No judgment, real tools, and a community that actually understood reentry. We finally felt seen.",
+    role: "Community Member · Forward Focus Elevation",
+    pillar: "S · SUSTAIN",
   },
 ];
 
 const credentials = [
-  { icon: Award, label: "Certified Life & Transformation Coach" },
-  { icon: BookOpen, label: "AI-Enhanced Coaching Methodology" },
-  { icon: Users, label: "500+ Clients Coached Worldwide" },
-  { icon: Star, label: "Specializing in Clarity, Purpose & Alignment" },
+  { icon: Award, label: "5x Certified Life & Transformation Coach" },
+  { icon: BookOpen, label: "Mindfulness & Goal-Setting Specialist" },
+  { icon: Star, label: "Life Purpose Coaching Certification" },
+  { icon: Users, label: "Accredited Consultant Strategist" },
+];
+
+const recognitions = [
+  "Woman-Owned Business",
+  "COED Workforce Partner",
+  "Columbus Chamber Member",
+  "WIOA-Aligned Programs",
 ];
 
 const CoachKay = () => {
@@ -43,7 +55,7 @@ const CoachKay = () => {
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
         title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
-        description="Kenza Alaoui (Coach Kay) is an emotionally intelligent, pattern-aware life coach who blends AI technology with deep human insight to help you find clarity."
+        description="Kenza Alaoui (Coach Kay) — founder of Coach Kay Elevates (for-profit workforce & AI literacy) and Forward Focus Elevation (nonprofit support for justice-impacted families). Pattern-aware coaching that blends AI with human insight."
         path="/coach-kay"
         jsonLd={[
           webPage("/coach-kay", "Coach Kay", "AboutPage"),
@@ -56,6 +68,21 @@ const CoachKay = () => {
           ),
         ]}
       />
+
+      {/* Header / Nav */}
+      <div className="relative z-20 px-6 md:px-12 py-6 flex items-center justify-between border-b border-border/40">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" /> Home
+        </button>
+        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
+          <span aria-hidden="true" className="text-primary font-medium">Focus</span>
+          <span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
+        </div>
+        <MobileNav />
+      </div>
 
       {/* Hero */}
       <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24">
@@ -124,26 +151,36 @@ const CoachKay = () => {
             </h2>
             <div className="space-y-5 text-foreground/80 leading-relaxed">
               <p>
-                Coach Kay's journey into coaching wasn't born from a textbook — it
-                was forged through lived experience. After years of navigating her
-                own seasons of uncertainty, burnout, and reinvention, she discovered
-                that the most powerful breakthroughs come when someone has the
-                courage to name what others won't say.
+                Coach Kay is a Columbus-based founder, 5x certified life coach,
+                full-time banking professional, and single mom to a daughter with
+                autism. Her frameworks weren't built in a classroom — they were
+                built in the margins of a real life, for people doing the same.
               </p>
               <p>
-                That insight became the foundation of FocusFlow AI — a platform
-                where technology amplifies empathy, where AI-driven pattern
-                detection meets emotionally intelligent coaching, and where every
-                interaction is designed to move you closer to the life you actually
-                want.
+                She leads two parallel missions. <strong>Coach Kay Elevates</strong>{" "}
+                is her for-profit workforce-readiness and AI-literacy program — a
+                COED partner serving working families across Central Ohio with
+                cohort-based learning, live sessions, and pilot programs for
+                organizations. <strong>Forward Focus Elevation</strong> is her
+                separate nonprofit, providing trauma-informed, income-based
+                support for justice-impacted families and crime victims and
+                survivors.
               </p>
               <p>
-                Her approach is simple: balance empathy with accountability. Connect
-                emotions to patterns to actions. Use simple, powerful language — no
-                jargon, no fluff. Whether you're stuck in a loop, standing at a
-                crossroads, or ready to level up, Coach Kay meets you where you are
-                and challenges you to go further.
+                Her approach across both: balance empathy with accountability,
+                connect emotions to patterns to actions, and make AI simple
+                enough that anyone can use it to build momentum that sticks.
               </p>
+            </div>
+            <div className="mt-10 flex flex-wrap justify-center gap-2">
+              {recognitions.map((r) => (
+                <span
+                  key={r}
+                  className="font-mono-label text-primary/80 tracking-[0.18em] text-[10px] px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5"
+                >
+                  {r}
+                </span>
+              ))}
             </div>
           </AnimatedSection>
         </div>
@@ -202,11 +239,103 @@ const CoachKay = () => {
                   <div>
                     <p className="font-medium text-foreground">{t.name}</p>
                     <p className="text-sm text-muted-foreground">{t.role}</p>
+                    <p className="font-mono-label text-primary/80 tracking-[0.2em] text-[10px] mt-2">
+                      {t.pillar}
+                    </p>
                   </div>
                 </div>
               </AnimatedSection>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Where this work lives — two brands */}
+      <section className="bg-secondary/20 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <AnimatedSection>
+            <p className="text-center font-mono-label text-primary tracking-[0.2em] mb-3">
+              TWO MISSIONS · ONE COACH
+            </p>
+            <h2 className="mb-4 text-center font-heading text-3xl font-bold">
+              Where Coach Kay's Work Lives
+            </h2>
+            <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
+              Coach Kay leads two distinct organizations. Each operates
+              independently with its own programs, terms, and privacy practices.
+            </p>
+          </AnimatedSection>
+          <div className="grid gap-6 md:grid-cols-2">
+            <AnimatedSection>
+              <div className="flex h-full flex-col rounded-xl border border-border bg-card p-8">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <Briefcase className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="font-mono-label text-primary tracking-[0.2em] text-[10px]">
+                    FOR-PROFIT · COLUMBUS, OH
+                  </span>
+                </div>
+                <h3 className="font-heading text-2xl mb-2">Coach Kay Elevates</h3>
+                <p className="text-sm text-muted-foreground mb-2">Workforce Readiness &amp; AI Literacy</p>
+                <p className="text-foreground/80 leading-relaxed flex-1 mb-6">
+                  Structured cohort program helping working families build AI
+                  literacy, career-ready skills, and sustainable momentum. COED
+                  partner. WIOA-aligned. Pilot programs available for
+                  organizations and public-sector partners.
+                </p>
+                <a
+                  href="https://coachkayelevates.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit coachkayelevates.org (opens in a new tab)"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
+                >
+                  Visit coachkayelevates.org <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={100}>
+              <div className="flex h-full flex-col rounded-xl border border-border bg-card p-8">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <Heart className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="font-mono-label text-primary tracking-[0.2em] text-[10px]">
+                    NONPROFIT · JUSTICE-IMPACTED FAMILIES
+                  </span>
+                </div>
+                <h3 className="font-heading text-2xl mb-2">Forward Focus Elevation</h3>
+                <p className="text-sm text-muted-foreground mb-2">Trauma-Informed Family Support</p>
+                <p className="text-foreground/80 leading-relaxed flex-1 mb-4">
+                  AI-enhanced, trauma-informed, income-based support for
+                  justice-impacted families and crime victims and survivors.
+                  Free learning community, peer support, and crisis resources.
+                </p>
+                <p className="text-[11px] text-muted-foreground/70 mb-6 border-l-2 border-primary/30 pl-3">
+                  In crisis? Call <a href="tel:911" className="underline">911</a> · Community help{" "}
+                  <a href="tel:211" className="underline">211</a> · Mental health{" "}
+                  <a href="tel:988" className="underline">988</a> · Text <strong>HOME</strong> to <strong>741741</strong>
+                </p>
+                <a
+                  href="https://forward-focus-elevation.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit forward-focus-elevation.org (opens in a new tab)"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
+                >
+                  Visit forward-focus-elevation.org <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+            </AnimatedSection>
+          </div>
+          <p className="mt-8 text-center text-xs text-muted-foreground/70 max-w-2xl mx-auto">
+            Forward Focus Elevation is a separate nonprofit entity. Donations and
+            program participation are governed by that organization's own terms
+            and privacy policy. Coach Kay Elevates is a for-profit woman-owned
+            business.
+          </p>
         </div>
       </section>
 
