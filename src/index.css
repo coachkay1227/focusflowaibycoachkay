@@ -51,6 +51,14 @@
     --sidebar-accent-foreground: 42 60% 90%;
     --sidebar-border: 210 20% 20%;
     --sidebar-ring: 43 75% 52%;
+
+    /* F.O.C.U.S. Pillar tokens (HSL) — used by PillarBadge, PillarStrip,
+       Modules grouping, and any program-card pillar accents. Single source. */
+    --pillar-f: 39 60% 51%;   /* Foundation — gold/amber */
+    --pillar-o: 213 49% 53%;  /* Opportunity — blue */
+    --pillar-c: 269 30% 51%;  /* Create — violet */
+    --pillar-u: 156 56% 40%;  /* Uplift — green */
+    --pillar-s: 339 58% 58%;  /* Support — rose */
   }
 }
 
