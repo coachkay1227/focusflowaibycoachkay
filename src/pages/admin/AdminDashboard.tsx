@@ -1,6 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNav } from "@/components/admin/AdminNav";
@@ -16,8 +14,6 @@ interface RecentUser {
 }
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { isAdmin, loading: rolesLoading } = useRoles();
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -28,17 +24,6 @@ const AdminDashboard = () => {
   const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [activity, setActivity] = useState<{ type: string; name: string; detail: string; timestamp: string }[]>([]);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (!rolesLoading && !isAdmin) {
-      navigate("/dashboard");
-      return;
-    }
-  }, [user, isAdmin, rolesLoading, navigate]);
 
   useEffect(() => {
     if (!isAdmin) return;

@@ -14,7 +14,9 @@ const navItems = [
   { label: "About", path: "/about", icon: Info, authOnly: false },
 ];
 
-const PRIVATE_ROUTES = ["/admin", "/kiosk", "/email-preview", "/onboarding", "/auth", "/reset-password", "/dashboard", "/community", "/coach", "/challenges", "/modules", "/result", "/clarity", "/mirror-challenge", "/programs", "/profile"];
+// Only fully hide the global nav on truly chrome-less surfaces.
+// Every other page keeps the nav so the user always has a way out.
+const NAV_HIDDEN_ROUTES = ["/kiosk", "/auth", "/reset-password", "/onboarding"];
 
 const DesktopNav = () => {
   const navigate = useNavigate();
@@ -22,10 +24,11 @@ const DesktopNav = () => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useRoles();
 
-  const isPrivateRoute = PRIVATE_ROUTES.some((r) => location.pathname.startsWith(r));
+  const isHiddenRoute = NAV_HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
   const isHome = location.pathname === "/";
 
-  if (isPrivateRoute || isHome) return null;
+  // Home has its own bespoke hero nav; everywhere else uses the global one.
+  if (isHiddenRoute || isHome) return null;
 
   return (
     <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-14 items-center justify-between px-8 bg-background/80 backdrop-blur-md border-b border-border/40">

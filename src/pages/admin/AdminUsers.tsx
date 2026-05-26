@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNav } from "@/components/admin/AdminNav";
@@ -23,25 +21,12 @@ interface AdminUser {
 const tierOptions: AccessTier[] = ["free", "subscriber", "cohort", "premium", "rent_agent", "corporate"];
 
 const AdminUsers = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { isAdmin, loading: rolesLoading } = useRoles();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [updatingTier, setUpdatingTier] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (!rolesLoading && !isAdmin) {
-      navigate("/dashboard");
-      return;
-    }
-  }, [user, isAdmin, rolesLoading, navigate]);
 
   useEffect(() => {
     if (!isAdmin) return;

@@ -1,69 +1,139 @@
-# /coach-kay audit — nav fix, accurate bio, compliant brand listings
+# Full site audit + admin-access fix + premium nav remediation
 
-## Problem 1 — No way out of the page
+## Part A — Root cause: why every /admin route bounces to /dashboard
 
-`src/pages/CoachKay.tsx` (line 39+) renders straight into a hero with **no DesktopNav and no MobileNav**. Every other public route mounts them. The page is a dead-end on desktop AND mobile.
+Confirmed in code, not guessed.
 
-**Fix:** import and render `DesktopNav` (top, sticky) + `MobileNav` (hamburger) at the top of the component, exactly like `Community.tsx` / `Index.tsx` do. Add a small "← Back to Home" link in the hero on mobile for redundancy.
+**File:** `src/hooks/use-roles.ts`
 
-## Problem 2 — Bio is generic and slightly inaccurate
+```ts
+const [isAdmin, setIsAdmin] = useState(false);
+const [loading, setLoading] = useState(true);
 
-The current copy invents stats ("500+ Clients Coached Worldwide") and ignores what's actually on `coachkayelevates.org`. The real public bio says:
+useEffect(() => {
+  if (!user) {
+    setIsAdmin(false);
+    setLoading(false);   // ← sets loading=false before checkRole ever runs
+    return;
+  }
+  const checkRole = async () => { ... };  // ← never sets loading=true
+  checkRole();
+}, [user]);
+```
 
-- **Founder & CEO, Focus Flow Elevation** — Columbus, OH. Woman-owned, COED partner.
-- **5x certified life coach**, full-time banking professional, single mom to a daughter with autism.
-- Credentials: Certified Transformation Life Coach · Mindfulness & Goal Setting Specialist · Life Purpose Coaching Certification · Accredited Consultant Strategist.
-- Business readiness: Columbus Chamber member · COED workforce partner · general + professional liability insurance · accepts purchase orders.
-- Two parallel missions: **for-profit workforce/AI literacy** (coachkayelevates.org) and **nonprofit justice-impacted family support** (forward-focus-elevation.org).
+Render sequence on `/admin`:
+1. First render: `authLoading=true`, `rolesLoading=true` → ProtectedRoute shows "Loading…".
+2. AuthContext resolves: `user` is initially undefined while session hydrates → useRoles useEffect fires the `!user` branch and sets `rolesLoading=false`, `isAdmin=false`.
+3. AuthContext finishes hydrating session, `user` becomes the real user → useEffect re-runs and starts `checkRole()` **but does not set `loading=true`**.
+4. ProtectedRoute now sees `!authLoading && !rolesLoading && requireAdmin && !isAdmin` → fires `navigate("/dashboard")` **before** `checkRole()` resolves.
 
-**Fix:** rewrite the bio + credentials grid to mirror the real story and credentials (no invented numbers). Add a single "Recognized for" row with: Woman-owned · COED Partner · Columbus Chamber · WIOA-aligned.
+Both verified admin accounts in DB (`hello@coachkayelevates.org`, `kizzy.alaoui@gmail.com`) have `role='admin'` in `user_roles`, and the fallback email list also includes them — so RBAC is correct; the bug is the client race.
 
-## Problem 3 — Two real brands aren't listed
+**Fix:**
+- In `use-roles.ts`, set `setLoading(true)` at the **start** of `checkRole()`, and only set `setLoading(false)` after the async work completes. Don't toggle `loading=false` in the `!user` branch until `authLoading` is also resolved (accept a `{ authLoading }` from AuthContext, or read `user === undefined` vs `null`).
+- Simplify all 5 admin pages: delete their duplicate `useEffect` that redirects on `!isAdmin` — `ProtectedRoute requireAdmin` already does that. The duplicate is what causes the visible bounce even after we fix the hook.
+- Add a quiet console.warn in dev when ProtectedRoute redirects an admin so future regressions surface in logs.
 
-Add a new **"Where Coach Kay's Work Lives"** section above the final CTA. Two equal cards, compliant phrasing — no donation solicitation here (donations only on the nonprofit site itself), and clearly disclose nonprofit vs for-profit status.
+## Part B — Page-by-page audit (every route in `src/App.tsx`)
 
-**Card 1 — Coach Kay Elevates (for-profit)**
-- Tag: `FOR-PROFIT · COLUMBUS, OH`
-- Headline: "Workforce Readiness & AI Literacy"
-- Body: "Structured cohort program helping working families build AI literacy, career-ready skills, and sustainable momentum. COED partner. WIOA-aligned. Pilot programs available."
-- CTA: `Visit coachkayelevates.org →` (opens new tab, `rel="noopener noreferrer"`)
+Legend: **OK** = working & needed · **FIX** = working but has issues · **GAP** = broken or unfinished · **KEEP-HIDDEN** = needed but should not be in public nav · **PRUNE** = candidate for removal.
 
-**Card 2 — Forward Focus Elevation (nonprofit)**
-- Tag: `NONPROFIT · JUSTICE-IMPACTED FAMILIES`
-- Headline: "Trauma-Informed Family Support"
-- Body: "AI-enhanced, trauma-informed, income-based support for justice-impacted families and crime victims/survivors. Free learning community, peer support, crisis resources."
-- Crisis line micro-row: `Crisis? 911 · 211 · 988 · Text HOME to 741741` (small, muted).
-- CTA: `Visit forward-focus-elevation.org →` (new tab, `rel="noopener noreferrer"`)
+### Public marketing
+| Route | Status | Notes |
+|---|---|---|
+| `/` | OK | Homepage, primary CTAs land correctly |
+| `/coach-kay` (`/about` redirect) | OK | Just rebuilt with nav + brand cards |
+| `/community` | OK | Skool link works |
+| `/modules` | OK | Lists programs |
+| `/programs/:slug` | OK | Detail pages |
+| `/store` | OK | Book studio |
+| `/rent-an-agent` | FIX | Verify CTA buttons go somewhere real |
+| `/advisory` | FIX | Same — confirm Calendly/booking link |
+| `/starter-kit` (+ `/ai-starter-kit` redirect) | OK | Free AI doorway |
+| `/kiosk` | KEEP-HIDDEN | In-person mode, correctly noIndex |
+| `/sitemap` | OK | Public HTML sitemap |
 
-**Compliance details applied to both cards:**
-- Explicit "for-profit" / "nonprofit" labels so users aren't misled about tax-deductibility.
-- `target="_blank" rel="noopener noreferrer"` on every external link.
-- `aria-label` includes "opens in new tab".
-- External-link icon (lucide `ExternalLink`) next to each link.
-- A short footnote under the section: "Forward Focus Elevation is a separate nonprofit entity. Donations and program participation are governed by that organization's own terms and privacy policy."
+### Clarity / Assessment funnel
+| Route | Status | Notes |
+|---|---|---|
+| `/clarity`, `/clarity/:moduleId` | OK | Engine + AI insight |
+| `/result` | OK | Now has mirror card + share |
+| `/assessment` | FIX | Confirm it isn't duplicate of `/clarity`; if it's the M.A.C. assessment, link from a CTA somewhere |
+| `/mirror-challenge`, `/challenges`, `/challenges/:type` | OK | Auth-gated where needed |
 
-## Problem 4 — Testimonials still use placeholder names
+### Auth / account
+| Route | Status | Notes |
+|---|---|---|
+| `/auth` | OK | Email/password + Google + sessionStorage returnTo |
+| `/reset-password` | OK | Present, required |
+| `/onboarding` | FIX | Verify it's reachable post-signup and skippable |
+| `/dashboard` | OK | Now has `YourProgramPanel` |
+| `/profile` | OK | |
+| `/coach` (auth-gated chat) | OK | |
 
-The 4 quotes (Amira/David T./Sarah/Marcus) don't match the Sheila/Starr/Buzz voices we just unified on the homepage. Swap to the same authentic Coach Kay Elevates voice with **F.O.C.U.S. pillar chips** so the brand reads consistent end-to-end. Keep 4 cards (homepage has 3); add a 4th "Forward Focus Elevation" community voice to reflect the nonprofit work.
+### Audit lane (consulting)
+| Route | Status | Notes |
+|---|---|---|
+| `/audit/landing` | OK | |
+| `/audit/intake` | OK | |
+| `/audit/intake/:id` | **GAP** | Renders 404 — App.tsx only registers `/audit/intake` (no `:id` variant). Current user is sitting on a 404 right now. **Fix:** add `<Route path="/audit/intake/:id" element={...} />` so resuming an intake works. |
+| `/audit/report/:id` | OK | |
 
-## Problem 5 — SEO + JSON-LD
+### Commerce / fulfillment
+| Route | Status | Notes |
+|---|---|---|
+| `/order-success` | OK | Stripe success landing |
 
-- Update `webPage("/coach-kay", "Coach Kay", "AboutPage")` description to mention both organizations.
-- Add a Person JSON-LD with `sameAs: ["https://coachkayelevates.org/", "https://forward-focus-elevation.org/"]` so search engines connect the three properties. (Helper already exists in `seo-schema.ts`; reuse `PERSON_ID`.)
+### Legal
+| Route | Status | Notes |
+|---|---|---|
+| `/privacy`, `/terms`, `/disclaimer`, `/refund-policy` | OK | Just shipped |
+| `/unsubscribe`, `/email-unsubscribe` | FIX | Two routes for same job — keep `/email-unsubscribe` (token flow) and redirect `/unsubscribe` to it, or vice versa |
 
-## Verification
+### Admin (all gated by `requireAdmin`)
+| Route | Status | Notes |
+|---|---|---|
+| `/admin` (Dashboard) | GAP | Blocked by race bug; after fix, verify `manage-users` edge fn returns stats |
+| `/admin/users` | GAP | Same; verify tier-change writes via service role |
+| `/admin/analytics` | GAP | Same; verify Recharts renders with real `analytics_events` |
+| `/admin/content` | GAP | Same; verify enable/feature toggles persist to `content_settings` |
+| `/admin/orders` | GAP | Same; verify CSV export + Stripe links |
+| `/email-preview` | GAP | Admin-only; verify it loads each template |
 
-After build:
-1. Open `/coach-kay` on desktop (1750px) — confirm `DesktopNav` shows and "Home / Programs / Community / Sign in" links work.
-2. Resize to mobile (375px) — confirm hamburger appears and opens MobileNav.
-3. Click both external brand cards — confirm new tab, correct URL, no referrer leak.
-4. Run a quick view-source check that the Person JSON-LD includes both `sameAs` URLs.
+### Misc
+| Route | Status | Notes |
+|---|---|---|
+| `*` (NotFound) | OK | |
 
-## Files touched
+## Part C — Navigation & button integrity
 
-- `src/pages/CoachKay.tsx` — nav imports, bio rewrite, credentials rewrite, new "Where this work lives" section, testimonials swap, JSON-LD update.
-- (no new components needed; reuse existing `DesktopNav`, `MobileNav`, `AnimatedSection`, `Button`, lucide `ExternalLink`.)
+Source of truth is `DesktopNav.tsx` + `MobileNav.tsx`. Mismatches to fix:
 
-## Open question
+1. **DesktopNav hides itself on `PRIVATE_ROUTES`** including `/dashboard`, `/profile`, `/admin`, `/community`, `/modules`, `/clarity`, `/coach`, etc. Result: once you click into anything substantive you lose the global nav. The home-page hero nav is bespoke and not reused. **Fix:** stop hiding DesktopNav on logged-in routes; only hide on `/kiosk` and `/auth`. This single change makes every page feel like one app.
+2. `MobileNav` is rendered only by pages that opt in (`Index`, `Community`, the new `CoachKay`). Many pages have no hamburger. **Fix:** mount `MobileNav` globally in `App.tsx` next to the `DesktopNav`, with the same hide rules.
+3. **Admin nav surface:** add the existing `AdminNav` component as a sub-header rendered inside `ProtectedRoute requireAdmin` so all 6 admin pages share one bar (currently each page imports it manually — fine, but verify each link present: Dashboard, Users, Analytics, Content, Orders, Email Preview).
+4. **Dead nav targets:** `DesktopNav` includes "Studio" → `/store` ✓, "Rent-an-Agent" → `/rent-an-agent` ✓, "Advisory" → `/advisory` ✓ — all routes exist. No dead links from nav.
+5. **Footer:** already covered legal + sitemap; add admin shortcut to footer only if `isAdmin` (small, muted, bottom-right).
 
-Do you want the new **"Where Coach Kay's work lives"** section **only on /coach-kay**, or should I also surface those two brand cards in the global `SiteFooter` (as a "Sister organizations" row) so every page acknowledges both entities? Footer placement is the standard compliant pattern for multi-entity brands, but it's a bigger change.
+## Part D — Endpoint / integration sanity
+
+Sweep we'll run after the routing fix:
+
+- Open every page in the browser tool (desktop + mobile), record any console error or 404 network call, and fix in place.
+- Confirm `manage-users`, `clarity-insight`, `create-checkout`, `stripe-webhook`, `send-transactional-email` edge functions still respond.
+- Confirm admin RPC `has_role` returns true for both admin accounts (already verified via DB query, but recheck after deploy).
+
+## Part E — Execution order (small, ordered, low-blast-radius)
+
+1. **Hook fix** — `use-roles.ts`: introduce proper loading state, accept `authLoading` from `useAuth`, only resolve `isAdmin` after both auth and role check finish.
+2. **Strip duplicate redirects** in the 5 admin pages.
+3. **Add missing route** `/audit/intake/:id` (current user is staring at a 404 from this exact gap).
+4. **Promote nav to App-level** — render `DesktopNav` + `MobileNav` in `App.tsx`, narrow the hide list to `["/kiosk", "/auth", "/reset-password"]`.
+5. **Consolidate unsubscribe** — pick one canonical route, `<Navigate>` the other.
+6. **Verify** — open `/admin`, `/admin/users`, `/admin/analytics`, `/admin/content`, `/admin/orders`, `/email-preview`, `/audit/intake/abc123` with the logged-in admin account in the browser tool. Capture screenshots, fix anything broken on contact.
+
+## Open questions before I touch code
+
+1. The user account currently signed into the preview — which email is it? If it's `hello@coachkayelevates.org` or `kizzy.alaoui@gmail.com`, the fix above is sufficient. If it's a different email, I'll also need to add that to the admin role (one-line migration).
+2. For `/unsubscribe` vs `/email-unsubscribe`: keep the token-based one (`/email-unsubscribe`) and 301 the bare `/unsubscribe` to it — OK?
+3. `/assessment` (the M.A.C. assessment): leave it as a standalone offering or merge into `/clarity`?
