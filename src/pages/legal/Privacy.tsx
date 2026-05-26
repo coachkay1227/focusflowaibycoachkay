@@ -85,6 +85,7 @@ const Privacy = () => (
       Continued use after the effective date means you accept the updated policy.
     </p>
   </LegalLayout>
+  </>
 );
 
 export default Privacy;
