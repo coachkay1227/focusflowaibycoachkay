@@ -21,6 +21,14 @@ export const PRODUCT_TIER_MAP: Record<string, string> = {
   "prod_UI3bH83UkOhFdF": "rent_agent", // Pro/Growth Standard $997/mo
   "prod_UI3bP0P7W0fAiZ": "rent_agent", // Dream Team Founding $997/mo
   "prod_UI3beYm5zLDjDR": "rent_agent", // Dream Team Standard $1497/mo
+  // Transformation Paths — 30-Day Resets ($297 / $497 / $997)
+  "prod_UaLGufK6Jr2ZU4": "reset_30",        // 30-Day Personal Reset
+  "prod_UaLNmsGwE80NHa": "reset_30",        // 30-Day Business Reset
+  "prod_UaLOQV9Neov5n6": "reset_30",        // 30-Day AI Reset
+  // Transformation Paths — 90-Day Transformations ($997 / $1,497 / $2,497)
+  "prod_UaLOmPz5zLmgvD": "transformation_90", // 90-Day Personal Transformation
+  "prod_UaLPfozQYtxwSa": "transformation_90", // 90-Day Business Transformation
+  "prod_UaLPqrSWcHVi9f": "transformation_90", // 90-Day Full AI Transformation
 };
 
 /** One-time purchase products that do NOT change the buyer's access tier.
@@ -47,6 +55,25 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   // One-time entry offers
   "price_1Tb41PBReje0oFcLMlvzjQQa": "payment",      // AI Business Audit $47
   "price_1Tb41vBReje0oFcLjxGozG2X": "payment",      // AI Strategy Intensive $497
+  // Transformation Paths — 30-Day Resets
+  "price_1TbAaPBReje0oFcLts5JuE5a": "payment", // 30-Day Personal Reset $297
+  "price_1TbAguBReje0oFcL3Qh5pIiH": "payment", // 30-Day Business Reset $497
+  "price_1TbAhOBReje0oFcL87MVrKFy": "payment", // 30-Day AI Reset $997
+  // Transformation Paths — 90-Day Transformations
+  "price_1TbAhtBReje0oFcLscEqWHEK": "payment", // 90-Day Personal Transformation $997
+  "price_1TbAiNBReje0oFcLrit7Ko5x": "payment", // 90-Day Business Transformation $1,497
+  "price_1TbAimBReje0oFcL4Uti8udD": "payment", // 90-Day Full AI Transformation $2,497
 };
 
-export const PROTECTED_TIERS = ["cohort", "premium", "rent_agent", "corporate"];
+export const PROTECTED_TIERS = ["reset_30", "transformation_90", "cohort", "premium", "rent_agent", "corporate"];
+
+/** Welcome-email template + program label for transformation-path purchases.
+ *  Used by stripe-webhook to fire the right welcome email after checkout. */
+export const TRANSFORMATION_PROGRAM_MAP: Record<string, { template: "reset-welcome" | "transformation-welcome"; programName: string; durationDays: number }> = {
+  "prod_UaLGufK6Jr2ZU4": { template: "reset-welcome",          programName: "30-Day Personal Reset",            durationDays: 30 },
+  "prod_UaLNmsGwE80NHa": { template: "reset-welcome",          programName: "30-Day Business Reset",            durationDays: 30 },
+  "prod_UaLOQV9Neov5n6": { template: "reset-welcome",          programName: "30-Day AI Reset",                  durationDays: 30 },
+  "prod_UaLOmPz5zLmgvD": { template: "transformation-welcome", programName: "90-Day Personal Transformation",   durationDays: 90 },
+  "prod_UaLPfozQYtxwSa": { template: "transformation-welcome", programName: "90-Day Business Transformation",   durationDays: 90 },
+  "prod_UaLPqrSWcHVi9f": { template: "transformation-welcome", programName: "90-Day Full AI Transformation",    durationDays: 90 },
+};

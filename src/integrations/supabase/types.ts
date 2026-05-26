@@ -772,6 +772,8 @@ export type Database = {
         | "premium"
         | "corporate"
         | "rent_agent"
+        | "reset_30"
+        | "transformation_90"
       app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
@@ -907,6 +909,8 @@ export const Constants = {
         "premium",
         "corporate",
         "rent_agent",
+        "reset_30",
+        "transformation_90",
       ],
       app_role: ["admin", "moderator", "user"],
     },
