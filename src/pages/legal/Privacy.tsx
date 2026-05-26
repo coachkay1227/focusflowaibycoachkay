@@ -56,7 +56,7 @@ const Privacy = () => (
       You may request a copy of your data, correction of inaccuracies, or deletion of your account
       at any time. Residents of the EU/UK (GDPR), California (CCPA), and other privacy
       jurisdictions have additional rights including the right to object to processing and the
-      right to data portability. Email <a href="mailto:hello@coachkayai.life" className="text-primary">hello@coachkayai.life</a> and we will respond within 30 days.
+      right to data portability. Email <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a> and we will respond within 30 days.
     </p>
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">6. Data retention</h2>
