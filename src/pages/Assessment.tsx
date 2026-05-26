@@ -467,6 +467,9 @@ const Assessment = () => {
               {MIND_LABELS[result.mind]} · {ACTION_LABELS[result.action]} ·{" "}
               {CHARACTER_LABELS[result.character]}
             </p>
+            <div className="mt-5">
+              <PillarBadge pillar="O" />
+            </div>
 
             {/* Loading shimmer while AI elaborates */}
             {elaborating && !insight && (
