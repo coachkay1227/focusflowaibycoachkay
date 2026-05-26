@@ -28,6 +28,7 @@ const SiteFooter = () => {
         { label: "Full AI 90-Day", to: "/modules" },
         { label: "Rent-an-Agent", to: "/rent-an-agent" },
         { label: "Advisory & Partnership", to: "/advisory" },
+        { label: "Autism & Social Stories", to: "/autism-social-stories" },
       ],
     },
     {
