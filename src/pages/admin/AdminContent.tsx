@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNav } from "@/components/admin/AdminNav";
@@ -31,8 +29,6 @@ interface ChallengeStat {
 }
 
 const AdminContent = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { isAdmin, loading: rolesLoading } = useRoles();
   const [enrollmentCounts, setEnrollmentCounts] = useState<Record<string, number>>({});
   const [challengeStats, setChallengeStats] = useState<ChallengeStat[]>([]);
