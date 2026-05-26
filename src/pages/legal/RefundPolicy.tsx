@@ -77,6 +77,7 @@ const RefundPolicy = () => (
       <li>We respond within 3 business days and process approved refunds via Stripe within 5–10 business days.</li>
     </ol>
   </LegalLayout>
+  </>
 );
 
 export default RefundPolicy;

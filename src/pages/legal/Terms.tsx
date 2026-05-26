@@ -1,6 +1,13 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "@/components/SEOHead";
 
 const Terms = () => (
+  <>
+    <SEOHead
+      title="Terms of Service — FocusFlow AI"
+      description="The terms governing your use of FocusFlow AI by Coach Kay."
+      path="/terms"
+    />
   <LegalLayout
     eyebrow="LEGAL · TERMS"
     title="Terms of Service"
