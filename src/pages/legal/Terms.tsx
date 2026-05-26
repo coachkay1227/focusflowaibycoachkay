@@ -108,6 +108,7 @@ const Terms = () => (
       Shield Her Elevation LLC · <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>
     </p>
   </LegalLayout>
+  </>
 );
 
 export default Terms;
