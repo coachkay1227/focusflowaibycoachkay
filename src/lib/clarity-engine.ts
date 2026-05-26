@@ -69,8 +69,8 @@ function findBestMatch(
     if (lower.includes(key)) return map[key];
   }
   // Deterministic fallback — same answers always yield the same insight.
-  const idx = Number(cyrb53(fallbackSeed) % BigInt(keys.length));
-  return map[keys[idx % keys.length]];
+  const idx = cyrb53(fallbackSeed) % keys.length;
+  return map[keys[idx]];
 }
 
 export function generateInsight(answers: ClarityAnswers): InsightResult {
