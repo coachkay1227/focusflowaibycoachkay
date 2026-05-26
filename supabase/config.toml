@@ -33,6 +33,10 @@ project_id = "rarawrpajilqqlcxdzpj"
     verify_jwt = false
   [functions.update-book-order]
     verify_jwt = false
+  [functions.create-autism-checkout]
+    verify_jwt = false
+  [functions.verify-autism-order]
+    verify_jwt = false
   [functions.mac-elaborate]
     verify_jwt = false
   [functions.generate-starter-report]

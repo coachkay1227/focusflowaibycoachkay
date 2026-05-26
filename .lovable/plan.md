@@ -1,64 +1,52 @@
-## Scope
+## Phase 3.2.5B — Step 5: Autism & Social Stories Lane
 
-Coach Kay AI chatbot only. Everything else (Stripe, modules, full route sweep) is queued for follow-up passes per your sequencing answer.
+Scope = Step 5 only (page + checkout). Steps 6–9 handled in a follow-up phase.
 
-In scope:
-- `/coach` chat page (`src/pages/CoachChat.tsx`)
-- `coach-chat` edge function (`supabase/functions/coach-chat/index.ts`)
-- `/coach-kay` profile page (`src/pages/CoachKay.tsx`) — entry/CTA surfaces only, not a chat
-- Inbound nav from Assessment / Dashboard / ResultScreen / DesktopNav / MobileNav / SiteFooter
-- Context handoff from clarity session (`location.state.context`)
-- Decision Mode / coaching style behavior (per system prompt + `mem://features/decision-mode`)
+### Pricing (confirmed)
+| Slug | Name | Price | Type |
+|---|---|---|---|
+| autism_single_digital | Single Digital Social Story | $47 | checkout |
+| autism_therapy_toolkit | Therapy Toolkit (3 stories) | $127 | checkout |
+| autism_premium_illustrated | Premium Illustrated Social Story | $297 | checkout (+ gift wrap) |
+| autism_therapy_practice_bundle | Therapy Practice Bundle (5 stories) | $997 | checkout |
+| autism_school_iep_bundle | School + IEP Bundle (10 stories) | from $1,997 | inquiry |
+| autism_custom_practice_license | Custom Practice License | $3,997+ | inquiry |
+| autism_gift_wrap_addon | Gift Wrap + Personalized Note | $25 | add-on |
 
-Out of scope this pass: Stripe, modules/enrollments, clarity-session generation itself, legal routes, admin.
+### Already done in this session
+- ✅ All 5 Stripe one-time USD products + prices created (4 packages + gift wrap).
+- ✅ Database migration `autism_orders` table applied with RLS (owner SELECT, admin SELECT, service-role writes only).
 
-## Audit checks
+### Files to create / modify
+**Edge functions** (all ESM `esm.sh` imports per memory):
+- NEW `supabase/functions/_shared/autism-catalog.ts` — server-side catalog (slug → priceId, priceCents, inquiry flag, gift-wrap eligible flag).
+- NEW `supabase/functions/create-autism-checkout/index.ts` — clone of `create-book-checkout`. Validates package_slug against server catalog, computes total from server prices (never trusts client), inserts `autism_orders` pending_payment row, creates Stripe Checkout session using stored `price` IDs (+ gift wrap line item when `gift_wrap=true` and package is premium), persists `stripe_session_id` with rollback if linking fails. Metadata: `{ autism_order_id, package_slug, order_type: "autism" }`. JWT optional (guest checkout allowed). success_url → `/order-success?type=autism&session_id={CHECKOUT_SESSION_ID}`; cancel_url → `/autism-social-stories#packages`.
+- NEW `supabase/functions/verify-autism-order/index.ts` — clone of `verify-book-order` against `autism_orders`. Same paid/complete/metadata/amount cross-checks.
+- MODIFY `supabase/functions/stripe-webhook/index.ts` — add an `autism_order_id` branch (mirrors book_order_id branch): amount cross-check → mark `autism_orders.status='paid'`, store `stripe_payment_intent_id`. Idempotent via existing `processed_stripe_events`. Does NOT touch `user_access_levels` (autism purchases never grant access tiers — respects the "never auto-modify tier" memory rule).
+- MODIFY `supabase/config.toml` — add `verify_jwt = false` entries for `create-autism-checkout` and `verify-autism-order`.
 
-### A. Auth + entry
-1. `/coach` is wrapped in `ProtectedRoute` — confirm unauth users redirect cleanly, not blank.
-2. Sign-out mid-session: textarea disables, but does a stale session token still POST? Inspect.
-3. Initial greeting effect runs once with `context` present — confirm no double-send under React StrictMode.
+**Frontend**:
+- NEW `src/data/autismCatalog.ts` — client mirror with display strings, bullets (LMN/HSA/IEP on every package), best-for line, anchor ID.
+- NEW `src/pages/AutismSocialStories.tsx` — full page per Step 5 brief:
+  - Hero (Cormorant heading, Coach Kay voice paragraph, gold accents).
+  - This-Is-For-You — 3 audience cards (Parents / Therapists / Schools & Clinics) anchored to corresponding package cards.
+  - Packages grid — 4 checkout cards + 2 inquiry cards with deep anchors `#single #toolkit #premium #practice #school #license`. Checkout cards show price (large, gold), "Best for" line, bullet list (always includes LMN + HSA + IEP). Premium card includes "Add gift wrap + personalized note (+$25)" checkbox. Buy Now → opens `AutismIntakeModal`. Inquiry cards → open existing `OfferInquiryDialog` with `lane={packageName}`.
+  - Reimbursement & Eligibility — verbatim copy block from brief.
+  - Footer CTA.
+  - SEOHead: title <60ch, description <160ch, canonical `/autism-social-stories`, single H1.
+  - Pure CSS animations + IntersectionObserver only (per memory).
+- NEW `src/components/autism/AutismIntakeModal.tsx` — adapted intake modal. Collects: buyer name/email/phone, use case (parent/therapist/school), child first name + age + interests, scenario focus (textarea), provider name + provider email (for LMN routing), special requirements, gift wrap toggle (when premium selected), gift recipient + gift note (when gift wrap on). On submit → invokes `create-autism-checkout` → `window.location.href = url` (same tab, per the existing PricingSection convention and the audit recommendation).
+- MODIFY `src/App.tsx` — add lazy route `/autism-social-stories`.
+- MODIFY `src/pages/OrderSuccess.tsx` — when `?type=autism`, call `verify-autism-order` instead of `verify-book-order`, and render an autism-specific header ("Your Story Is On Its Way") + line confirming LMN template + HSA itemized receipt will arrive by email.
 
-### B. Edge function (`coach-chat`)
-4. JWT validated via service-role `auth.getUser(token)` — matches API protection rule (mem://security/api-protection). ✅ expected.
-5. Input validation: 1–50 messages, each ≤10k chars, role+content required. Confirm 400 paths.
-6. Streaming SSE: passes upstream `response.body` straight through with `text/event-stream`. Verify CORS headers travel with stream (they're in the initial Response — fine).
-7. Error mapping: 429 → toast "Slow down", 402 → "Credits needed", else generic. Trace each.
-8. Model: `google/gemini-3-flash-preview` — matches Core memory. ✅
-9. Context injection: truth/pattern/action + answers map appended to system prompt. Confirm shape from ResultScreen matches what edge expects (ResultScreen passes `{ ...insight, answers }` — verify keys).
+### Security & rules respected
+- All edge functions input-validated with Zod, server-side price authority, guest-checkout supported, JWT optional (matches `create-book-checkout`).
+- Webhook tier-protection rules untouched — autism branch never writes to `user_access_levels`.
+- AI race-condition rule N/A (no AI in flow).
+- No external animation libraries.
 
-### C. Client streaming
-10. SSE parser handles partial frames via `textBuffer` re-queue on parse failure — review for infinite loop / dropped tokens.
-11. `assistantSoFar` accumulator + functional `setMessages` — confirm no race when user sends two quickly (3s cooldown should prevent, verify).
-12. Loading indicator only shows when last msg isn't assistant — confirm no flicker after stream ends.
-13. Markdown render uses `ReactMarkdown` with no `remarkGfm` — lists/bold work; tables/strikethrough won't. Note as observation, not bug.
-14. No conversation persistence (matches chat-agent-ui-contract one-conversation / no-storage choice). Refreshing `/coach` wipes history — confirm intended.
-
-### D. Behavior (live test in preview, logged in)
-15. Cold start no-context: send "I feel stuck" → expect SUPPORTIVE/REFLECTIVE tone, ends with question or next step.
-16. Decision Mode trigger: send "I'm stuck between two options and can't decide" → expect 2–3 clearly enumerated options w/ likely outcomes.
-17. Avoidance challenge: "I'll figure it out later, I'm too busy" → expect DIRECT mode pushback, not generic affirmation.
-18. Strategy mode: "Give me a 7-day plan to start journaling" → expect STRATEGIC structured plan.
-19. Long-input guard: paste >10k chars → expect 400 "Invalid message format" toast.
-20. Rate-limit path: hammer send (bypassing cooldown via DevTools) → confirm 429 surfaces "Slow down".
-21. Context handoff: complete clarity session → land on `/coach` with state → confirm auto-greeting fires and Kay references truth/pattern/action.
-
-### E. Logs cross-check
-22. After each live test, pull `coach-chat` edge logs — confirm: no unhandled errors, request count matches, token user ID present, upstream gateway status.
-23. Check console for React key warnings, hydration issues, or SSE parse exceptions.
-
-## Deliverable
-
-A single report grouped as:
-- ✅ Working — short bullets
-- ⚠️ Minor / observation — file:line, why it matters, suggested fix
-- ❌ Broken — file:line, reproduction, edge-log evidence, suggested fix
-
-No code changes this pass. After you review, we decide what to fix vs. defer to the cleanup audit, then move to the next scope area (Stripe end-to-end with both code-trace and test-mode charges).
-
-## Technical notes
-
-- Will use `browser--navigate_to_sandbox` against `/coach` while logged in as your preview session.
-- Will use `supabase--edge_function_logs function_name=coach-chat` after each test batch.
-- Won't trigger any Stripe / DB-write side effects.
-- If preview session isn't logged in, I'll stop and ask you to log in rather than fill the auth form.
+### Deferred to follow-up phases
+- Step 6: Coach Kay AI router catalog alignment.
+- Step 7: nav entries.
+- Step 8: sitemap entry.
+- Step 9: LMN/HSA email templates + automated provider routing.
