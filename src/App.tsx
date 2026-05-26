@@ -104,6 +104,7 @@ const App = () => (
             <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
             <Route path="/audit/landing" element={<Suspense fallback={<PageSkeleton />}><AuditLanding /></Suspense>} />
             <Route path="/audit/intake" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
+            <Route path="/audit/intake/:id" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
             <Route path="/audit/report/:id" element={<Suspense fallback={<PageSkeleton />}><AuditReport /></Suspense>} />
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
@@ -113,7 +114,7 @@ const App = () => (
             <Route path="/disclaimer" element={<Suspense fallback={<PageSkeleton />}><Disclaimer /></Suspense>} />
             <Route path="/refund-policy" element={<Suspense fallback={<PageSkeleton />}><RefundPolicy /></Suspense>} />
             <Route path="/unsubscribe" element={<Suspense fallback={<PageSkeleton />}><Unsubscribe /></Suspense>} />
-            <Route path="/email-unsubscribe" element={<Suspense fallback={<PageSkeleton />}><EmailUnsubscribe /></Suspense>} />
+            <Route path="/email-unsubscribe" element={<Navigate to="/unsubscribe" replace />} />
             <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
           </Routes>
           </main>

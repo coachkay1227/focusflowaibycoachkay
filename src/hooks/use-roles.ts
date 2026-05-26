@@ -3,11 +3,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function useRoles() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Wait for auth to finish hydrating before deciding anything.
+    if (authLoading) {
+      setLoading(true);
+      return;
+    }
     if (!user) {
       setIsAdmin(false);
       setLoading(false);
@@ -15,6 +20,7 @@ export function useRoles() {
     }
 
     const checkRole = async () => {
+      setLoading(true);
       try {
         // 1. Check via has_role RPC (proper RBAC)
         const { data: hasAdminRole, error: roleError } = await supabase.rpc("has_role", {
@@ -46,7 +52,7 @@ export function useRoles() {
     };
 
     checkRole();
-  }, [user]);
+  }, [user, authLoading]);
 
   return { isAdmin, loading };
 }
