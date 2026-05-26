@@ -1,46 +1,40 @@
-## Phase 3.4 — Launch Readiness Audit Plan
+# Plan: Re-verify Launch Readiness Audit
 
-This is a 12-step, read-mostly audit. I'll execute steps sequentially, reporting after each, and only make code changes per the Fix Discipline rules (auto-fix trivial, auto-fix-with-diff small, FLAG anything touching Stripe/pricing/auth/compliance/copy substantively).
+The prior 12-step audit summary was produced before recent changes (SEO classifications for `/autism-social-stories` + `/faq`, and the `claim_audit_token` REVOKE migration). This plan re-runs the audit with the current code, fixes trivial drift inline, and flags anything substantive.
 
-### Execution approach per step
+## Approach
 
-**Step 1 — Route inventory.** Read `src/App.tsx` + every route component header (just enough to confirm imports + `<SEOHead>` presence). Run `scripts/check-seo-regressions.ts`. Report matrix.
+Sequential, read-mostly. Per-step ✅/🔧/⚠️/❌ with matrices. Fix discipline:
+- **Auto-fix silently**: typos, dead slugs, missing alt/aria, console.log, 501c3 misattribution
+- **Auto-fix with diff**: llms.txt pricing drift, missing AI enum validation, missing loading/error states
+- **FLAG only**: new Stripe SKUs, pricing changes, auth changes, substantive copy, missing email templates
 
-**Step 2 — Stripe SKU verification.** Read `supabase/functions/_shared/stripe-config.ts`, `book-catalog.ts`, and grep for `startCheckout(` / `priceId:` / `create-autism-checkout` / `create-book-checkout` across `src/`. Build SKU↔CTA matrix. FLAG (do not edit) any Transformation Lane / Lead Engine SKUs that don't exist — these are price/SKU changes.
+**Do not touch**: AuthContext, useSubscription, useAccessLevel, create-checkout, ReportView, generate-business-audit (except offer_slug validation), clarity-insight, coach-chat, pattern-detect, ApplyNowDialog, OrderSuccess, AuditIntake, AuditReport, AuditLanding, Resend from-addresses, stripe-webhook (except missing branch handlers).
 
-**Step 3 — Webhook branches.** Read `supabase/functions/stripe-webhook/index.ts` end-to-end. Verify branch order, `processed_stripe_events` guard per branch, `PROTECTED_TIERS` on `subscription.deleted`, `webhook_failures` writes. Report matrix only — no edits unless a real bug (per rule 5, stripe-webhook is protected except missing branch handlers).
+## 12 Steps
 
-**Step 4 — GHL coverage.** Grep for `apply-now` / `OfferInquiryDialog` / `ApplyNowDialog` callers; trace payloads. Report path matrix. FLAG missing paths.
+1. **Routes & SEO** — verify `App.tsx` routes, `<SEOHead>` present, run `scripts/check-seo-regressions.ts`. Confirm `/autism-social-stories` + `/faq` classified.
+2. **Stripe SKU↔CTA matrix** — `_shared/stripe-config.ts`, `book-catalog.ts`, grep `startCheckout(` / `priceId:` / `create-*-checkout`. FLAG missing Transformation/Lead Engine/$3,997 SKUs.
+3. **stripe-webhook branches** — order, `processed_stripe_events`, `PROTECTED_TIERS`, `webhook_failures`. Matrix only.
+4. **GHL inquiry coverage** — trace ApplyNowDialog / OfferInquiryDialog / AutismIntakeModal / AuditIntake → ghl-webhook.
+5. **AI edge functions** — generate-business-audit, clarity-insight, coach-chat, pattern-detect. Auto-fix-with-diff if `offer_slug` enum not enforced.
+6. **Auth integrity** — AuthContext, useRoles, useAccessLevel, useSubscription, ProtectedRoute, `handle_new_user`, bootstrap admins. Read-only.
+7. **Email templates** — registry + each template. Re-confirm autism-purchase-confirmation status. FLAG missing.
+8. **FAQ + SEO + llms.txt** — JSON-LD parses, sitemap entries, llms.txt pricing matches `stripe-config.ts`. Auto-fix-with-diff for llms.txt drift.
+9. **Compliance sweep** — `rg` for `501c3`, entity names, `focusflow_30|90|6mo`, insurance reimbursement language. Auto-fix trivial.
+10. **Analytics** — `lib/analytics.ts` coverage, `index.html` tracking scripts. Report + decision flag.
+11. **Mobile + a11y** — MobileNav, 4 modals, alt/aria/button-type spot-check. Auto-fix trivial.
+12. **Build + 8 flow traces** — re-run SEO check + sitemap, code-trace A–H ($47 audit, autism bundles, studio orders, Rent-an-Agent sub + cancel, PROTECTED_TIERS preservation, 30/90-day emails, inquiry → GHL, refunds).
 
-**Step 5 — AI flows.** Read each of the 4 edge functions + frontend retry surfaces. Check `generate-business-audit` for offer_slug enum validation against the 29-slug list. Auto-fix-with-diff if validation is missing (small bug fix on existing flow). Report.
+## Deliverable
 
-**Step 6 — Auth integrity.** Read `AuthContext`, `useRoles`, `useAccessLevel`, `useSubscription`, `ProtectedRoute`, `handle_new_user` trigger. Verify bootstrap admin emails. Report. Do not modify protected files.
+Single markdown report:
+- Per-step status table
+- Full matrices (SKU↔CTA, webhook branches, GHL paths, email templates, flows A–H)
+- BEFORE/AFTER diffs for every auto-fix
+- CRITICAL / RECOMMENDED / DEFERRED issue tiers
+- Live Stripe test-mode checklist for user
 
-**Step 7 — Email templates.** Read `supabase/functions/_shared/transactional-email-templates/registry.ts` + each template. Verify the autism + audit templates exist (last audit flagged autism as missing — re-confirm current state). FLAG any still-missing templates as USER action.
+## Expected scope
 
-**Step 8 — FAQ + SEO + llms.txt.** Read all 5 FAQ-bearing pages, validate JSON-LD parses, read `public/llms.txt` + `public/sitemap.xml`. Cross-check prices in llms.txt against `stripe-config.ts`. Auto-fix-with-diff for pricing drift in llms.txt (data-file, not copy).
-
-**Step 9 — Compliance + copy sweep.** `rg` for `501c3|501\(c\)\(3\)`, `Focus Flow Elevation|Forward Focus Elevation|FocusFlow AI`, `focusflow_30|focusflow_90|focusflow_6mo`, `insurance.*reimburs`. Auto-fix trivial findings (typos, dead slugs, 501c3 misattribution per global rule). FLAG substantive copy changes.
-
-**Step 10 — Analytics.** Read `src/lib/analytics.ts`, grep `trackEvent(` call sites. Read `index.html` for tracking scripts. Report coverage + FLAG decision items.
-
-**Step 11 — Mobile + a11y + perf.** Spot-check `MobileNav`, modals (`ApplyNowDialog`, `OfferInquiryDialog`, `AutismIntakeModal`, `AuditIntake`), images for alt text, lazy routes in App.tsx. Auto-fix trivial a11y gaps (missing alt, aria-label, button type). Report perf flags.
-
-**Step 12 — Build + 8 flow traces.** Already-passing typecheck/build verified via harness. Re-run `scripts/check-seo-regressions.ts`. Code-trace flows A–H step-by-step against the source files. Report individual pass/fail.
-
-### Fix discipline I will apply
-- **Auto-fix silently:** typos, missing imports, broken anchors, dead slugs, unused vars, missing alt/aria, console.log left in prod, 501c3 misattribution.
-- **Auto-fix with diff:** llms.txt pricing drift, missing validation on AI offer_slug enum, missing loading/error states on existing flows.
-- **FLAG (no edit):** any new Stripe SKU, any pricing change, any auth-flow change, any substantive copy rewrite, any Forward Focus / autism reimbursement language, any architecture decision, missing Transformation/Lead Engine SKUs, missing email templates beyond what already exists.
-
-### Do not touch
-- AuthContext, useSubscription, useAccessLevel, create-checkout, ReportView, generate-business-audit (except adding offer_slug validation), clarity-insight, coach-chat, pattern-detect, ApplyNowDialog, OrderSuccess, AuditIntake, AuditReport, AuditLanding, Resend `from:` addresses.
-- stripe-webhook (except adding a missing branch handler if one is genuinely broken).
-
-### Deliverable
-Single consolidated markdown report in the exact format specified, with per-step ✅/🔧/⚠️/❌ status, full matrices, BEFORE/AFTER diffs for every fix, and the three-tier final issue list (CRITICAL / RECOMMENDED / DEFERRED) + the live Stripe test-mode checklist for the user.
-
-### Estimated scope
-~12 sequential checkpoints, mostly read-only. Expect 0–8 small auto-fixes (llms.txt pricing, a11y, dead slugs, offer_slug validation). Anything bigger gets flagged, not changed. No new files created unless a critical bug demands one.
-
-Ready to execute on approval.
+0–8 small auto-fixes (most likely: llms.txt pricing, a11y nits, dead slugs, offer_slug validation). Carryover known items (autism-purchase-confirmation template, Resend domain verification, tracking pixel decision, 6-Month Partnership + Lead Engine SKU disposition) get re-flagged, not silently changed. No new files unless a critical bug demands one.
