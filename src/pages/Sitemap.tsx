@@ -16,6 +16,13 @@ const coreLinks = [
   { path: "/auth", label: "Sign In / Sign Up" },
 ];
 
+const legalLinks = [
+  { path: "/privacy", label: "Privacy Policy" },
+  { path: "/terms", label: "Terms of Service" },
+  { path: "/disclaimer", label: "Coaching & Earnings Disclaimer" },
+  { path: "/refund-policy", label: "Refund & Cancellation Policy" },
+];
+
 const paths: PublicPath[] = ["personal", "business", "ai"];
 
 const Sitemap = () => (
@@ -82,6 +89,19 @@ const Sitemap = () => (
         <p className="text-xs text-muted-foreground/70">
           Backend modules are available inside the dashboard for enrolled clients.
         </p>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="font-heading text-xl font-light mb-4 text-primary">Legal</h2>
+        <ul className="space-y-2">
+          {legalLinks.map((l) => (
+            <li key={l.path}>
+              <Link to={l.path} className="text-foreground/80 hover:text-primary hover:underline transition-colors">
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   </div>

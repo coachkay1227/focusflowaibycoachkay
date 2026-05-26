@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, ArrowRight, User, LogOut, Zap } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
+import SiteFooter from "@/components/SiteFooter";
 import { getPublicPrograms } from "@/data/programs";
 import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
 import coachKayPortrait from "@/assets/coach-kay.jpeg";
