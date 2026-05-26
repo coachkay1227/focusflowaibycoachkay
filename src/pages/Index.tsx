@@ -13,6 +13,7 @@ import PricingSection from "@/components/PricingSection";
 import { getPublicPrograms } from "@/data/programs";
 import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
 import coachKayPortrait from "@/assets/coach-kay.jpeg";
+import { trackEvent } from "@/lib/analytics";
 
 const Index = () => {
   const navigate = useNavigate();
