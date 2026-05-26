@@ -16,6 +16,7 @@ import { ArrowRight, BookOpen, Trophy, Sparkles, LogOut, Plus } from "lucide-rea
 import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
+import YourProgramPanel from "@/components/dashboard/YourProgramPanel";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useRoles } from "@/hooks/use-roles";
@@ -73,6 +74,13 @@ const Dashboard = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("checkout") === "success") {
       toast({ title: "Welcome aboard!", description: "Your payment was successful. Your access has been upgraded." });
+      window.history.replaceState({}, "", "/dashboard");
+    }
+    if (params.get("welcome") === "program") {
+      toast({
+        title: "You're in 🎉",
+        description: "Your program is now active. Scroll down to see what's included and your next step.",
+      });
       window.history.replaceState({}, "", "/dashboard");
     }
     Promise.all([
@@ -155,6 +163,13 @@ const Dashboard = () => {
           <div className="text-center py-20 text-muted-foreground">Loading your journey...</div>
         ) : (
           <div className="space-y-12">
+            {/* Your Program (only renders for reset_30 / transformation_90 tiers) */}
+            {!tierLoading && (tier === "reset_30" || tier === "transformation_90") && (
+              <AnimatedSection delay={25}>
+                <YourProgramPanel tier={tier} />
+              </AnimatedSection>
+            )}
+
             {/* Clarity Score */}
             <AnimatedSection delay={50}>
               <div className="flex items-center justify-between mb-6">
