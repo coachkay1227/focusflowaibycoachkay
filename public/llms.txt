@@ -9,6 +9,7 @@
 - [Assessment](/assessment): Clarity assessment to identify where you're stuck and what to do next.
 - [Programs](/programs): Coaching programs built on the F.O.C.U.S. pillars.
 - [Studio](/store): Story, Legacy & Publishing Studio — books, packages, and inquiry lanes (including Autism & Social Stories).
+- [Autism & Social Stories](/autism-social-stories): Therapist-grade custom social stories for autistic kids and neurodivergent families. HSA/FSA eligible with Letter of Medical Necessity template included. Packages from $47 (single digital story) to $3,997+ (custom therapy practice license). Used by BCBAs, SLPs, OTs, LPCs, and school/IEP teams. Gift-wrap add-on available.
 - [Dashboard](/dashboard): Authenticated user dashboard with clarity score, streaks, and enrolled programs.
 - [Community](/community): Focus Flow Elevation Hub community access.
 - [Pricing](/pricing): Plans, tiers, and one-time purchases.
