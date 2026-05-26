@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Megaphone,
@@ -83,6 +83,7 @@ export default function Store() {
   const [category, setCategory] = useState<BookCategory>("storybooks");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const onOrder = (slug: string) => {
     const pkg = PACKAGES.find((p) => p.slug === slug);
@@ -214,7 +215,16 @@ export default function Store() {
             Choose Your Lane
           </h2>
         </div>
-        <CategoryTabs active={category} onChange={setCategory} />
+        <CategoryTabs
+          active={category}
+          onChange={(c) => {
+            if (c === "autism") {
+              navigate("/autism-social-stories");
+              return;
+            }
+            setCategory(c);
+          }}
+        />
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visiblePackages.map((p) => (
             <PackageCard key={p.slug} pkg={p} onOrder={onOrder} />
