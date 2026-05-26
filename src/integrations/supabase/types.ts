@@ -79,6 +79,99 @@ export type Database = {
           },
         ]
       }
+      autism_orders: {
+        Row: {
+          addons: Json
+          addons_total: number
+          admin_notes: string | null
+          child_age: string | null
+          child_first_name: string | null
+          child_interests: string | null
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          created_at: string
+          gift_note: string | null
+          gift_recipient: string | null
+          gift_wrap: boolean
+          id: string
+          order_total: number
+          package_name: string
+          package_price: number
+          package_slug: string
+          provider_email: string | null
+          provider_name: string | null
+          scenario_focus: string
+          special_requirements: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          use_case: string
+          user_id: string | null
+        }
+        Insert: {
+          addons?: Json
+          addons_total?: number
+          admin_notes?: string | null
+          child_age?: string | null
+          child_first_name?: string | null
+          child_interests?: string | null
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          created_at?: string
+          gift_note?: string | null
+          gift_recipient?: string | null
+          gift_wrap?: boolean
+          id?: string
+          order_total: number
+          package_name: string
+          package_price: number
+          package_slug: string
+          provider_email?: string | null
+          provider_name?: string | null
+          scenario_focus: string
+          special_requirements?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          use_case: string
+          user_id?: string | null
+        }
+        Update: {
+          addons?: Json
+          addons_total?: number
+          admin_notes?: string | null
+          child_age?: string | null
+          child_first_name?: string | null
+          child_interests?: string | null
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          created_at?: string
+          gift_note?: string | null
+          gift_recipient?: string | null
+          gift_wrap?: boolean
+          id?: string
+          order_total?: number
+          package_name?: string
+          package_price?: number
+          package_slug?: string
+          provider_email?: string | null
+          provider_name?: string | null
+          scenario_focus?: string
+          special_requirements?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          use_case?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       book_orders: {
         Row: {
           addons: Json
