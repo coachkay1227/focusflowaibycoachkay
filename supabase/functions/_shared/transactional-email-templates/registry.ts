@@ -16,6 +16,8 @@ import { template as bookOrderStatusUpdate } from './book-order-status-update.ts
 import { template as webhookFailureAlert } from './webhook-failure-alert.tsx'
 import { template as clarityCodeResult } from './clarity-code-result.tsx'
 import { template as auditPurchaseConfirmation } from './audit-purchase-confirmation.tsx'
+import { template as resetWelcome } from './reset-welcome.tsx'
+import { template as transformationWelcome } from './transformation-welcome.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -25,4 +27,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'webhook-failure-alert': webhookFailureAlert,
   'clarity-code-result': clarityCodeResult,
   'audit-purchase-confirmation': auditPurchaseConfirmation,
+  'reset-welcome': resetWelcome,
+  'transformation-welcome': transformationWelcome,
 }
