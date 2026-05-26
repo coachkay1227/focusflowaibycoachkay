@@ -30,18 +30,45 @@ type AuditReport = {
 
 function ctaRoute(slug: string): { href: string; external?: boolean; opening_soon?: boolean; label?: string } {
   switch (slug) {
-    case "focusflow_30":
-    case "focusflow_90":
-    case "focusflow_6mo":
+    // Door 1 — Transformation lane lives in /store today
+    case "transform_30_personal":
+    case "transform_30_business":
+    case "transform_30_ai":
+    case "transform_90_personal":
+    case "transform_90_business":
+    case "transform_90_ai":
+    case "transform_6mo_partnership":
+      return { href: "/store" };
+    // Door 2 — Rent-an-Agent + Lead Engine
     case "rent_agent_starter":
     case "rent_agent_pro":
+    case "rent_agent_dreamteam":
+    case "rent_agent_enterprise":
+    case "lead_engine_essentials":
+    case "lead_engine_pro":
+    case "lead_engine_growth":
+    case "lead_engine_scale":
+    case "lead_engine_enterprise":
       return { href: "/rent-an-agent" };
-    case "advisory":
+    // Door 3 — Advisory
+    case "advisory_strategy_intensive":
+    case "advisory_executive":
+    case "advisory_speaking":
+    case "advisory_corporate":
+    case "advisory_university":
+    case "group_programs":
       return { href: "/advisory" };
+    // Door 4 — Studio (books) lives in /store
+    case "studio_mini_story":
+    case "studio_storybook_pro":
+    case "studio_other":
+      return { href: "/store" };
+    // Build Studio — Phase 3.5, opening soon
     case "build_studio_landing":
     case "build_studio_site":
     case "build_studio_dashboard":
       return { href: "#", opening_soon: true, label: "Opening soon — get notified" };
+    // Community / free
     case "focus_flow_elevation_hub":
       return { href: SKOOL_URL, external: true };
     default:
