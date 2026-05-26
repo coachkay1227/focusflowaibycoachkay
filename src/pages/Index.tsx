@@ -13,6 +13,7 @@ import PricingSection from "@/components/PricingSection";
 import SiteFooter from "@/components/SiteFooter";
 import { getPublicPrograms } from "@/data/programs";
 import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
+import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import coachKayPortrait from "@/assets/coach-kay.jpeg";
 import { trackEvent } from "@/lib/analytics";
 
@@ -40,27 +41,7 @@ const Index = () => {
           webPage("/", "Home"),
           breadcrumb([{ name: "Home", path: "/" }], "/"),
           offerCatalog(getPublicPrograms()),
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: [
-              {
-                "@type": "Question",
-                name: "What is a Clarity Check?",
-                acceptedAnswer: { "@type": "Answer", text: "A free 5-minute guided self-reflection session that identifies your patterns and provides a personalized clarity report with actionable next steps." },
-              },
-              {
-                "@type": "Question",
-                name: "Do I need to sign up to try it?",
-                acceptedAnswer: { "@type": "Answer", text: "No. The Clarity Check is completely free with no sign-up required. You can save your results by creating an account afterward." },
-              },
-              {
-                "@type": "Question",
-                name: "What is the Mirror Challenge?",
-                acceptedAnswer: { "@type": "Answer", text: "A daily guided reflection challenge available in 3, 7, 14, or 30-day formats. Each day includes a specific prompt designed to build self-awareness and lasting change." },
-              },
-            ],
-          },
+          faqPageSchema(getFaqLane("clarity")?.items ?? []),
         ]}
       />
       {/* Mouse glow */}
