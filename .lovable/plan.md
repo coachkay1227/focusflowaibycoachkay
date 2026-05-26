@@ -1,54 +1,61 @@
-# Full Launch Audit + Email Campaign Plan
+# Launch Audit — Status Report
 
-## Part 1 — Comprehensive Launch Audit (read-only)
+## ✅ Verified working (from yesterday's changes)
 
-I'll produce a single consolidated report covering everything **working / broken / missing / needs-update** across 10 surfaces. No code changes during the audit — findings only, then we triage.
+- **Email rewire complete**: `send-transactional-email` and `auth-email-hook` both send via Resend API → `Coach Kay <noreply@coachkayai.life>`, Reply-To `Hello@coachkayelevates.org`. No stale `notify.coachkayelevates.org` / `SENDER_DOMAIN` references remain anywhere in the codebase.
+- **Autism purchase confirmation template** exists (`autism-purchase-confirmation.tsx`) and is registered.
+- **Stripe webhook** wired to invoke the new autism template with extended metadata.
+- **Templates registered** (11 total): application-received, audit-purchase-confirmation, autism-purchase-confirmation, book-order-paid, book-order-status-update, clarity-code-result, reset-welcome, transformation-welcome, webhook-failure-alert, welcome-to-focusflow.
+- **Edge function logs**: no recent errors on send-transactional-email or stripe-webhook (no traffic yet — these need a real test transaction to confirm).
 
-### Audit surfaces
+## ⚠️ Still broken / needs fixing
 
-1. **Routes & SEO** — all 46 routes, `<SEOHead>` coverage, sitemap (28 entries), robots.txt, llms.txt pricing drift, JSON-LD validity, canonical/og tags
-2. **Stripe payment surface** — every SKU in `_shared/stripe-config.ts` cross-checked against UI CTAs (`startCheckout`, `priceId`, `create-*-checkout`). Flag missing SKUs (6-Month Partnership $3,997, Lead Engine 5 tiers) and orphaned SKUs
-3. **stripe-webhook** — branch coverage (book / autism / audit / tier-map / NO_TIER), idempotency via `processed_stripe_events`, PROTECTED_TIERS preservation, `webhook_failures` alerting
-4. **Edge functions inventory** — all 30+ functions: deployment status, JWT verification posture, ESM import compliance, error handling, CORS
-5. **Database & RLS** — run linter, verify `user_access_levels` / `user_roles` / `audit_tokens` / `business_audits` / `orders` / `enrollments` policies, SECURITY DEFINER function grants
-6. **Auth flow** — AuthContext, ProtectedRoute coverage, bootstrap admins, `handle_new_user` trigger, Google OAuth status, password reset, magic-link audit claim flow
-7. **Email infrastructure** — domain status (`notify.coachkayelevates.org`), Resend `from:` verification, template registry (9 templates), queue/cron health, **missing autism-purchase-confirmation template**, GHL webhook coverage
-8. **AI flows** — `generate-business-audit` (offer_slug enum), `clarity-insight`, `coach-chat`, `pattern-detect`, `generate-starter-report`, `mac-elaborate`, `weekly-insights` — model usage, JWT, error paths
-9. **Compliance & copy** — 501c3 misattribution sweep, dead slug detection, entity naming, refund/disclaimer/terms presence, insurance language
-10. **Mobile + a11y + analytics + build** — viewport check at 369px (current), MobileNav, modal a11y, tracking pixel decision, `tsc`, prebuild, SEO regression script, 8 end-to-end flow traces (A: $47 audit · B: autism bundles · C: studio orders · D: Rent-an-Agent sub+cancel · E: PROTECTED_TIERS preservation · F: 30/90-day welcome emails · G: inquiry→GHL · H: refunds)
+### Security findings (10 open from scanner, NEW since yesterday)
 
-### Deliverable format
+1. **`book_orders` — missing INSERT policy** (warn). Authenticated users can insert rows with arbitrary `user_id`. Need `WITH CHECK (auth.uid() = user_id)`.
+2. **`autism_orders` — missing INSERT policy** (warn). Same issue. Need ownership-enforcing INSERT policy.
+3. **`cohort_registrations`** — anon INSERT with no field validation / rate limit. Lower priority; add a CHECK on email format at minimum.
+4. **5× "RLS Policy Always True" warnings** — need to identify which UPDATE/DELETE/INSERT policies use `USING (true)` and tighten them.
+5. **3× "Authenticated Can Execute SECURITY DEFINER" warnings** — new definer functions exposed to `authenticated` role. Need to identify and either revoke EXECUTE or document as accepted risk in security memory.
+6. **1× "Anon Can Execute SECURITY DEFINER"** — likely `get_audit_by_token` (already in accepted-risk memory). Confirm and re-mark as fixed.
 
-Single markdown report with:
-- **Per-surface status table** (✅ working / ⚠️ needs update / ❌ broken / 🔲 missing)
-- **Detailed findings** grouped by surface
-- **Final 3-tier triage**: 🔴 CRITICAL (blocks launch) · 🟡 RECOMMENDED (do before launch) · 🟢 DEFERRED (post-launch ok)
-- **Carryover items** explicitly re-confirmed: Resend domain verification, autism-purchase-confirmation template, 6-Month Partnership SKU disposition, Lead Engine SKU disposition, tracking pixel decision
-- **Live Stripe test-mode checklist** (12 flows)
+### Email infrastructure gaps
 
-## Part 2 — Final Page + Email Campaign (scoping only, build after audit)
+7. **Lovable Emails workspace still has stale `coachkayelevates.org` entry** with `provisioning_failed`. Should be deleted + Lovable Emails toggled off for the project (since we now send 100% via Resend) — otherwise it sits as a confusing artifact and the queue dispatcher cron may still try to drain.
+8. **`process-email-queue` cron** — confirm whether it's still scheduled. Since both senders now bypass the pgmq queue and call Resend directly, the queue tables (`email_send_log`, `email_unsubscribe_tokens`, `suppressed_emails`) are no longer being written to. Decision needed: (a) delete the queue infra, or (b) refactor the Resend senders to enqueue + dispatch (recommended for retry safety, suppression, unsubscribe).
+9. **No suppression / unsubscribe check** in the new Resend sender path. Recipients who unsubscribed previously will now receive emails again. Auth emails are fine (transactional/required), but app emails should respect `suppressed_emails`.
 
-After the audit lands, I need two answers from you to scope cleanly:
+### Code health
 
-**A. The one remaining page** — which one? Likely candidates based on prior phases:
-- `/transformations` lane page (Phase 4 scope per memory)
-- Something else?
+10. **Stale references to send-transactional-email** in `client-notify`, `clarity-insight`, `apply-now`, `update-book-order`, `stripe-webhook`, `_shared/structured-log.ts` — verify each invocation still passes a valid `templateName` and that no caller still expects the old Lovable gateway response shape.
+11. **React Router v7 warnings** in console (non-blocking) — add `future` flags or accept.
 
-**B. Email campaign scope** — to plan correctly I need:
-- **Type**: transactional drip (welcome → day 3 → day 7 → day 30) vs. nurture sequence vs. launch announcement?
-- **Audience**: free signups · audit purchasers · autism customers · Rent-an-Agent subs · cohort/transformation enrollees · inquiry-only leads?
-- **Trigger source**: enrollment events (Lovable transactional) vs. marketing drip (GHL)? Per project rule: **transactional → Lovable, marketing/drip → GHL**.
-- **Number of sequences + emails per sequence** (rough)
+## 📄 The "one more page" you mentioned
 
-## Execution order
+You said you still have one more page to build — I don't know which one. Routes currently registered: Index, Auth, ResetPassword, Onboarding, Dashboard, Profile, Community, Modules, ProgramDetail, ClaritySession, ResultScreen, MirrorChallenge, Challenges, CoachChat, CoachKay, Store, OrderSuccess, AutismSocialStories, Assessment, StarterKit, RentAnAgent, Advisory, AuditIntake, AuditReport, AuditLanding, EmailPreview, EmailUnsubscribe, Unsubscribe, Kiosk, Sitemap, Faq, NotFound, Privacy, Terms, Disclaimer, RefundPolicy, plus Admin (Dashboard/Users/Analytics/Content/Orders). **Tell me which page is missing** and I'll build it.
 
-1. Run audit (15–20 parallel read calls, no writes)
-2. Deliver consolidated report
-3. You triage + answer A/B above
-4. Switch to build mode for final page + email campaign
+## 📧 Email campaign (next phase, not started)
 
-## What I will NOT touch during the audit
+Confirmed scope before building:
+- Welcome / nurture sequence for each access path?
+- Audit-buyer drip after $47 purchase?
+- Autism Studio post-purchase educational series?
+- Cohort enrollment campaign?
+- Marketing emails belong outside Lovable's transactional system (deliverability rule) — confirm you want these in GHL or Resend Broadcasts, not in our transactional pipeline.
 
-AuthContext · useSubscription · useAccessLevel · create-checkout · ReportView · ApplyNowDialog · OrderSuccess · AuditIntake/Report/Landing · stripe-webhook (except documenting) · Resend from-addresses · RLS on working tables.
+---
 
-Approve to run the audit.
+## Proposed fix order (if approved)
+
+1. Add INSERT-with-ownership policies to `book_orders` + `autism_orders` (migration).
+2. Audit + tighten the 5 "always true" RLS policies (migration).
+3. Identify the 3 new authenticated-SECURITY-DEFINER functions; revoke or accept-risk + memory update.
+4. Re-mark `get_audit_by_token` finding as fixed (already in memory).
+5. Decide queue strategy: refactor Resend senders to enqueue+dispatch, OR delete queue infra. **Recommend refactor** so we keep suppression/unsubscribe.
+6. Add suppression check + unsubscribe footer support to the Resend send path.
+7. Delete stale Lovable Emails workspace entry; toggle Lovable Emails off.
+8. Sanity-check the 6 callers of `send-transactional-email`.
+9. Build the missing page (need name).
+10. Email campaign scoping → build.
+
+**Tell me: which page is missing, and do you want me to proceed with items 1–8 as a single fix pass before we tackle the page + campaigns?**
