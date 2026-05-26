@@ -1,6 +1,13 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "@/components/SEOHead";
 
 const RefundPolicy = () => (
+  <>
+    <SEOHead
+      title="Refund & Cancellation Policy — FocusFlow AI"
+      description="Refund windows and cancellation terms for FocusFlow AI programs."
+      path="/refund-policy"
+    />
   <LegalLayout
     eyebrow="LEGAL · REFUNDS"
     title="Refund & Cancellation Policy"
