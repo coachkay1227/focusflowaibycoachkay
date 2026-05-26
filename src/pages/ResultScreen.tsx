@@ -17,6 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
 import { trackCta } from "@/lib/analytics";
+import PillarBadge from "@/components/PillarBadge";
+import PillarStrip from "@/components/PillarStrip";
 
 interface InsightResult {
   truth: string;
@@ -240,6 +242,9 @@ const ResultScreen = () => {
             <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
               This isn't a diagnosis. It's a mirror. Read slowly. Let it land.
             </p>
+            <div className="mt-5 flex justify-center">
+              <PillarBadge pillar="F" />
+            </div>
           </AnimatedSection>
 
           {emailStatus !== "idle" && emailStatus !== "skipped" && (
@@ -533,6 +538,10 @@ const ResultScreen = () => {
                 Explore all transformation paths →
               </button>
             </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={1400} className="mt-16">
+            <PillarStrip />
           </AnimatedSection>
         </div>
       )}

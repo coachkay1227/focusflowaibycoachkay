@@ -14,6 +14,8 @@ import { isAdminPreviewArmed } from "@/lib/admin-preview";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ReportView from "@/components/reports/ReportView";
+import PillarStrip from "@/components/PillarStrip";
+import PillarBadge from "@/components/PillarBadge";
 
 type Dimension = "M" | "A" | "C";
 
@@ -465,6 +467,9 @@ const Assessment = () => {
               {MIND_LABELS[result.mind]} · {ACTION_LABELS[result.action]} ·{" "}
               {CHARACTER_LABELS[result.character]}
             </p>
+            <div className="mt-5">
+              <PillarBadge pillar="O" />
+            </div>
 
             {/* Loading shimmer while AI elaborates */}
             {elaborating && !insight && (
@@ -558,6 +563,9 @@ const Assessment = () => {
               >
                 Retake
               </Button>
+            </div>
+            <div className="mt-16">
+              <PillarStrip />
             </div>
           </div>
         )}

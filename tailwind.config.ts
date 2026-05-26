@@ -63,6 +63,13 @@ export default {
           deep: "hsl(var(--navy-deep))",
           light: "hsl(var(--navy-light))",
         },
+        pillar: {
+          f: "hsl(var(--pillar-f))",
+          o: "hsl(var(--pillar-o))",
+          c: "hsl(var(--pillar-c))",
+          u: "hsl(var(--pillar-u))",
+          s: "hsl(var(--pillar-s))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

@@ -67,27 +67,27 @@ export interface Program {
 export const FOCUS_PILLARS: Record<FocusPillar, { full: string; color: string; description: string }> = {
   F: {
     full: "Foundation",
-    color: "#C9973A",
+    color: "hsl(var(--pillar-f))",
     description: "Identity, mindset, and inner work. Clear what's blocking you so you can build on solid ground.",
   },
   O: {
     full: "Opportunity",
-    color: "#4A7FC1",
+    color: "hsl(var(--pillar-o))",
     description: "Recognize open doors, align with purpose, shift from survival mode to strategic clarity.",
   },
   C: {
     full: "Create",
-    color: "#7B5EA7",
+    color: "hsl(var(--pillar-c))",
     description: "Take aligned action, design your life by intention, and build what you were made to build.",
   },
   U: {
     full: "Uplift",
-    color: "#2E9E75",
+    color: "hsl(var(--pillar-u))",
     description: "Elevate your standards, habits, and environment. Become the version of yourself that sustains success.",
   },
   S: {
     full: "Support",
-    color: "#D4527E",
+    color: "hsl(var(--pillar-s))",
     description: "Community, accountability, and ongoing coaching. You don't grow alone — this is where it compounds.",
   },
 };

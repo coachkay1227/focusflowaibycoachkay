@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Trophy, Check, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
+import PillarBadge from "@/components/PillarBadge";
+import PillarStrip from "@/components/PillarStrip";
 
 const challengeDayPreviews: Record<string, string[]> = {
   "3-day": [
@@ -163,6 +165,9 @@ const Challenges = () => {
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
             Each challenge is a structured daily coaching experience designed to create lasting change. Pick a duration that matches your readiness.
           </p>
+          <div className="mt-6 flex justify-center">
+            <PillarBadge pillar="F" />
+          </div>
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -251,6 +256,10 @@ const Challenges = () => {
               </AnimatedSection>
             );
           })}
+        </div>
+
+        <div className="mt-16">
+          <PillarStrip caption="Challenges live in the Foundation pillar — inner work before outer action." />
         </div>
       </div>
     </div>

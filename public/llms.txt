@@ -17,4 +17,15 @@
 
 ## About
 
-FocusFlow AI is Coach Kay's clarity coaching platform. It combines AI-guided sessions, structured programs, and a publishing studio to help people get unstuck, make decisions, and build a legacy.
+FocusFlow AI is Coach Kay's clarity coaching platform. Everything maps to one
+framework: **F.O.C.U.S.** — five transformational pillars that every module,
+challenge, assessment, and coaching session traces back to.
+
+- **F — Foundation:** identity, mindset, inner work
+- **O — Opportunity:** vision, direction, strategic clarity
+- **C — Create:** aligned action and intentional building
+- **U — Uplift:** standards, habits, environment
+- **S — Support:** community, accountability, ongoing coaching
+
+It combines AI-guided sessions, structured programs, and a publishing studio
+to help people get unstuck, make decisions, and build a legacy.

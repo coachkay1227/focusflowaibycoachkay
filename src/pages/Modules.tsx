@@ -3,7 +3,7 @@ import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
-import { getPublicPrograms, getProgramsByPath, type PublicPath, PUBLIC_PATHS } from "@/data/programs";
+import { getPublicPrograms, getProgramsByPath, FOCUS_PILLARS, type PublicPath, PUBLIC_PATHS, type FocusPillar } from "@/data/programs";
 import { getModuleEnrollments, enrollInModule, type ModuleEnrollment } from "@/lib/enrollment-store";
 import { TIER_RANK } from "@/lib/tier-constants";
 import { useRoles } from "@/hooks/use-roles";
@@ -15,10 +15,12 @@ import { webPage, breadcrumb } from "@/lib/seo-schema";
 import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
+import PillarStrip from "@/components/PillarStrip";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PATHS: PublicPath[] = ["personal", "business", "ai"];
+const PILLAR_ORDER: FocusPillar[] = ["F", "O", "C", "U", "S"];
 
 const Modules = () => {
   const navigate = useNavigate();
@@ -63,6 +65,13 @@ const Modules = () => {
   const filteredPrograms = activePath === "all"
     ? allPublic
     : getProgramsByPath(activePath);
+
+  // Group programs by F.O.C.U.S. pillar so the framework is visible end-to-end.
+  const grouped = PILLAR_ORDER.map((pillar) => ({
+    pillar,
+    meta: FOCUS_PILLARS[pillar],
+    items: filteredPrograms.filter((p) => p.pillar === pillar),
+  })).filter((g) => g.items.length > 0);
 
   const jsonLd = [
     webPage("/modules", "Transformation Paths", "CollectionPage"),
@@ -157,38 +166,72 @@ const Modules = () => {
           })}
         </div>
 
-        {/* Program Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredPrograms.map((program, i) => {
-            const adminBypass = isAdmin && !userView;
-            const needsGate = !adminBypass && program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
-            return (
-              <AnimatedSection key={program.id} delay={Math.min(i * 60, 600)}>
-                {needsGate ? (
-                  <AccessGate requiredTier={program.accessTier}>
-                    <ProgramCard
-                      program={program}
-                      enrollment={getEnrollment(program.id)}
-                      onEnroll={handleEnroll}
-                      enrolling={enrolling === program.id}
-                    />
-                  </AccessGate>
-                ) : (
-                  <ProgramCard
-                    program={program}
-                    enrollment={getEnrollment(program.id)}
-                    onEnroll={handleEnroll}
-                    enrolling={enrolling === program.id}
-                  />
-                )}
-              </AnimatedSection>
-            );
-          })}
+        {/* Programs grouped by F.O.C.U.S. pillar */}
+        <div className="space-y-14">
+          {grouped.map((group) => (
+            <section key={group.pillar} aria-labelledby={`pillar-${group.pillar}`}>
+              <div className="flex items-end justify-between flex-wrap gap-3 mb-5 border-b border-border/50 pb-3">
+                <div className="flex items-center gap-3">
+                  <span
+                    className="w-9 h-9 rounded-full border-2 flex items-center justify-center text-sm font-semibold"
+                    style={{ borderColor: group.meta.color, color: group.meta.color }}
+                    aria-hidden="true"
+                  >
+                    {group.pillar}
+                  </span>
+                  <div>
+                    <h2
+                      id={`pillar-${group.pillar}`}
+                      className="font-heading text-xl md:text-2xl font-light leading-tight"
+                      style={{ color: group.meta.color }}
+                    >
+                      {group.meta.full}
+                    </h2>
+                    <p className="text-xs text-muted-foreground max-w-xl">{group.meta.description}</p>
+                  </div>
+                </div>
+                <span className="font-mono-label text-[10px] tracking-[0.18em] text-muted-foreground/70">
+                  {group.items.length} {group.items.length === 1 ? "PROGRAM" : "PROGRAMS"}
+                </span>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {group.items.map((program, i) => {
+                  const adminBypass = isAdmin && !userView;
+                  const needsGate = !adminBypass && program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
+                  return (
+                    <AnimatedSection key={program.id} delay={Math.min(i * 60, 400)}>
+                      {needsGate ? (
+                        <AccessGate requiredTier={program.accessTier}>
+                          <ProgramCard
+                            program={program}
+                            enrollment={getEnrollment(program.id)}
+                            onEnroll={handleEnroll}
+                            enrolling={enrolling === program.id}
+                          />
+                        </AccessGate>
+                      ) : (
+                        <ProgramCard
+                          program={program}
+                          enrollment={getEnrollment(program.id)}
+                          onEnroll={handleEnroll}
+                          enrolling={enrolling === program.id}
+                        />
+                      )}
+                    </AnimatedSection>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
 
         {filteredPrograms.length === 0 && (
           <p className="text-center text-muted-foreground mt-12">No programs found for this path.</p>
         )}
+
+        <div className="mt-16">
+          <PillarStrip />
+        </div>
       </div>
     </div>
   );
