@@ -338,7 +338,7 @@ const Index = () => {
             {
               label: "01 · CLARITY",
               title: "F.O.C.U.S. Clarity Check",
-              desc: "Answer 6 questions. Get your personalized clarity report.",
+              desc: "6 questions · ~3 min. Personalized AI clarity report from Coach Kay.",
               cta: "Take the Check",
               to: "/clarity",
               primary: true,
@@ -346,7 +346,7 @@ const Index = () => {
             {
               label: "02 · ASSESSMENT",
               title: "Business Clarity Assessment",
-              desc: "Discover how your mindset, action, and character drive your business.",
+              desc: "18 questions · ~5 min. Discover your Mind · Action · Character archetype.",
               cta: "Take the Assessment",
               to: "/assessment",
               primary: false,
@@ -354,9 +354,9 @@ const Index = () => {
             {
               label: "03 · DOWNLOAD",
               title: "AI Transformation Starter Kit",
-              desc: "A free download to kickstart your AI-powered business transformation.",
+              desc: "4 questions · ~2 min. Instant AI Quick Start Report for your business.",
               cta: "Download Free",
-              to: "/programs/kpi-roi-tracker",
+              to: "/starter-kit",
               primary: false,
             },
           ].map((item, i) => (
@@ -368,7 +368,14 @@ const Index = () => {
                 <h3 className="font-heading text-lg font-medium text-foreground mt-2">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mt-2 flex-1">{item.desc}</p>
                 <Button
-                  onClick={() => navigate(item.to)}
+                  onClick={() => {
+                    void trackEvent(
+                      "path_card_clicked",
+                      { card: item.label, title: item.title, to: item.to },
+                      item.to === "/clarity" ? "personal" : item.to === "/assessment" ? "business" : "ai"
+                    );
+                    navigate(item.to);
+                  }}
                   size="sm"
                   variant={item.primary ? "default" : "outline"}
                   className={
