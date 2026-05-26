@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import FloatingOrbs from "@/components/FloatingOrbs";
-import SEOHead from "@/components/SEOHead";
 import SiteFooter from "@/components/SiteFooter";
 
 interface LegalLayoutProps {
@@ -16,7 +15,6 @@ interface LegalLayoutProps {
 
 const LegalLayout = ({ title, description, path, eyebrow, lastUpdated, children }: LegalLayoutProps) => (
   <div className="relative min-h-screen overflow-hidden grain-overlay">
-    <SEOHead title={`${title} — FocusFlow AI`} description={description} path={path} />
     <FloatingOrbs />
 
     <div className="relative z-10 px-6 md:px-12 py-6">

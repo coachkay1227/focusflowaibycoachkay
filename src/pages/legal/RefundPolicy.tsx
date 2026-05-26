@@ -1,6 +1,13 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "@/components/SEOHead";
 
 const RefundPolicy = () => (
+  <>
+    <SEOHead
+      title="Refund & Cancellation Policy — FocusFlow AI"
+      description="Refund windows and cancellation terms for FocusFlow AI programs."
+      path="/refund-policy"
+    />
   <LegalLayout
     eyebrow="LEGAL · REFUNDS"
     title="Refund & Cancellation Policy"
@@ -70,6 +77,7 @@ const RefundPolicy = () => (
       <li>We respond within 3 business days and process approved refunds via Stripe within 5–10 business days.</li>
     </ol>
   </LegalLayout>
+  </>
 );
 
 export default RefundPolicy;
