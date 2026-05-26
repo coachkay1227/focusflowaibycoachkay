@@ -510,21 +510,24 @@ const Index = () => {
           {[
             {
               quote:
-                "I've done therapy, journaling, meditation — but this 5-minute session showed me a pattern I'd been blind to for years.",
-              name: "Aisha M.",
-              role: "Creative Director",
+                "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone — I knew exactly which one thing to protect every morning.",
+              name: "Sheila",
+              role: "Cohort Member · Reset 30",
+              pillar: "F · FOCUS",
             },
             {
               quote:
-                "The Mirror Challenge rewired how I start my mornings. Day 4 broke something open in me. I'm not the same person I was a week ago.",
-              name: "David R.",
-              role: "Founder & CEO",
+                "Coach Kay made AI feel like a journal that actually answers back. The Clarity Check named the pattern I'd been dancing around for years — in one paragraph. That's when I stopped second-guessing and started building.",
+              name: "Starr",
+              role: "Life Coaching Client · Transformation 90",
+              pillar: "C · CLARITY  ·  U · UPLEVEL",
             },
             {
               quote:
-                "Coach Kay's voice in the results felt like someone who actually sees me. Not generic advice — real, specific truth.",
-              name: "Priya S.",
-              role: "Product Designer",
+                "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own — not one I rented from a YouTube video.",
+              name: "Buzz",
+              role: "Founder · AI Simplified Track",
+              pillar: "O · OWNERSHIP  ·  S · SUSTAIN",
             },
           ].map((item, i) => (
             <AnimatedSection key={item.name} delay={i * 120}>
@@ -533,6 +536,7 @@ const Index = () => {
                 <div className="mt-6 pt-4 border-t border-border/50">
                   <p className="font-medium text-sm text-foreground">{item.name}</p>
                   <p className="font-mono-label text-muted-foreground/60 mt-1">{item.role}</p>
+                  <p className="font-mono-label text-primary/80 tracking-[0.2em] text-[10px] mt-2">{item.pillar}</p>
                 </div>
               </div>
             </AnimatedSection>

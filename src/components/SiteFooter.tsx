@@ -36,7 +36,7 @@ const SiteFooter = () => {
         { label: "About Coach Kay", to: "/coach-kay" },
         { label: "Community", to: "/community" },
         { label: "Sitemap", to: "/sitemap" },
-        { label: "Contact", to: "mailto:hello@coachkayai.life", external: true },
+        { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },
       ],
     },
     {
@@ -138,8 +138,8 @@ const SiteFooter = () => {
             <p>© {year} FocusFlow Elevation · Shield Her Elevation LLC. All rights reserved.</p>
             <p>
               Built with care by Coach Kay Elevates ·{" "}
-              <a href="mailto:hello@coachkayai.life" className="hover:text-primary transition-colors">
-                hello@coachkayai.life
+              <a href="mailto:hello@coachkayelevates.org" className="hover:text-primary transition-colors">
+                hello@coachkayelevates.org
               </a>
             </p>
           </div>

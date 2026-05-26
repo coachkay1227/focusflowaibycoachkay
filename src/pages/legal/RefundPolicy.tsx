@@ -12,7 +12,7 @@ const RefundPolicy = () => (
       We want every client to feel confident saying yes. Our refund windows are designed to
       protect that — while respecting the fact that coaching delivers value the moment you do the
       work. All refund requests should be sent to{" "}
-      <a href="mailto:hello@coachkayai.life" className="text-primary">hello@coachkayai.life</a>.
+      <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>.
     </p>
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">Free offerings</h2>
@@ -65,7 +65,7 @@ const RefundPolicy = () => (
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">How to request a refund</h2>
     <ol className="list-decimal pl-6 space-y-2">
-      <li>Email <a href="mailto:hello@coachkayai.life" className="text-primary">hello@coachkayai.life</a> from the email on your account.</li>
+      <li>Email <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a> from the email on your account.</li>
       <li>Include your order number and the program name.</li>
       <li>We respond within 3 business days and process approved refunds via Stripe within 5–10 business days.</li>
     </ol>
