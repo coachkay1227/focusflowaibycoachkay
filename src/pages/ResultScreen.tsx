@@ -601,6 +601,35 @@ const ResultScreen = () => {
             </div>
           </AnimatedSection>
 
+          {/* Share block — turn the result into a referral moment */}
+          <AnimatedSection delay={1350} className="mt-12">
+            <div className="clarity-card rounded-lg border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8 text-center">
+              <Share2 className="h-6 w-6 text-primary mx-auto mb-3" />
+              <h3 className="font-heading text-xl md:text-2xl font-light mb-2">
+                Know someone who needs this clarity?
+              </h3>
+              <p className="text-muted-foreground text-sm max-w-md mx-auto mb-5">
+                The Clarity Check is free, takes under 5 minutes, and lands deeper than most paid
+                assessments. Pass it on.
+              </p>
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" /> Link copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" /> Share the Clarity Check
+                  </>
+                )}
+              </Button>
+            </div>
+          </AnimatedSection>
+
           <AnimatedSection delay={1400} className="mt-16">
             <PillarStrip />
           </AnimatedSection>
