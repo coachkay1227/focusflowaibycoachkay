@@ -40,17 +40,6 @@ const AdminContent = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (!rolesLoading && !isAdmin) {
-      navigate("/dashboard");
-      return;
-    }
-  }, [user, isAdmin, rolesLoading, navigate]);
-
-  useEffect(() => {
     if (!isAdmin) return;
 
     const fetchContentStats = async () => {

@@ -46,17 +46,6 @@ const AdminAnalytics = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (!rolesLoading && !isAdmin) {
-      navigate("/dashboard");
-      return;
-    }
-  }, [user, isAdmin, rolesLoading, navigate]);
-
-  useEffect(() => {
     if (!isAdmin) return;
 
     const fetchAnalytics = async () => {
