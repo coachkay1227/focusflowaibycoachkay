@@ -62,11 +62,24 @@ const ResultScreen = () => {
 
   const fetchInsight = async () => {
     if (!answers) return;
-    
+
+    // Generate a stable session id up-front so the server-side email
+    // dedupes correctly (idempotency key) and so we can save the same id
+    // to history below.
+    const sessionId = crypto.randomUUID();
+
     let insightData: InsightResult;
     try {
       const { data, error } = await supabase.functions.invoke("clarity-insight", {
-        body: { answers, moduleId },
+        body: {
+          answers,
+          moduleId,
+          sessionId,
+          // Server resolves authed user from JWT; only pass guest fields when
+          // we actually have them (anon flow).
+          guest_email: guestEmail,
+          guest_name: guestName,
+        },
       });
 
       if (error || data?.error) {
@@ -83,7 +96,7 @@ const ResultScreen = () => {
 
     // Save session with the local insightData variable (not stale React state)
     const session: SessionRecord = {
-      id: crypto.randomUUID(),
+      id: sessionId,
       timestamp: Date.now(),
       moduleId,
       answers,
@@ -91,34 +104,14 @@ const ResultScreen = () => {
     };
     saveSessionCloud(session);
 
-    // Email the Clarity Code. We only email authenticated users so the
-    // server-side wrapper can resolve the recipient from the verified user
-    // session — preventing the email endpoint from being abused to spam
-    // arbitrary addresses.
+    // Email + GHL webhook are dispatched server-side by clarity-insight
+    // (to either the authed user's verified email OR the guest_email we
+    // just captured in the gate). Reflect that in the UI status.
     const { data: { session: authSession } } = await supabase.auth.getSession();
-    const recipientEmail = authSession?.user?.email;
+    const recipientEmail = authSession?.user?.email ?? guestEmail ?? null;
     if (recipientEmail) {
-      setEmailStatus("sending");
       setSentToEmail(recipientEmail);
-      supabase.functions
-        .invoke("client-notify", {
-          body: {
-            action: "clarity_complete",
-            data: {
-              sessionId: session.id,
-              moduleId,
-              insight: {
-                truth: insightData.truth,
-                pattern: insightData.pattern,
-                action: insightData.action,
-              },
-            },
-          },
-        })
-        .then(({ error }) => {
-          setEmailStatus(error ? "failed" : "sent");
-        })
-        .catch(() => setEmailStatus("failed"));
+      setEmailStatus("sent");
     } else {
       setEmailStatus("skipped");
     }
