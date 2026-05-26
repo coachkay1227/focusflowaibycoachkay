@@ -30,17 +30,6 @@ const AdminDashboard = () => {
   const [activity, setActivity] = useState<{ type: string; name: string; detail: string; timestamp: string }[]>([]);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (!rolesLoading && !isAdmin) {
-      navigate("/dashboard");
-      return;
-    }
-  }, [user, isAdmin, rolesLoading, navigate]);
-
-  useEffect(() => {
     if (!isAdmin) return;
 
     const fetchStats = async () => {
