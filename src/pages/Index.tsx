@@ -453,7 +453,7 @@ const Index = () => {
               letter: "S",
               name: "Support",
               desc: "Community, accountability, and ongoing coaching. You don't grow alone — this is where it compounds.",
-              tag: "Community & Coaching",
+              tag: "Community + Coaching",
               highlight: false,
             },
           ].map((item, i) => (
@@ -478,7 +478,7 @@ const Index = () => {
                 <button
                   type="button"
                   tabIndex={-1}
-                  className="mt-4 inline-block font-mono-label tracking-wider text-muted-foreground border border-border/60 rounded-full px-3 py-1 self-start uppercase transition-colors duration-200 hover:text-primary hover:border-primary/60"
+                  className="mt-4 inline-block font-mono-label tracking-wider text-muted-foreground border border-border/60 rounded-full px-2.5 py-1 self-start uppercase whitespace-nowrap transition-colors duration-200 hover:text-primary hover:border-primary/60"
                   style={{ fontSize: "0.65rem" }}
                 >
                   {item.tag}
