@@ -5,16 +5,16 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 
 const TESTIMONIALS = [
   {
-    quote: "This 5-minute session showed me a pattern I'd been blind to for years.",
-    name: "Aisha M.",
+    quote: "Coach Kay showed me I didn't need another system — I needed focus. Week two, the noise was gone.",
+    name: "Sheila — Cohort Member, Reset 30",
   },
   {
-    quote: "The Mirror Challenge rewired how I start my mornings. I'm not the same person I was a week ago.",
-    name: "David R.",
+    quote: "The Clarity Check named the pattern I'd been dancing around for years — in one paragraph.",
+    name: "Starr — Transformation 90",
   },
   {
-    quote: "Coach Kay's voice in the results felt like someone who actually sees me.",
-    name: "Priya S.",
+    quote: "She walked me through AI like a friend, not a manual. Three weeks in, I owned the workflow.",
+    name: "Buzz — AI Simplified Track",
   },
 ];
 

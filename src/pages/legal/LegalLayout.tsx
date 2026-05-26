@@ -44,8 +44,8 @@ const LegalLayout = ({ title, description, path, eyebrow, lastUpdated, children 
 
       <p className="mt-16 text-xs text-muted-foreground/50 border-t border-border/30 pt-6">
         Questions about this document? Email{" "}
-        <a href="mailto:hello@coachkayai.life" className="text-primary/70 hover:text-primary">
-          hello@coachkayai.life
+        <a href="mailto:hello@coachkayelevates.org" className="text-primary/70 hover:text-primary">
+          hello@coachkayelevates.org
         </a>
         .
       </p>

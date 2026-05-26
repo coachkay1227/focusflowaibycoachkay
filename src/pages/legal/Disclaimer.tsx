@@ -56,7 +56,7 @@ const Disclaimer = () => (
 
     <p className="text-sm text-muted-foreground/70 pt-4">
       Questions? Email{" "}
-      <a href="mailto:hello@coachkayai.life" className="text-primary">hello@coachkayai.life</a>.
+      <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>.
     </p>
   </LegalLayout>
 );

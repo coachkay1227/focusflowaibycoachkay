@@ -98,7 +98,7 @@ const Terms = () => (
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">11. Contact</h2>
     <p>
-      Shield Her Elevation LLC · <a href="mailto:hello@coachkayai.life" className="text-primary">hello@coachkayai.life</a>
+      Shield Her Elevation LLC · <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>
     </p>
   </LegalLayout>
 );
