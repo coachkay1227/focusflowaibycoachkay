@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info, Sparkles, BookMarked, Bot, Briefcase, Heart } from "lucide-react";
+import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info, Sparkles, BookMarked, Bot, Briefcase } from "lucide-react";
 
 const navItems = [
   { label: "Start Session", path: "/clarity", icon: Sparkles, authOnly: false, primary: true },
@@ -13,7 +13,6 @@ const navItems = [
   { label: "Coach Kay", path: "/coach-kay", icon: MessageCircle, authOnly: false },
   { label: "Community", path: "/community", icon: Users, authOnly: false },
   { label: "Studio", path: "/store", icon: BookMarked, authOnly: false },
-  { label: "Autism Stories", path: "/autism-social-stories", icon: Heart, authOnly: false },
   { label: "About", path: "/about", icon: Info, authOnly: false },
   { label: "Profile", path: "/profile", icon: User, authOnly: true },
 ];
