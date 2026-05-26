@@ -1,48 +1,56 @@
-## Goal
-Make the F.O.C.U.S. framework feel loud, coherent, and load-bearing across the entire site — and fix the small typographic break where "Community & Coaching" wraps to two lines on the homepage pillar card.
 
-## What I found in the audit
+# Transformation Paths — Approved Launch Plan
 
-**Strong, on-brand:**
-- `src/data/programs.ts` has a clean canonical source: `FOCUS_PILLARS` (F/O/C/U/S) with full names, colors, and descriptions. Every program in the catalog carries `pillar` + `pillarFull`.
-- `ProgramDetail.tsx` surfaces the pillar badge with the pillar color.
-- Homepage "Your F.O.C.U.S. Journey" section presents all 5 pillars.
+Booking link for Partnership: `https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp`
 
-**Weak / inconsistent:**
-1. **Tag wrap bug (visual):** The 5th pillar card tag "COMMUNITY & COACHING" wraps to two lines at lg breakpoint because the pill uses `px-3 py-1` + uppercase + letter-spacing. The other 4 tags are shorter and stay on one line.
-2. **Modules page** (`/modules`) does not visually group, color, or label programs by pillar — programs render without the F.O.C.U.S. context that the homepage promises ("Every module… maps to one of five transformational pillars").
-3. **Challenges / Mirror Challenge** pages don't reference a pillar at all.
-4. **Assessment, Clarity Session, Starter Kit** result screens don't tell the user *which pillar* their result maps to — breaking the "this all adds up" feeling.
-5. **Pillar tags on homepage** (`Core Inner Work`, `Vision & Direction`, etc.) don't appear anywhere else on the site — they're orphan vocabulary.
-6. **Color system disconnect:** Pillar colors in `programs.ts` are hard-coded hex (`#C9973A`, `#4A7FC1`…) instead of HSL design tokens, so they can't be reused consistently in Tailwind.
+## Decisions locked
+- 6 offers → direct Stripe Checkout (one-time payment).
+- Partnership ($3,997) → CTA opens the booking link in a new tab. No application form, no Stripe SKU.
+- Tier grouping: 3 new tiers — `reset_30`, `transformation_90`, `partnership` (added later, manual).
+- Auth required before checkout (cleaner fulfillment + tier provisioning).
 
-## The plan
+## Phase 1 — Create Stripe products (catalog only)
+Create 6 one-time products + prices via `stripe--create_stripe_product_and_price`:
+| Product | Price |
+|---|---|
+| 30-Day Personal Reset | $297 |
+| 30-Day Business Reset | $497 |
+| 30-Day AI Reset | $997 |
+| 90-Day Personal Transformation | $997 |
+| 90-Day Business Transformation | $1,497 |
+| 90-Day Full AI Transformation | $2,497 |
 
-### Phase 1 — Fix the visible break (homepage tag wrap)
-- `src/pages/Index.tsx` pillar cards: make tag pill `whitespace-nowrap`, drop horizontal padding to `px-2.5`, and shrink the 5th tag to "Community + Coaching" (single line, ampersand removed) so it sits on one line at every breakpoint. Verify at 1024 / 1280 / 1440 / 1641.
+Capture returned `prod_…` and `price_…` IDs.
 
-### Phase 2 — Make F.O.C.U.S. the spine, not decoration
-- **Pillar tokens:** Move the 5 pillar colors into `src/index.css` as semantic tokens (`--pillar-f`, `--pillar-o`, `--pillar-c`, `--pillar-u`, `--pillar-s`) in HSL; update `FOCUS_PILLARS` in `programs.ts` to reference token names instead of raw hex. Add a single `PillarBadge` component in `src/components/PillarBadge.tsx` that everything reuses.
-- **Modules page** (`/modules`): add a sticky pillar filter row (F · O · C · U · S, each in its pillar color) and group/sort programs by pillar with a pillar header per group. Each card shows the `PillarBadge`.
-- **Challenges + Mirror Challenge**: surface "Part of the [Pillar Name] Pillar" badge in the header.
-- **Assessment, Clarity Session, Starter Kit result screens**: add a "Maps to your [Pillar] Pillar" line under the result hero so every output ties back to the framework.
+## Phase 2 — Wire the checkout
+1. **`supabase/functions/_shared/stripe-config.ts`** — add the 6 new prices to `PRICE_MODE_MAP` (`payment`) and the 6 new products to `PRODUCT_TIER_MAP` mapped to `reset_30` (×3) and `transformation_90` (×3).
+2. **DB migration** — extend the `access_tier` enum with `reset_30` and `transformation_90`. Update `TIER_RANK` / `TIER_LABELS` in `src/lib/tier-constants.ts` and the `AccessTier` union in `src/hooks/use-access-level.ts`.
+3. **`src/components/PricingSection.tsx`** — replace single `openApply` with per-offer handler:
+   - 6 offers: call `supabase.functions.invoke("create-checkout", { body: { priceId, successPath: "/dashboard?welcome=<slug>", cancelPath: "/#pricing" } })` → `window.open(url)`.
+   - If not signed in: redirect to `/auth?intent=buy:<priceId>` and auto-resume after login.
+   - Partnership: `window.open(BOOKING_URL, "_blank")` — no dialog, no form.
+4. **Button labels** — replace "Apply for…" with "Start Personal Reset" / "Start Business Coaching" / etc. Partnership becomes "Book Discovery Call".
 
-### Phase 3 — Make it loud + understood
-- Add a small recurring footer band under hero sections on the 4 main funnel pages (Index, Modules, Assessment, Programs): a horizontal F · O · C · U · S strip with one-word labels. Reinforces the framework on every scroll.
-- Update `public/llms.txt` "About" paragraph to name the 5 pillars explicitly so AI crawlers describe the framework correctly.
-- Ensure the homepage subhead under "Your F.O.C.U.S. Journey" is mirrored verbatim wherever the framework appears (single source of copy in `programs.ts`).
+## Phase 3 — Minimal fulfillment scaffolding
+- **`supabase/functions/stripe-webhook/index.ts`** — already maps product→tier from `PRODUCT_TIER_MAP`. Add: send a per-tier welcome transactional email (`reset-welcome`, `transformation-welcome`) and push a GHL tag (`reset_personal`, `transformation_ai`, etc.) so Coach Kay's CRM segments by offer.
+- **New transactional templates** (2): `reset-welcome.tsx` + `transformation-welcome.tsx` under `supabase/functions/_shared/transactional-email-templates/`. Each lists what's included + next step + Skool link. Register in `registry.ts`.
+- **`/dashboard`** — add a "Your Program" panel that switches by tier: shows the offer name, what's included (static list per tier), and a "Book your first call" CTA for `transformation_90` (same booking link).
+- Defer building the actual module/call delivery for now — tier + welcome email + dashboard panel = enough to start collecting money and notify Coach Kay manually for fulfillment.
 
-### Phase 4 — Verify
-- Walk the 3 main paths (`/clarity`, `/assessment`, `/starter-kit`) and confirm each result screen names the pillar.
-- Walk `/modules` and `/challenges` and confirm pillar grouping/badge.
-- Re-screenshot homepage pillar row at 4 widths to confirm no tag wraps.
+## Phase 4 — End-to-end QA (Stripe test mode)
+- Sign-up → click each of 6 offers → Stripe Checkout opens → complete with test card `4242…` → land on `/dashboard?welcome=…` → confirm: webhook fired, tier updated in `user_access_levels`, welcome email sent, GHL tag pushed.
+- Sign-out test: click "Start AI Reset" → redirected to `/auth?intent=buy:price_…` → after login, checkout auto-opens.
+- Partnership: click "Book Discovery Call" → new tab opens to GHL booking widget. No Stripe call.
+- One $1 live charge per product type after switch to live mode, then refund.
 
 ## Out of scope
-- No backend, RLS, or edge function changes.
-- No new AI behavior — pillar mapping is deterministic from existing `programs.ts` data.
-- No copy rewrites beyond the tag and pillar-mapping lines.
+- Module content, drips beyond welcome email, automated call scheduling for 90-day tiers.
+- Changes to existing Rent-an-Agent / legacy / Audit flows.
+- Design changes beyond button labels in `PricingSection`.
 
-## Technical notes
-- All color additions go in `index.css` as HSL tokens + `tailwind.config.ts` extension; no inline hex.
-- `PillarBadge` accepts `pillar: FocusPillar` and renders letter + name + token-driven color.
-- Modules page grouping happens client-side from the existing `programs` array — no schema changes.
+## Files touched
+- Create: 2 email templates.
+- Migrate: enum extension.
+- Edit: `PricingSection.tsx`, `stripe-config.ts`, `stripe-webhook/index.ts`, `tier-constants.ts`, `use-access-level.ts`, `Dashboard.tsx`, `transactional-email-templates/registry.ts`.
+
+Ready to execute on approval.
