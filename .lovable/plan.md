@@ -1,45 +1,42 @@
-# Finish Phase 3.2.5B — Autism Lane Surface-Level Deployment
+# Route Studio → Autism Page (and Revert Nav Menu)
 
-You're right — I built the page + backend but didn't expose it. The page exists at `/autism-social-stories` but nothing links to it, so it's effectively invisible. Here's the cleanup plan to finish what 3.2.5B left dangling, BEFORE moving on to Phase 3.2.5C.
+Got it. Two surgical changes:
 
-## Files to modify (5 small surgical edits)
+## 1. Revert the new "Autism Stories" top-nav entry
 
-### 1. `src/components/DesktopNav.tsx`
-Add nav entry after Studio:
+Remove the link I added in:
+- `src/components/DesktopNav.tsx`
+- `src/components/MobileNav.tsx`
+
+(Footer link + sitemap + llms.txt entry stay — those are SEO/discoverability only, not visible chrome.)
+
+## 2. Make Studio's "Autism & Social Stories" tab route to `/autism-social-stories`
+
+In `src/pages/Store.tsx`, intercept the category change:
+
 ```ts
-{ label: "Autism Stories", path: "/autism-social-stories", icon: Heart, authOnly: false },
-```
-Import `Heart` from `lucide-react`.
+import { useNavigate } from "react-router-dom";
+// ...
+const navigate = useNavigate();
 
-### 2. `src/components/MobileNav.tsx`
-Mirror the same entry so mobile drawer surfaces it.
-
-### 3. `src/components/SiteFooter.tsx`
-Add to the Explore/Offers column:
-```ts
-{ label: "Autism & Social Stories", to: "/autism-social-stories" },
-```
-
-### 4. `scripts/generate-sitemap.ts`
-Add entry so Google indexes it:
-```ts
-{ path: "/autism-social-stories", priority: "0.9", changefreq: "weekly" },
+<CategoryTabs
+  active={category}
+  onChange={(c) => {
+    if (c === "autism") {
+      navigate("/autism-social-stories");
+      return;
+    }
+    setCategory(c);
+  }}
+/>
 ```
 
-### 5. `public/llms.txt`
-Add a dedicated bullet under the offer list (the current line only mentions autism as a parenthetical under Studio). Add:
-```
-- [Autism & Social Stories](/autism-social-stories): Therapist-grade custom social stories. HSA/FSA eligible with LMN template included. Packages from $47 (single digital) to $3,997 (custom practice license). Used by BCBAs, SLPs, OTs, LPCs, and school IEP teams.
-```
+Effect: clicking the Autism tab from Studio jumps the user straight to the dedicated `/autism-social-stories` page (the full 6-package catalog, intake modal, HSA/FSA copy). The other 4 tabs still switch in-place as before.
 
-## Deferred to Phase 3.2.5D (not this lane)
-- Coach Kay AI chat router awareness of autism intent → belongs with the router enhancement step you already planned for 3.2.5D
-- LMN/HSA/provider-routing transactional email templates → separate email lane
+## Bonus fix included
 
-## Verification after build
-- Click nav link on desktop + mobile → lands on `/autism-social-stories`
-- Footer link works
-- `public/sitemap.xml` regenerates with the new entry on next dev/build
-- `llms.txt` reflects the dedicated lane
+While I'm in `AutismSocialStories.tsx`, I'll also fix the `useReveal` bug that's leaving 4 of 6 package cards stuck at `opacity-0` below the fold — initialize `shown=true` for cards already in view, only animate cards that start off-screen. This is what was making the page look half-empty.
 
-After this is ✅, I'll proceed cleanly into Phase 3.2.5C (FAQ + AI discoverability) as you originally instructed.
+## Verification
+
+After the patch I'll navigate to `/store`, click the Autism tab, confirm I land on `/autism-social-stories`, scroll, and confirm all 6 packages render visibly.
