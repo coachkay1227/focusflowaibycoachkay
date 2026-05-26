@@ -36,6 +36,7 @@ const SiteFooter = () => {
       links: [
         { label: "About Coach Kay", to: "/coach-kay" },
         { label: "Community", to: "/community" },
+        { label: "FAQ", to: "/faq" },
         { label: "Sitemap", to: "/sitemap" },
         { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },
       ],
