@@ -98,7 +98,7 @@ serve(async (req) => {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${resendKey}` },
         body: JSON.stringify({
-          from: "FocusFlow <onboarding@resend.dev>",
+          from: "Coach Kay <noreply@coachkayai.life>",
           to: COACH_EMAIL,
           reply_to: email,
           subject,
@@ -119,7 +119,7 @@ serve(async (req) => {
           "X-Connection-Api-Key": lovableKey,
         },
         body: JSON.stringify({
-          from: "FocusFlow <onboarding@resend.dev>",
+          from: "Coach Kay <noreply@coachkayai.life>",
           to: [COACH_EMAIL],
           reply_to: email,
           subject,
