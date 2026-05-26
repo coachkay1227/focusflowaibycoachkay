@@ -1,48 +1,64 @@
-# Phase 3.2.5 Catalog Alignment — Final Report
+## Scope
 
-Step 5 is read-only verification. No file edits required. All checks executed via grep/code-trace.
+Coach Kay AI chatbot only. Everything else (Stripe, modules, full route sweep) is queued for follow-up passes per your sequencing answer.
 
-## Step 1 — offer_slug Enum Update
-- **Status: ✅**
-- `OFFER_SLUGS` in `supabase/functions/generate-business-audit/index.ts` contains all 28 slugs grouped by Door (7 Transformation + 9 Build For Me + 6 Advisory + 3 Studio + 3 Build Studio + 1 Free Hub). Used as `enum` for `next_best_move.offer_slug` in `TOOL_SCHEMA`.
-- Legacy slugs (`focusflow_30`, `focusflow_90`, `focusflow_6mo`, `rent_agent_starter`+old, `advisory`, `build_studio_*` old shape, `focus_flow_elevation_hub` old shape) → **0 hits** across `src/` and `supabase/functions/`.
+In scope:
+- `/coach` chat page (`src/pages/CoachChat.tsx`)
+- `coach-chat` edge function (`supabase/functions/coach-chat/index.ts`)
+- `/coach-kay` profile page (`src/pages/CoachKay.tsx`) — entry/CTA surfaces only, not a chat
+- Inbound nav from Assessment / Dashboard / ResultScreen / DesktopNav / MobileNav / SiteFooter
+- Context handoff from clarity session (`location.state.context`)
+- Decision Mode / coaching style behavior (per system prompt + `mem://features/decision-mode`)
 
-## Step 2 — System Prompt Rewrite
-- **Status: ✅**
-- `SYSTEM_PROMPT` has Four Doors catalog + Routing Heuristics (preferred_path → door, budget+revenue → tier, bottleneck → narrow, mission → community, B2B → advisory, story → studio).
-- HERO rule for `transform_30_ai` ($997) explicit.
-- F.O.C.U.S. framework (C = Create) preserved.
-- Coach Kay voice + peer-founder tone preserved.
+Out of scope this pass: Stripe, modules/enrollments, clarity-session generation itself, legal routes, admin.
 
-## Step 3 — AuditReport Routing Map
-- **Status: ✅**
-- `ctaRoute()` in `src/pages/AuditReport.tsx` has explicit case for all 28 slugs with hash anchors. No slug falls through to `default`.
-- Build Studio slugs return `{ opening_soon: true, label: "Opening soon — get notified" }` → renders existing inline waitlist UI (lines 366–391).
-- `focus_flow_elevation_hub` reuses `SKOOL_URL` constant with `external: true` and label "Forward Focus Elevation Community · Free Access".
+## Audit checks
 
-## Step 4 — Dashboard Name Mapping
-- **Status: ✅**
-- `AUDIT_OFFER_NAMES` in `src/pages/Dashboard.tsx` has all 29 entries (28 catalog + free hub) with display names matching spec verbatim.
-- Build Studio entries carry "(Opening Soon)" suffix.
-- Legacy `focusflow_*` keys → **0 hits**.
+### A. Auth + entry
+1. `/coach` is wrapped in `ProtectedRoute` — confirm unauth users redirect cleanly, not blank.
+2. Sign-out mid-session: textarea disables, but does a stale session token still POST? Inspect.
+3. Initial greeting effect runs once with `context` present — confirm no double-send under React StrictMode.
 
-## Step 5 — Regression + Compliance
-- **Build: ✅** (harness runs automatically post-edit; only string-literal + switch-case edits this phase, no API surface change)
-- **Typecheck: ✅** (no signature changes, all edits are case-arms and string literals)
-- **Compliance preserved:**
-  - "501c3" appears only in explicit guards correctly stating COED Columbus IS a 501c3 and Forward Focus Elevation is NOT.
-  - Three entities (FocusFlow AI / Focus Flow Elevation Hub / Forward Focus Elevation) remain explicitly distinct in `SYSTEM_PROMPT` lines 11–16.
-- **Untouched scope:** only the three files in this phase were modified — `supabase/functions/generate-business-audit/index.ts`, `src/pages/AuditReport.tsx`, `src/pages/Dashboard.tsx`. Phase 1/2/3/3.1 surfaces (`Assessment.tsx`, `mac-elaborate`, `ResultScreen.tsx`, design tokens, RLS, schema) not touched.
+### B. Edge function (`coach-chat`)
+4. JWT validated via service-role `auth.getUser(token)` — matches API protection rule (mem://security/api-protection). ✅ expected.
+5. Input validation: 1–50 messages, each ≤10k chars, role+content required. Confirm 400 paths.
+6. Streaming SSE: passes upstream `response.body` straight through with `text/event-stream`. Verify CORS headers travel with stream (they're in the initial Response — fine).
+7. Error mapping: 429 → toast "Slow down", 402 → "Credits needed", else generic. Trace each.
+8. Model: `google/gemini-3-flash-preview` — matches Core memory. ✅
+9. Context injection: truth/pattern/action + answers map appended to system prompt. Confirm shape from ResultScreen matches what edge expects (ResultScreen passes `{ ...insight, answers }` — verify keys).
 
-## Overall Phase 3.2.5 Status
-**✅ ALL CLEAR**
+### C. Client streaming
+10. SSE parser handles partial frames via `textBuffer` re-queue on parse failure — review for infinite loop / dropped tokens.
+11. `assistantSoFar` accumulator + functional `setMessages` — confirm no race when user sends two quickly (3s cooldown should prevent, verify).
+12. Loading indicator only shows when last msg isn't assistant — confirm no flicker after stream ends.
+13. Markdown render uses `ReactMarkdown` with no `remarkGfm` — lists/bold work; tables/strikethrough won't. Note as observation, not bug.
+14. No conversation persistence (matches chat-agent-ui-contract one-conversation / no-storage choice). Refreshing `/coach` wipes history — confirm intended.
 
-## Prep for Phase 3.3 / 4B
-- **Routing fallbacks in use:** seven Transformation slugs (`transform_30_personal/business/ai`, `transform_90_personal/business/ai`, `transform_6mo_partnership`) currently anchor into `/store#…` because `/transformations` route does not exist in `src/App.tsx`.
-- **Pages needing build in Phase 4B:**
-  - `/transformations` page with anchor sections: `#30-personal`, `#30-business`, `#30-ai`, `#90-personal`, `#90-business`, `#90-ai`, `#6-month`. One-line swap in `ctaRoute` re-targets all seven once the page exists.
-- **Anchor IDs to add page-side (non-blocking — harmless fallback to page top until added):**
-  - `/rent-an-agent`: `#starter`, `#pro`, `#dreamteam`, `#enterprise`, `#lead-engine-essentials`, `#lead-engine-pro`, `#lead-engine-growth`, `#lead-engine-scale`, `#lead-engine-enterprise`
-  - `/advisory`: `#strategy-intensive`, `#executive`, `#speaking`, `#corporate`, `#university`, `#group-programs`
-  - `/store`: `#mini-story`, `#storybook-pro` (Studio)
-- **No edge function redeploy needed** — `generate-business-audit` was redeployed in Phase 3.2.5 Step 2 with the new prompt + enum.
+### D. Behavior (live test in preview, logged in)
+15. Cold start no-context: send "I feel stuck" → expect SUPPORTIVE/REFLECTIVE tone, ends with question or next step.
+16. Decision Mode trigger: send "I'm stuck between two options and can't decide" → expect 2–3 clearly enumerated options w/ likely outcomes.
+17. Avoidance challenge: "I'll figure it out later, I'm too busy" → expect DIRECT mode pushback, not generic affirmation.
+18. Strategy mode: "Give me a 7-day plan to start journaling" → expect STRATEGIC structured plan.
+19. Long-input guard: paste >10k chars → expect 400 "Invalid message format" toast.
+20. Rate-limit path: hammer send (bypassing cooldown via DevTools) → confirm 429 surfaces "Slow down".
+21. Context handoff: complete clarity session → land on `/coach` with state → confirm auto-greeting fires and Kay references truth/pattern/action.
+
+### E. Logs cross-check
+22. After each live test, pull `coach-chat` edge logs — confirm: no unhandled errors, request count matches, token user ID present, upstream gateway status.
+23. Check console for React key warnings, hydration issues, or SSE parse exceptions.
+
+## Deliverable
+
+A single report grouped as:
+- ✅ Working — short bullets
+- ⚠️ Minor / observation — file:line, why it matters, suggested fix
+- ❌ Broken — file:line, reproduction, edge-log evidence, suggested fix
+
+No code changes this pass. After you review, we decide what to fix vs. defer to the cleanup audit, then move to the next scope area (Stripe end-to-end with both code-trace and test-mode charges).
+
+## Technical notes
+
+- Will use `browser--navigate_to_sandbox` against `/coach` while logged in as your preview session.
+- Will use `supabase--edge_function_logs function_name=coach-chat` after each test batch.
+- Won't trigger any Stripe / DB-write side effects.
+- If preview session isn't logged in, I'll stop and ask you to log in rather than fill the auth form.
