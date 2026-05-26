@@ -21,34 +21,121 @@ Your tone: direct, emotionally intelligent, confident. No corporate jargon. No f
 
 You are generating a personalized $47 AI Business Audit. The reader has filled out a detailed 17-field intake. Use EVERY field. Reference specific things they said. Make them feel seen — that's the conversion mechanic.
 
-Generate an 8-section audit that diagnoses their business, gives them a real 7-day plan, demonstrates AI expertise, and routes them to ONE recommended next-best-move from this ecosystem:
+Generate an 8-section audit that diagnoses their business, gives them a real 7-day plan, demonstrates AI expertise, and routes them to exactly ONE next-best-move from the complete Coach Kay Elevates catalog below. Use the exact offer_slug values listed.
 
-PAID OFFERS (Coach Kay Elevates / FocusFlow AI):
-- FocusFlow 30-day ($297 one-time): Self-paced AI + life transformation. Best for solo founders with clarity gaps and budget under $500.
-- FocusFlow 90-day ($497 one-time): Coached AI + business transformation. Best for launched businesses with revenue/leads bottleneck.
-- FocusFlow 6-month ($1997 one-time): High-touch AI + business mastery. Best for scaling businesses with operational complexity.
-- Rent-an-Agent Starter ($297/mo subscription): Managed AI agent service. Best for those wanting AI in business without DIY.
-- Rent-an-Agent Pro ($697/mo): Multi-agent managed service. Best for growing teams.
-- Advisory Consultation (custom pricing): Best for corporate, team, EAP, workforce development, or B2B signals.
-- F.O.C.U.S. Build Studio (opening soon — flag as 'Opening soon' if recommended): Landing pages $497, business sites $1997, dashboards $2997+. Best when bottleneck is no website, broken funnel, or operational complexity needing custom tools.
+═══ THE FOUR DOORS ═══
 
-FREE COMMUNITY PATHWAY:
-- Focus Flow Elevation Hub (free Skool community): For mission-driven, nonprofit, justice-impacted, second-chance, or reentry signals. This is a free recommendation — frame it as community access through Forward Focus Elevation (the nonprofit lane), NOT as a paid offer.
+DOOR 1 — TRANSFORM ME (Transformation lane, self/coached programs):
+- transform_30_personal ($297 one-time): 30-Day Personal Reset. Identity, energy, clarity. Best for burnout, life-pivot, foundational reset before business work.
+- transform_30_business ($497 one-time): 30-Day Business Reset. Offer + audience + first systems. Best for solo founders pre-$5K/mo who need traction.
+- transform_30_ai ($997 one-time) ⭐ HERO: 30-Day AI Reset. Build your AI stack + workflows. Best for any operator with an AI gap and budget ≥ $500 and no stronger lane signal — this is the flagship.
+- transform_90_personal ($997 one-time): 90-Day Personal Transformation. Deeper identity + habits work.
+- transform_90_business ($1,497 one-time): 90-Day Business Transformation. Revenue + delivery system. Best for $5–25K/mo founders breaking through a plateau.
+- transform_90_ai ($2,497 one-time): 90-Day Full AI Transformation. AI-native business build-out.
+- transform_6mo_partnership ($3,997 one-time): 6-Month Private Partnership. High-touch 1:1. Best for $25K+/mo operators or complex multi-product scale.
 
-ROUTING LOGIC — Use the intake fields budget_appetite, preferred_path, biggest_bottleneck, stage, and industry to choose ONE primary recommendation. Be confident — name it clearly. If the reader signals mission-driven / nonprofit / justice-impacted intent OR explicitly low budget with high mission alignment, recommend the Focus Flow Elevation Hub (community pathway through Forward Focus Elevation) as the next best move.
+DOOR 2 — BUILD FOR ME (Done-for-you AI + lead systems):
+- rent_agent_starter ($297/mo): Rent-an-Agent Starter. One managed agent. Best for solos who want AI in business without DIY.
+- rent_agent_pro ($697/mo): Rent-an-Agent Pro. Multi-agent. Best for $5–25K/mo with growing ops.
+- rent_agent_dreamteam ($997/mo): Rent-an-Agent Dream Team. Coordinated agent team for cross-function work.
+- rent_agent_enterprise ($1,997+/mo): Rent-an-Agent Enterprise. Custom-scoped agent ops for $25K+/mo or team-led businesses.
+- lead_engine_essentials ($697/mo + setup): Lead Engine Essentials. Inbound funnel + nurture basics. Best for "no leads" + budget under $1.5K/mo.
+- lead_engine_pro ($1,497/mo + setup): Lead Engine Pro. Multi-channel lead system.
+- lead_engine_growth ($2,497/mo + setup): Lead Engine Growth. Pipeline + analytics. Best for $25K+/mo scaling.
+- lead_engine_scale ($2,997/mo + setup): Lead Engine Scale. High-volume outbound + inbound.
+- lead_engine_enterprise ($4,997/mo + setup): Lead Engine Enterprise. Full revenue ops, custom integrations.
+
+DOOR 3 — TRAIN MY TEAM (Advisory + B2B):
+- advisory_strategy_intensive ($497 / 90-min): AI Strategy Intensive. One-shot expert session.
+- advisory_executive ($500/hr retainer): Executive Advisory. Ongoing 1:1 advisory for execs/founders.
+- advisory_speaking (from $750): Speaking & Workshops. Best for keynote/speaking signals.
+- advisory_corporate (custom): Corporate, EAP & Workforce Learning. Best for corporate, EAP, workforce-development, B2B-team signals.
+- advisory_university (custom): AI University Roadmap Tracks. Best for higher-ed / curriculum signals.
+- group_programs (custom): Group Programs / Collective AI Summit. Cohort-based group offerings.
+
+DOOR 4 — TELL MY STORY (Studio: books, story, authority):
+- studio_mini_story ($497): Mini-Story Starter. Best for entry storytelling, lead-magnet book.
+- studio_storybook_pro ($1,250): The Storybook Pro. Full storybook production.
+- studio_other (custom): Other Studio lanes — Legacy & Family books, Expert/Authority books, Creator/Seller coloring books, Autism & Social Stories. Use this when the operator wants story/authority/book work that doesn't fit the two named tiers.
+
+BUILD STUDIO (Phase 3.5 — opening soon, MUST be flagged "Opening soon — Phase 3.5" inside why_this_one if chosen):
+- build_studio_landing ($497): Landing page build.
+- build_studio_site ($1,997): Full business site.
+- build_studio_dashboard ($2,997+): Custom dashboard / internal tool.
+
+COMMUNITY / FREE PATHWAY:
+- focus_flow_elevation_hub: Focus Flow Elevation Hub (free Skool community). Frame as a free community access point through Forward Focus Elevation (the nonprofit lane). NOT a paid offer. NOT a 501c3.
+
+═══ ROUTING HEURISTICS ═══
+
+Combine the intake signals in this order:
+
+1. preferred_path picks the door:
+   - "teach me" / "transform me" → Door 1 (Transformation)
+   - "build it for me" / "done for me" → Door 2 (Build For Me)
+   - "train my team" / B2B / corporate → Door 3 (Advisory)
+   - "tell my story" / book / brand → Door 4 (Studio)
+
+2. budget_appetite + monthly_revenue pick the tier within the door:
+   - under $500: 30-day Transformation or community.
+   - $500–$2K: 30-day Transformation (AI Reset preferred if AI gap), Rent Starter, Lead Essentials, Mini-Story, Strategy Intensive.
+   - $2K–$5K: 90-day Transformation, Rent Pro, Lead Pro, Storybook Pro, Executive Advisory.
+   - $5K+: 6-Month Partnership, Rent Dream Team / Enterprise, Lead Growth / Scale / Enterprise, Advisory Corporate, Group Programs.
+
+3. biggest_bottleneck + whats_broken narrow within the tier:
+   - "no leads" / "pipeline" → Lead Engine.
+   - "ops chaos" / "doing it all" → Rent-an-Agent.
+   - "no clarity" / "no offer" / "no brand" → 30-day Reset (Personal or Business).
+   - "AI gap" / "manual work" / "want to use AI" → AI lane (transform_30_ai is the hero default).
+   - "scaling team" / "operational complexity" → 90-day or 6-Month Partnership.
+
+4. industry / mission signals override to community when justice-impacted, reentry, second-chance, nonprofit, or strong mission alignment with explicit low budget → focus_flow_elevation_hub.
+
+5. Corporate / EAP / workforce / team-training signals → advisory_corporate (or advisory_executive for exec 1:1, advisory_speaking for keynotes, advisory_university for higher-ed).
+
+6. Book / story / authority-building signals → Studio (mini → pro → other by budget).
+
+HERO RULE: transform_30_ai ($997) is the flagship. Prefer it when the operator shows any AI gap AND budget ≥ $500 AND no stronger door signal pulls them elsewhere.
+
+Pick exactly ONE next_best_move. Be decisive. Name it. Tell them WHY it's the right move given the specific things they typed. In all_pathways_note, briefly acknowledge 1–2 adjacent doors so they see the full ecosystem without losing the primary recommendation.
 
 Generate output via the generate_audit tool.`;
 
 const OFFER_SLUGS = [
-  "focusflow_30",
-  "focusflow_90",
-  "focusflow_6mo",
+  // Door 1 — Transformation
+  "transform_30_personal",
+  "transform_30_business",
+  "transform_30_ai",
+  "transform_90_personal",
+  "transform_90_business",
+  "transform_90_ai",
+  "transform_6mo_partnership",
+  // Door 2 — Build For Me
   "rent_agent_starter",
   "rent_agent_pro",
-  "advisory",
+  "rent_agent_dreamteam",
+  "rent_agent_enterprise",
+  "lead_engine_essentials",
+  "lead_engine_pro",
+  "lead_engine_growth",
+  "lead_engine_scale",
+  "lead_engine_enterprise",
+  // Door 3 — Advisory
+  "advisory_strategy_intensive",
+  "advisory_executive",
+  "advisory_speaking",
+  "advisory_corporate",
+  "advisory_university",
+  "group_programs",
+  // Door 4 — Studio
+  "studio_mini_story",
+  "studio_storybook_pro",
+  "studio_other",
+  // Build Studio (Phase 3.5 — opening soon)
   "build_studio_landing",
   "build_studio_site",
   "build_studio_dashboard",
+  // Community / free
   "focus_flow_elevation_hub",
 ];
 

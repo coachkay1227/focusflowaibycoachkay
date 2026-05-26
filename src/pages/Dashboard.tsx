@@ -24,15 +24,40 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const AUDIT_OFFER_NAMES: Record<string, string> = {
-  focusflow_30: "FocusFlow 30-Day",
-  focusflow_90: "FocusFlow 90-Day",
-  focusflow_6mo: "FocusFlow 6-Month",
+  // Door 1 — Transformation
+  transform_30_personal: "30-Day Personal Reset",
+  transform_30_business: "30-Day Business Reset",
+  transform_30_ai: "30-Day AI Reset",
+  transform_90_personal: "90-Day Personal Transformation",
+  transform_90_business: "90-Day Business Transformation",
+  transform_90_ai: "90-Day Full AI Transformation",
+  transform_6mo_partnership: "6-Month Private Partnership",
+  // Door 2 — Build For Me
   rent_agent_starter: "Rent-an-Agent Starter",
   rent_agent_pro: "Rent-an-Agent Pro",
-  advisory: "Advisory Consultation",
+  rent_agent_dreamteam: "Rent-an-Agent Dream Team",
+  rent_agent_enterprise: "Rent-an-Agent Enterprise",
+  lead_engine_essentials: "Lead Engine Essentials",
+  lead_engine_pro: "Lead Engine Pro",
+  lead_engine_growth: "Lead Engine Growth",
+  lead_engine_scale: "Lead Engine Scale",
+  lead_engine_enterprise: "Lead Engine Enterprise",
+  // Door 3 — Advisory
+  advisory_strategy_intensive: "AI Strategy Intensive",
+  advisory_executive: "Executive Advisory",
+  advisory_speaking: "Speaking & Workshops",
+  advisory_corporate: "Corporate, EAP & Workforce Learning",
+  advisory_university: "AI University Roadmap",
+  group_programs: "Group Programs / Collective AI Summit",
+  // Door 4 — Studio
+  studio_mini_story: "Mini-Story Starter",
+  studio_storybook_pro: "The Storybook Pro",
+  studio_other: "Studio — Custom Lane",
+  // Build Studio (Phase 3.5 — opening soon)
   build_studio_landing: "Build Studio — Landing Page",
   build_studio_site: "Build Studio — Business Site",
   build_studio_dashboard: "Build Studio — Dashboard",
+  // Community / free
   focus_flow_elevation_hub: "Focus Flow Elevation Hub (Community)",
 };
 
