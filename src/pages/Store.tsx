@@ -335,6 +335,11 @@ export default function Store() {
         </Button>
       </section>
 
+      <FAQSection
+        eyebrow="Story, Legacy & Publishing Studio"
+        items={getFaqLane("studio")?.items ?? []}
+      />
+
       <IntakeFormModal
         open={modalOpen}
         onOpenChange={setModalOpen}
