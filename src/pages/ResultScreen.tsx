@@ -12,7 +12,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap, Mail, CheckCircle2 } from "lucide-react";
+import { Sparkles, Calendar, Trophy, ArrowLeft, TrendingUp, MessageCircle, Compass, ArrowRight, Zap, Mail, CheckCircle2, Share2, Copy, Quote } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
@@ -51,6 +51,7 @@ const ResultScreen = () => {
   const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "skipped" | "failed">("idle");
   const [sentToEmail, setSentToEmail] = useState<string | null>(null);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!answers) {
@@ -189,6 +190,37 @@ const ResultScreen = () => {
     return `${type.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase())} Challenge`;
   }, [trackResult]);
 
+  // Mirror the user's own words back at them — premium clarity tools always do this.
+  const mirroredAnswers = useMemo(() => {
+    if (!answers) return [];
+    const items: { label: string; value: string }[] = [];
+    if (answers.triedSoFar?.trim()) items.push({ label: "What you've tried", value: answers.triedSoFar.trim() });
+    if (answers.holdingBack?.trim()) items.push({ label: "What's really in the way", value: answers.holdingBack.trim() });
+    if (answers.clarityWouldChange?.trim()) items.push({ label: "What clarity would change first", value: answers.clarityWouldChange.trim() });
+    return items;
+  }, [answers]);
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/clarity?ref=share`;
+    const text = "I just took the Clarity Check by Coach Kay — 5 minutes, no sign-up. It cut through more than I expected.";
+    if (typeof navigator !== "undefined" && (navigator as Navigator).share) {
+      try {
+        await (navigator as Navigator).share({ title: "Clarity Check by Coach Kay", text, url });
+        return;
+      } catch {
+        // user dismissed — fall through to copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setCopied(true);
+      toast({ title: "Link copied", description: "Send it to someone who needs clarity." });
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast({ title: "Couldn't copy", description: "Long-press the link to share it manually." });
+    }
+  };
+
   if (!answers) return null;
 
   const sections = insight
@@ -245,7 +277,36 @@ const ResultScreen = () => {
             <div className="mt-5 flex justify-center">
               <PillarBadge pillar="F" />
             </div>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="font-mono-label text-primary tracking-[0.15em]">+5 CLARITY SCORE EARNED</span>
+            </div>
           </AnimatedSection>
+
+          {/* "What you told me" — mirror the user's own words */}
+          {mirroredAnswers.length > 0 && (
+            <AnimatedSection delay={50} className="mb-10">
+              <div className="clarity-card rounded-lg border border-border bg-card/20 backdrop-blur-sm p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-5">
+                  <Quote className="h-5 w-5 text-primary/70" />
+                  <span className="font-mono-label text-primary/70 tracking-[0.15em] text-xs">WHAT YOU TOLD ME</span>
+                </div>
+                <div className="space-y-5">
+                  {mirroredAnswers.map((m) => (
+                    <div key={m.label} className="border-l-2 border-primary/30 pl-4">
+                      <p className="font-mono-label text-muted-foreground/70 text-[10px] tracking-[0.18em] uppercase mb-1.5">
+                        {m.label}
+                      </p>
+                      <p className="text-foreground/85 italic leading-relaxed">"{m.value}"</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-6 text-xs text-muted-foreground/60">
+                  Your words. Read them again before you read what I see below.
+                </p>
+              </div>
+            </AnimatedSection>
+          )}
 
           {emailStatus !== "idle" && emailStatus !== "skipped" && (
             <AnimatedSection delay={100} className="mb-10">
@@ -537,6 +598,35 @@ const ResultScreen = () => {
               >
                 Explore all transformation paths →
               </button>
+            </div>
+          </AnimatedSection>
+
+          {/* Share block — turn the result into a referral moment */}
+          <AnimatedSection delay={1350} className="mt-12">
+            <div className="clarity-card rounded-lg border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8 text-center">
+              <Share2 className="h-6 w-6 text-primary mx-auto mb-3" />
+              <h3 className="font-heading text-xl md:text-2xl font-light mb-2">
+                Know someone who needs this clarity?
+              </h3>
+              <p className="text-muted-foreground text-sm max-w-md mx-auto mb-5">
+                The Clarity Check is free, takes under 5 minutes, and lands deeper than most paid
+                assessments. Pass it on.
+              </p>
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" /> Link copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" /> Share the Clarity Check
+                  </>
+                )}
+              </Button>
             </div>
           </AnimatedSection>
 

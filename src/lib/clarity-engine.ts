@@ -40,20 +40,47 @@ const actionMap: Record<string, string> = {
   strength: "Write a letter to yourself from the version of you who already has what you're seeking. What does that person tell you? That voice — that's your real voice. Start listening to it.",
 };
 
-function findBestMatch(input: string, map: Record<string, string>): string {
-  const lower = input.toLowerCase();
-  for (const key of Object.keys(map)) {
+/**
+ * Stable, dependency-free string hash (cyrb53 variant).
+ * Same input → same output, always. Used so fallback insights are
+ * reproducible per user instead of random.
+ */
+function cyrb53(str: string, seed = 0): number {
+  let h1 = 0xdeadbeef ^ seed;
+  let h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+function findBestMatch(
+  input: string,
+  map: Record<string, string>,
+  fallbackSeed: string,
+): string {
+  const lower = (input ?? "").toLowerCase();
+  const keys = Object.keys(map);
+  for (const key of keys) {
     if (lower.includes(key)) return map[key];
   }
-  const keys = Object.keys(map);
-  return map[keys[Math.floor(Math.random() * keys.length)]];
+  // Deterministic fallback — same answers always yield the same insight.
+  const idx = cyrb53(fallbackSeed) % keys.length;
+  return map[keys[idx]];
 }
 
 export function generateInsight(answers: ClarityAnswers): InsightResult {
+  // Seed combines every answer so two different users get different fallbacks,
+  // and the same user reloading gets identical output.
+  const seed = Object.values(answers).join("|");
   return {
-    truth: findBestMatch(answers.emotionalState, truthMap),
-    pattern: findBestMatch(answers.challenge, patternMap),
-    action: findBestMatch(answers.desiredFeeling, actionMap),
+    truth: findBestMatch(answers.emotionalState, truthMap, seed + ":truth"),
+    pattern: findBestMatch(answers.challenge, patternMap, seed + ":pattern"),
+    action: findBestMatch(answers.desiredFeeling, actionMap, seed + ":action"),
   };
 }
 

@@ -67,6 +67,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://coachkayai.life/privacy</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://coachkayai.life/terms</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://coachkayai.life/disclaimer</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://coachkayai.life/refund-policy</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://coachkayai.life/clarity/clarity-check</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>

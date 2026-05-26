@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, ArrowRight, User, LogOut, Zap } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
+import SiteFooter from "@/components/SiteFooter";
 import { getPublicPrograms } from "@/data/programs";
 import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
 import coachKayPortrait from "@/assets/coach-kay.jpeg";
@@ -564,46 +565,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-12 px-6 border-t border-border/30">
-        <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
-            <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
-              <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>{" "}
-              <span className="text-muted-foreground/40 text-sm">by Coach Kay</span>
-            </div>
-            <div className="flex gap-6 text-sm text-muted-foreground/60 flex-wrap justify-center">
-              <button onClick={() => navigate("/clarity")} className="hover:text-foreground transition-colors">
-                Clarity Session
-              </button>
-              <button onClick={() => navigate("/modules")} className="hover:text-foreground transition-colors">
-                Modules
-              </button>
-              <button onClick={() => navigate("/challenges")} className="hover:text-foreground transition-colors">
-                Challenges
-              </button>
-              <button onClick={() => navigate("/coach")} className="hover:text-foreground transition-colors">
-                AI Coach
-              </button>
-              <button onClick={() => navigate("/rent-an-agent")} className="hover:text-foreground transition-colors">
-                Rent-an-Agent
-              </button>
-              <button onClick={() => navigate("/advisory")} className="hover:text-foreground transition-colors">
-                Advisory
-              </button>
-              <button onClick={() => navigate("/about")} className="hover:text-foreground transition-colors">
-                About
-              </button>
-              <button onClick={() => navigate("/community")} className="hover:text-foreground transition-colors">
-                Community
-              </button>
-            </div>
-          </div>
-          <div className="text-center text-xs text-muted-foreground/40 space-y-1">
-            <p>Master Certified Life Coach · Coach Kay</p>
-            <p>&copy; {new Date().getFullYear()} FocusFlow Elevation · Shield Her Elevation LLC</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 };
