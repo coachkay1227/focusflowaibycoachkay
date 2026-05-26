@@ -1,60 +1,46 @@
-## Verification results
+## Phase 3.4 — Launch Readiness Audit Plan
 
-**Finding 1 — `audit_tokens` client-side SELECT:**
-- Searched `src/` for `from('audit_tokens')` and `from("audit_tokens")` — **0 hits**.
-- Only references are in edge functions (`generate-business-audit`, `stripe-webhook`) which use service_role.
-- ✅ Intentional. No client-side query exists.
+This is a 12-step, read-mostly audit. I'll execute steps sequentially, reporting after each, and only make code changes per the Fix Discipline rules (auto-fix trivial, auto-fix-with-diff small, FLAG anything touching Stripe/pricing/auth/compliance/copy substantively).
 
-**Finding 2 — `starter_kit_reports` anon SELECT:**
-- `src/pages/StarterKit.tsx` line 55–77: calls `supabase.functions.invoke("generate-starter-report")`, reads `data.report` directly from response, calls `setReport(data.report)`.
-- No `supabase.from("starter_kit_reports").select(...)` anywhere in `src/`.
-- ✅ Architecture A (response-based). No fix needed.
+### Execution approach per step
 
-**Finding 3 — SECURITY DEFINER functions with anon EXECUTE:**
+**Step 1 — Route inventory.** Read `src/App.tsx` + every route component header (just enough to confirm imports + `<SEOHead>` presence). Run `scripts/check-seo-regressions.ts`. Report matrix.
 
-Inspected `pg_proc.proacl` for all 9 SECURITY DEFINER functions in `public`. The `=X/postgres` ACL entry means PUBLIC (which includes anon + authenticated) has EXECUTE.
+**Step 2 — Stripe SKU verification.** Read `supabase/functions/_shared/stripe-config.ts`, `book-catalog.ts`, and grep for `startCheckout(` / `priceId:` / `create-autism-checkout` / `create-book-checkout` across `src/`. Build SKU↔CTA matrix. FLAG (do not edit) any Transformation Lane / Lead Engine SKUs that don't exist — these are price/SKU changes.
 
-| Function | PUBLIC EXECUTE? | Required by anon? | Action |
-|---|---|---|---|
-| `get_audit_by_token` | yes | yes (guest magic link) | **KEEP** |
-| `claim_audit_token` | yes | no (requires `auth.uid()`) | **REVOKE from anon, PUBLIC** |
-| `has_role` | no | — | none |
-| `get_user_tier` | no | — | none |
-| `handle_new_user` | no | — | none |
-| `update_updated_at_column` | no | — | none |
-| `enqueue_email` / `delete_email` / `read_email_batch` / `move_to_dlq` | no | — | none |
+**Step 3 — Webhook branches.** Read `supabase/functions/stripe-webhook/index.ts` end-to-end. Verify branch order, `processed_stripe_events` guard per branch, `PROTECTED_TIERS` on `subscription.deleted`, `webhook_failures` writes. Report matrix only — no edits unless a real bug (per rule 5, stripe-webhook is protected except missing branch handlers).
 
-Only `claim_audit_token` needs remediation. The other helpers already have PUBLIC revoked (only `authenticated` / `service_role` retain EXECUTE).
+**Step 4 — GHL coverage.** Grep for `apply-now` / `OfferInquiryDialog` / `ApplyNowDialog` callers; trace payloads. Report path matrix. FLAG missing paths.
 
-## Plan
+**Step 5 — AI flows.** Read each of the 4 edge functions + frontend retry surfaces. Check `generate-business-audit` for offer_slug enum validation against the 29-slug list. Auto-fix-with-diff if validation is missing (small bug fix on existing flow). Report.
 
-### Step 1 — Document Finding 1 + 2 as intentional
-Add a comment block to the new migration explaining:
-- `audit_tokens` has no client SELECT policy by design — all reads go through `get_audit_by_token` (SECURITY DEFINER) or service_role edge functions.
-- `starter_kit_reports` has no anon SELECT policy by design — reports are returned in the `generate-starter-report` edge function response.
+**Step 6 — Auth integrity.** Read `AuthContext`, `useRoles`, `useAccessLevel`, `useSubscription`, `ProtectedRoute`, `handle_new_user` trigger. Verify bootstrap admin emails. Report. Do not modify protected files.
 
-### Step 2 — Migration: revoke PUBLIC/anon EXECUTE on `claim_audit_token`
-```sql
--- Revoke broad EXECUTE; keep authenticated + service_role.
-REVOKE EXECUTE ON FUNCTION public.claim_audit_token(text, uuid) FROM PUBLIC, anon;
-GRANT  EXECUTE ON FUNCTION public.claim_audit_token(text, uuid) TO authenticated, service_role;
+**Step 7 — Email templates.** Read `supabase/functions/_shared/transactional-email-templates/registry.ts` + each template. Verify the autism + audit templates exist (last audit flagged autism as missing — re-confirm current state). FLAG any still-missing templates as USER action.
 
--- Preserve get_audit_by_token anon access (no-op, just affirms intent in migration history).
-GRANT  EXECUTE ON FUNCTION public.get_audit_by_token(text) TO anon, authenticated, service_role;
-```
+**Step 8 — FAQ + SEO + llms.txt.** Read all 5 FAQ-bearing pages, validate JSON-LD parses, read `public/llms.txt` + `public/sitemap.xml`. Cross-check prices in llms.txt against `stripe-config.ts`. Auto-fix-with-diff for pricing drift in llms.txt (data-file, not copy).
 
-### Step 3 — Verify
-- Re-query `pg_proc.proacl` after migration to confirm:
-  - `claim_audit_token` ACL no longer contains `=X/postgres` or `anon=X/postgres`.
-  - `get_audit_by_token` still lists `anon=X/postgres`.
-- Run `supabase--linter` to confirm the `0028_anon_security_definer_function_executable` finding is resolved.
+**Step 9 — Compliance + copy sweep.** `rg` for `501c3|501\(c\)\(3\)`, `Focus Flow Elevation|Forward Focus Elevation|FocusFlow AI`, `focusflow_30|focusflow_90|focusflow_6mo`, `insurance.*reimburs`. Auto-fix trivial findings (typos, dead slugs, 501c3 misattribution per global rule). FLAG substantive copy changes.
 
-### Step 4 — Final markdown report
-Per the user's template, with BEFORE/AFTER ACL diffs for `claim_audit_token`.
+**Step 10 — Analytics.** Read `src/lib/analytics.ts`, grep `trackEvent(` call sites. Read `index.html` for tracking scripts. Report coverage + FLAG decision items.
 
-## What is NOT changing
-- No RLS policy changes on any table.
-- No edge function changes.
-- No auth flow changes.
-- `get_audit_by_token` anon EXECUTE preserved.
-- `claim_audit_token` remains callable by authenticated users (save-to-account flow intact).
+**Step 11 — Mobile + a11y + perf.** Spot-check `MobileNav`, modals (`ApplyNowDialog`, `OfferInquiryDialog`, `AutismIntakeModal`, `AuditIntake`), images for alt text, lazy routes in App.tsx. Auto-fix trivial a11y gaps (missing alt, aria-label, button type). Report perf flags.
+
+**Step 12 — Build + 8 flow traces.** Already-passing typecheck/build verified via harness. Re-run `scripts/check-seo-regressions.ts`. Code-trace flows A–H step-by-step against the source files. Report individual pass/fail.
+
+### Fix discipline I will apply
+- **Auto-fix silently:** typos, missing imports, broken anchors, dead slugs, unused vars, missing alt/aria, console.log left in prod, 501c3 misattribution.
+- **Auto-fix with diff:** llms.txt pricing drift, missing validation on AI offer_slug enum, missing loading/error states on existing flows.
+- **FLAG (no edit):** any new Stripe SKU, any pricing change, any auth-flow change, any substantive copy rewrite, any Forward Focus / autism reimbursement language, any architecture decision, missing Transformation/Lead Engine SKUs, missing email templates beyond what already exists.
+
+### Do not touch
+- AuthContext, useSubscription, useAccessLevel, create-checkout, ReportView, generate-business-audit (except adding offer_slug validation), clarity-insight, coach-chat, pattern-detect, ApplyNowDialog, OrderSuccess, AuditIntake, AuditReport, AuditLanding, Resend `from:` addresses.
+- stripe-webhook (except adding a missing branch handler if one is genuinely broken).
+
+### Deliverable
+Single consolidated markdown report in the exact format specified, with per-step ✅/🔧/⚠️/❌ status, full matrices, BEFORE/AFTER diffs for every fix, and the three-tier final issue list (CRITICAL / RECOMMENDED / DEFERRED) + the live Stripe test-mode checklist for the user.
+
+### Estimated scope
+~12 sequential checkpoints, mostly read-only. Expect 0–8 small auto-fixes (llms.txt pricing, a11y, dead slugs, offer_slug validation). Anything bigger gets flagged, not changed. No new files created unless a critical bug demands one.
+
+Ready to execute on approval.
