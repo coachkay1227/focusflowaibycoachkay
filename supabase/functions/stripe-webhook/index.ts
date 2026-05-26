@@ -220,7 +220,7 @@ serve(async (req) => {
         const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
         const { data: pending, error: pendingErr } = await supabaseClient
           .from("autism_orders")
-          .select("id, order_total")
+          .select("id, order_total, client_email, client_name, package_name, child_first_name, scenario_focus, gift_wrap, gift_recipient")
           .eq("id", autismOrderId)
           .eq("stripe_session_id", session.id)
           .eq("status", "pending_payment")
@@ -263,6 +263,35 @@ serve(async (req) => {
           });
         } else {
           log.info("autism_order_marked_paid", { ctx: { autism_order_id: autismOrderId } });
+          if (pending.client_email) {
+            try {
+              const totalStr = typeof pending.order_total === "number"
+                ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(pending.order_total / 100)
+                : undefined;
+              await supabaseClient.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: "autism-purchase-confirmation",
+                  recipientEmail: pending.client_email,
+                  idempotencyKey: `autism-purchase-${pending.id}`,
+                  templateData: {
+                    name: pending.client_name,
+                    packageName: pending.package_name,
+                    orderTotal: totalStr,
+                    orderId: pending.id,
+                    childFirstName: pending.child_first_name,
+                    scenarioFocus: pending.scenario_focus,
+                    isGift: !!pending.gift_wrap,
+                    giftRecipient: pending.gift_recipient,
+                  },
+                },
+              });
+            } catch (e) {
+              await fail("email", "autism_confirm_email_failed", {
+                message: e instanceof Error ? e.message : String(e),
+                context: { autism_order_id: pending.id },
+              });
+            }
+          }
         }
         return ok(req);
       }

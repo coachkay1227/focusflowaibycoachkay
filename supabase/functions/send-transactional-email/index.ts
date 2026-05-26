@@ -3,17 +3,14 @@ import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 
-// Configuration baked in at scaffold time — do NOT change these manually.
-// To update, re-run the email domain setup flow.
-const SITE_NAME = "focusflowaibycoachkay"
-// SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
-// It MUST match the subdomain delegated to Lovable's nameservers — never the root domain.
-// The email API looks up this exact domain; a mismatch causes "No email domain record found".
-const SENDER_DOMAIN = "notify.coachkayelevates.org"
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// When display_from_root is enabled, this can be the root domain for cleaner branding,
-// even though actual sending uses the subdomain above.
-const FROM_DOMAIN = "notify.coachkayelevates.org"
+// Sender configuration — all transactional email is delivered via Resend.
+// `coachkayai.life` is the verified sending domain in Resend.
+// Replies are routed to Coach Kay's primary inbox.
+const SITE_NAME = "FocusFlow AI"
+const FROM_ADDRESS = `Coach Kay <noreply@coachkayai.life>`
+const REPLY_TO = "Hello@coachkayelevates.org"
+const APP_ORIGIN = "https://coachkayai.life"
+const RESEND_ENDPOINT = "https://api.resend.com/emails"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -51,6 +48,20 @@ function decodeJwtRole(authHeader: string | null): string | null {
   }
 }
 
+function appendUnsubscribeFooter(html: string, unsubUrl: string): string {
+  const footer = `
+<div style="margin:32px auto 0;padding:16px 24px;max-width:600px;text-align:center;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;color:#9ca3af;line-height:1.5;">
+  You're receiving this because you interacted with FocusFlow AI by Coach Kay.<br/>
+  Questions? Reply to this email or write us at
+  <a href="mailto:${REPLY_TO}" style="color:#9ca3af;text-decoration:underline;">${REPLY_TO}</a>.<br/>
+  <a href="${unsubUrl}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe from these emails</a>
+</div>`
+  if (html.includes('</body>')) {
+    return html.replace('</body>', `${footer}</body>`)
+  }
+  return html + footer
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -71,8 +82,9 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
-  if (!supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseUrl || !supabaseServiceKey || !resendApiKey) {
     console.error('Missing required environment variables')
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
@@ -326,10 +338,8 @@ Deno.serve(async (req) => {
       ? template.subject(templateData)
       : template.subject
 
-  // 5. Enqueue the pre-rendered email for async processing by the dispatcher.
-  // The dispatcher (process-email-queue) handles sending, retries, and rate-limit backoff.
-
-  // Log pending BEFORE enqueue so we have a record even if enqueue crashes
+  // 5. Send directly via Resend (coachkayai.life is verified there).
+  // Log pending BEFORE send so we have a record even if Resend fails.
   await supabase.from('email_send_log').insert({
     message_id: messageId,
     template_name: templateName,
@@ -337,52 +347,80 @@ Deno.serve(async (req) => {
     status: 'pending',
   })
 
-  const { error: enqueueError } = await supabase.rpc('enqueue_email', {
-    queue_name: 'transactional_emails',
-    payload: {
-      message_id: messageId,
-      to: effectiveRecipient,
-      from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-      sender_domain: SENDER_DOMAIN,
-      subject: resolvedSubject,
-      html,
-      text: plainText,
-      purpose: 'transactional',
-      label: templateName,
-      idempotency_key: idempotencyKey,
-      unsubscribe_token: unsubscribeToken,
-      queued_at: new Date().toISOString(),
-    },
-  })
+  const unsubUrl = `${APP_ORIGIN}/email-unsubscribe?token=${unsubscribeToken}`
+  const htmlWithFooter = appendUnsubscribeFooter(html, unsubUrl)
+  const textWithFooter = `${plainText}\n\n—\nUnsubscribe: ${unsubUrl}\nReply or write Hello@coachkayelevates.org`
 
-  if (enqueueError) {
-    console.error('Failed to enqueue email', {
-      error: enqueueError,
-      templateName,
-      effectiveRecipient,
+  try {
+    const res = await fetch(RESEND_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendApiKey}`,
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: JSON.stringify({
+        from: FROM_ADDRESS,
+        to: [effectiveRecipient],
+        reply_to: REPLY_TO,
+        subject: resolvedSubject,
+        html: htmlWithFooter,
+        text: textWithFooter,
+        headers: {
+          'List-Unsubscribe': `<${unsubUrl}>, <mailto:${REPLY_TO}?subject=unsubscribe>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+        tags: [{ name: 'template', value: templateName }],
+      }),
     })
 
+    if (!res.ok) {
+      const errBody = await res.text()
+      console.error('Resend send failed', { status: res.status, errBody, templateName, effectiveRecipient })
+      await supabase.from('email_send_log').insert({
+        message_id: messageId,
+        template_name: templateName,
+        recipient_email: effectiveRecipient,
+        status: 'failed',
+        error_message: `Resend ${res.status}: ${errBody.slice(0, 500)}`,
+      })
+      return new Response(JSON.stringify({ error: 'Email send failed' }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const result = await res.json().catch(() => ({}))
+    await supabase.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: templateName,
+      recipient_email: effectiveRecipient,
+      status: 'sent',
+    })
+
+    console.log('Transactional email sent via Resend', {
+      templateName,
+      effectiveRecipient,
+      resend_id: result?.id,
+    })
+
+    return new Response(
+      JSON.stringify({ success: true, sent: true, resend_id: result?.id ?? null }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('Resend send exception', { error: msg, templateName })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
-      error_message: 'Failed to enqueue email',
+      error_message: msg.slice(0, 500),
     })
-
-    return new Response(JSON.stringify({ error: 'Failed to enqueue email' }), {
+    return new Response(JSON.stringify({ error: 'Email send exception' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
-
-  console.log('Transactional email enqueued', { templateName, effectiveRecipient })
-
-  return new Response(
-    JSON.stringify({ success: true, queued: true }),
-    {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    }
-  )
 })
