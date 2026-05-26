@@ -37,7 +37,7 @@ const Privacy = () => (
       We do not sell your data. We share only with service providers we need to run the platform:
     </p>
     <ul className="list-disc pl-6 space-y-2">
-      <li><strong>Lovable Cloud (Supabase):</strong> database, authentication, file storage.</li>
+      <li><strong>Lovable Cloud:</strong> our managed backend for database, authentication, and file storage.</li>
       <li><strong>Stripe:</strong> payment processing.</li>
       <li><strong>Resend:</strong> transactional email delivery.</li>
       <li><strong>Google (Gemini) / OpenAI via Lovable AI Gateway:</strong> generating your AI coaching responses.</li>
