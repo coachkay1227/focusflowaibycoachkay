@@ -23,7 +23,9 @@ import {
   type BookCategory,
 } from "@/lib/book-store";
 import SEOHead from "@/components/SEOHead";
-import { webPage, breadcrumb } from "@/lib/seo-schema";
+import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
+import FAQSection from "@/components/FAQSection";
+import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import { trackEvent } from "@/lib/analytics";
 
 const ADDON_ICONS = [Megaphone, Magnet, PhoneCall];
@@ -143,6 +145,10 @@ export default function Store() {
               },
             })),
           },
+          faqPageSchema(
+            getFaqLane("studio")?.items ?? [],
+            `${SITE_URL}/store#faq`
+          ),
         ]}
       />
       <div
@@ -328,6 +334,11 @@ export default function Store() {
           Start with {CATEGORY_LABELS[category]}
         </Button>
       </section>
+
+      <FAQSection
+        eyebrow="Story, Legacy & Publishing Studio"
+        items={getFaqLane("studio")?.items ?? []}
+      />
 
       <IntakeFormModal
         open={modalOpen}

@@ -18,6 +18,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
 const EmailPreview = lazy(() => import("./pages/EmailPreview.tsx"));
 const Sitemap = lazy(() => import("./pages/Sitemap.tsx"));
+const Faq = lazy(() => import("./pages/Faq.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe.tsx"));
 const EmailUnsubscribe = lazy(() => import("./pages/EmailUnsubscribe.tsx"));
@@ -111,6 +112,7 @@ const App = () => (
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
+            <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
             <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><Privacy /></Suspense>} />
             <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><Terms /></Suspense>} />
             <Route path="/disclaimer" element={<Suspense fallback={<PageSkeleton />}><Disclaimer /></Suspense>} />

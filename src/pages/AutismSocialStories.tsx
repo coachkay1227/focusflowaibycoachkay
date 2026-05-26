@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import SiteFooter from "@/components/SiteFooter";
+import FAQSection from "@/components/FAQSection";
+import { getFaqLane, faqPageSchema } from "@/data/faqs";
+import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 import { Button } from "@/components/ui/button";
 import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
 import AutismIntakeModal from "@/components/autism/AutismIntakeModal";
@@ -124,6 +127,24 @@ export default function AutismSocialStories() {
         title="Autism & Social Stories — Coach Kay Elevates"
         description="AI-personalized, therapist-grade social stories for autism and special needs. HSA/FSA-ready, IEP-aligned, with a Letter of Medical Necessity included."
         path="/autism-social-stories"
+        jsonLd={[
+          webPage(
+            "/autism-social-stories",
+            "Autism & Social Stories",
+            "CollectionPage"
+          ),
+          breadcrumb(
+            [
+              { name: "Home", path: "/" },
+              { name: "Autism & Social Stories", path: "/autism-social-stories" },
+            ],
+            "/autism-social-stories"
+          ),
+          faqPageSchema(
+            getFaqLane("autism")?.items ?? [],
+            `${SITE_URL}/autism-social-stories#faq`
+          ),
+        ]}
       />
 
       {/* Hero */}
@@ -251,6 +272,11 @@ export default function AutismSocialStories() {
           and we'll point you to the right one.
         </p>
       </section>
+
+      <FAQSection
+        eyebrow="Autism & Social Stories"
+        items={getFaqLane("autism")?.items ?? []}
+      />
 
       <SiteFooter />
 
