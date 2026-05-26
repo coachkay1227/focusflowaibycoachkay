@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -374,6 +374,39 @@ serve(async (req) => {
         });
       } else {
         log.info("tier_upgraded", { ctx: { user_id: userId, tier: mappedTier } });
+        // Transformation-path welcome email (best-effort, idempotent via key).
+        const program = TRANSFORMATION_PROGRAM_MAP[productId];
+        if (program) {
+          try {
+            const recipientEmail =
+              (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+              (typeof session.customer_email === "string" && session.customer_email) ||
+              null;
+            const recipientName =
+              (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+            if (recipientEmail) {
+              const origin = req.headers.get("origin") || "https://coachkayai.life";
+              await supabaseClient.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: program.template,
+                  recipientEmail,
+                  idempotencyKey: `${program.template}-${session.id}`,
+                  templateData: {
+                    name: recipientName,
+                    programName: program.programName,
+                    dashboardUrl: `${origin}/dashboard?welcome=program`,
+                  },
+                },
+              });
+              log.info("transformation_welcome_sent", { ctx: { user_id: userId, template: program.template } });
+            }
+          } catch (e) {
+            await fail("email", "transformation_welcome_failed", {
+              message: e instanceof Error ? e.message : String(e),
+              context: { user_id: userId, product_id: productId },
+            });
+          }
+        }
       }
     } else if (event.type === "customer.subscription.deleted") {
       // Subscription cancelled — downgrade to free
