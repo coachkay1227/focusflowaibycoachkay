@@ -209,6 +209,64 @@ serve(async (req) => {
         return ok(req);
       }
 
+      // Autism Studio branch: if metadata carries an autism_order_id, mark the
+      // autism order as paid (idempotent) and exit. Does not touch tier logic.
+      const autismOrderId = readMetaString(session.metadata, "autism_order_id");
+      if (autismOrderId) {
+        if (!UUID_RE.test(autismOrderId)) {
+          await fail("autism_order", "invalid_autism_order_id", { context: { autism_order_id: autismOrderId } });
+          return ok(req, { received: true, ignored: "invalid_autism_order_id" });
+        }
+        const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
+        const { data: pending, error: pendingErr } = await supabaseClient
+          .from("autism_orders")
+          .select("id, order_total")
+          .eq("id", autismOrderId)
+          .eq("stripe_session_id", session.id)
+          .eq("status", "pending_payment")
+          .maybeSingle();
+        if (pendingErr) {
+          await fail("autism_order", "lookup_failed", {
+            message: pendingErr.message,
+            context: { autism_order_id: autismOrderId, session_id: session.id },
+          });
+          return ok(req, { received: true, ignored: "lookup_failed" });
+        }
+        if (!pending) {
+          await fail("autism_order", "no_pending_match", {
+            context: { autism_order_id: autismOrderId, session_id: session.id },
+          });
+          return ok(req);
+        }
+        const amountTotal = typeof session.amount_total === "number" ? session.amount_total : null;
+        if (amountTotal === null || amountTotal !== pending.order_total) {
+          await fail("autism_order", "amount_mismatch", {
+            context: { autism_order_id: autismOrderId, session_amount: amountTotal, expected: pending.order_total },
+          });
+          return ok(req, { received: true, ignored: "amount_mismatch" });
+        }
+        const { data: updated, error: autismErr } = await supabaseClient
+          .from("autism_orders")
+          .update({ status: "paid", stripe_payment_intent_id: pi })
+          .eq("id", autismOrderId)
+          .eq("stripe_session_id", session.id)
+          .eq("status", "pending_payment")
+          .select("id");
+        if (autismErr) {
+          await fail("autism_order", "update_failed", {
+            message: autismErr.message,
+            context: { autism_order_id: autismOrderId },
+          });
+        } else if (!updated || updated.length === 0) {
+          log.info("autism_order_already_processed", {
+            ctx: { autism_order_id: autismOrderId, session_id: session.id },
+          });
+        } else {
+          log.info("autism_order_marked_paid", { ctx: { autism_order_id: autismOrderId } });
+        }
+        return ok(req);
+      }
+
       // AI Business Audit branch ($47 one-time, prod_U91GXGNgo01tYp).
       // Runs BEFORE the user_id requirement so guest checkouts also work.
       // Creates a business_audits row + a 90-day magic-link token, then
