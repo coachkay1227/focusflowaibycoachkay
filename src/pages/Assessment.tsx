@@ -14,6 +14,8 @@ import { isAdminPreviewArmed } from "@/lib/admin-preview";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ReportView from "@/components/reports/ReportView";
+import PillarStrip from "@/components/PillarStrip";
+import PillarBadge from "@/components/PillarBadge";
 
 type Dimension = "M" | "A" | "C";
 

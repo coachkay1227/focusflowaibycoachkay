@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import ReportView from "@/components/reports/ReportView";
+import PillarBadge from "@/components/PillarBadge";
+import PillarStrip from "@/components/PillarStrip";
 
 const BUSINESS_TYPES = [
   "Coaching/Consulting",
@@ -124,6 +126,7 @@ const StarterKit = () => {
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-10">
               A personalized 3-section snapshot of where you are, what to focus on first, and your one action this week.
             </p>
+            <div className="mb-8"><PillarBadge pillar="O" /></div>
           </>
         )}
 
@@ -218,6 +221,10 @@ const StarterKit = () => {
             ]}
           />
         )}
+
+        <div className="mt-16">
+          <PillarStrip />
+        </div>
       </main>
     </div>
   );

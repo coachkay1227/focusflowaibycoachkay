@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Check, Lock, Trophy } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
+import PillarBadge from "@/components/PillarBadge";
 
 // Challenge prompt configs
 const challengePrompts: Record<string, { prompt: string }[]> = {
@@ -234,6 +235,9 @@ const MirrorChallenge = () => {
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
             One prompt per day. One honest answer. {totalDays} days that change how you see yourself.
           </p>
+          <div className="mt-5 flex justify-center">
+            <PillarBadge pillar="F" />
+          </div>
         </AnimatedSection>
 
         <AnimatedSection delay={200} className="mb-12">
