@@ -16,6 +16,8 @@ import {
   ENTRY_OFFERS,
 } from "@/lib/offer-catalog";
 import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
+import FAQSection from "@/components/FAQSection";
+import { getFaqLane, faqPageSchema } from "@/data/faqs";
 
 const FOUNDING_STORAGE_KEY = "raa.founding";
 
@@ -100,6 +102,10 @@ const RentAnAgent = () => {
         { name: "Rent-an-Agent", path: "/rent-an-agent" },
       ],
       "/rent-an-agent"
+    ),
+    faqPageSchema(
+      getFaqLane("rent-an-agent")?.items ?? [],
+      `${SITE_URL}/rent-an-agent#faq`
     ),
     {
       "@context": "https://schema.org",

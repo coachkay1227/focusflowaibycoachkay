@@ -24,6 +24,9 @@ import {
 } from "@/lib/book-store";
 import SEOHead from "@/components/SEOHead";
 import { webPage, breadcrumb } from "@/lib/seo-schema";
+import { SITE_URL } from "@/lib/seo-schema";
+import FAQSection from "@/components/FAQSection";
+import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import { trackEvent } from "@/lib/analytics";
 
 const ADDON_ICONS = [Megaphone, Magnet, PhoneCall];

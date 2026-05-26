@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ENTRY_OFFERS, ADVISORY_LANES } from "@/lib/offer-catalog";
 import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
+import FAQSection from "@/components/FAQSection";
+import { getFaqLane, faqPageSchema } from "@/data/faqs";
 
 const Advisory = () => {
   const navigate = useNavigate();
