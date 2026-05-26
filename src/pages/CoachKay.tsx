@@ -4,7 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart } from "lucide-react";
 import coachKayImg from "@/assets/coach-kay.jpeg";
-import { webPage, breadcrumb, PERSON_ID } from "@/lib/seo-schema";
+import { webPage, breadcrumb } from "@/lib/seo-schema";
 import MobileNav from "@/components/MobileNav";
 
 const testimonials = [
