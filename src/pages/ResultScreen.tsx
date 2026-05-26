@@ -277,7 +277,36 @@ const ResultScreen = () => {
             <div className="mt-5 flex justify-center">
               <PillarBadge pillar="F" />
             </div>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="font-mono-label text-primary tracking-[0.15em]">+5 CLARITY SCORE EARNED</span>
+            </div>
           </AnimatedSection>
+
+          {/* "What you told me" — mirror the user's own words */}
+          {mirroredAnswers.length > 0 && (
+            <AnimatedSection delay={50} className="mb-10">
+              <div className="clarity-card rounded-lg border border-border bg-card/20 backdrop-blur-sm p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-5">
+                  <Quote className="h-5 w-5 text-primary/70" />
+                  <span className="font-mono-label text-primary/70 tracking-[0.15em] text-xs">WHAT YOU TOLD ME</span>
+                </div>
+                <div className="space-y-5">
+                  {mirroredAnswers.map((m) => (
+                    <div key={m.label} className="border-l-2 border-primary/30 pl-4">
+                      <p className="font-mono-label text-muted-foreground/70 text-[10px] tracking-[0.18em] uppercase mb-1.5">
+                        {m.label}
+                      </p>
+                      <p className="text-foreground/85 italic leading-relaxed">"{m.value}"</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-6 text-xs text-muted-foreground/60">
+                  Your words. Read them again before you read what I see below.
+                </p>
+              </div>
+            </AnimatedSection>
+          )}
 
           {emailStatus !== "idle" && emailStatus !== "skipped" && (
             <AnimatedSection delay={100} className="mb-10">
