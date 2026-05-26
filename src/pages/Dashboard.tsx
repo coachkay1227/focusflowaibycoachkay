@@ -48,17 +48,17 @@ const AUDIT_OFFER_NAMES: Record<string, string> = {
   advisory_speaking: "Speaking & Workshops",
   advisory_corporate: "Corporate, EAP & Workforce Learning",
   advisory_university: "AI University Roadmap",
-  group_programs: "Group Programs / Collective AI Summit",
+  group_programs: "Group Programs",
   // Door 4 — Studio
   studio_mini_story: "Mini-Story Starter",
   studio_storybook_pro: "The Storybook Pro",
-  studio_other: "Studio — Custom Lane",
+  studio_other: "Publishing Studio",
   // Build Studio (Phase 3.5 — opening soon)
-  build_studio_landing: "Build Studio — Landing Page",
-  build_studio_site: "Build Studio — Business Site",
-  build_studio_dashboard: "Build Studio — Dashboard",
+  build_studio_landing: "Build Studio — Landing Page (Opening Soon)",
+  build_studio_site: "Build Studio — Business Site (Opening Soon)",
+  build_studio_dashboard: "Build Studio — Dashboard (Opening Soon)",
   // Community / free
-  focus_flow_elevation_hub: "Focus Flow Elevation Hub (Community)",
+  focus_flow_elevation_hub: "Focus Flow Elevation Hub (Free)",
 };
 
 type AuditRow = {
