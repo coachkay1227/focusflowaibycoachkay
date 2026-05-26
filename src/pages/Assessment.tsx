@@ -86,24 +86,18 @@ function buildQuestions(): MacQuestion[] {
     { q: "How do you make sense of a chaotic situation?", s: "There's no wrong answer here." },
     { q: "When someone shares an idea with you, you naturally...", s: "Notice your default reaction." },
     { q: "What feels most satisfying to figure out?", s: "Where does your mind want to go?" },
-    { q: "When you read a long article, what sticks with you?", s: "Be honest about what your brain holds onto." },
-    { q: "Your favorite kind of conversation is one that...", s: "Where do you come alive intellectually?" },
   ];
   const actionPrompts = [
     { q: "When you start something new, you...", s: "What's your true rhythm?" },
     { q: "Under a tight deadline, your default mode is to...", s: "Not what you wish — what actually happens." },
     { q: "You'd rather be known as someone who...", s: "Pick the version closest to true." },
     { q: "When the plan changes mid-project, you...", s: "Your reflex matters more than your strategy." },
-    { q: "Your best work tends to happen when you...", s: "Recall a recent win." },
-    { q: "Looking at a half-finished thing, your urge is to...", s: "What pulls at you?" },
   ];
   const charPrompts = [
     { q: "People who know you best would say you are...", s: "What's the word that keeps coming back?" },
     { q: "In a crisis, you tend to become...", s: "Pressure reveals truth." },
     { q: "The role you keep getting pulled into is...", s: "Patterns are signals." },
     { q: "What you protect most fiercely is...", s: "What you'd defend without hesitation." },
-    { q: "When a group is uncertain, you...", s: "Your instinct in the silence." },
-    { q: "The quality you most want to be remembered for is...", s: "The legacy version." },
   ];
 
   const qs: MacQuestion[] = [];
@@ -111,7 +105,7 @@ function buildQuestions(): MacQuestion[] {
     qs.push({
       id: `m${i + 1}`,
       dimension: "M",
-      label: `MIND · ${String(i + 1).padStart(2, "0")} / 06`,
+      label: `MIND · ${String(i + 1).padStart(2, "0")} / 04`,
       question: p.q,
       subtitle: p.s,
       options: MIND_OPTIONS,
@@ -121,7 +115,7 @@ function buildQuestions(): MacQuestion[] {
     qs.push({
       id: `a${i + 1}`,
       dimension: "A",
-      label: `ACTION · ${String(i + 1).padStart(2, "0")} / 06`,
+      label: `ACTION · ${String(i + 1).padStart(2, "0")} / 04`,
       question: p.q,
       subtitle: p.s,
       options: ACTION_OPTIONS,
@@ -131,7 +125,7 @@ function buildQuestions(): MacQuestion[] {
     qs.push({
       id: `c${i + 1}`,
       dimension: "C",
-      label: `CHARACTER · ${String(i + 1).padStart(2, "0")} / 06`,
+      label: `CHARACTER · ${String(i + 1).padStart(2, "0")} / 04`,
       question: p.q,
       subtitle: p.s,
       options: CHARACTER_OPTIONS,
@@ -361,7 +355,7 @@ const Assessment = () => {
     >
       <SEOHead
         title="Business Clarity Assessment — FocusFlow AI"
-        description="Discover how your Mind, Action, and Character drive your business decisions. 18 questions. A personalized clarity profile from Coach Kay."
+        description="Discover how your Mind, Action, and Character drive your business decisions. 12 questions, ~5 minutes. A personalized clarity profile from Coach Kay."
         path="/assessment"
         jsonLd={{
           "@context": "https://schema.org",
@@ -370,7 +364,7 @@ const Assessment = () => {
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
           url: "https://coachkayai.life/assessment",
-          description: "18-question Mind/Action/Character business clarity assessment delivering a personalized leadership profile.",
+          description: "12-question Mind/Action/Character business clarity assessment delivering a personalized leadership profile in about 5 minutes.",
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
           creator: { "@type": "Person", name: "Coach Kay" },
         }}
@@ -396,8 +390,9 @@ const Assessment = () => {
         {!done && (
           <div className="mb-10">
             <Progress value={progress} className="h-1 bg-border" />
-            <div className="mt-2 font-mono-label text-[10px] tracking-wider text-muted-foreground/70 text-right">
-              {step + 1} / {total}
+            <div className="mt-2 font-mono-label text-[10px] tracking-wider text-muted-foreground/70 flex justify-between">
+              <span>~{Math.max(1, Math.ceil(((total - step) * 25) / 60))} MIN LEFT</span>
+              <span>{step + 1} / {total}</span>
             </div>
           </div>
         )}

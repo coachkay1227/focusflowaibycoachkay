@@ -77,9 +77,9 @@ serve(async (req) => {
       toolSchema: {
         type: "object",
         properties: {
-          where_you_are: { type: "string" },
-          what_to_focus_on: { type: "string" },
-          action_this_week: { type: "string" },
+          where_you_are: { type: "string", maxLength: 600, description: "2-3 sentences. Name the real situation under the surface; reference their stated bottleneck verbatim where it fits." },
+          what_to_focus_on: { type: "string", maxLength: 600, description: "2-4 sentences. The single F.O.C.U.S. pillar to attend to this season and why — concrete to their business type." },
+          action_this_week: { type: "string", maxLength: 600, description: "2-3 sentences. One specific, doable move for THIS week. No lists. No vague advice." },
         },
         required: ["where_you_are", "what_to_focus_on", "action_this_week"],
         additionalProperties: false,

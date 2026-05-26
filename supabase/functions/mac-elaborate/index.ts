@@ -83,12 +83,12 @@ serve(async (req) => {
       toolSchema: {
         type: "object",
         properties: {
-          archetype_name: { type: "string", description: "A short evocative name for this archetype" },
-          mind: { type: "string" },
-          action: { type: "string" },
-          character: { type: "string" },
-          strength: { type: "string" },
-          growth_edge: { type: "string" },
+          archetype_name: { type: "string", maxLength: 60, description: "Short evocative name (2-4 words) for this archetype" },
+          mind: { type: "string", maxLength: 600, description: "2-4 sentences. Speak directly to this person about their Mind archetype." },
+          action: { type: "string", maxLength: 600, description: "2-4 sentences about their Action archetype." },
+          character: { type: "string", maxLength: 600, description: "2-4 sentences about their Character archetype." },
+          strength: { type: "string", maxLength: 600, description: "2-4 sentences. One specific strength concrete to this M.A.C. combination." },
+          growth_edge: { type: "string", maxLength: 600, description: "2-4 sentences. One specific growth edge concrete to this combination." },
         },
         required: ["archetype_name", "mind", "action", "character", "strength", "growth_edge"],
         additionalProperties: false,
