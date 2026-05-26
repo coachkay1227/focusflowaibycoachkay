@@ -18,9 +18,10 @@ export default function OrderSuccess() {
   const [params] = useSearchParams();
   const sessionId = params.get("session_id");
   const tierParam = params.get("tier");
+  const orderType = params.get("type");
   const [summary, setSummary] = useState<OrderSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [mode, setMode] = useState<"loading" | "book" | "non_book">("loading");
+  const [mode, setMode] = useState<"loading" | "book" | "autism" | "non_book">("loading");
 
   useEffect(() => {
     if (!sessionId) {
@@ -30,7 +31,8 @@ export default function OrderSuccess() {
     }
     (async () => {
       try {
-        const { data, error } = await supabase.functions.invoke("verify-book-order", {
+        const fnName = orderType === "autism" ? "verify-autism-order" : "verify-book-order";
+        const { data, error } = await supabase.functions.invoke(fnName, {
           body: { session_id: sessionId },
         });
         if (error || !data || !(data as OrderSummary).package_name) {
@@ -40,13 +42,14 @@ export default function OrderSuccess() {
           return;
         }
         setSummary(data as OrderSummary);
-        setMode("book");
+        setMode(orderType === "autism" ? "autism" : "book");
         void trackEvent(
           "studio_checkout_paid",
           {
             session_id: sessionId,
             package_name: (data as OrderSummary | null)?.package_name,
             order_total_cents: (data as OrderSummary | null)?.order_total,
+            order_type: orderType ?? "book",
           },
           "studio"
         );
@@ -55,7 +58,7 @@ export default function OrderSuccess() {
         setMode("non_book");
       }
     })();
-  }, [sessionId]);
+  }, [sessionId, orderType]);
 
   const tierLabel =
     tierParam && (TIER_LABELS as Record<string, string>)[tierParam]
@@ -115,6 +118,12 @@ export default function OrderSuccess() {
     );
   }
 
+  const isAutism = mode === "autism";
+  const headline = isAutism ? "Your Story Is On Its Way" : "Your Book Journey Begins";
+  const lede = isAutism
+    ? "We've received your order. Coach Kay's team will review your intake and follow up within 24 hours. Your itemized HSA/FSA receipt and Letter of Medical Necessity template will arrive by email shortly."
+    : "We've received your order and your vision. Coach Kay's team will review your intake and be in touch within 24 hours.";
+
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
       <SEOHead
@@ -129,11 +138,10 @@ export default function OrderSuccess() {
         </div>
 
         <h1 className="font-heading text-4xl sm:text-5xl text-foreground mb-4">
-          Your Book Journey Begins
+          {headline}
         </h1>
         <p className="text-muted-foreground text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-          We&apos;ve received your order and your vision. Coach Kay&apos;s team will review
-          your intake and be in touch within 24 hours.
+          {lede}
         </p>
 
         {summary && (
