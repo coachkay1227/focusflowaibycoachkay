@@ -28,6 +28,10 @@ const INDEXABLE: string[] = [
   "/store",
   "/rent-an-agent",
   "/advisory",
+  "/privacy",
+  "/terms",
+  "/disclaimer",
+  "/refund-policy",
 ];
 
 // Routes that MUST be noindex (SEOHead present with noIndex={true}). Not expected in sitemap.
@@ -48,6 +52,7 @@ const NOINDEX: string[] = [
   "/email-unsubscribe",
   "/audit/landing",
   "/audit/intake",
+  "/audit/intake/:id",
   "/audit/report/:id",
   "*", // NotFound
 ];
