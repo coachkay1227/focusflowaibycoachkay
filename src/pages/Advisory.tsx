@@ -100,6 +100,10 @@ const Advisory = () => {
         })),
       ],
     },
+    faqPageSchema(
+      getFaqLane("advisory")?.items ?? [],
+      `${SITE_URL}/advisory#faq`
+    ),
   ];
 
   return (
