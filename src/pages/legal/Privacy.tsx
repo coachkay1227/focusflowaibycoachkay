@@ -1,6 +1,13 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "@/components/SEOHead";
 
 const Privacy = () => (
+  <>
+    <SEOHead
+      title="Privacy Policy — FocusFlow AI"
+      description="How FocusFlow AI by Coach Kay collects, uses, and protects your information."
+      path="/privacy"
+    />
   <LegalLayout
     eyebrow="LEGAL · PRIVACY"
     title="Privacy Policy"
