@@ -185,7 +185,8 @@ serve(async (req) => {
     // This sends a "magic link" style email with custom HTML
     // For production, configure a custom SMTP in Supabase dashboard
     const resendKey = Deno.env.get("RESEND_API_KEY");
-    const fromEmail = Deno.env.get("FROM_EMAIL") ?? "coach@focusflowelevation-hub.com";
+    const fromEmail = Deno.env.get("FROM_EMAIL") ?? "noreply@coachkayai.life";
+    const replyToEmail = Deno.env.get("REPLY_TO_EMAIL") ?? "hello@coachkayelevates.org";
 
     if (resendKey) {
       // Use Resend API if configured
@@ -198,6 +199,7 @@ serve(async (req) => {
         body: JSON.stringify({
           from: `Coach Kay <${fromEmail}>`,
           to: recipientEmail,
+          reply_to: replyToEmail,
           subject: emailSubject,
           html,
         }),
