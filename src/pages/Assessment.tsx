@@ -564,6 +564,9 @@ const Assessment = () => {
                 Retake
               </Button>
             </div>
+            <div className="mt-16">
+              <PillarStrip />
+            </div>
           </div>
         )}
       </div>
