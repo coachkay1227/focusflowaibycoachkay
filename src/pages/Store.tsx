@@ -23,8 +23,7 @@ import {
   type BookCategory,
 } from "@/lib/book-store";
 import SEOHead from "@/components/SEOHead";
-import { webPage, breadcrumb } from "@/lib/seo-schema";
-import { SITE_URL } from "@/lib/seo-schema";
+import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import { trackEvent } from "@/lib/analytics";
@@ -146,6 +145,10 @@ export default function Store() {
               },
             })),
           },
+          faqPageSchema(
+            getFaqLane("studio")?.items ?? [],
+            `${SITE_URL}/store#faq`
+          ),
         ]}
       />
       <div
