@@ -38,6 +38,7 @@ const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const CoachKay = lazy(() => import("./pages/CoachKay.tsx"));
 const Store = lazy(() => import("./pages/Store.tsx"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess.tsx"));
+const AutismSocialStories = lazy(() => import("./pages/AutismSocialStories.tsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.tsx"));
 const Assessment = lazy(() => import("./pages/Assessment.tsx"));
 const StarterKit = lazy(() => import("./pages/StarterKit.tsx"));
@@ -99,6 +100,7 @@ const App = () => (
             <Route path="/admin/content" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminContent /></Suspense></ProtectedRoute>} />
             <Route path="/kiosk" element={<Suspense fallback={<PageSkeleton />}><Kiosk /></Suspense>} />
             <Route path="/store" element={<ErrorBoundary><Suspense fallback={<PageSkeleton />}><Store /></Suspense></ErrorBoundary>} />
+            <Route path="/autism-social-stories" element={<Suspense fallback={<PageSkeleton />}><AutismSocialStories /></Suspense>} />
             <Route path="/rent-an-agent" element={<Suspense fallback={<PageSkeleton />}><RentAnAgent /></Suspense>} />
             <Route path="/advisory" element={<Suspense fallback={<PageSkeleton />}><Advisory /></Suspense>} />
             <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
