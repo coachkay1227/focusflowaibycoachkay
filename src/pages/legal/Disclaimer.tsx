@@ -1,6 +1,13 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "@/components/SEOHead";
 
 const Disclaimer = () => (
+  <>
+    <SEOHead
+      title="Disclaimer — FocusFlow AI"
+      description="Important context about what FocusFlow AI by Coach Kay is — and what it isn't."
+      path="/disclaimer"
+    />
   <LegalLayout
     eyebrow="LEGAL · DISCLAIMER"
     title="Coaching, Wellness & Earnings Disclaimer"
