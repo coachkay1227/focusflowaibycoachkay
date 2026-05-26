@@ -152,122 +152,171 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center justify-center min-h-[70vh] px-6 pt-4 md:pt-8 text-center">
-        {/* Gold line */}
-        <div
-          className="mb-8"
-          style={{
-            width: "min(80vw, 400px)",
-            height: 1,
-            background: "linear-gradient(90deg, transparent, hsl(43 75% 52% / 0.6), transparent)",
-            transform: phase >= 1 ? "scaleX(1)" : "scaleX(0)",
-            transition: "transform 0.6s ease-out",
-            willChange: "transform",
-          }}
-        />
+      {/* Hero — Editorial Asymmetry (60/40) */}
+      <section className="relative z-10 px-4 md:px-8 pb-6">
+        <div className="w-full max-w-7xl mx-auto relative overflow-hidden border border-foreground/5 bg-background/40 backdrop-blur-sm shadow-2xl">
+          <div className="flex flex-col md:flex-row min-h-[78vh]">
+            {/* 60% — Content */}
+            <div className="w-full md:w-[60%] p-8 md:p-14 lg:p-20 flex flex-col justify-center relative">
+              {/* Vertical decorative line */}
+              <div
+                className="absolute left-4 md:left-8 top-12 bottom-12 w-px pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, transparent, hsl(43 75% 52% / 0.3), transparent)",
+                }}
+                aria-hidden="true"
+              />
 
-        {/* Label */}
-        <div
-          className="font-mono-label text-primary mb-6 tracking-[0.2em]"
-          style={{
-            opacity: phase >= 2 ? 1 : 0,
-            transition: "opacity 0.5s ease-out 0.1s",
-          }}
-        >
-          Clarity Code by Coach Kay
-        </div>
+              <div
+                className="space-y-7 md:space-y-9"
+                style={{
+                  opacity: phase >= 2 ? 1 : 0,
+                  transform: phase >= 2 ? "translateY(0)" : "translateY(30px)",
+                  transition: "all 1.2s ease-out",
+                  willChange: "transform, opacity",
+                }}
+              >
+                <span className="block font-mono-label text-primary tracking-[0.4em] text-[10px] font-bold uppercase">
+                  Clarity Code by Coach Kay
+                </span>
 
-        {/* Headline — direct-response: audience + pain + outcome + timeframe */}
-        <h1
-          className="font-heading text-4xl md:text-6xl lg:text-7xl font-light leading-tight max-w-4xl"
-          style={{
-            opacity: phase >= 2 ? 1 : 0,
-            filter: phase >= 2 ? "blur(0)" : "blur(12px)",
-            transform: phase >= 2 ? "translateY(0)" : "translateY(20px)",
-            transition: "all 0.8s ease-out",
-            willChange: "transform, opacity, filter",
-            textShadow: "0 0 40px hsl(43 75% 52% / 0.15)",
-          }}
-        >
-          For high-achievers stuck in decision loops:
-          <br />
-          <span className="text-primary">get one clear next move in 90 seconds.</span>
-        </h1>
+                <h1
+                  className="font-heading text-4xl md:text-6xl lg:text-7xl font-light leading-[1.05] text-foreground"
+                  style={{ textShadow: "0 0 40px hsl(43 75% 52% / 0.12)" }}
+                >
+                  For high-achievers stuck in{" "}
+                  <span className="italic">decision loops</span>: get one clear next move in{" "}
+                  <span className="text-primary">90 seconds.</span>
+                </h1>
 
-        {/* Subtitle */}
-        <p
-          className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed"
-          style={{
-            opacity: phase >= 3 ? 1 : 0,
-            transform: phase >= 3 ? "translateY(0) scale(1)" : "translateY(15px) scale(0.95)",
-            transition: "all 0.6s ease-out",
-          }}
-        >
-          No planner. No journal. No coaching call. Six honest questions and a personalized Clarity Code from Master Certified Coach Kay.
-        </p>
+                <p className="text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
+                  No planner. No journal. No coaching call. Six honest questions and a
+                  personalized Clarity Code from Master Certified Coach Kay.
+                </p>
 
-        {/* Single CTA */}
-        <div
-          className="mt-10 flex justify-center"
-          style={{
-            opacity: phase >= 3 ? 1 : 0,
-            transform: phase >= 3 ? "translateY(0) scale(1)" : "translateY(15px) scale(0.95)",
-            transition: "all 0.6s ease-out 0.15s",
-          }}
-        >
-          <Button
-            onClick={() => navigate("/clarity")}
-            size="lg"
-            className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform text-base px-10 py-7"
-          >
-            <Sparkles className="mr-2 h-5 w-5" />
-            Get My Clarity Code
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
+                <div className="pt-2 flex flex-col gap-10">
+                  {/* CTA with gold halo */}
+                  <button
+                    type="button"
+                    onClick={() => navigate("/clarity")}
+                    className="group relative w-fit"
+                    aria-label="Get My Clarity Code"
+                  >
+                    <span
+                      className="absolute -inset-3 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: "hsl(43 75% 52% / 0.25)" }}
+                      aria-hidden="true"
+                    />
+                    <span className="relative inline-flex items-center gap-2 bg-primary text-primary-foreground px-9 py-5 rounded-full font-bold text-sm tracking-[0.05em] uppercase transition-transform duration-300 group-hover:-translate-y-0.5">
+                      <Sparkles className="h-4 w-4" />
+                      Get My Clarity Code
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </button>
 
-        {/* Proof line */}
-        <p
-          className="mt-6 text-sm text-foreground/70 max-w-md text-center"
-          style={{
-            opacity: phase >= 4 ? 1 : 0,
-            transition: "opacity 0.8s ease-out",
-          }}
-        >
-          Trusted by early-access founders and coaches rebuilding their focus.
-        </p>
+                  {/* Trust strip */}
+                  <div className="flex flex-wrap items-center gap-6 md:gap-8 border-t border-foreground/10 pt-6 md:pt-8">
+                    <div className="space-y-1">
+                      <p className="font-mono-label text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70">
+                        Level
+                      </p>
+                      <p className="font-heading text-lg italic text-foreground">
+                        Master Certified
+                      </p>
+                    </div>
+                    <div className="w-px h-8 bg-foreground/10" aria-hidden="true" />
+                    <div className="space-y-1">
+                      <p className="font-mono-label text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70">
+                        Experience
+                      </p>
+                      <p className="text-sm font-medium text-foreground">600+ Hours</p>
+                    </div>
+                    <div className="w-px h-8 bg-foreground/10" aria-hidden="true" />
+                    <div className="space-y-1">
+                      <p className="font-mono-label text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70">
+                        Framework
+                      </p>
+                      <p className="text-sm font-medium text-foreground">3 Paths</p>
+                    </div>
+                  </div>
 
-        {/* Friction reversal */}
-        <div
-          className="mt-4 inline-flex items-center gap-2 font-mono-label text-primary/80 tracking-[0.15em] text-xs"
-          style={{
-            opacity: phase >= 4 ? 1 : 0,
-            transition: "opacity 1s ease-out",
-          }}
-        >
-          <Zap className="h-3.5 w-3.5" />
-          Takes 90 seconds · No signup · No card · Just clarity
-        </div>
-      </section>
-
-      {/* Credentials Bar */}
-      <section className="relative z-10 py-8 px-6">
-        <AnimatedSection className="max-w-4xl mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-center">
-            {[
-              "Master Certified Life Coach",
-              "600+ Coaching Hours",
-              "3 Transformation Paths",
-              "Founding Cohort Waitlist Open",
-            ].map((cred, i) => (
-              <div key={cred} className="flex items-center gap-4 md:gap-8">
-                <span className="font-mono-label text-[11px] tracking-wider text-primary/90 opacity-70">{cred}</span>
-                {i < 3 && <span className="hidden md:inline text-primary/20">|</span>}
+                  {/* Friction reversal */}
+                  <div className="inline-flex items-center gap-2 font-mono-label text-primary/80 tracking-[0.15em] text-[11px]">
+                    <Zap className="h-3.5 w-3.5" />
+                    Takes 90 seconds · No signup · No card · Just clarity
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* 40% — Portrait */}
+            <div className="w-full md:w-[40%] relative bg-card/50 overflow-hidden group min-h-[50vh] md:min-h-0">
+              {/* Overlays */}
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(to top, hsl(220 40% 8%) 0%, transparent 55%)",
+                }}
+                aria-hidden="true"
+              />
+              <div
+                className="absolute inset-0 z-10 pointer-events-none mix-blend-overlay"
+                style={{ background: "hsl(43 75% 52% / 0.05)" }}
+                aria-hidden="true"
+              />
+
+              {/* Portrait */}
+              <img
+                src={coachKayPortrait}
+                alt="Coach Kay — Master Certified Life Coach"
+                loading="eager"
+                className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[1200ms] ease-in-out"
+                style={{
+                  opacity: phase >= 2 ? 1 : 0,
+                  transition: "opacity 1.4s ease-out, filter 1.2s ease-in-out",
+                }}
+              />
+
+              {/* Gold frame */}
+              <div
+                className="absolute inset-6 md:inset-8 border z-20 pointer-events-none transition-all duration-[1200ms] ease-in-out group-hover:inset-7 md:group-hover:inset-10"
+                style={{ borderColor: "hsl(43 75% 52% / 0.25)" }}
+                aria-hidden="true"
+              />
+
+              {/* Soft glow */}
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full blur-[100px] pointer-events-none animate-brand-pulse"
+                style={{ background: "hsl(43 75% 52% / 0.12)" }}
+                aria-hidden="true"
+              />
+            </div>
           </div>
-        </AnimatedSection>
+
+          {/* Next-act indicator */}
+          <div className="h-16 md:h-20 border-t border-foreground/5 flex items-center justify-between px-6 md:px-12 bg-card/40">
+            <div className="flex items-center gap-4 md:gap-6">
+              <span className="font-heading text-2xl italic text-primary/80">01</span>
+              <span className="font-mono-label text-[10px] tracking-[0.3em] uppercase text-muted-foreground/70 font-bold">
+                The Core Methodology
+              </span>
+            </div>
+            <a
+              href="#how-it-works"
+              className="group flex items-center gap-3 md:gap-4 text-muted-foreground/60 hover:text-primary transition-colors"
+            >
+              <span className="font-mono-label text-[9px] tracking-[0.2em] uppercase font-bold">
+                Scroll to Begin
+              </span>
+              <span
+                className="w-10 md:w-12 h-px bg-current transition-all duration-500 group-hover:w-16"
+                aria-hidden="true"
+              />
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Start Here — Free */}
