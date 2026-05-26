@@ -20,29 +20,46 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
-    // Auth check — prevent anonymous AI credit consumption
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
+    // Anon-allowed: this powers the public Clarity Check (guest flow).
+    // We opportunistically resolve the user if a JWT is present, so the
+    // result email goes to their verified address. Otherwise we accept
+    // a guest_email captured by our own email gate.
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       { auth: { persistSession: false } }
     );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !userData?.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    let authedUser: { id: string; email: string | null; name?: string } | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data } = await supabase.auth.getUser(token);
+      if (data?.user?.id) {
+        authedUser = {
+          id: data.user.id,
+          email: data.user.email ?? null,
+          name:
+            (data.user.user_metadata?.full_name as string | undefined) ||
+            (data.user.user_metadata?.name as string | undefined) ||
+            undefined,
+        };
+      }
     }
 
     const body = await req.json();
     const answers = body?.answers;
     const moduleId = body?.moduleId;
+    const sessionId =
+      typeof body?.sessionId === "string" && body.sessionId.length <= 100
+        ? body.sessionId
+        : crypto.randomUUID();
+    const guestEmailRaw = typeof body?.guest_email === "string" ? body.guest_email.trim().toLowerCase() : "";
+    const guestEmail =
+      !authedUser && guestEmailRaw.includes("@") && guestEmailRaw.length <= 254 ? guestEmailRaw : null;
+    const guestName =
+      !authedUser && typeof body?.guest_name === "string" && body.guest_name.trim().length > 0
+        ? body.guest_name.trim().slice(0, 100)
+        : null;
 
     if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
       return new Response(JSON.stringify({ error: "Invalid answers object" }), {
@@ -84,9 +101,9 @@ serve(async (req) => {
       toolSchema: {
         type: "object",
         properties: {
-          truth: { type: "string", description: "The Truth section - what's really going on" },
-          pattern: { type: "string", description: "The Pattern section - what keeps showing up" },
-          action: { type: "string", description: "The Action section - the next move" },
+          truth: { type: "string", maxLength: 600, description: "The Truth - what's really going on. Quote at least one phrase from the user's answers. 2-3 sentences." },
+          pattern: { type: "string", maxLength: 600, description: "The Pattern - what keeps showing up. Tie back to a specific answer. 2-3 sentences." },
+          action: { type: "string", maxLength: 600, description: "The Action - one concrete move they can make this week. 2-3 sentences." },
         },
         required: ["truth", "pattern", "action"],
         additionalProperties: false,
@@ -98,6 +115,43 @@ serve(async (req) => {
         status: result.status ?? 500,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
+    }
+
+    // Fire-and-forget: email + GHL webhook. Recipient is either the verified
+    // authed user OR the guest_email captured by our own email gate. We never
+    // send to a free-form client-supplied email when an auth user is present.
+    const recipientEmail = authedUser?.email ?? guestEmail;
+    const recipientName = authedUser?.name ?? guestName ?? undefined;
+    if (recipientEmail) {
+      const insightData = result.data as { truth?: string; pattern?: string; action?: string };
+      supabase.functions
+        .invoke("send-transactional-email", {
+          body: {
+            templateName: "clarity-code-result",
+            recipientEmail,
+            idempotencyKey: `clarity-code-${sessionId}`,
+            templateData: {
+              name: recipientName,
+              truth: (insightData.truth ?? "").slice(0, 4000),
+              pattern: (insightData.pattern ?? "").slice(0, 4000),
+              action: (insightData.action ?? "").slice(0, 4000),
+            },
+          },
+        })
+        .catch((e) => console.warn("clarity-insight email enqueue failed:", e));
+      supabase.functions
+        .invoke("ghl-webhook", {
+          body: {
+            event: "clarity_session_complete",
+            payload: {
+              email: recipientEmail,
+              user_id: authedUser?.id ?? null,
+              moduleId,
+              guest: !authedUser,
+            },
+          },
+        })
+        .catch((e) => console.warn("clarity-insight ghl webhook failed:", e));
     }
 
     return new Response(JSON.stringify(result.data), {
