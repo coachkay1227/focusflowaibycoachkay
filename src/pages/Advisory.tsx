@@ -238,6 +238,11 @@ const Advisory = () => {
         </div>
       </section>
 
+      <FAQSection
+        eyebrow="Advisory & Cohorts"
+        items={getFaqLane("advisory")?.items ?? []}
+      />
+
       <OfferInquiryDialog
         open={inquiry.open}
         onOpenChange={(open) => setInquiry((s) => ({ ...s, open }))}

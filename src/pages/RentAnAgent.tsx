@@ -364,6 +364,11 @@ const RentAnAgent = () => {
         </div>
       </section>
 
+      <FAQSection
+        eyebrow="Rent-an-Agent"
+        items={getFaqLane("rent-an-agent")?.items ?? []}
+      />
+
       <OfferInquiryDialog
         open={inquiry.open}
         onOpenChange={(open) => setInquiry((s) => ({ ...s, open }))}
