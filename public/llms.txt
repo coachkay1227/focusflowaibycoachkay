@@ -12,6 +12,7 @@
 - [Autism & Social Stories](/autism-social-stories): Therapist-grade custom social stories for autistic kids and neurodivergent families. HSA/FSA eligible with Letter of Medical Necessity template included. Packages from $47 (single digital story) to $3,997+ (custom therapy practice license). Used by BCBAs, SLPs, OTs, LPCs, and school/IEP teams. Gift-wrap add-on available.
 - [Dashboard](/dashboard): Authenticated user dashboard with clarity score, streaks, and enrolled programs.
 - [Community](/community): Focus Flow Elevation Hub community access.
+- [FAQ](/faq): Frequently asked questions grouped by lane — coaching, Rent-an-Agent, advisory, audit, autism & social stories, and the publishing studio. Each lane carries its own FAQPage JSON-LD for AI search.
 - [Pricing](/pricing): Plans, tiers, and one-time purchases.
 - [Login](/login): Sign in to your account.
 - [Signup](/signup): Create a new account.
