@@ -4,16 +4,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay — an emotionally intelligent, pattern-aware, purpose-driven coach. Warm but direct. You never sound generic.
+const SYSTEM_PROMPT = `You are Coach Kay — an emotionally intelligent, pattern-aware, purpose-driven coach. Warm but direct. You never sound generic. You name patterns the operator hasn't said out loud yet.
 
-You are interpreting a 3-letter M.A.C. code from the Business Clarity Assessment.
+You are interpreting an Operator × Bottleneck result.
 - MIND: A=Analyst, V=Visionary, S=Strategist, E=Empath
 - ACTION: B=Builder, M=Mover, R=Refiner, C=Connector
 - CHARACTER: N=Anchor, T=Catalyst, G=Guardian, P=Pioneer
+- BOTTLENECK: CLARITY=don't know what to build/sell/say · FOCUS=can't get it done · UPLEVEL=invisible to next audience · OWNERSHIP=money/systems/time leaking
 
-Explain the archetype the code expresses across the three pillars (Mind, Action, Character). Then call out one specific Strength to lean into and one specific Growth Edge to address. Be concrete to this combination. Speak like a coach across the table from them. 2-4 sentences per field.
+Your job: name the specific pattern this exact Operator × Bottleneck combination creates in a coaching business. Give them the "I never thought of that" moment — not a personality reading. Speak to behavior, not labels.
 
-Respond using the elaborate_mac_code tool.`;
+Respond using the elaborate_operator_bottleneck tool.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -31,6 +32,8 @@ serve(async (req) => {
       answers?: Record<string, string>;
       email?: string;
       name?: string;
+      primaryBucket?: string;
+      secondaryBucket?: string;
     } = {};
     try {
       body = await req.json();
@@ -49,6 +52,16 @@ serve(async (req) => {
     if (Object.keys(answers).length > 40) {
       return json(400, { error: "Too many answers" });
     }
+
+    const BUCKETS = new Set(["CLARITY", "FOCUS", "UPLEVEL", "OWNERSHIP"]);
+    const primaryBucket =
+      typeof body.primaryBucket === "string" && BUCKETS.has(body.primaryBucket)
+        ? body.primaryBucket
+        : "CLARITY";
+    const secondaryBucket =
+      typeof body.secondaryBucket === "string" && BUCKETS.has(body.secondaryBucket)
+        ? body.secondaryBucket
+        : primaryBucket;
 
     const guestEmail =
       typeof body.email === "string" && body.email.includes("@") && body.email.length <= 254
@@ -76,21 +89,24 @@ serve(async (req) => {
 
     const result = await generateReport({
       systemPrompt: SYSTEM_PROMPT,
-      userPrompt: `M.A.C. code: ${code}\n\nAnswers:\n${Object.entries(answers)
+      userPrompt: `Operator code: ${code}\nPrimary bottleneck: ${primaryBucket}\nSecondary bottleneck: ${secondaryBucket}\n\nScenario answers:\n${Object.entries(answers)
         .map(([k, v]) => `${k}: ${v}`)
         .join("\n")}`,
-      toolName: "elaborate_mac_code",
+      toolName: "elaborate_operator_bottleneck",
       toolSchema: {
         type: "object",
         properties: {
-          archetype_name: { type: "string", maxLength: 60, description: "Short evocative name (2-4 words) for this archetype" },
-          mind: { type: "string", maxLength: 600, description: "2-4 sentences. Speak directly to this person about their Mind archetype." },
-          action: { type: "string", maxLength: 600, description: "2-4 sentences about their Action archetype." },
-          character: { type: "string", maxLength: 600, description: "2-4 sentences about their Character archetype." },
-          strength: { type: "string", maxLength: 600, description: "2-4 sentences. One specific strength concrete to this M.A.C. combination." },
-          growth_edge: { type: "string", maxLength: 600, description: "2-4 sentences. One specific growth edge concrete to this combination." },
+          archetype_name: { type: "string", maxLength: 60, description: "Short evocative 2-4 word name for this operator type (e.g. 'Empath-Connector', 'Visionary-Pioneer')." },
+          combo_line: { type: "string", maxLength: 140, description: "One sentence in the form: 'You're a {ArchetypeName} stuck at {BUCKET}.' Use the exact primary bucket word." },
+          pattern_line: { type: "string", maxLength: 360, description: "TWO sentences max. Name the specific pattern this Operator × Bottleneck combination creates in a coaching business. Be the 'I never thought of that' moment. No labels — describe behavior and consequence." },
+          combo_reason: { type: "string", maxLength: 280, description: "One sentence connecting how this operator type tends to create exactly this bottleneck. Concrete, not generic." },
+          mind: { type: "string", maxLength: 500, description: "2-3 sentences about how their Mind archetype shows up in business." },
+          action: { type: "string", maxLength: 500, description: "2-3 sentences about their Action archetype in business." },
+          character: { type: "string", maxLength: 500, description: "2-3 sentences about their Character archetype in business." },
+          strength: { type: "string", maxLength: 500, description: "2-3 sentences. One concrete strength this combination unlocks against this bottleneck." },
+          growth_edge: { type: "string", maxLength: 500, description: "2-3 sentences. One concrete growth edge to address THIS bottleneck given this operator type." },
         },
-        required: ["archetype_name", "mind", "action", "character", "strength", "growth_edge"],
+        required: ["archetype_name", "combo_line", "pattern_line", "combo_reason", "mind", "action", "character", "strength", "growth_edge"],
         additionalProperties: false,
       },
     });
