@@ -1,53 +1,111 @@
-# Promote Enterprise tier to a centered "banner box"
+# Fix AI Lead Engine: symmetric layout + real, convertible offers
 
-## What's wrong now
+## Two problems in one section
 
-On `/rent-an-agent`, the Enterprise card is rendered as a 4th cell appended to the same grid that holds `RENT_AGENT_TIERS` (`RentAnAgent.tsx:248–314`). The grid uses `getSymmetricPricingGridClass(RENT_AGENT_TIERS.length)` — sized for the 3 paid tiers — and Enterprise is just dropped in after the `.map()`. Result: it inherits a column slot it wasn't designed for, lands flush-left at certain breakpoints, and visually reads like a forgotten 4th tier rather than the premium "talk to us" path.
+**1. Asymmetry.** `LEAD_ENGINE_TIERS` has 5 items, rendered through `getSymmetricGridClass(5)`, which lays them as 3-col on lg → orphaned row of 2 boxes hugging the left edge (visible in your screenshot). 5 is a hostile count for a clean grid at every breakpoint.
 
-## What to build
+**2. Bluffy copy.** Current descriptions are one-liners with no deliverable, no volume, no outcome, no timeline:
+- "AI-scored, enriched lead lists."
+- "Full GHL sub-account + automated outreach system."
+- "Done-for-you outreach follow-up and reporting."
+- "Voice AI + LinkedIn + auto appointment booking."
+- "Full-channel custom build and integration."
 
-Split Enterprise out of the tier grid entirely and give it its own **centered banner row** directly below the 3-tier grid. Keep it inside the same section so the rhythm of the page is preserved.
+These are jargon stubs. A prospect can't tell what they're buying, what gets delivered week one, or what success looks like. Low conversion is structural here, not a styling problem.
 
-### Layout
+## Plan
 
-```text
-[ Starter ]   [ Pro (highlighted) ]   [ Scale ]      ← existing 3-tier grid
+### A. Collapse 5 tiers → 3 tiers + 1 Enterprise banner
 
-         ┌─────────────────────────────────────┐
-         │  ENTERPRISE BANNER (max-w-3xl, mx)  │     ← new
-         └─────────────────────────────────────┘
+Mirrors the Rent-an-Agent layout we just shipped. Three real paths covers the market without dilution; Enterprise sits below as the "talk to us" lane.
+
+- **Essentials** — list + intelligence
+- **Pro** — system + sequenced outreach (was Pro + Growth merged)
+- **Scale** — full omnichannel including voice (was Scale)
+- **Enterprise** — custom build (banner, not in grid)
+
+This gives a clean `lg:grid-cols-3` row with no orphans.
+
+### B. Rewrite every offer with the same 5-part structure
+
+Each tier card gets: **outcome headline** → **concrete deliverables list** → **volume / cadence** → **timeline to live** → **price + setup**. No more one-liner descriptions.
+
+#### Proposed tiers (you'll review copy before I ship — these are my best draft):
+
+**Lead Engine — Essentials · $697/mo intro ($997/mo standard) + $1,500 setup**
+*Outcome:* "Stop guessing who to call. Get a weekly list of pre-qualified, intent-scored leads."
+- Up to **500 enriched leads / month** matched to your ICP
+- Intent + fit scoring (0–100) with reasoning per lead
+- Verified email + direct phone + LinkedIn URL per record
+- Weekly CSV drop into your CRM (HubSpot / GHL / Pipedrive)
+- 1× scoring tune-up call per month
+*Live in:* 7 days
+*Best for:* Founders doing outbound themselves who want a smarter list, not a bigger one.
+
+**Lead Engine — Pro · $1,997/mo + $2,500 setup** *(highlighted as Most Popular)*
+*Outcome:* "Replace your outbound SDR with a system that sends, follows up, and books."
+- Everything in Essentials, plus:
+- Dedicated GHL sub-account (fully provisioned + branded)
+- **3-channel sequence**: email + LinkedIn + SMS, 8-touch cadence
+- AI-personalized first lines on every send
+- Reply detection → auto-route to your calendar
+- Monthly performance review (open / reply / meeting rates)
+*Live in:* 14 days
+*Best for:* Operators with a clear ICP who need consistent pipeline without hiring.
+
+**Lead Engine — Scale · $3,497/mo + $5,000 setup**
+*Outcome:* "Run a full outbound floor — voice, social, inbox — without headcount."
+- Everything in Pro, plus:
+- **Voice AI agent** (outbound dialer + inbound qualification, 1,000 calls/mo included)
+- LinkedIn automation with profile warming + connection sequencing
+- Calendar-integrated auto-booking with reminder cadence
+- Dedicated success engineer (weekly call)
+- Custom dashboard: pipeline, attribution, cost-per-meeting
+*Live in:* 21 days
+*Best for:* Teams targeting 30+ booked meetings / month across multiple channels.
+
+**Lead Engine — Enterprise · By application** *(banner, like Rent-an-Agent Enterprise)*
+*Outcome:* "Custom-built outbound infrastructure for multi-brand, multi-region, or regulated GTM."
+- Custom-scoped agent fleet across channels
+- Dedicated success engineer + solutions architect
+- CRM / data warehouse integration (Salesforce, HubSpot Enterprise, Snowflake)
+- SLA + compliance review (SOC 2, GDPR, TCPA)
+- Quarterly executive briefings on pipeline + system health
+*Best for:* Multi-brand operators, agencies, and regulated industries.
+
+### C. Honesty guardrails
+
+To honor "real not bluffed":
+- Every deliverable is something we can actually scope and ship — no "magical AI" claims, no unbounded "unlimited" language, no promised meeting counts (only **target ranges** and **honest cost-per-meeting framing**).
+- Voice AI is the only deliverable that depends on a per-account provisioning step; Pro and Essentials work on launch day. Setup timelines reflect that.
+- Pricing anchors include the setup fee so prospects don't bounce at the first invoice.
+
+### D. Code changes
+
+**`src/lib/offer-catalog.ts`** — Replace `LEAD_ENGINE_TIERS` with the new 3-tier shape:
+```ts
+export const LEAD_ENGINE_TIERS = [
+  { name, headline, price, setup, bullets: string[], timeline, best_for, highlighted? }, ...
+] as const;
+export const LEAD_ENGINE_ENTERPRISE = { name, headline, price, bullets, best_for };
 ```
 
-- Desktop (`md+`): horizontal banner — left column (≈60%) holds crown badge, name, tagline, features list, best-for italics; right column (≈40%) holds price + "Request Enterprise Scope" CTA, vertically centered. `max-w-3xl mx-auto`.
-- Mobile: stacks vertically, CTA full-width, same content order as today.
-- Visual treatment: keep the existing `rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm` but **upgrade** to match the page's premium register —
-  - `border-primary/40` (subtle gold edge, half-step under the highlighted Pro tier so it doesn't compete)
-  - `ring-1 ring-primary/15`
-  - faint gold gradient wash: `bg-gradient-to-br from-card/60 via-card/40 to-primary/5`
-  - small "By application" eyebrow chip above the name, in the same style as "Most Popular" (mono-label, gold border, gold tint) so it reads as deliberately differentiated, not just bigger.
+**`src/pages/RentAnAgent.tsx`** (lines 330–358) — Rebuild the section to mirror the Rent-an-Agent layout we just shipped:
+- 3-col grid (`lg:grid-cols-3`) for the three tiers with `items-stretch`
+- Highlight Pro with the same gold ring treatment used on the Rent-an-Agent Pro tier
+- Each card: name, headline (one bold sentence), price + setup, bullets list with `Check` icons, "Live in X days" footnote, italic best_for, "Request Scope" CTA
+- Centered Enterprise banner below (same `max-w-3xl` gold-edged pattern as Rent-an-Agent Enterprise)
 
-### Code changes (single file: `src/pages/RentAnAgent.tsx`)
+### E. Verification
 
-1. Inside the section, keep the existing 3-tier grid exactly as-is — just remove the trailing Enterprise `<div>` (lines 291–313).
-2. Right after the closing `</div>` of the grid, add a new wrapper:
-   ```tsx
-   <div className="mt-8 max-w-3xl mx-auto">
-     <div className="relative overflow-hidden rounded-2xl border border-primary/40 ring-1 ring-primary/15 bg-gradient-to-br from-card/60 via-card/40 to-primary/5 backdrop-blur-sm p-8 md:p-10">
-       {/* eyebrow chip + two-column md:grid layout */}
-     </div>
-   </div>
-   ```
-3. The inner content uses `grid md:grid-cols-[1.4fr_1fr] gap-8 md:gap-10 items-center`. Left column gets the crown, eyebrow chip, name, tagline, features, and best-for italics. Right column gets price (larger — `text-2xl font-semibold`), CTA (full-width within its column).
-4. Bump the section's `max-w` if currently capped tighter than the banner needs (verify on render; current page is `max-w-6xl mx-auto`, which is fine — the `max-w-3xl` is on the banner itself).
+After edits: screenshot `/rent-an-agent` at desktop (1366) and mobile (390), confirm the AI Lead Engine row is now 3 even cards + a centered Enterprise banner, and the copy reads concrete on a single read.
 
 ## What I am NOT touching
 
-- `RENT_AGENT_TIERS` data or the 3-tier grid logic.
-- `getSymmetricPricingGridClass` helper.
-- `OfferCard`, `OfferInquiryDialog`, or any other surface.
-- Enterprise content (name, tagline, features, price, best-for) — same data, just re-presented.
+- Stripe price IDs, GHL provisioning, inquiry flow.
+- The Rent-an-Agent tier section above this one.
+- Any other page's offer surfaces.
 
-## Verification
+## Open question
 
-After the edit:
-- Browser screenshot at desktop (1366) and mobile (390) to confirm the banner is centered, content reads cleanly, CTA is reachable, and the gold treatment lands at "premium not gaudy."
+Pricing on the new consolidated Pro tier — I rolled "Pro + Growth" into a single tier at **$1,997/mo + $2,500 setup** (a deliberate increase from old Pro's $1,497 because the new Pro now includes Growth's outreach follow-up + reporting). Approve, or hold Pro at $1,497 and downgrade the deliverables list?
