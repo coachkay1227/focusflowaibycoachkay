@@ -13,30 +13,30 @@ const workGroups = [
   {
     label: "For Individuals",
     items: [
-      { label: "Paths", path: "/modules", icon: BookOpen },
-      { label: "Studio", path: "/store", icon: BookMarked },
+      { label: "Transformation Paths", path: "/modules", icon: BookOpen },
+      { label: "Books & AI Kits", path: "/store", icon: BookMarked },
       { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot },
     ],
   },
   {
     label: "For Organizations",
     items: [
-      { label: "Advisory", path: "/advisory", icon: Briefcase },
-      { label: "Build Studio", path: "/build-studio", icon: Wrench },
+      { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
+      { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
       { label: "Collective AI", path: "/collective", icon: Layers },
     ],
   },
   {
     label: "Connect",
     items: [
-      { label: "Community", path: "/community", icon: Users },
+      { label: "Elevation Hub", path: "/community", icon: Users },
     ],
   },
 ];
 
 const topLinks = [
-  { label: "Truth", path: "/truth", icon: Eye },
-  { label: "Coach Kay", path: "/coach-kay", icon: MessageCircle },
+  { label: "The Truth About AI", path: "/truth", icon: Eye },
+  { label: "Meet Coach Kay", path: "/coach-kay", icon: MessageCircle },
   { label: "FAQ", path: "/faq", icon: HelpCircle },
 ];
 

@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import FloatingOrbs from "@/components/FloatingOrbs";
-import SiteFooter from "@/components/SiteFooter";
 
 interface LegalLayoutProps {
   title: string;
@@ -49,7 +48,7 @@ const LegalLayout = ({ title, description, path, eyebrow, lastUpdated, children 
       </p>
     </div>
 
-    <SiteFooter />
+
   </div>
 );
 

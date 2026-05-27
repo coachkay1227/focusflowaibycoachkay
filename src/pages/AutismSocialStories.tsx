@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
-import SiteFooter from "@/components/SiteFooter";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
@@ -278,7 +277,7 @@ export default function AutismSocialStories() {
         items={getFaqLane("autism")?.items ?? []}
       />
 
-      <SiteFooter />
+
 
       <AutismIntakeModal
         open={intakeOpen}

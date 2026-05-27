@@ -18,6 +18,7 @@ import MobileNav from "@/components/MobileNav";
 import PillarStrip from "@/components/PillarStrip";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getSymmetricGridClass } from "@/lib/grid";
 
 const PATHS: PublicPath[] = ["personal", "business", "ai"];
 const PILLAR_ORDER: FocusPillar[] = ["F", "O", "C", "U", "S"];
@@ -194,7 +195,7 @@ const Modules = () => {
                   {group.items.length} {group.items.length === 1 ? "PROGRAM" : "PROGRAMS"}
                 </span>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className={`${getSymmetricGridClass(group.items.length)} gap-5`}>
                 {group.items.map((program, i) => {
                   const adminBypass = isAdmin && !userView;
                   const needsGate = !adminBypass && program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);

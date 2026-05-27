@@ -12,30 +12,30 @@ const workWithMeGroups = [
   {
     label: "For Individuals",
     items: [
-      { label: "Paths", path: "/modules", icon: BookOpen, desc: "F.O.C.U.S. modules" },
-      { label: "Studio", path: "/store", icon: BookMarked, desc: "Books, kits & add-ons" },
-      { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "Done-with-you AI" },
+      { label: "Transformation Paths", path: "/modules", icon: BookOpen, desc: "Personal · Business · Full AI programs" },
+      { label: "Books & AI Kits", path: "/store", icon: BookMarked, desc: "Self-paced tools, templates & guides" },
+      { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "Done-with-you AI agents on your stack" },
     ],
   },
   {
     label: "For Organizations",
     items: [
-      { label: "Advisory", path: "/advisory", icon: Briefcase, desc: "Strategy & partnership" },
-      { label: "Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI delivery" },
-      { label: "Collective AI", path: "/collective", icon: Layers, desc: "Delivery team" },
+      { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
+      { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
+      { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
     ],
   },
   {
     label: "Connect",
     items: [
-      { label: "Community", path: "/community", icon: Users, desc: "Skool hub" },
+      { label: "Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
     ],
   },
 ];
 
 const topLinks = [
-  { label: "Truth", path: "/truth" },
-  { label: "Coach Kay", path: "/coach-kay" },
+  { label: "The Truth About AI", path: "/truth" },
+  { label: "Meet Coach Kay", path: "/coach-kay" },
   { label: "FAQ", path: "/faq" },
 ];
 

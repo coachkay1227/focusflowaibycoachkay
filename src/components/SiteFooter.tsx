@@ -13,10 +13,10 @@ const SiteFooter = () => {
     {
       title: "Explore",
       links: [
-        { label: "Paths", to: "/modules" },
-        { label: "Studio", to: "/store" },
+        { label: "Transformation Paths", to: "/modules" },
+        { label: "Books & AI Kits", to: "/store" },
         { label: "The Truth About AI", to: "/truth" },
-        { label: "Coach Kay", to: "/coach-kay" },
+        { label: "Meet Coach Kay", to: "/coach-kay" },
       ],
     },
     {
@@ -25,6 +25,8 @@ const SiteFooter = () => {
         { label: "Free 15-min Clarity Call", to: "https://coachkayelevates.org/", external: true },
         { label: "45-min Strategy · $67", to: "https://coachkayelevates.org/", external: true },
         { label: "Advisory & Partnership", to: "/advisory" },
+        { label: "AI Build Studio", to: "/build-studio" },
+        { label: "Rent-an-Agent", to: "/rent-an-agent" },
         { label: "Collective AI", to: "/collective" },
       ],
     },
@@ -32,7 +34,7 @@ const SiteFooter = () => {
       title: "Company",
       links: [
         { label: "About", to: "/about" },
-        { label: "Community", to: "/community" },
+        { label: "Elevation Hub (Community)", to: "/community" },
         { label: "FAQ", to: "/faq" },
         { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },
         { label: "Sitemap", to: "/sitemap" },
