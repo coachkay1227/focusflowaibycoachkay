@@ -32,3 +32,4 @@
 - [Product Roadmap](mem://strategy/product-roadmap) — Planned features like Cohort Code validation
 - [Edge Function Dev](mem://tech/edge-function-development) — Deno ESM import requirements
 - [Email Strategy](mem://features/email-strategy) — Hybrid Lovable transactional + GHL marketing/drip setup
+- [Pause Hub](mem://features/pause-hub) — /pause-hub is the scam alert hub (Supabase Realtime), NOT a breathwork page

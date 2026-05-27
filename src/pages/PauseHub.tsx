@@ -1,123 +1,193 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Wind, Eye, Compass, Sparkles, Pause as PauseIcon } from "lucide-react";
+import { ArrowLeft, ShieldAlert, ShieldCheck, Eye, CheckCircle2, ExternalLink, Sparkles, Bell } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import MobileNav from "@/components/MobileNav";
 import AnimatedSection from "@/components/AnimatedSection";
-import { webPage, breadcrumb } from "@/lib/seo-schema";
+import { supabase } from "@/integrations/supabase/client";
+import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
+import { toast } from "@/hooks/use-toast";
 
-const RITUALS = [
-  {
-    icon: Wind,
-    name: "Box Breath",
-    duration: "60 seconds",
-    body:
-      "In for 4. Hold for 4. Out for 4. Hold for 4. Three rounds. Your nervous system catches up to the moment.",
-  },
-  {
-    icon: Eye,
-    name: "Name It",
-    duration: "30 seconds",
-    body:
-      "Out loud or in your head: \"Right now I'm feeling _______.\" The thing you name loses its grip on you.",
-  },
-  {
-    icon: Compass,
-    name: "Next Right Thing",
-    duration: "2 minutes",
-    body:
-      "Forget the plan. What is the single next action that moves you forward? Write it down. Then do that one thing.",
-  },
-  {
-    icon: Sparkles,
-    name: "Mirror Question",
-    duration: "3 minutes",
-    body:
-      "If a friend you loved was standing where you are, what would you tell them? Now apply it to yourself.",
-  },
-];
+type ThreatLevel = "red_flag" | "caution" | "watch" | "resolved";
 
-const PROMPTS = [
-  "What am I avoiding because it feels too big?",
-  "Where am I performing instead of being honest?",
-  "What would I do if I trusted myself completely?",
-  "What's the smallest version of the thing I'm putting off?",
-  "What am I tolerating that's quietly draining me?",
-  "What would I say yes to if fear wasn't running the show?",
-  "Who am I becoming by the choices I make this week?",
-  "What does my body know that my mind keeps overriding?",
-];
-
-function BreathOrb() {
-  const [phase, setPhase] = useState<"in" | "hold1" | "out" | "hold2">("in");
-
-  useEffect(() => {
-    const cycle = ["in", "hold1", "out", "hold2"] as const;
-    let i = 0;
-    const id = setInterval(() => {
-      i = (i + 1) % cycle.length;
-      setPhase(cycle[i]);
-    }, 4000);
-    return () => clearInterval(id);
-  }, []);
-
-  const label =
-    phase === "in" ? "Breathe in" : phase === "out" ? "Breathe out" : "Hold";
-  const scale =
-    phase === "in" ? "scale-100" : phase === "out" ? "scale-50" : phase === "hold1" ? "scale-100" : "scale-50";
-
-  return (
-    <div className="flex flex-col items-center justify-center py-8">
-      <div className="relative h-48 w-48 flex items-center justify-center">
-        <div
-          aria-hidden
-          className={`absolute h-40 w-40 rounded-full bg-primary/15 border border-primary/30 transition-all duration-[4000ms] ease-in-out ${scale}`}
-          style={{ boxShadow: "0 0 60px hsl(43 75% 52% / 0.25)" }}
-        />
-        <span className="relative text-sm uppercase tracking-[0.28em] text-primary/90">
-          {label}
-        </span>
-      </div>
-      <p className="mt-3 text-xs text-muted-foreground tracking-wide">
-        4 in · 4 hold · 4 out · 4 hold
-      </p>
-    </div>
-  );
+interface ScamAlert {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  body: string;
+  threat_level: ThreatLevel;
+  category: string;
+  action_rules: string[];
+  source_url: string | null;
+  published_at: string | null;
 }
 
-function DailyPrompt() {
-  // Stable per day using day-of-year so it doesn't shift on rerender.
-  const dayIndex = Math.floor(Date.now() / 86_400_000) % PROMPTS.length;
-  return (
-    <div className="rounded-2xl border border-primary/20 bg-card/40 p-6 sm:p-8">
-      <span className="text-[10px] tracking-[0.28em] uppercase text-primary/90">Today's Pause Prompt</span>
-      <p className="font-heading text-2xl sm:text-3xl font-light leading-snug mt-4 text-foreground">
-        {PROMPTS[dayIndex]}
-      </p>
-      <p className="mt-5 text-xs text-muted-foreground">
-        Sit with it for 60 seconds before you answer. The first answer is rarely the honest one.
-      </p>
-    </div>
-  );
+type Filter = "all" | ThreatLevel;
+
+const THREAT_META: Record<ThreatLevel, { label: string; chip: string; ring: string; icon: typeof ShieldAlert }> = {
+  red_flag: {
+    label: "Red Flag",
+    chip: "bg-destructive/15 text-destructive border-destructive/40",
+    ring: "ring-destructive/30",
+    icon: ShieldAlert,
+  },
+  caution: {
+    label: "Caution",
+    chip: "bg-primary/15 text-primary border-primary/40",
+    ring: "ring-primary/30",
+    icon: Eye,
+  },
+  watch: {
+    label: "Watch",
+    chip: "bg-muted text-muted-foreground border-border",
+    ring: "ring-border",
+    icon: Bell,
+  },
+  resolved: {
+    label: "Resolved",
+    chip: "bg-card text-muted-foreground/70 border-border/60 line-through",
+    ring: "ring-border/40",
+    icon: ShieldCheck,
+  },
+};
+
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "red_flag", label: "Red Flag" },
+  { id: "caution", label: "Caution" },
+  { id: "watch", label: "Watch" },
+  { id: "resolved", label: "Resolved" },
+];
+
+function timeAgo(iso: string | null): string {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d ago`;
+  return new Date(iso).toLocaleDateString();
 }
 
 export default function PauseHub() {
+  const [alerts, setAlerts] = useState<ScamAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState<Filter>("all");
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  // Initial load
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("scam_alerts")
+        .select("id, title, slug, summary, body, threat_level, category, action_rules, source_url, published_at")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false, nullsFirst: false });
+      if (cancelled) return;
+      if (error) {
+        console.error("Failed to load scam alerts", error);
+      } else {
+        setAlerts((data ?? []) as ScamAlert[]);
+      }
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Realtime subscription — new published alerts slide in live.
+  useEffect(() => {
+    const channel = supabase
+      .channel("scam_alerts_feed")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "scam_alerts" },
+        (payload) => {
+          const row = payload.new as ScamAlert & { is_published: boolean };
+          if (!row.is_published) return;
+          setAlerts((prev) => (prev.some((a) => a.id === row.id) ? prev : [row, ...prev]));
+          toast({ title: "New alert published", description: row.title });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "scam_alerts" },
+        (payload) => {
+          const row = payload.new as ScamAlert & { is_published: boolean };
+          setAlerts((prev) => {
+            const without = prev.filter((a) => a.id !== row.id);
+            return row.is_published ? [row, ...without] : without;
+          });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "scam_alerts" },
+        (payload) => {
+          const row = payload.old as { id: string };
+          setAlerts((prev) => prev.filter((a) => a.id !== row.id));
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const filtered = useMemo(
+    () => (active === "all" ? alerts : alerts.filter((a) => a.threat_level === active)),
+    [alerts, active]
+  );
+
+  const counts = useMemo(() => {
+    const c: Record<Filter, number> = { all: alerts.length, red_flag: 0, caution: 0, watch: 0, resolved: 0 };
+    alerts.forEach((a) => {
+      c[a.threat_level] += 1;
+    });
+    return c;
+  }, [alerts]);
+
+  const toggle = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
   const jsonLd = [
-    webPage("/pause-hub", "The Pause Hub — Reset Your Nervous System in 60 Seconds", "WebPage"),
+    webPage("/pause-hub", "P.A.U.S.E. Check — AI Scam & Safety Hub", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
-        { name: "Pause Hub", path: "/pause-hub" },
+        { name: "P.A.U.S.E. Check", path: "/pause-hub" },
       ],
       "/pause-hub"
     ),
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/pause-hub#alerts`,
+      name: "Coach Kay P.A.U.S.E. Check Alerts",
+      numberOfItems: alerts.length,
+      itemListElement: alerts.map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: a.title,
+      })),
+    },
   ];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="The Pause Hub — Reset in 60 Seconds | FocusFlow AI"
-        description="Free guided pauses, breath rituals, and clarity prompts. Built by Coach Kay to slow you down on purpose so you can move forward with intention."
+        title="P.A.U.S.E. Check — AI Scams, Traps & Safety Alerts"
+        description="Before you click, swipe, or pay — the P.A.U.S.E. Check tracks active AI scams, overhyped trends, and productivity traps targeting working families."
         path="/pause-hub"
         jsonLd={jsonLd}
       />
@@ -134,100 +204,157 @@ export default function PauseHub() {
       </header>
 
       {/* HERO */}
-      <section className="relative z-10 px-6 sm:px-10 pt-12 pb-6 max-w-4xl mx-auto text-center">
-        <span className="font-mono-label text-primary tracking-[0.28em] text-xs inline-flex items-center gap-2">
-          <PauseIcon className="h-3 w-3" strokeWidth={1.75} /> THE PAUSE HUB
+      <section className="relative z-10 px-6 sm:px-10 pt-12 pb-8 max-w-4xl mx-auto text-center">
+        <span className="font-mono-label text-primary tracking-[0.28em] text-xs">
+          P.A.U.S.E. CHECK · LIVE SAFETY HUB
         </span>
         <h1
           className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
           style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
         >
-          Slow down on purpose. Move with intention.
+          Before you click, swipe, or pay.
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Most people don't need more hustle. They need a real pause — long enough for the
-          honest answer to surface. Use this room any time you feel scattered, stuck, or about
-          to react when you should respond.
+          Active AI scams, overhyped trends, and productivity traps — tracked in plain English for
+          single parents, second-chance seekers, and working families. Updated live. No paywall.
         </p>
+        <div className="mt-6 inline-flex items-center gap-2 text-xs text-muted-foreground/80">
+          <Sparkles className="h-3.5 w-3.5 text-primary/80" strokeWidth={1.5} />
+          {alerts.length} alert{alerts.length === 1 ? "" : "s"} currently active · updates appear in real time
+        </div>
       </section>
 
-      {/* BREATH */}
-      <section className="relative z-10 px-6 sm:px-10 max-w-3xl mx-auto py-6">
-        <AnimatedSection>
-          <div className="rounded-2xl border border-border/40 bg-card/30 p-6 sm:p-10">
-            <div className="text-center mb-2">
-              <span className="text-[10px] tracking-[0.28em] uppercase text-primary/90">Box Breath · Live</span>
+      {/* FILTERS */}
+      <section className="relative z-10 px-6 sm:px-10 max-w-5xl mx-auto">
+        <div className="flex flex-wrap gap-2 justify-center">
+          {FILTERS.map((f) => {
+            const isActive = f.id === active;
+            return (
+              <button
+                key={f.id}
+                onClick={() => setActive(f.id)}
+                className={
+                  isActive
+                    ? "rounded-full border border-primary/60 bg-primary/15 text-primary px-3.5 py-1.5 text-xs tracking-wide transition-all"
+                    : "rounded-full border border-border/40 bg-card/30 text-muted-foreground hover:text-foreground hover:border-primary/30 px-3.5 py-1.5 text-xs tracking-wide transition-all"
+                }
+              >
+                {f.label}
+                <span className="ml-1.5 text-muted-foreground/70">{counts[f.id]}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* FEED */}
+      <section className="relative z-10 px-6 sm:px-10 max-w-4xl mx-auto py-10">
+        {loading ? (
+          <div className="space-y-4">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="rounded-xl border border-border/40 bg-card/30 p-6 h-40 animate-pulse" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="rounded-xl border border-border/40 bg-card/30 p-10 text-center">
+            <p className="text-sm text-muted-foreground">No alerts in this category right now.</p>
+          </div>
+        ) : (
+          <AnimatedSection>
+            <div className="space-y-4">
+              {filtered.map((a) => {
+                const meta = THREAT_META[a.threat_level];
+                const Icon = meta.icon;
+                const isOpen = expanded.has(a.id);
+                return (
+                  <article
+                    key={a.id}
+                    className={`rounded-xl border border-border/40 bg-card/40 p-5 sm:p-6 transition-all hover:border-primary/30 ring-1 ${meta.ring}`}
+                  >
+                    <header className="flex items-start gap-3 mb-3">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase ${meta.chip}`}>
+                        <Icon className="h-3 w-3" strokeWidth={2} />
+                        {meta.label}
+                      </span>
+                      <span className="text-[10px] tracking-[0.16em] uppercase text-muted-foreground/80 pt-1">
+                        {a.category}
+                      </span>
+                      <span className="ml-auto text-[10px] text-muted-foreground/60 pt-1">
+                        {timeAgo(a.published_at)}
+                      </span>
+                    </header>
+                    <h2 className="font-heading text-xl sm:text-2xl font-light leading-snug mb-2">
+                      {a.title}
+                    </h2>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{a.summary}</p>
+
+                    {a.action_rules && a.action_rules.length > 0 && (
+                      <ul className="mt-4 space-y-2">
+                        {a.action_rules.map((rule, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm text-foreground/90">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" strokeWidth={1.75} />
+                            <span>{rule}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {isOpen && a.body && (
+                      <div className="mt-4 pt-4 border-t border-border/40 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                        {a.body}
+                      </div>
+                    )}
+
+                    <div className="mt-4 flex items-center gap-4 text-xs">
+                      {a.body && (
+                        <button
+                          onClick={() => toggle(a.id)}
+                          className="text-primary hover:underline tracking-wide"
+                        >
+                          {isOpen ? "Hide details" : "Read full alert"}
+                        </button>
+                      )}
+                      {a.source_url && (
+                        <a
+                          href={a.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          Source <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
-            <BreathOrb />
-            <p className="text-center text-sm text-muted-foreground max-w-md mx-auto">
-              Follow the orb. Three rounds is enough to drop your heart rate and bring your
-              prefrontal cortex back online.
-            </p>
-          </div>
-        </AnimatedSection>
-      </section>
-
-      {/* DAILY PROMPT */}
-      <section className="relative z-10 px-6 sm:px-10 max-w-3xl mx-auto py-8">
-        <AnimatedSection>
-          <DailyPrompt />
-        </AnimatedSection>
-      </section>
-
-      {/* RITUALS */}
-      <section className="relative z-10 px-6 sm:px-10 max-w-5xl mx-auto py-10">
-        <AnimatedSection>
-          <div className="text-center mb-8">
-            <span className="font-mono-label text-primary tracking-[0.28em] text-xs">FOUR PAUSE RITUALS</span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-light mt-3">
-              Pick the one your body needs.
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {RITUALS.map((r) => {
-              const Icon = r.icon;
-              return (
-                <div
-                  key={r.name}
-                  className="rounded-xl border border-border/40 bg-card/40 p-6 hover:border-primary/40 transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <Icon className="h-5 w-5 text-primary" strokeWidth={1.5} />
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                      {r.duration}
-                    </span>
-                  </div>
-                  <p className="font-heading text-xl font-light mb-2">{r.name}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{r.body}</p>
-                </div>
-              );
-            })}
-          </div>
-        </AnimatedSection>
+          </AnimatedSection>
+        )}
       </section>
 
       {/* CTA */}
-      <section className="relative z-10 px-6 sm:px-10 max-w-3xl mx-auto pb-20 pt-4 text-center">
+      <section className="relative z-10 px-6 sm:px-10 max-w-3xl mx-auto pb-20 text-center">
         <div className="rounded-2xl border border-border/40 bg-card/40 p-8">
           <h2 className="font-heading text-2xl sm:text-3xl font-light mb-3">
-            Ready for more than a pause?
+            Want help wiring AI into your business — without falling for the trap?
           </h2>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto mb-6">
-            A full Clarity Session takes 90 seconds and gives you a real next step — not just a
-            breath. Free, no signup required to start.
+            The AI Business Audit walks you through what's real, what's hype, and what
+            actually moves the needle for your situation.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
-              to="/clarity"
+              to="/audit/landing"
               className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium tracking-wide hover:opacity-90 transition-opacity"
             >
-              Start a Clarity Session <ArrowRight className="h-4 w-4" />
+              Run the AI Business Audit
             </Link>
             <Link
-              to="/challenges"
+              to="/ai-tools"
               className="inline-flex items-center gap-2 rounded-full border border-border/60 text-foreground px-5 py-2.5 text-sm font-medium tracking-wide hover:border-primary/40 transition-colors"
             >
-              Browse Challenges
+              Browse the tool stack
             </Link>
           </div>
         </div>
