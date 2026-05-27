@@ -6,38 +6,63 @@ import BrandLogo from "@/components/BrandLogo";
 import {
   LayoutDashboard, User, Shield, LogOut, ChevronDown, ArrowRight,
   BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers,
+  Sparkles, Rocket, ClipboardCheck, Mirror, Flame,
+  Library, ShieldAlert, MessageCircle, Eye, HelpCircle,
+  FileSearch, Heart,
 } from "lucide-react";
 
-const workWithMeGroups = [
-  {
-    label: "For Individuals",
-    items: [
-      { label: "Transformation Paths", path: "/modules", icon: BookOpen, desc: "Personal · Business · Full AI programs" },
-      { label: "Books & AI Kits", path: "/store", icon: BookMarked, desc: "Self-paced tools, templates & guides" },
-      { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "Done-with-you AI agents on your stack" },
-    ],
-  },
-  {
-    label: "For Organizations",
-    items: [
-      { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
-      { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
-      { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
-    ],
-  },
-  {
-    label: "Connect",
-    items: [
-      { label: "Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
-    ],
-  },
-];
+type NavItem = { label: string; path: string; icon: any; desc: string };
+type NavGroup = { key: string; label: string; items: NavItem[] };
 
-const topLinks = [
-  { label: "The Truth About AI", path: "/truth" },
-  { label: "Meet Coach Kay", path: "/coach-kay" },
-  { label: "FAQ", path: "/faq" },
-];
+const startHereGroup: NavGroup = {
+  key: "start",
+  label: "Start Here",
+  items: [
+    { label: "Clarity Session", path: "/clarity", icon: Sparkles, desc: "One question. AI insight in 30 seconds." },
+    { label: "Starter Kit", path: "/starter-kit", icon: Rocket, desc: "Your free first step into AI" },
+    { label: "Free Assessment", path: "/assessment", icon: ClipboardCheck, desc: "Find your AI readiness score" },
+    { label: "Mirror Challenge", path: "/mirror-challenge", icon: Eye, desc: "See yourself through AI's lens" },
+    { label: "30-Day Challenges", path: "/challenges", icon: Flame, desc: "Daily prompts to build the habit" },
+  ],
+};
+
+const workGroup: NavGroup = {
+  key: "work",
+  label: "Work With Me",
+  items: [
+    { label: "Transformation Paths", path: "/modules", icon: BookOpen, desc: "Personal · Business · Full AI programs" },
+    { label: "Books & AI Kits", path: "/store", icon: BookMarked, desc: "Self-paced tools, templates & guides" },
+    { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "Done-with-you AI agents on your stack" },
+    { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
+    { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
+    { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
+    { label: "Business Audit", path: "/audit/landing", icon: FileSearch, desc: "Where AI fits in your business — in 24 hours" },
+    { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart, desc: "AI-personalized stories for families" },
+  ],
+};
+
+const resourcesGroup: NavGroup = {
+  key: "resources",
+  label: "Tools & Resources",
+  items: [
+    { label: "AI Tools Directory", path: "/ai-tools", icon: Library, desc: "63 vetted tools, scored & reviewed" },
+    { label: "Pause Hub — Scam Watch", path: "/pause-hub", icon: ShieldAlert, desc: "Live AI scam & threat alerts" },
+    { label: "Coach Chat (AI)", path: "/coach", icon: MessageCircle, desc: "Talk to Coach Kay's AI anytime" },
+    { label: "Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
+  ],
+};
+
+const truthGroup: NavGroup = {
+  key: "truth",
+  label: "Truth & About",
+  items: [
+    { label: "The Truth About AI", path: "/truth", icon: Eye, desc: "What AI really is — no hype, no fear" },
+    { label: "Meet Coach Kay", path: "/coach-kay", icon: User, desc: "The human behind the mission" },
+    { label: "FAQ", path: "/faq", icon: HelpCircle, desc: "Answers to the questions you're about to ask" },
+  ],
+};
+
+const navGroups: NavGroup[] = [startHereGroup, workGroup, resourcesGroup, truthGroup];
 
 const NAV_HIDDEN_ROUTES = ["/kiosk", "/auth", "/reset-password", "/onboarding"];
 
@@ -46,20 +71,19 @@ const DesktopNav = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const { isAdmin } = useRoles();
-  const [workOpen, setWorkOpen] = useState(false);
+  const [openKey, setOpenKey] = useState<string | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
-  const workRef = useRef<HTMLDivElement>(null);
+  const groupsRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
-  // Close menus on outside click / route change — hooks MUST run unconditionally
   useEffect(() => {
-    setWorkOpen(false);
+    setOpenKey(null);
     setAccountOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (workRef.current && !workRef.current.contains(e.target as Node)) setWorkOpen(false);
+      if (groupsRef.current && !groupsRef.current.contains(e.target as Node)) setOpenKey(null);
       if (accountRef.current && !accountRef.current.contains(e.target as Node)) setAccountOpen(false);
     };
     document.addEventListener("mousedown", onClick);
@@ -71,77 +95,65 @@ const DesktopNav = () => {
 
   if (isHiddenRoute || isHome) return null;
 
-  const isWorkActive = workWithMeGroups.some((g) =>
-    g.items.some((i) => location.pathname.startsWith(i.path)),
-  );
+  const isGroupActive = (group: NavGroup) =>
+    group.items.some((i) => location.pathname.startsWith(i.path));
 
   return (
-    <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 items-center justify-between px-8 lg:px-12 bg-navy-deep/80 backdrop-blur-xl border-b border-border/30">
+    <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 items-center justify-between px-6 lg:px-10 bg-navy-deep/80 backdrop-blur-xl border-b border-border/30">
       <BrandLogo size="md" />
 
-      <div className="flex items-center gap-1">
-        {/* Work With Me dropdown */}
-        <div ref={workRef} className="relative">
-          <button
-            onClick={() => setWorkOpen((v) => !v)}
-            aria-expanded={workOpen}
-            className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm transition-colors ${
-              isWorkActive || workOpen
-                ? "text-primary bg-primary/10"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-            }`}
-          >
-            Work With Me
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${workOpen ? "rotate-180" : ""}`} />
-          </button>
-          {workOpen && (
-            <div className="absolute top-full right-0 mt-2 w-[640px] rounded-2xl border border-border/50 bg-navy-deep/95 backdrop-blur-xl shadow-2xl shadow-navy-deep/50 p-6 grid grid-cols-2 gap-x-6 gap-y-5">
-              {workWithMeGroups.map((group) => (
-                <div key={group.label} className={group.label === "Connect" ? "col-span-2 pt-4 border-t border-border/30" : ""}>
-                  <h4 className="font-mono text-[10px] tracking-[0.18em] text-primary/70 uppercase mb-3">
-                    {group.label}
-                  </h4>
-                  <ul className="space-y-1">
-                    {group.items.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <li key={item.path}>
-                          <button
-                            onClick={() => { navigate(item.path); setWorkOpen(false); }}
-                            className="w-full flex items-start gap-3 p-2.5 rounded-lg text-left hover:bg-primary/5 transition-colors group"
-                          >
-                            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border/40 bg-primary/5 group-hover:border-primary/40 group-hover:bg-primary/10 transition-colors">
-                              <Icon className="h-4 w-4 text-primary" />
-                            </span>
-                            <span className="flex-1">
-                              <span className="block text-sm text-foreground">{item.label}</span>
-                              <span className="block text-xs text-muted-foreground/70">{item.desc}</span>
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {topLinks.map((item) => {
-          const active = location.pathname === item.path;
+      <div ref={groupsRef} className="flex items-center gap-1">
+        {navGroups.map((group) => {
+          const active = isGroupActive(group);
+          const open = openKey === group.key;
+          // 2-column for groups >4 items, single column otherwise
+          const wide = group.items.length > 4;
           return (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={`px-4 py-2 rounded-full text-sm transition-colors ${
-                active
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-              }`}
-            >
-              {item.label}
-            </button>
+            <div key={group.key} className="relative">
+              <button
+                onClick={() => setOpenKey(open ? null : group.key)}
+                aria-expanded={open}
+                className={`flex items-center gap-1 px-3.5 py-2 rounded-full text-sm transition-colors ${
+                  active || open
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                }`}
+              >
+                {group.label}
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+              </button>
+              {open && (
+                <div
+                  className={`absolute top-full ${
+                    group.key === "truth" ? "right-0" : "left-1/2 -translate-x-1/2"
+                  } mt-2 ${
+                    wide ? "w-[640px] grid grid-cols-2 gap-x-4 gap-y-1" : "w-[360px]"
+                  } rounded-2xl border border-border/50 bg-navy-deep/95 backdrop-blur-xl shadow-2xl shadow-navy-deep/50 p-4`}
+                >
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const itemActive = location.pathname === item.path;
+                    return (
+                      <button
+                        key={item.path}
+                        onClick={() => { navigate(item.path); setOpenKey(null); }}
+                        className={`w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors group ${
+                          itemActive ? "bg-primary/10" : "hover:bg-primary/5"
+                        }`}
+                      >
+                        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border/40 bg-primary/5 group-hover:border-primary/40 group-hover:bg-primary/10 transition-colors">
+                          <Icon className="h-4 w-4 text-primary" />
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-sm text-foreground">{item.label}</span>
+                          <span className="block text-xs text-muted-foreground/70 truncate">{item.desc}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
