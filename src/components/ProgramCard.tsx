@@ -24,7 +24,7 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
   const canStart = program.type === "assessment";
 
   // Eyebrow combines pillar + category for fast scanning
-  const eyebrow = `${program.pillar} · ${pillar.name} · ${program.category}`;
+  const eyebrow = `${program.pillar} · ${pillar.full} · ${program.category}`;
 
   // Badge precedence: enrollment status > New > Featured
   let badge: string | undefined;
