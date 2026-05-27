@@ -4,6 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import OfferCard from "@/components/offers/OfferCard";
 
 const PARTNERSHIP_BOOKING_URL =
   "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp";
@@ -12,6 +13,8 @@ const PENDING_CHECKOUT_KEY = "pending_checkout_price";
 interface Offer {
   title: string;
   price: string;
+  tagline?: string;
+  features?: string[];
   description: string;
   cta: string;
   priceId?: string;       // Stripe price id — present on buy-now offers
@@ -31,24 +34,42 @@ const GROUPS: Group[] = [
       {
         title: "30-Day Personal Reset",
         price: "$297",
-        description:
-          "A private 30-day transformation experience for clarity, confidence, mindset, habits, and forward movement. Best for people who feel stuck, overwhelmed, or ready for a personal reset.",
+        tagline: "A private 30-day reset for clarity, confidence, and forward movement.",
+        features: [
+          "Private 1:1 coaching container",
+          "Mindset, habits, and emotional clarity",
+          "Best for people who feel stuck or overwhelmed",
+          "Daily structure + accountability rhythm",
+        ],
+        description: "",
         cta: "Start Personal Reset — $297",
         priceId: "price_1TbAaPBReje0oFcLts5JuE5a",
       },
       {
         title: "30-Day Business Reset",
         price: "$497",
-        description:
-          "A focused 30-day business transformation experience for entrepreneurs, coaches, and founders who need clarity, structure, stronger execution, and better decision-making.",
+        tagline: "A focused 30-day business reset for entrepreneurs, coaches, and founders.",
+        features: [
+          "Clarity on offers, audience, and direction",
+          "Stronger execution and decision-making",
+          "Structure your week around what moves the needle",
+          "Private strategy + accountability",
+        ],
+        description: "",
         cta: "Start Business Reset — $497",
         priceId: "price_1TbAguBReje0oFcL3Qh5pIiH",
       },
       {
         title: "30-Day AI Reset",
         price: "$997",
-        description:
-          "A guided 30-day AI transformation experience to help you use AI more intentionally in your life or business for clarity, productivity, systems, and growth.",
+        tagline: "Use AI intentionally in your life or business — clarity, systems, growth.",
+        features: [
+          "Personalized AI workflow audit",
+          "Custom prompts and automations",
+          "Productivity and decision systems",
+          "Private guidance from Coach Kay",
+        ],
+        description: "",
         cta: "Start AI Reset — $997",
         priceId: "price_1TbAhOBReje0oFcL87MVrKFy",
       },
@@ -60,24 +81,42 @@ const GROUPS: Group[] = [
       {
         title: "90-Day Personal Transformation",
         price: "$997",
-        description:
-          "A deeper private coaching experience for personal growth, emotional clarity, confidence, accountability, and sustainable life change.",
+        tagline: "Deeper private coaching for personal growth and sustainable life change.",
+        features: [
+          "Weekly 1:1 sessions over 90 days",
+          "Emotional clarity, confidence, accountability",
+          "Tools that outlast the program",
+          "Best for committed personal evolution",
+        ],
+        description: "",
         cta: "Start Personal Transformation — $997",
         priceId: "price_1TbAhtBReje0oFcLscEqWHEK",
       },
       {
         title: "90-Day Business Transformation",
         price: "$1,497",
-        description:
-          "A private transformation container for entrepreneurs and professionals who want sharper offers, cleaner execution, stronger leadership, and business momentum.",
+        tagline: "Sharper offers, cleaner execution, stronger leadership, real momentum.",
+        features: [
+          "Private business transformation container",
+          "Offer + positioning refinement",
+          "Leadership and execution discipline",
+          "Built for entrepreneurs and operators",
+        ],
+        description: "",
         cta: "Start Business Transformation — $1,497",
         priceId: "price_1TbAiNBReje0oFcLrit7Ko5x",
       },
       {
         title: "90-Day Full AI Transformation",
         price: "$2,497",
-        description:
-          "A premium private coaching and strategy experience for people ready to integrate AI into their workflow, business, decision-making, and growth strategy.",
+        tagline: "Premium private coaching + strategy for AI-integrated growth.",
+        features: [
+          "End-to-end AI integration into your work",
+          "Workflow + decision-making systems",
+          "Growth strategy powered by AI",
+          "Highest-touch 90-day container",
+        ],
+        description: "",
         cta: "Start Full AI Transformation — $2,497",
         priceId: "price_1TbAimBReje0oFcL4Uti8udD",
       },
@@ -90,8 +129,14 @@ const GROUPS: Group[] = [
       {
         title: "6-Month Private Transformation Partnership",
         price: "$3,997",
-        description:
-          "A high-touch private coaching experience for clients who want long-term support, deeper transformation, and personalized guidance across personal growth, business evolution, and AI-powered execution. Book a 60-minute discovery call with Coach Kay to see if it's the right fit.",
+        tagline: "Long-term, high-touch partnership across life, business, and AI.",
+        features: [
+          "6 months of private 1:1 partnership",
+          "Personal growth + business evolution + AI execution",
+          "Direct access and deep personalization",
+          "Begins with a 60-min discovery call",
+        ],
+        description: "",
         cta: "Book Discovery Call",
         bookingUrl: PARTNERSHIP_BOOKING_URL,
       },
@@ -188,25 +233,27 @@ export default function PricingSection() {
                 group.centerSingle ? "[&>*]:lg:col-start-2" : ""
               }`}
             >
-              {group.offers.map((offer, i) => (
-                <AnimatedSection key={offer.title} delay={i * 100}>
-                  <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6 flex flex-col h-full hover:border-primary/40 transition-colors">
-                    <h3 className="font-heading text-lg text-foreground">{offer.title}</h3>
-                    <div className="mt-3 text-3xl font-bold text-primary">{offer.price}</div>
-                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed flex-1">
-                      {offer.description}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => handleOfferClick(offer)}
-                      disabled={loadingPriceId === offer.priceId}
-                      className="mt-6 w-full bg-primary text-primary-foreground rounded-lg py-3 text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {loadingPriceId === offer.priceId ? "Opening checkout…" : offer.cta}
-                    </button>
-                  </div>
-                </AnimatedSection>
-              ))}
+              {group.offers.map((offer, i) => {
+                const busy = !!offer.priceId && loadingPriceId === offer.priceId;
+                const isPartnership = !!offer.bookingUrl;
+                return (
+                  <AnimatedSection key={offer.title} delay={i * 100} className="h-full">
+                    <OfferCard
+                      eyebrow={group.label}
+                      badge={isPartnership ? "Invitation" : undefined}
+                      title={offer.title}
+                      tagline={offer.tagline ?? offer.description}
+                      features={offer.features ?? []}
+                      price={offer.price}
+                      variant={isPartnership ? "premium" : "standard"}
+                      primaryCta={{
+                        label: busy ? "Opening checkout…" : offer.cta,
+                        onClick: () => handleOfferClick(offer),
+                      }}
+                    />
+                  </AnimatedSection>
+                );
+              })}
             </div>
           </div>
         ))}
