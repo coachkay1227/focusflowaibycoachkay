@@ -206,6 +206,10 @@ const Index = () => {
                 src={coachKayPortrait}
                 alt="Coach Kay — Master Certified Life Coach"
                 loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                width={1200}
+                height={1500}
                 className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[1200ms] ease-in-out"
                 style={{
                   opacity: phase >= 2 ? 1 : 0,
