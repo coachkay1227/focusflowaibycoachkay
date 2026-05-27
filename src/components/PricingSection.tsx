@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import OfferCard from "@/components/offers/OfferCard";
+import { getSymmetricGridClass } from "@/lib/grid";
 
 const PARTNERSHIP_BOOKING_URL =
   "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp";
@@ -24,7 +25,6 @@ interface Offer {
 interface Group {
   label: string;
   offers: Offer[];
-  centerSingle?: boolean;
 }
 
 const GROUPS: Group[] = [
@@ -124,7 +124,6 @@ const GROUPS: Group[] = [
   },
   {
     label: "Private Partnership",
-    centerSingle: true,
     offers: [
       {
         title: "6-Month Private Transformation Partnership",
@@ -228,11 +227,7 @@ export default function PricingSection() {
               </div>
             </AnimatedSection>
 
-            <div
-              className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${
-                group.centerSingle ? "[&>*]:lg:col-start-2" : ""
-              }`}
-            >
+            <div className={`${getSymmetricGridClass(group.offers.length)} gap-6 items-stretch`}>
               {group.offers.map((offer, i) => {
                 const busy = !!offer.priceId && loadingPriceId === offer.priceId;
                 const isPartnership = !!offer.bookingUrl;
