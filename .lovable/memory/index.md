@@ -1,7 +1,7 @@
 # Project Memory
 
 ## Core
-- FocusFlow AI by Coach Kay: Cinematic/sci-fi brand. Deep navy bg, gold (hsl(43 75% 52%)), cream text. Cormorant Garamond headings, DM Sans body.
+- FocusFlow AI by Coach Kay: Cinematic/sci-fi brand. Deep navy bg #0D1B2A (hsl 210 52% 11%), true gold #C9A84C (hsl 43 53% 54%), cream text #F5EDD6. Cormorant Garamond headings, DM Sans body.
 - STRICT: NO external animation libraries (Three.js/GSAP/Framer). Pure CSS or IntersectionObserver ONLY.
 - Edge functions MUST use ESM imports (esm.sh), no `npm:` specifiers.
 - Hybrid storage: Auth -> Supabase, Anon -> localStorage. Gemini-3-Flash-Preview for AI via Lovable Cloud.
