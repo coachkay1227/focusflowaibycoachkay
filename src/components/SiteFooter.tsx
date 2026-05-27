@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Mail, ExternalLink, Layers } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import NewsletterWaitlist from "@/components/NewsletterWaitlist";
 
 /**
  * Premium, compliant site footer for FocusFlow AI by Coach Kay.
@@ -120,6 +121,16 @@ const SiteFooter = () => {
               </ul>
             </div>
           ))}
+        </div>
+
+        {/* Newsletter waitlist */}
+        <div className="py-8 border-t border-border/30">
+          <NewsletterWaitlist
+            source="footer"
+            variant="card"
+            heading="FocusFlow Newsletter — coming soon"
+            subheading="Weekly clarity drops, AI plays, and Coach Kay's no-fluff field notes. Get on the waitlist."
+          />
         </div>
 
         {/* Disclaimer */}

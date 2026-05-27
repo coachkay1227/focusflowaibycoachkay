@@ -50,6 +50,7 @@ const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStud
 const TruthAboutAI = lazy(() => import("./pages/TruthAboutAI.tsx"));
 const Collective = lazy(() => import("./pages/Collective.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
+const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
@@ -62,6 +63,7 @@ const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy.tsx"));
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
 const DesktopNav = lazy(() => import("./components/DesktopNav.tsx"));
 const GlobalFooter = lazy(() => import("./components/GlobalFooter.tsx"));
+const NewsletterPopup = lazy(() => import("./components/NewsletterPopup.tsx"));
 const AdminViewToggle = lazy(() =>
   import("./components/AccessGate.tsx").then((m) => ({ default: m.AdminViewToggle }))
 );
@@ -121,6 +123,7 @@ const App = () => (
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/autism-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAutismOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/build-inquiries" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBuildInquiries /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNewsletter /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
@@ -136,6 +139,7 @@ const App = () => (
           <Suspense fallback={null}><DesktopNav /></Suspense>
           <Suspense fallback={null}><GlobalFooter /></Suspense>
           <Suspense fallback={null}><ChatWidget /></Suspense>
+          <Suspense fallback={null}><NewsletterPopup /></Suspense>
           <Suspense fallback={null}><AdminViewToggle /></Suspense>
           </ErrorBoundary>
         </BrowserRouter>
