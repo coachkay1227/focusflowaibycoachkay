@@ -71,3 +71,28 @@ Why this and not the full Phase 4: it gives the "blow my mind" moment for free (
 2. **Mirror Reveal copy** — keep the line above as-is, or want to write your own? (I can ship with mine and you can tweak after.)
 
 Answer those and I'll build straight through.
+
+---
+
+## ✅ Shipped (this session)
+
+**Phase 1 — Collective AI Trust Layer**
+- New `/collective` page (trust + roles + capabilities + FAQ + JSON-LD)
+- `SiteFooter`: Collective trust line, "Book with Kay" column (15 / 30 / 45min · $67 external), entity updated to Focus Flow AI LLC · DBA Coach Kay Elevates
+- `CoachKay`: primary CTA → external `coachkayelevates.org`, new "Two hats · one mission" section linking to `/collective`
+- `CollectiveAIBuildStudio`: hero eyebrow "Led by Coach Kay" + "Delivered by the Collective AI team" strip
+- `Advisory`: "Talk to Kay first" external CTA + "Who delivers" Collective trust strip
+- `seo-schema.ts`: Person `memberOf: Collective AI`, Organization `legalName: Focus Flow AI LLC`
+- Sitemap + SEO regression include `/collective`
+
+**Phase 4 surprise — "The Mirror"**
+- New `src/components/truth/MirrorReveal.tsx` — scroll-triggered typewriter signature line + 3-card cascade. Pure CSS + IntersectionObserver, respects `prefers-reduced-motion`. Injected on `/truth` between OPENER and MYTHS sections.
+
+---
+
+## 🗂 Backlog (future sessions, in order)
+
+1. **Phase 2 — Offer Symmetry**: migrate `ProgramCard`, `PackageCard`, `AddonCard`, Advisory cards, Build Studio tier cards, Rent-an-Agent tier cards, Autism package cards → `OfferCard`. Delete dead components.
+2. **Phase 3 — Doorway + Nav**: canonical `/start`, trim nav to 7 items, footer 3-column audience nav (Individuals/Businesses/Institutions), `RelatedOffers` strip on every offer page.
+3. **Phase 5 — New audiences**: `/local` (B2G/B2B2C + capability statement PDF), `/nonprofit` (donate→external, sponsor form, applicant form), `audience` column on `build_inquiries`, admin inbox tabs.
+4. **Logo**: drop a transparent PNG into `src/assets/collective-ai-logo.png` to replace the text lockup in the footer + `/collective` hero.
