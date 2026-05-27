@@ -463,8 +463,3 @@ function MythBadge({ kind }: { kind: "false" | "nuanced" | "true" }) {
     </span>
   );
 }
-
-/* tiny utility for body paragraphs to keep markup tight */
-declare global {
-  interface HTMLElementTagNameMap {}
-}
