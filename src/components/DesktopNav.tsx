@@ -6,7 +6,7 @@ import BrandLogo from "@/components/BrandLogo";
 import {
   LayoutDashboard, User, Shield, LogOut, ChevronDown, ArrowRight,
   BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers,
-  Sparkles, Rocket, ClipboardCheck, Mirror, Flame,
+  Sparkles, Rocket, ClipboardCheck, Flame,
   Library, ShieldAlert, MessageCircle, Eye, HelpCircle,
   FileSearch, Heart,
 } from "lucide-react";
