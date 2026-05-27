@@ -6,8 +6,8 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sparkles, ArrowRight, User, LogOut, Zap } from "lucide-react";
+import { Sparkles, ArrowRight, Zap } from "lucide-react";
+import DesktopNav from "@/components/DesktopNav";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
 import { getPublicPrograms } from "@/data/programs";
@@ -18,7 +18,7 @@ import { trackEvent } from "@/lib/analytics";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  useAuth();
   // Start fully visible so hero content appears immediately above the fold
   // (no animation gating). Transitions still apply on subsequent re-renders.
   const [phase, setPhase] = useState(4);
@@ -71,66 +71,14 @@ const Index = () => {
         FOCUSFLOW AI
       </div>
 
-      {/* Navigation — premium minimal bar mirroring global IA */}
-      <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5">
-        <div className="font-heading text-xl md:text-2xl font-light tracking-wide" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden="true" className="text-primary font-medium">Focus</span>
-          <span aria-hidden="true" className="text-foreground font-light">Flow</span>
-          <span aria-hidden="true" className="text-primary font-medium ml-1">AI</span>
-        </div>
-        <div className="hidden md:flex items-center gap-1">
-          <button onClick={() => navigate("/modules")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Paths</button>
-          <button onClick={() => navigate("/store")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Studio</button>
-          <button onClick={() => navigate("/truth")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Truth</button>
-          <button onClick={() => navigate("/coach-kay")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Coach Kay</button>
-          <button onClick={() => navigate("/faq")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">FAQ</button>
-        </div>
-        <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="hidden md:inline-flex text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
-              >
-                Dashboard
-              </button>
-              <Avatar className="h-8 w-8 border border-primary/30 hidden md:flex">
-                <AvatarImage src={user.user_metadata?.avatar_url || user.user_metadata?.picture} />
-                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                  {(user.email?.[0] || "U").toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <button
-                onClick={signOut}
-                className="hidden md:flex items-center text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Sign out"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </>
-          ) : (
-            <Button
-              onClick={() => navigate("/auth")}
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground hidden md:inline-flex"
-            >
-              <User className="h-4 w-4 mr-1" /> Sign In
-            </Button>
-          )}
-          <Button
-            onClick={() => navigate("/clarity")}
-            size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex rounded-full px-5"
-          >
-            Get My Clarity Code
-          </Button>
-          <MobileNav />
-        </div>
-      </nav>
+      {/* Global navigation — single source of truth across all pages */}
+      <DesktopNav />
+      <div className="md:hidden relative z-10 flex items-center justify-end px-6 py-4">
+        <MobileNav />
+      </div>
 
       {/* Hero — Editorial Asymmetry (60/40) */}
-      <section className="relative z-10 px-4 md:px-8 pb-6">
+      <section className="relative z-10 px-4 md:px-8 pb-6 md:pt-20">
         <div className="w-full max-w-7xl mx-auto relative overflow-hidden border border-foreground/5 bg-background/40 backdrop-blur-sm shadow-2xl">
           <div className="flex flex-col md:flex-row min-h-[78vh]">
             {/* 60% — Content */}
@@ -230,6 +178,15 @@ const Index = () => {
             {/* 40% — Portrait */}
             <div className="w-full md:w-[40%] relative bg-navy-deep overflow-hidden group min-h-[50vh] md:min-h-0">
               {/* Overlays */}
+              {/* Top fade — masks any white edge in the source asset */}
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, hsl(220 40% 8%) 0%, transparent 14%)",
+                }}
+                aria-hidden="true"
+              />
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
@@ -252,6 +209,7 @@ const Index = () => {
                 className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[1200ms] ease-in-out"
                 style={{
                   opacity: phase >= 2 ? 1 : 0,
+                  objectPosition: "center 20%",
                   transition: "opacity 1.4s ease-out, filter 1.2s ease-in-out",
                 }}
               />
