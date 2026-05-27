@@ -137,6 +137,7 @@ const App = () => (
           <Suspense fallback={null}><DesktopNav /></Suspense>
           <Suspense fallback={null}><GlobalFooter /></Suspense>
           <Suspense fallback={null}><ChatWidget /></Suspense>
+          <Suspense fallback={null}><NewsletterPopup /></Suspense>
           <Suspense fallback={null}><AdminViewToggle /></Suspense>
           </ErrorBoundary>
         </BrowserRouter>
