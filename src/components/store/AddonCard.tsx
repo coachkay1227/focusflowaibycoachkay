@@ -1,22 +1,24 @@
-import type { LucideIcon } from "lucide-react";
 import type { BookAddon } from "@/lib/book-store";
 import { formatUSD } from "@/lib/book-store";
 import OfferCard from "@/components/offers/OfferCard";
 
 interface Props {
   addon: BookAddon;
-  Icon: LucideIcon;
 }
 
-export function AddonCard({ addon, Icon: _Icon }: Props) {
+export function AddonCard({ addon }: Props) {
+  const scrollToPackages = () => {
+    if (typeof document === "undefined") return;
+    document.getElementById("packages")?.scrollIntoView({ behavior: "smooth" });
+  };
   return (
     <OfferCard
-      density="compact"
       eyebrow="Add-on"
       title={addon.name}
       tagline={addon.description}
-      features={[]}
+      features={[]} 
       price={formatUSD(addon.priceCents)}
+      primaryCta={{ label: "Add at checkout", onClick: scrollToPackages }}
     />
   );
 }
