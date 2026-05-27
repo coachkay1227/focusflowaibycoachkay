@@ -1,56 +1,89 @@
 
-# Fix: Rebuild `/pause-hub` as the P.A.U.S.E. Scam Hub
+# Honest answers first
 
-## What went wrong
-In msgs #897–#902 we locked the plan: Pause Hub = **P.A.U.S.E. Check** — a consumer-protection hub for AI scams, overhyped trends, and productivity traps, auto-refreshing via Supabase Realtime, published from `/admin`. In #914 I re-offered it as a vague "Pause practice/tool" and built a box-breathing meditation page. Wrong feature. Discarding it.
+**1. The 6 scam alerts currently seeded — I made them up.**
+They're archetypes pattern-matched to real categories (deepfake voice scams, fake browser extensions, pig-butchering, AI-millionaire funnels, etc.) but **none have a `source_url`** and none are tied to specific named incidents, perpetrators, or reporting outlets. That's on me. You're right — for a consumer-protection hub, validated > vibes. We'll replace them.
 
-## What we build instead
+**2. Realtime IS wired** — `PauseHub.tsx` subscribes to `postgres_changes` on `scam_alerts` (INSERT/UPDATE/DELETE) and the table is in `supabase_realtime`. But there's **no visible signal** to the user that the page is live. We'll fix that.
 
-### 1. Database (one migration)
-- `scam_alerts` table: `id`, `title`, `slug`, `summary`, `body` (markdown), `threat_level` (enum: `red_flag`, `caution`, `watch`, `resolved`), `category` (e.g. "AI scam", "Overhyped trend", "Productivity trap"), `action_rules` (jsonb array of short do/don't bullets), `source_url`, `published_at`, `created_by`, `is_published`.
-- RLS:
-  - `anon` + `authenticated`: SELECT where `is_published = true`
-  - `admin` role: full INSERT/UPDATE/DELETE
-- Grants per public-schema rule.
-- `ALTER PUBLICATION supabase_realtime ADD TABLE public.scam_alerts;`
-- Seed 6–8 starter alerts so the page isn't empty on launch.
+**3. Tools directory is thin** — 23 tools, mostly Coach Kay's core stack. You named Manus, GenSpark, HeyGen, HitPaw, and "many more." We need a comprehensive directory with two link types per tool: a **direct signup URL** (default) and an optional **affiliate URL** when you have one. For tools where you'll grab affiliate later, I'll mark them `affiliate_pending: true` so you can fill them in without me re-editing the file.
 
-### 2. `/pause-hub` page — rebuild from scratch
-Delete the current breathwork implementation. New page:
-- Hero: "The P.A.U.S.E. Check — before you click, swipe, or pay." Subtext on consumer protection mission.
-- Live alert feed: cards sorted by `published_at desc`, grouped or filterable by `threat_level`. Each card shows threat badge (color-coded, no red as primary — gold/amber for caution, deep crimson reserved only for `red_flag`), category chip, title, summary, action rules as a checklist, "Read full alert" expand, source link.
-- Filter chips: All / Red Flag / Caution / Watch / Resolved + category filter.
-- Realtime subscription: `supabase.channel('scam_alerts').on('postgres_changes', ...)` — new alerts slide in at top, no refresh button, no polling. Toast on new alert while page is open.
-- Empty state + skeleton loading.
-- SEO: JSONLD `CollectionPage` + `ItemList` of alerts.
+---
 
-### 3. Admin publishing UI — `/admin/scam-alerts`
-- List view of all alerts (published + drafts).
-- Create / edit form: title, summary, body (markdown textarea), threat level, category, action rules (repeatable input), source URL, publish toggle.
-- Wire into existing `AdminNav.tsx`.
-- Service-role gated via existing `has_role(auth.uid(), 'admin')`.
+# What I'll build
 
-### 4. Cleanup
-- Remove breathwork-only code: box-breathing orb, daily prompts list, ritual cards.
-- Keep route `/pause-hub` (already in nav, sitemap, MobileNav) — only the contents change.
-- Update memory: `mem://features/pause-hub` describing the scam-hub purpose so this never drifts again.
-- Update `CHANGELOG.md`.
+## A. Tools directory — comprehensive rebuild (`/ai-tools`)
 
-## What I am NOT touching this round
-- `/ai-tools` directory (separate PRD question, still open)
-- `/scams` route from the PRD — folding into `/pause-hub` since Pause Hub IS the scam hub per original plan. If you'd rather have both `/scams` and `/pause-hub`, say so and I'll split.
-- Quiz, F.O.C.U.S. pillar tags on the tool directory, Poppins/Open Sans font swap — all still pending answers from my earlier 4 questions.
+Expand `src/data/ai-tools-directory.ts` from 23 → ~60+ tools across these categories (adding new ones in **bold**):
 
-## Technical notes
-- Pure CSS animations only (per memory rule, no Framer/GSAP).
-- Realtime free tier: 200 concurrent connections, 2M msgs/month — way under projected traffic.
-- Edge functions: none needed; admin writes go through Supabase client with RLS.
-- No new secrets required.
+- AI Chat & Reasoning — ChatGPT, Claude, Gemini, Perplexity, **Grok**, **DeepSeek**, **Kimi**, **Mistral Le Chat**
+- AI Build & No-Code — Lovable, Cursor, v0, Supabase, **Bolt.new**, **Replit Agent**, **Windsurf**, **Base44**, **Softr**, **Bubble**
+- AI Agents & Research — **Manus**, **GenSpark**, **Operator (OpenAI)**, **Claude Computer Use**, n8n, Make, **Zapier AI**
+- AI Voice & Audio — ElevenLabs, Descript, **Suno**, **Udio**, **Whisper / MacWhisper**, **Krisp**
+- AI Video & Image — Midjourney, Runway, Canva, **HeyGen**, **HitPaw** (image/video upscaler), **Synthesia**, **Pika**, **Kling**, **Luma Dream Machine**, **Sora**, **Ideogram**, **Flux / BlackForestLabs**, **Topaz Labs**
+- Productivity & Notes — Notion, Obsidian, Granola, **Fathom**, **Otter.ai**, **NotebookLM**, **Mem**
+- Automation & Ops — GoHighLevel, n8n, Make, **Pipedream**, **Airtable AI**
+- Payments & Delivery — Stripe, Beehiiv, **Resend**, **Kit (ConvertKit)**, **Whop**
+- Community — Skool, Calendly, **Circle**, **Discord**
 
-## Acceptance check before I say it's done
-1. Visit `/pause-hub` while logged out → see live alerts.
-2. Publish a new alert from `/admin/scam-alerts` in one tab → it appears in `/pause-hub` in another tab within ~1s, no refresh.
-3. Unpublish → it disappears live.
-4. Filter chips work; threat badges render correctly; mobile layout clean at 375px.
+Each tool entry adds:
+```ts
+{
+  name: "HeyGen",
+  blurb: "...",
+  category: "AI Video & Image",
+  signup_url: "https://heygen.com",      // direct/public URL
+  affiliate_url?: "https://...",         // optional, overrides signup when present
+  affiliate_pending?: true,              // shows "Affiliate coming" instead of badge
+  pricing: "Freemium",
+}
+```
+UI: card shows "Try it →" (uses affiliate if set, else signup). If `affiliate_pending`, small gold note "Affiliate link coming — bookmark for later." Card link target is single-source-of-truth so when you paste affiliate URLs later, the whole card switches automatically.
 
-Ready to switch to build mode and execute.
+I'll seed sensible defaults; **you fill in affiliate URLs you sign up for** — easy diff, no schema migration.
+
+## B. Pause Hub — visible "Live" signal + real scams
+
+**Live indicator (UI only):**
+- Pulsing green dot + "Live feed · auto-updating" pill near the page header.
+- When a new alert arrives via realtime, the existing toast fires AND the new card flashes a gold ring for 2s.
+- "Last updated Xs ago" timestamp that ticks every 10s.
+
+**Replace seeded alerts with real, sourced incidents.** I'll wipe the 6 fakes and seed ~8 validated ones, each with `source_url` to mainstream reporting. Working list (final wording confirmed against sources at build time):
+
+1. **OpenAI Operator / Computer-Use agents — surveillance & credential exposure risk** (caution) — Wired/Ars coverage of agents that act on logged-in browsers.
+2. **WormGPT & FraudGPT — uncensored LLMs sold for phishing** (red_flag) — SlashNext/Krebs reporting.
+3. **Deepfake CFO video call — $25M Arup heist (Hong Kong, Feb 2024)** (red_flag) — CNN/FT reporting.
+4. **AI-generated voice clone scams targeting families** (red_flag) — FTC consumer alert.
+5. **Fake "ChatGPT" Chrome extensions stealing Facebook sessions** (red_flag) — Guardio Labs / BleepingComputer.
+6. **Air Canada chatbot hallucination ruled binding** (watch) — informational, BBC/CBC — what AI confidently lying costs.
+7. **"AI agency in a box" / done-for-you reseller funnels** (caution) — pattern alert, links to FTC guidance on biz-opp fraud.
+8. **Pig-butchering + AI trading bot romance scams** (red_flag) — FBI IC3 report + ProPublica.
+
+Each will have real `source_url`, real `body` with what happened + what to do, and `action_rules` you can actually follow. If a source doesn't pan out at build time I'll swap it for one that does — no fakes get re-seeded.
+
+**Migration:** one SQL file that `DELETE FROM scam_alerts WHERE source_url IS NULL;` then inserts the validated 8. Idempotent via slug.
+
+## C. Admin polish (small)
+
+`/admin/scam-alerts` form: make `source_url` **required** with a helper line "No source, no publish. This is a validated-resources hub." Prevents future fake-feeling entries.
+
+---
+
+# What I am NOT touching this round
+
+- F.O.C.U.S. pillar tags / `$0 only` toggle on the directory (still pending your earlier PRD answers).
+- `/scams` separate route (folded into `/pause-hub`).
+- Quiz, Poppins/Open Sans swap.
+- Truth About AI page edits — you mentioned "OpenAI surveillance" warnings belong there too. Worth doing, but it's a separate scope; flag it and I'll plan it next round if you want.
+
+# Acceptance check
+
+1. `/ai-tools` shows 60+ tools, filters still work, every card has a working "Try it" link (signup or affiliate).
+2. `/pause-hub` shows the pulsing "Live" pill; publishing from `/admin/scam-alerts` in tab A makes the card slide into tab B within ~1s with a gold flash.
+3. Every visible alert has a clickable source link to a real article/report.
+4. Admin form blocks publish without `source_url`.
+
+# One thing I need from you (after I build)
+
+A list of which tools you already have affiliate links for, OR confirmation I should set them all to `affiliate_pending: true` and you'll paste URLs in batch. Either works — say the word and I'll start.

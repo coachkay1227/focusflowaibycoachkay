@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ShieldAlert, ShieldCheck, Eye, CheckCircle2, ExternalLink, Sparkles, Bell } from "lucide-react";
+import { ArrowLeft, ShieldAlert, ShieldCheck, Eye, CheckCircle2, ExternalLink, Bell, Radio } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import MobileNav from "@/components/MobileNav";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -78,6 +78,26 @@ export default function PauseHub() {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<Filter>("all");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [flashing, setFlashing] = useState<Set<string>>(new Set());
+  const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
+  const [tick, setTick] = useState(0);
+
+  // Tick every 10s so "updated Xs ago" stays fresh
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 10_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const flashCard = (id: string) => {
+    setFlashing((prev) => new Set(prev).add(id));
+    setTimeout(() => {
+      setFlashing((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 2000);
+  };
 
   // Initial load
   useEffect(() => {
@@ -93,6 +113,7 @@ export default function PauseHub() {
         console.error("Failed to load scam alerts", error);
       } else {
         setAlerts((data ?? []) as ScamAlert[]);
+        setLastUpdate(Date.now());
       }
       setLoading(false);
     })();
@@ -112,6 +133,8 @@ export default function PauseHub() {
           const row = payload.new as ScamAlert & { is_published: boolean };
           if (!row.is_published) return;
           setAlerts((prev) => (prev.some((a) => a.id === row.id) ? prev : [row, ...prev]));
+          setLastUpdate(Date.now());
+          flashCard(row.id);
           toast({ title: "New alert published", description: row.title });
         }
       )
@@ -124,6 +147,8 @@ export default function PauseHub() {
             const without = prev.filter((a) => a.id !== row.id);
             return row.is_published ? [row, ...without] : without;
           });
+          setLastUpdate(Date.now());
+          if (row.is_published) flashCard(row.id);
         }
       )
       .on(
@@ -132,6 +157,7 @@ export default function PauseHub() {
         (payload) => {
           const row = payload.old as { id: string };
           setAlerts((prev) => prev.filter((a) => a.id !== row.id));
+          setLastUpdate(Date.now());
         }
       )
       .subscribe();
@@ -218,9 +244,21 @@ export default function PauseHub() {
           Active AI scams, overhyped trends, and productivity traps — tracked in plain English for
           single parents, second-chance seekers, and working families. Updated live. No paywall.
         </p>
-        <div className="mt-6 inline-flex items-center gap-2 text-xs text-muted-foreground/80">
-          <Sparkles className="h-3.5 w-3.5 text-primary/80" strokeWidth={1.5} />
-          {alerts.length} alert{alerts.length === 1 ? "" : "s"} currently active · updates appear in real time
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <span
+            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] tracking-[0.18em] uppercase text-primary"
+            aria-label="Live feed"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+            </span>
+            <Radio className="h-3 w-3" strokeWidth={2} />
+            Live · auto-updating
+          </span>
+          <span className="text-[11px] text-muted-foreground/70" key={tick}>
+            {alerts.length} active · updated {timeAgo(new Date(lastUpdate).toISOString()) || "just now"}
+          </span>
         </div>
       </section>
 
@@ -266,10 +304,15 @@ export default function PauseHub() {
                 const meta = THREAT_META[a.threat_level];
                 const Icon = meta.icon;
                 const isOpen = expanded.has(a.id);
+                const isFlashing = flashing.has(a.id);
                 return (
                   <article
                     key={a.id}
-                    className={`rounded-xl border border-border/40 bg-card/40 p-5 sm:p-6 transition-all hover:border-primary/30 ring-1 ${meta.ring}`}
+                    className={`rounded-xl border bg-card/40 p-5 sm:p-6 transition-all hover:border-primary/30 ring-1 ${meta.ring} ${
+                      isFlashing
+                        ? "border-primary/80 shadow-[0_0_24px_hsl(43_75%_52%/0.35)] animate-pulse"
+                        : "border-border/40"
+                    }`}
                   >
                     <header className="flex items-start gap-3 mb-3">
                       <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase ${meta.chip}`}>

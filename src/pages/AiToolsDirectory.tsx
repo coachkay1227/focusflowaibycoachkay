@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowUpRight, BadgeCheck, Filter, Sparkles } from "lucide-re
 import SEOHead from "@/components/SEOHead";
 import MobileNav from "@/components/MobileNav";
 import AnimatedSection from "@/components/AnimatedSection";
-import { DIRECTORY_TOOLS, DIRECTORY_CATEGORIES, type DirCategory } from "@/data/ai-tools-directory";
+import { DIRECTORY_TOOLS, DIRECTORY_CATEGORIES, ctaUrl, type DirCategory } from "@/data/ai-tools-directory";
 import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 
 type Filter = "All" | DirCategory;
@@ -36,7 +36,7 @@ export default function AiToolsDirectory() {
         "@type": "ListItem",
         position: i + 1,
         name: t.name,
-        url: t.url,
+        url: ctaUrl(t),
       })),
     },
   ];
@@ -118,9 +118,9 @@ export default function AiToolsDirectory() {
             {filtered.map((tool) => (
               <a
                 key={tool.name}
-                href={tool.url}
+                href={ctaUrl(tool)}
                 target="_blank"
-                rel={tool.affiliate ? "sponsored noopener noreferrer" : "noopener noreferrer"}
+                rel={tool.affiliate_url ? "sponsored noopener noreferrer" : "noopener noreferrer"}
                 className="group flex flex-col rounded-xl border border-border/40 bg-card/40 p-5 transition-all hover:border-primary/40 hover:bg-card/60 hover:-translate-y-0.5"
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
@@ -138,12 +138,21 @@ export default function AiToolsDirectory() {
                 </p>
                 <div className="mt-4 flex items-center justify-between text-[10px] uppercase tracking-[0.16em]">
                   <span className="text-muted-foreground/80">{tool.pricing}</span>
-                  {tool.affiliate && (
+                  {tool.affiliate_url ? (
                     <span className="inline-flex items-center gap-1.5 text-primary/90">
                       <BadgeCheck className="h-3.5 w-3.5" strokeWidth={1.75} />
                       Affiliate
                     </span>
-                  )}
+                  ) : tool.affiliate_pending ? (
+                    <span className="inline-flex items-center gap-1.5 text-primary/70">
+                      <Sparkles className="h-3 w-3" strokeWidth={1.75} />
+                      Affiliate soon
+                    </span>
+                  ) : null}
+                </div>
+                <div className="mt-3 text-[11px] text-foreground/70 group-hover:text-primary transition-colors inline-flex items-center gap-1">
+                  Try it
+                  <ArrowUpRight className="h-3 w-3" strokeWidth={1.75} />
                 </div>
               </a>
             ))}
