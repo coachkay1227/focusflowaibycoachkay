@@ -49,6 +49,8 @@ const Advisory = lazy(() => import("./pages/Advisory.tsx"));
 const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStudio.tsx"));
 const TruthAboutAI = lazy(() => import("./pages/TruthAboutAI.tsx"));
 const Collective = lazy(() => import("./pages/Collective.tsx"));
+const PauseHub = lazy(() => import("./pages/PauseHub.tsx"));
+const AiToolsDirectory = lazy(() => import("./pages/AiToolsDirectory.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
