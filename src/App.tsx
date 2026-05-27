@@ -46,6 +46,8 @@ const Assessment = lazy(() => import("./pages/Assessment.tsx"));
 const StarterKit = lazy(() => import("./pages/StarterKit.tsx"));
 const RentAnAgent = lazy(() => import("./pages/RentAnAgent.tsx"));
 const Advisory = lazy(() => import("./pages/Advisory.tsx"));
+const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStudio.tsx"));
+const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
@@ -105,6 +107,7 @@ const App = () => (
             <Route path="/autism-social-stories" element={<Suspense fallback={<PageSkeleton />}><AutismSocialStories /></Suspense>} />
             <Route path="/rent-an-agent" element={<Suspense fallback={<PageSkeleton />}><RentAnAgent /></Suspense>} />
             <Route path="/advisory" element={<Suspense fallback={<PageSkeleton />}><Advisory /></Suspense>} />
+            <Route path="/build-studio" element={<Suspense fallback={<PageSkeleton />}><CollectiveAIBuildStudio /></Suspense>} />
             <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
             <Route path="/audit/landing" element={<Suspense fallback={<PageSkeleton />}><AuditLanding /></Suspense>} />
             <Route path="/audit/intake" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
@@ -112,6 +115,7 @@ const App = () => (
             <Route path="/audit/report/:id" element={<Suspense fallback={<PageSkeleton />}><AuditReport /></Suspense>} />
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/autism-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAutismOrders /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/build-inquiries" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBuildInquiries /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
