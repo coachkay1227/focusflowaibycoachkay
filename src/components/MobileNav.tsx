@@ -2,11 +2,12 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info, Sparkles, BookMarked, Bot, Briefcase, HelpCircle, Wrench } from "lucide-react";
+import { Menu, X, LayoutDashboard, BookOpen, Trophy, MessageCircle, Users, LogOut, User, Info, Sparkles, BookMarked, Bot, Briefcase, HelpCircle, Wrench, Eye } from "lucide-react";
 
 const navItems = [
   { label: "Start Session", path: "/clarity", icon: Sparkles, authOnly: false, primary: true },
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, authOnly: true },
+  { label: "Truth", path: "/truth", icon: Eye, authOnly: false },
   { label: "Paths", path: "/modules", icon: BookOpen, authOnly: false },
   { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, authOnly: false },
   { label: "Advisory", path: "/advisory", icon: Briefcase, authOnly: false },
