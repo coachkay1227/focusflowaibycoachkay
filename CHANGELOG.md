@@ -4,6 +4,21 @@ All notable changes to the FocusFlow AI platform are documented here.
 
 ---
 
+## [1.1.0] — 2026-05-27 — Launch readiness
+
+### Added
+- **Newsletter waitlist capture** — new `newsletter_subscribers` table (RLS: anon insert, admin select), `newsletter-subscribe` edge function with optional Beehiiv forwarding (`BEEHIIV_API_KEY` + `BEEHIIV_PUBLICATION_ID`), `<NewsletterWaitlist />` card in the site footer, `<NewsletterPopup />` (30s delay or 50% scroll, once-per-visitor, hidden on app/admin routes).
+- **Admin newsletter view** — `/admin/newsletter` lists captured subscribers with CSV export and sync status. Added to AdminNav.
+- **GHL `newsletter_signup` event** — fires fire-and-forget through the existing `ghl-webhook` function so GHL automations can hook the same way as signup/clarity/application events.
+- **Email strategy doc** — `.lovable/memory/features/email-strategy.md` now lists every GHL event payload shape.
+
+### Verified (launch checklist)
+- Internal link sweep: every `to=` / `href=` resolves to a route in `App.tsx`.
+- `public/sitemap.xml` already exhaustive; `public/robots.txt` blocks all private routes.
+- Type-check passes; no console.log in new code paths.
+
+---
+
 ## [1.0.0] — 2026-04-02
 
 ### 🚀 Features

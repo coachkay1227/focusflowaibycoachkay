@@ -109,21 +109,21 @@ Deno.serve(async (req) => {
     }
   }
 
-  // Fire-and-forget GHL marketing webhook
-  const ghlUrl = Deno.env.get("GHL_WEBHOOK_URL");
-  if (ghlUrl) {
-    fetch(ghlUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  // Fire-and-forget GHL marketing webhook via the internal ghl-webhook function
+  // (which validates URL, handles auth, and keeps event payloads consistent).
+  admin.functions
+    .invoke("ghl-webhook", {
+      body: {
         event: "newsletter_signup",
-        email,
-        name: name ?? null,
-        source: source ?? null,
-        synced_to_beehiiv: synced,
-      }),
-    }).catch(() => {});
-  }
+        payload: {
+          email,
+          name: name ?? null,
+          newsletter_source: source ?? null,
+          synced_to_beehiiv: synced,
+        },
+      },
+    })
+    .catch(() => {});
 
   return json(200, { ok: true, synced });
 });
