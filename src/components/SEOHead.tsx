@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { globalGraph } from "@/lib/seo-schema";
 
 const BASE_URL = "https://coachkayai.life";
-const BRAND_SUFFIX = "Coach Kay — Clarity Coaching & AI Transformation";
+const BRAND_SUFFIX = "Coach Kay AI";
 
 interface SEOHeadProps {
   title: string;
