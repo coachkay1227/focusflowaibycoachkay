@@ -19,7 +19,7 @@ import {
 import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
-import { getSymmetricGridClass, getSymmetricPricingGridClass } from "@/lib/grid";
+import { getSymmetricPricingGridClass } from "@/lib/grid";
 
 const FOUNDING_STORAGE_KEY = "raa.founding";
 
