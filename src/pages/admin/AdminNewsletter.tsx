@@ -55,7 +55,7 @@ const AdminNewsletter = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Newsletter · Admin" description="Newsletter waitlist subscribers" />
+        <SEOHead title="Newsletter · Admin" description="Newsletter waitlist subscribers" path="/admin/newsletter" />
       <div className="max-w-6xl mx-auto px-6 py-10">
         <AdminNav />
         <div className="flex items-center justify-between mb-6">
