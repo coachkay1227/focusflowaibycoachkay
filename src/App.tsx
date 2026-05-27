@@ -47,6 +47,7 @@ const StarterKit = lazy(() => import("./pages/StarterKit.tsx"));
 const RentAnAgent = lazy(() => import("./pages/RentAnAgent.tsx"));
 const Advisory = lazy(() => import("./pages/Advisory.tsx"));
 const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStudio.tsx"));
+const TruthAboutAI = lazy(() => import("./pages/TruthAboutAI.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
@@ -108,6 +109,7 @@ const App = () => (
             <Route path="/rent-an-agent" element={<Suspense fallback={<PageSkeleton />}><RentAnAgent /></Suspense>} />
             <Route path="/advisory" element={<Suspense fallback={<PageSkeleton />}><Advisory /></Suspense>} />
             <Route path="/build-studio" element={<Suspense fallback={<PageSkeleton />}><CollectiveAIBuildStudio /></Suspense>} />
+            <Route path="/truth" element={<Suspense fallback={<PageSkeleton />}><TruthAboutAI /></Suspense>} />
             <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
             <Route path="/audit/landing" element={<Suspense fallback={<PageSkeleton />}><AuditLanding /></Suspense>} />
             <Route path="/audit/intake" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />

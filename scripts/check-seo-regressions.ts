@@ -29,6 +29,7 @@ const INDEXABLE: string[] = [
   "/rent-an-agent",
   "/advisory",
   "/build-studio",
+  "/truth",
   "/autism-social-stories",
   "/faq",
   "/privacy",
