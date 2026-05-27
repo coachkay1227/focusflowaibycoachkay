@@ -123,6 +123,7 @@ const App = () => (
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/autism-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAutismOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/build-inquiries" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBuildInquiries /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNewsletter /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
