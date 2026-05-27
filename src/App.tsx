@@ -62,6 +62,7 @@ const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy.tsx"));
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
 const DesktopNav = lazy(() => import("./components/DesktopNav.tsx"));
 const GlobalFooter = lazy(() => import("./components/GlobalFooter.tsx"));
+const NewsletterPopup = lazy(() => import("./components/NewsletterPopup.tsx"));
 const AdminViewToggle = lazy(() =>
   import("./components/AccessGate.tsx").then((m) => ({ default: m.AdminViewToggle }))
 );
