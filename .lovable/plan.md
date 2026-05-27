@@ -1,119 +1,29 @@
+## Finish wiring the Collective AI Build Studio
 
-## Goal
+The page, dialog, catalog, Stripe config, and admin inquiries view already exist. This plan connects them to the rest of the app.
 
-Launch a new revenue-generating page at `/collective-ai-build-studio` that productizes Coach Kay's AI-leveraged build services. Same brand DNA (cinematic navy + gold, Cormorant + DM Sans, pure-CSS animation) as the rest of the site. Hybrid lead flow: Stripe checkout for low-ticket and recurring; qualified application form for $2K+ builds.
+### 1. Routes (`src/App.tsx`)
+- Add public route `/build-studio` → `CollectiveAIBuildStudio` (lazy import).
+- Add admin route `/admin/build-inquiries` → `AdminBuildInquiries` (lazy import, behind existing admin protection).
 
-## Positioning
+### 2. Global navigation
+- `src/components/DesktopNav.tsx`: add `{ label: "Build Studio", path: "/build-studio", icon: Wrench, authOnly: false }` between Advisory and Coach Kay.
+- `src/components/MobileNav.tsx`: add the same entry in the matching slot.
+- Pick a lucide icon already idiomatic to the codebase (`Wrench` or `Hammer`).
 
-- **Brand:** Collective AI Build Studio (sub-line: *"where vision meets velocity"*)
-- **Hero promise:** *"From idea to live in days. From launch to scale on autopilot."*
-- **Why "Collective":** ladders into existing Collective AI Summit + cohorts; positions Coach Kay + AI agents + customer as a tribe, not a vendor relationship; pre-frames the AI-leveraged delivery model so no one feels duped
-- **Differentiator copy on page:** *"What agencies build in 4 months, the Collective ships in 14 days — because we build with AI, not around it."*
+### 3. Admin navigation (`src/components/admin/AdminNav.tsx`)
+- Add `{ to: "/admin/build-inquiries", label: "Build", icon: Wrench }` to the `navItems` array.
 
-## Page structure (`/collective-ai-build-studio`)
+### 4. Sitemap (`public/sitemap.xml`)
+- Append a `<url>` entry for `/build-studio` (priority 0.9, weekly), lastmod `2026-05-27`.
+- Admin route stays out of the sitemap.
 
-```text
-┌─────────────────────────────────────────────┐
-│ 1. HERO — headline + sub + dual CTA         │
-│    (Start a build • Book strategy call)     │
-├─────────────────────────────────────────────┤
-│ 2. MANIFESTO STRIP — 3 pillars              │
-│    Speed · Systems · Sovereignty            │
-├─────────────────────────────────────────────┤
-│ 3. WHAT WE BUILD — tier tabs                │
-│    Quick Wins | Business Builds |           │
-│    Custom AI Apps | Care Plans              │
-├─────────────────────────────────────────────┤
-│ 4. THE PROCESS — Brief→Build→Launch→Care    │
-├─────────────────────────────────────────────┤
-│ 5. RECURRING CARE — pricing cards (MRR)     │
-├─────────────────────────────────────────────┤
-│ 6. APPLICATION FORM — for Tier 2+ builds    │
-├─────────────────────────────────────────────┤
-│ 7. FAQ — AI ownership, revisions, timeline  │
-│ 8. FINAL CTA + "by invitation" enterprise   │
-└─────────────────────────────────────────────┘
-```
+### 5. SEO regression check
+- Run `bunx tsx scripts/check-seo-regressions.ts` after edits to confirm the new page passes title/description/canonical checks (the page already sets `SEOHead`).
 
-## Offer catalog (lives in `src/lib/build-studio-catalog.ts`)
+### 6. Verify
+- Confirm build passes (auto), spot-check `/build-studio` renders, nav highlights active state, and `/admin/build-inquiries` is reachable for admins.
 
-**Tier 1 — Quick Wins (Stripe checkout, instant buy)**
-| Offer | Price | Turnaround |
-|---|---|---|
-| Conversion landing page | $497 | 72 hr |
-| Link-in-bio / creator hub | $297 | 48 hr |
-| Lead magnet + opt-in funnel | $697 | 5 days |
-| AI chatbot widget (setup) | $797 + $47/mo care | 5 days |
-| Personal brand / resume site | $397 | 72 hr |
-
-**Tier 2 — Business Builds (Application required)**
-| Offer | Price | Turnaround |
-|---|---|---|
-| Full marketing site (5–8 pp, CMS, SEO) | $2,497 | 2 wk |
-| Lead-gen tool / AI quiz funnel | $2,497 | 2 wk |
-| E-commerce store | $2,997 | 2 wk |
-| Client portal / dashboard | $3,497 | 2–3 wk |
-| Course / membership platform | $3,997 | 3 wk |
-| Internal ops dashboard | $3,997 | 3 wk |
-
-**Tier 3 — Custom AI Apps (Application required)**
-| Offer | Price | Turnaround |
-|---|---|---|
-| AI tool / SaaS MVP | $7,997–$14,997 | 3–4 wk |
-| Multi-agent workflow system | $9,997 | 4 wk |
-| Industry-specific AI assistant | $9,997+ | 4 wk |
-| White-label coaching platform | $12,997 | 4 wk |
-
-**Tier 5 — Recurring Care (Stripe checkout, monthly subscription)**
-| Plan | Price | Includes |
-|---|---|---|
-| Site Care | $97/mo | Hosting, updates, small edits |
-| Agent Care | $197/mo | Monitoring, prompt tuning, model updates |
-| Build Credits | $497/mo | 4 hrs banked build time |
-| Collective Membership | $97/mo | Templates, office hours, build queue priority |
-
-**By invitation (footer line, no checkout):** Fractional AI Product Lead ($4,997/mo), Enterprise build pods ($25K+), Equity builds.
-
-## Technical implementation
-
-### Files to create
-- `src/pages/CollectiveAIBuildStudio.tsx` — the page (sections 1–8)
-- `src/lib/build-studio-catalog.ts` — offer data (mirrors `offer-catalog.ts` pattern)
-- `src/components/build-studio/BuildTierTabs.tsx` — Tier 1/2/3/Care tabbed grid
-- `src/components/build-studio/BuildApplicationDialog.tsx` — Tier 2+ qualification form (reuses `OfferInquiryDialog` pattern, adds project-type + budget fields)
-- `src/components/build-studio/CarePlanCard.tsx` — recurring subscription card
-- `supabase/functions/build-studio-inquiry/index.ts` — new edge function that writes to a new `build_inquiries` table + sends notification email to `hello@coachkayelevates.org`
-- `supabase/functions/_shared/transactional-email-templates/build-studio-inquiry-received.tsx` — customer confirmation email (hybrid brand header, navy palette, matches autism template pattern)
-- New migration: `build_inquiries` table (id, name, email, company, project_type, tier, budget_range, timeline, notes, status, created_at) + GRANTs + RLS (insert public, select admin)
-
-### Files to update
-- `src/App.tsx` — add `/collective-ai-build-studio` route
-- `src/components/DesktopNav.tsx` + `MobileNav.tsx` — add nav link under "Services" or "Build"
-- `src/lib/stripe-tiers.ts` — register new Tier 1 product/price IDs and Care subscription IDs (after Stripe products are created)
-- `supabase/functions/create-checkout/index.ts` — accept new `build_studio_*` price IDs
-- `supabase/functions/stripe-webhook/index.ts` — handle new `build-studio` line items → send `build-studio-purchase-confirmation` email + create row in `build_inquiries` with status `paid`
-- `supabase/functions/_shared/transactional-email-templates/registry.ts` — register the two new templates
-- `src/pages/admin/AdminDashboard.tsx` + `AdminNav.tsx` — add "Build Inquiries" admin route
-- New page: `src/pages/admin/AdminBuildInquiries.tsx` (mirrors `AdminAutismOrders.tsx`)
-- `public/sitemap.xml` + `scripts/check-seo-regressions.ts` — register new route
-- `src/lib/seo-schema.ts` — add Service schema for the studio offers
-
-### Stripe products to create (via `stripe--create_stripe_product_and_price`)
-Tier 1 — 5 one-time prices ($297, $397, $497, $697, $797)
-Tier 5 — 4 monthly recurring prices ($97×2, $197, $497)
-
-Tier 2/3 stay application-only (no Stripe products until scope confirmed per deal).
-
-### SEO
-- Title: *Collective AI Build Studio — From Idea to Live in Days*
-- Meta: *Custom AI websites, dashboards, lead-gen tools, and SaaS apps built in days, not months. Productized AI build studio by Coach Kay.*
-- JSON-LD: `Service` schema with `offers` array reflecting the catalog
-- Canonical: `/collective-ai-build-studio`
-
-## Out of scope (call out if you want them in)
-
-- Actually building the showcase/case-study assets (slot is stubbed until real builds ship)
-- Stripe products for Tier 2/3 (application-only for now)
-- White-label reseller program ($1,997/mo — flagged for v2)
-- Auto-assigning a project Trello/Notion board on Tier 1 purchase (manual for now)
-- Updating `coachkayai.life` nav across other landing surfaces beyond the main nav
+### Out of scope
+- No catalog, pricing, Stripe, or dialog changes — those were completed earlier.
+- No new Stripe products (the 9 prices are already mapped).
