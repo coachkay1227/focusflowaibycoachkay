@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, Zap, Cog, Crown, Sparkles } from "lucide-react";
+import { ArrowLeft, Zap, Cog, Crown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import BuildApplicationDialog from "@/components/build-studio/BuildApplicationDialog";
+import OfferCard from "@/components/offers/OfferCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -248,55 +249,28 @@ const CollectiveAIBuildStudio = () => {
 
         {/* Offer grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {activeOffers.map((o) => (
-            <div
-              key={o.key}
-              className={`flex flex-col rounded-xl border bg-card/40 backdrop-blur-sm p-6 transition-colors ${
-                o.highlighted
-                  ? "border-primary/60 shadow-[0_0_30px_hsl(43_75%_52%/0.08)]"
-                  : "border-border/60 hover:border-primary/40"
-              }`}
-            >
-              {o.highlighted && (
-                <span className="self-start text-[10px] font-mono-label text-primary tracking-[0.2em] mb-2">
-                  MOST POPULAR
-                </span>
-              )}
-              <h3 className="font-heading text-xl text-foreground">{o.name}</h3>
-              <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-primary text-2xl font-bold">{o.priceDisplay}</span>
-                <span className="text-xs text-muted-foreground">· {o.turnaround}</span>
-              </div>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{o.tagline}</p>
-              <ul className="mt-4 space-y-2">
-                {o.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-foreground/85">
-                    <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-5">
-                {o.priceId ? (
-                  <Button
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={busyPriceId === o.priceId}
-                    onClick={() => startCheckout(o)}
-                  >
-                    {busyPriceId === o.priceId ? "Starting…" : "Buy now"}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="w-full border-border"
-                    onClick={() => openApp(o, BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.label ?? "")}
-                  >
-                    Apply to build
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
+          {activeOffers.map((o) => {
+            const tierLabel = BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.label ?? "";
+            const isCheckout = Boolean(o.priceId);
+            const busy = isCheckout && busyPriceId === o.priceId;
+            return (
+              <OfferCard
+                key={o.key}
+                eyebrow={o.turnaround}
+                badge={o.highlighted ? "Most Popular" : undefined}
+                title={o.name}
+                tagline={o.tagline}
+                features={[...o.features]}
+                price={o.priceDisplay}
+                variant={o.highlighted ? "featured" : "standard"}
+                primaryCta={
+                  isCheckout
+                    ? { label: busy ? "Starting…" : "Buy now", onClick: () => startCheckout(o) }
+                    : { label: "Apply to build", onClick: () => openApp(o, tierLabel) }
+                }
+              />
+            );
+          })}
         </div>
       </section>
 
