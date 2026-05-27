@@ -160,7 +160,7 @@ const CollectiveAIBuildStudio = () => {
       {/* HERO */}
       <section className="relative z-10 px-6 sm:px-10 pt-16 pb-12 max-w-5xl mx-auto text-center">
         <span className="font-mono-label text-primary tracking-[0.28em] text-xs">
-          COLLECTIVE AI · BUILD STUDIO
+          COLLECTIVE AI BUILD STUDIO · LED BY COACH KAY
         </span>
         <h1
           className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
@@ -173,6 +173,11 @@ const CollectiveAIBuildStudio = () => {
           What agencies build in 4 months, the Collective ships in 14 days —
           because we build <em>with</em> AI, not around it. Landing pages, dashboards,
           lead-gen tools, AI apps, and the care plans that keep them growing.
+        </p>
+        <p className="mt-4 text-xs text-muted-foreground/80">
+          Delivered by the{" "}
+          <Link to="/collective" className="text-primary hover:underline">Collective AI team</Link>{" "}
+          · Contracted under Focus Flow AI LLC
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Button

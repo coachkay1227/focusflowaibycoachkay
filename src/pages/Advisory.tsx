@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Layers, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -227,14 +227,52 @@ const Advisory = () => {
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
             Start with the $47 AI Business Audit. We'll route you to the right advisory, training, or cohort path based on what surfaces.
           </p>
-          <Button
-            size="lg"
-            className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
-            disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              size="lg"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
+              onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
+              disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
+            >
+              {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Take the $47 audit"}
+            </Button>
+            <a
+              href="https://coachkayelevates.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-primary/40 text-primary px-8 py-2.5 text-sm font-medium hover:bg-primary/10 transition-colors"
+            >
+              Talk to Kay first <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* WHO DELIVERS — Collective AI trust strip */}
+      <section className="relative z-10 px-6 sm:px-10 pb-20 max-w-4xl mx-auto">
+        <div className="rounded-2xl border border-primary/25 bg-primary/[0.04] p-7 md:p-9">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
+              <Layers className="h-5 w-5 text-primary" />
+            </div>
+            <span className="font-mono-label text-primary tracking-[0.22em] text-[10px]">
+              WHO DELIVERS
+            </span>
+          </div>
+          <h2 className="font-heading text-2xl text-foreground mb-3">
+            Advisory is led by Coach Kay, delivered with the Collective.
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            For trainings, cohorts, and enterprise advisory, your engagement is staffed with
+            the right roles around your scope — Operations Architect (Kay), Lead Engineer,
+            AI Researcher, and Designer/QA. Same point of contact, more horsepower.
+          </p>
+          <Link
+            to="/collective"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
           >
-            {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Take the $47 audit"}
-          </Button>
+            Meet the Collective <ArrowLeft className="h-4 w-4 rotate-180" />
+          </Link>
         </div>
       </section>
 

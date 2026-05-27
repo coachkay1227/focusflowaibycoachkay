@@ -2,10 +2,11 @@ import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart } from "lucide-react";
+import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart, Layers } from "lucide-react";
 import coachKayImg from "@/assets/coach-kay.jpeg";
 import { webPage, breadcrumb } from "@/lib/seo-schema";
 import MobileNav from "@/components/MobileNav";
+import { Link } from "react-router-dom";
 
 const testimonials = [
   {
@@ -124,21 +125,53 @@ const CoachKay = () => {
                 <Button
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={() => navigate("/clarity")}
+                  onClick={() => window.open("https://coachkayelevates.org/", "_blank", "noopener,noreferrer")}
                 >
-                  Free Clarity Check <ArrowRight className="ml-2 h-4 w-4" />
+                  Book a session with Kay <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
                   className="border-primary/30 text-foreground hover:bg-primary/10"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/clarity")}
                 >
-                  Get Started
+                  Free Clarity Check
                 </Button>
               </div>
             </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      {/* TWO HATS — Collective AI positioning */}
+      <section id="two-hats" className="py-12 md:py-16 bg-secondary/10">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <AnimatedSection>
+            <div className="rounded-2xl border border-primary/25 bg-card/40 backdrop-blur-sm p-7 md:p-9">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
+                  <Layers className="h-5 w-5 text-primary" />
+                </div>
+                <span className="font-mono-label text-primary tracking-[0.22em] text-[10px]">
+                  TWO HATS · ONE MISSION
+                </span>
+              </div>
+              <h2 className="font-heading text-2xl md:text-3xl text-foreground mb-3">
+                Coach Kay is both the coach and the builder.
+              </h2>
+              <p className="text-[15px] text-muted-foreground leading-[1.8]">
+                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs — solo and high-touch.
+                As <strong className="text-foreground/85">Operations Architect &amp; Lead Developer at Collective AI</strong>, she leads
+                the multidisciplinary team that ships enterprise builds, automations, and AI systems.
+              </p>
+              <Link
+                to="/collective"
+                className="mt-4 inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
+              >
+                Meet the Collective <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
