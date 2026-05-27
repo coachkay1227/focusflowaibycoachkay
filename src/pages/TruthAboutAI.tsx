@@ -415,16 +415,87 @@ export default function TruthAboutAI() {
 
           {/* TRUST */}
           <AnimatedSection>
-            <Section label="Why people trust this room" title="The pledges I make to everyone on this site">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <Section
+              label="Why people trust this room"
+              title="What I'll never do — and what I promise instead"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {TRUST_PILLARS.map((p) => (
-                  <div key={p.title} className="rounded-xl border border-border/40 bg-card/40 p-5">
+                  <div
+                    key={p.title}
+                    className="rounded-xl border border-border/40 bg-card/40 p-5 flex flex-col"
+                  >
                     <p.icon className="h-5 w-5 text-primary mb-3" strokeWidth={1.5} />
-                    <p className="text-sm font-medium text-foreground mb-1.5">{p.title}</p>
+                    <p className="text-sm font-medium text-foreground mb-1.5 leading-snug">{p.title}</p>
                     <p className="text-[12px] text-muted-foreground leading-relaxed">{p.body}</p>
                   </div>
                 ))}
               </div>
+
+              {/* F.O.C.U.S. bridge — mindset/life coaching tie-in */}
+              <div className="mt-7 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-7">
+                <p className="text-[13px] md:text-[14px] text-foreground/90 leading-relaxed font-light mb-5">
+                  Mindset isn't a separate program. It lives inside{" "}
+                  <span className="text-primary font-medium">Uplift</span> (rebuild your inner
+                  operating system) and{" "}
+                  <span className="text-primary font-medium">Support</span> (have a coach in your
+                  corner when the work gets hard). Both are pillars of the F.O.C.U.S. framework —
+                  not paywalled add-ons.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(["U", "S"] as const).map((key) => (
+                    <Link
+                      key={key}
+                      to={`/modules?pillar=${key}`}
+                      className="group flex items-start gap-3 rounded-xl border border-border/40 bg-card/40 p-4 transition-all hover:border-primary/40 hover:bg-card/60"
+                    >
+                      <span
+                        className="mt-0.5 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[12px] font-medium"
+                        style={{
+                          backgroundColor: `${FOCUS_PILLARS[key].color} / 0.15`,
+                          color: FOCUS_PILLARS[key].color,
+                          background: `color-mix(in srgb, ${FOCUS_PILLARS[key].color} 18%, transparent)`,
+                        }}
+                      >
+                        {key}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-sm font-medium text-foreground">
+                            {FOCUS_PILLARS[key].full}
+                          </p>
+                          <ArrowRight
+                            className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all"
+                            strokeWidth={1.5}
+                          />
+                        </div>
+                        <p className="text-[12px] text-muted-foreground leading-relaxed">
+                          {FOCUS_PILLARS[key].description}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </Section>
+          </AnimatedSection>
+
+          {/* COACH KAY'S TOOL PICKS */}
+          <AnimatedSection>
+            <Section label="What I actually use" title="Coach Kay's tool picks">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-7 max-w-2xl">
+                The stack behind every program. Affiliate links are tagged. No tool here gets a
+                placement it didn't earn in my own workflow first.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {TOOL_PICKS.map((tool) => (
+                  <ToolPickCard key={tool.name} tool={tool} />
+                ))}
+              </div>
+              <p className="mt-5 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground/80">
+                <Wrench className="h-3.5 w-3.5" strokeWidth={1.5} />
+                Updated as my stack changes — not when a vendor pays
+              </p>
             </Section>
           </AnimatedSection>
 
