@@ -354,6 +354,56 @@ export default function TruthAboutAI() {
             </Section>
           </AnimatedSection>
 
+          {/* ENVIRONMENT — fact-cited */}
+          <AnimatedSection>
+            <Section
+              label="The environmental question"
+              title="Yes, AI uses energy and water. Here's what's actually true — and what's not."
+            >
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
+                You've seen the headlines. "Every ChatGPT query drinks a bottle of water." "AI is
+                boiling the planet." Some of that is real. Most of it is wildly out of context.
+                Here's the honest math — every number cited.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {ENVIRONMENT.map((e, i) => (
+                  <div key={i} className="rounded-xl border border-border/40 bg-card/40 p-5">
+                    <MythBadge kind={e.kind} />
+                    <p className="text-sm font-medium text-foreground mt-2 mb-1.5 leading-snug">
+                      "{e.claim}"
+                    </p>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">{e.truth}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-6 text-[14px] text-foreground/85 leading-relaxed font-light italic">
+                Use AI when it helps you. Vote and pressure your utility on where the power comes
+                from. Those are different problems — and pretending they're the same is its own kind
+                of dishonesty.
+              </p>
+              <div className="mt-6 rounded-lg border border-border/30 bg-card/30 p-4">
+                <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground/80 mb-2 font-medium">
+                  Sources
+                </p>
+                <ol className="space-y-1.5">
+                  {ENVIRONMENT_SOURCES.map((s) => (
+                    <li key={s.n} className="text-[12px] text-muted-foreground leading-relaxed">
+                      <span className="text-primary/80 mr-1.5">[{s.n}]</span>
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary underline-offset-2 hover:underline"
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </Section>
+          </AnimatedSection>
+
           {/* STRENGTHS / WEAKNESSES */}
           <AnimatedSection>
             <Section label="The real picture" title="What AI is actually good at — and where it still fails">
