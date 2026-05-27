@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  Megaphone,
-  Magnet,
-  PhoneCall,
   Sparkles,
   Zap,
   HeartHandshake,
@@ -27,8 +24,7 @@ import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import { trackEvent } from "@/lib/analytics";
-
-const ADDON_ICONS = [Megaphone, Magnet, PhoneCall];
+import { getSymmetricGridClass } from "@/lib/grid";
 
 const WHY_WINS = [
   {
@@ -231,7 +227,7 @@ export default function Store() {
             setCategory(c);
           }}
         />
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`${getSymmetricGridClass(visiblePackages.length)} gap-6 items-stretch`}>
           {visiblePackages.map((p) => (
             <PackageCard key={p.slug} pkg={p} onOrder={onOrder} />
           ))}
@@ -247,9 +243,9 @@ export default function Store() {
             Amplify Your Launch
           </h2>
         </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {ADDONS.map((a, i) => (
-            <AddonCard key={a.slug} addon={a} Icon={ADDON_ICONS[i]} />
+        <div className={`${getSymmetricGridClass(ADDONS.length)} gap-5 items-stretch`}>
+          {ADDONS.map((a) => (
+            <AddonCard key={a.slug} addon={a} />
           ))}
         </div>
       </section>
