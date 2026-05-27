@@ -452,7 +452,6 @@ export default function TruthAboutAI() {
                       <span
                         className="mt-0.5 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[12px] font-medium"
                         style={{
-                          backgroundColor: `${FOCUS_PILLARS[key].color} / 0.15`,
                           color: FOCUS_PILLARS[key].color,
                           background: `color-mix(in srgb, ${FOCUS_PILLARS[key].color} 18%, transparent)`,
                         }}
