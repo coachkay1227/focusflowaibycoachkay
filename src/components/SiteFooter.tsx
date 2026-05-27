@@ -59,7 +59,9 @@ const SiteFooter = () => {
                 <Layers className="h-4 w-4 text-primary" />
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Solo coaching by Kay. Enterprise builds delivered with{" "}
+                Solo coaching by Coach Kay.
+                <br />
+                Enterprise builds delivered by{" "}
                 <Link to="/collective" className="text-primary hover:underline font-medium">
                   Collective AI
                 </Link>.
