@@ -6,6 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import OfferCard from "@/components/offers/OfferCard";
 import SiteFooter from "@/components/SiteFooter";
+import MirrorReveal from "@/components/truth/MirrorReveal";
 import { SITE_URL, ORG_ID } from "@/lib/seo-schema";
 
 const TAGS = ["AI literacy", "No hype", "No fear", "Human-first", "Coach Kay"];
@@ -235,6 +236,7 @@ export default function TruthAboutAI() {
           </AnimatedSection>
 
           {/* MYTHS */}
+          <MirrorReveal />
           <AnimatedSection>
             <Section label="Myth busting" title="What people are getting wrong about AI right now">
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
