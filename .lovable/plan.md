@@ -1,52 +1,45 @@
-# Unify all card surfaces under the OfferCard 5-zone layout
+# Visual regression check for OfferCard symmetry
 
-## Audit — where we stand right now
+## Reality check on "visual regression"
 
-| File | Uses OfferCard? | Notes |
-|---|---|---|
-| `src/components/ProgramCard.tsx` | yes | Full 5-zone usage with `primaryCta` + `secondaryCta`. Reference implementation. |
-| `src/components/store/PackageCard.tsx` | yes | Has eyebrow/title/tagline/features/price/primaryCta. No secondary. |
-| `src/components/store/AddonCard.tsx` | yes, but `density="compact"` and **no CTA** — zone 5 collapses, so it doesn't match the 5-zone geometry. Receives an `Icon` prop that's silently dropped. |
-| `src/pages/AutismSocialStories.tsx` (inline `PackageCard`, lines 41-103) | **no** — hand-rolled `<div>` with its own bullets, gift-wrap checkbox, and Button. Out of system. |
-| Grid wrappers around all of the above | inconsistent — some use `getSymmetricGridClass` + `items-stretch`, others don't. |
+True pixel-diff visual regression needs Playwright + baseline screenshots + a CI runner that stores artifacts — none of which is wired into this project, and it would mean adding Playwright as a new dependency just for this. That's heavy for what we actually care about.
 
-So three things need fixing to actually standardize: the inline Autism `PackageCard`, the `AddonCard` shape, and the grid wrappers around them.
+What we actually care about is preventing two specific regressions:
+1. A grid that renders `<OfferCard>` siblings forgets `items-stretch` → cards stop matching height.
+2. `OfferCard` itself loses its `h-full` / `flex-col` / `mt-auto` invariants → CTAs stop bottom-anchoring.
+
+Both are structural invariants — detectable without rendering pixels. The right tool is the **vitest + jsdom** setup already in the project (`vitest.config.ts`, `src/test/setup.ts`).
 
 ## Plan
 
-### 1. `src/pages/AutismSocialStories.tsx` — replace inline PackageCard with OfferCard
-- Delete the local `PackageCard` component (lines 41-103) and the `useReveal` hook (per-card reveal is overkill and the rest of the site uses `AnimatedSection`).
-- Render `OfferCard` directly inside the two grids. Map fields:
-  - `eyebrow` → `"Autism & Social Stories"` (group label) or `pkg.bestFor` short form — propose using the section's group label so it matches Truth/Build Studio convention.
-  - `title` → `pkg.name`
-  - `tagline` → `pkg.bestFor`
-  - `features` → `pkg.bullets`
-  - `price` → `pkg.priceLabel` (preserve existing label string)
-  - `primaryCta` → buy-now or inquiry, depending on `pkg.inquiryOnly`
-  - `variant` → `standard` everywhere (no featured highlight is currently set)
-- Gift-wrap checkbox: move into the OfferCard `footnote` slot. Keep local `giftWrap` state per card via a thin wrapper component (`AutismOfferCard`) that owns the checkbox state and forwards it into the buy handler. The footnote already renders at the bottom-center under the CTAs, so geometry stays locked — inquiry-only cards just render no footnote.
-- Replace the two grids with `${getSymmetricGridClass(list.length)} gap-5 items-stretch` so checkout and inquiry rows align like Truth.
+Add **two test files** that together act as the regression check.
 
-### 2. `src/components/store/AddonCard.tsx` — full 5-zone parity
-- Drop `density="compact"`. The whole point is uniform geometry.
-- Add a `primaryCta` so zone 5 isn't empty. The natural CTA is **"Add at checkout"** — purely informational (add-ons are bundled into the package order flow, not bought standalone). Clicking it scrolls to the packages section (`document.getElementById("packages")?.scrollIntoView(...)`) so users go pick a package to attach it to. If you'd rather the addon CTA do nothing visible (label-only badge), say so and I'll render it as a non-interactive "Included add-on" line in the `footnote` slot instead.
-- The unused `Icon` prop: render it as a small icon row above the eyebrow OR remove it from the type and from `Store.tsx` callers. I'll remove it (the icon was never visible and dropping it keeps the OfferCard surface clean) unless you say otherwise.
-- Provide a 1-line `tagline` derived from `addon.description`'s first sentence so the tagline zone isn't oversized, and pass the full description as a single feature bullet so the features zone is populated and matches sibling card heights.
+### 1. `src/components/offers/OfferCard.symmetry.test.tsx`
+- Render an `OfferCard` and assert the article element has `data-offer-card`, `h-full`, `flex`, `flex-col` on its className.
+- Render with and without `secondaryCta` and confirm the CTA wrapper carries `mt-auto`.
+- Render with and without `price` and confirm the title and tagline keep their locked `min-h` classes (`min-h-[3.6rem]` / `min-h-[2.6rem]` for default density).
+- Render with 0 features → assert the spacer `<div className="flex-1" />` exists so empty-feature cards still push CTAs to the bottom.
+- Render two siblings inside a `<div className="grid grid-cols-2 items-stretch">` with wildly different feature counts (1 vs 6) and confirm both root articles render `h-full` (jsdom won't measure pixels, but the className contract is what guarantees parity when the browser does layout).
 
-### 3. Grid wrappers
-- `src/pages/Store.tsx` packages grid (line 234): swap `grid md:grid-cols-2 lg:grid-cols-3 gap-6` → `${getSymmetricGridClass(visiblePackages.length)} gap-6 items-stretch`.
-- `src/pages/Store.tsx` addons grid (line 250): swap `grid md:grid-cols-3 gap-5` → `${getSymmetricGridClass(ADDONS.length)} gap-5 items-stretch`.
-- `src/pages/AutismSocialStories.tsx` both grids: as covered in step 1.
-- `src/pages/Modules.tsx` (line 198): already uses `getSymmetricGridClass` — just add `items-stretch`.
+### 2. `src/components/offers/OfferCard.gridUsage.test.ts`
+A static-analysis test that reads every project source file once and asserts: **every JSX grid that contains an `<OfferCard>` (directly or via the known wrapper components `ProgramCard`, `PackageCard`, `AddonCard`, `AutismOfferCard`) declares `items-stretch` on its grid wrapper.**
 
-### 4. Things I am NOT touching
-- `OfferCard` itself — locked source of truth, no edits.
-- `ProgramCard`, `store/PackageCard` — already conform.
-- Any non-pricing cards (PILLARS, PROCESS, "Why this studio wins", "This is for you if you're a…", tool picks, etc.). Those are informational tiles, not offers, and shoving them into OfferCard would add ghost zones (price, CTA) that don't belong.
+Implementation:
+- Walk `src/pages/**/*.tsx` and `src/components/**/*.tsx` with `fs.readdirSync` recursively.
+- For each file, find every `className=` that contains `grid` AND any line within the same JSX block that renders one of the known offer components.
+- Maintain an allowlist of known-good files mapped to the expected grid classes (Pricing, Build Studio, Truth, Store, Autism, Modules). If a new file uses an offer card in a grid without `items-stretch`, the test fails with a clear message naming the file and line.
 
-## Open questions before I execute
+This is the actually-load-bearing check — the OfferCard internals rarely change, but new grids are added all the time. The test makes it impossible to add a new offer-card grid without remembering `items-stretch`.
 
-1. **AddonCard CTA**: scroll-to-packages "Add at checkout" button, or no CTA + render an "Included add-on" label in `footnote` (still keeps zone 5 occupied so geometry matches)?
-2. **Autism gift-wrap UX**: OK to move the checkbox into the `footnote` slot under the CTA? It will look like: `[Buy Now — $X]` then below it a small `☑ Add gift wrap (+$XX)`. The alternative is keeping the checkbox above the CTA, which means a custom wrapper outside OfferCard and the cards will no longer be height-symmetric with the inquiry cards.
+### 3. Tiny prep edit (already done in earlier turn)
+`OfferCard` already emits `data-offer-card` on its root, so the unit test can target it without coupling to className strings. No production code change needed.
 
-Tell me your call on those two and I'll ship it.
+## What I am NOT doing and why
+
+- **Playwright / pixel diffs** — would require a new dependency, a baseline image store, and a CI runner. Disproportionate for the failure mode we've actually seen (forgotten `items-stretch`). Happy to scope this as a follow-up if you want true cross-browser screenshot regression — say the word and I'll spec it separately.
+- **Browser-tool live screenshot** — useful for one-time verification (and I can run it on request), but it's not a "check" that re-runs.
+- **Storybook visual regression** — no Storybook in this project; not adding one for two tests.
+
+## Open question
+
+Do you want me to also run the live browser tool right now to capture **before/after screenshots** at mobile (375×812) and desktop (1366×768) for the four offer surfaces (Truth, Pricing, Build Studio, Store) as a one-time human-verifiable QA pass alongside the test suite? It's a separate thing from the regression *check* itself, but it's the fastest way to confirm "yes, everything looks symmetric today." If yes, I'll do both in the build pass.
