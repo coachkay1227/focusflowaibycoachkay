@@ -1,89 +1,107 @@
 
-# Honest answers first
+# VA Affiliate Link Brief + Site Readiness Audit
 
-**1. The 6 scam alerts currently seeded — I made them up.**
-They're archetypes pattern-matched to real categories (deepfake voice scams, fake browser extensions, pig-butchering, AI-millionaire funnels, etc.) but **none have a `source_url`** and none are tied to specific named incidents, perpetrators, or reporting outlets. That's on me. You're right — for a consumer-protection hub, validated > vibes. We'll replace them.
-
-**2. Realtime IS wired** — `PauseHub.tsx` subscribes to `postgres_changes` on `scam_alerts` (INSERT/UPDATE/DELETE) and the table is in `supabase_realtime`. But there's **no visible signal** to the user that the page is live. We'll fix that.
-
-**3. Tools directory is thin** — 23 tools, mostly Coach Kay's core stack. You named Manus, GenSpark, HeyGen, HitPaw, and "many more." We need a comprehensive directory with two link types per tool: a **direct signup URL** (default) and an optional **affiliate URL** when you have one. For tools where you'll grab affiliate later, I'll mark them `affiliate_pending: true` so you can fill them in without me re-editing the file.
+Two deliverables: (1) a message you can paste straight to your VA to collect every affiliate link, and (2) a clean audit of what's done, what's thin, and what could block launch.
 
 ---
 
-# What I'll build
+## 1. Copy-Paste VA Brief
 
-## A. Tools directory — comprehensive rebuild (`/ai-tools`)
+> **Subject:** Affiliate sign-ups for Coach Kay's AI Tools Hub
+>
+> Hey — I need you to register Coach Kay as an affiliate for every tool below and send me back the **direct affiliate link** (the trackable URL we'd give to a user clicking "Try it"). If a program requires approval, apply and note status. If a tool has no affiliate program, write "NO PROGRAM" and paste the plain signup URL instead.
+>
+> Use this email + name for all sign-ups: *[FILL IN]*. Payout method: *[FILL IN]*.
+>
+> Format every reply as:
+> `Tool name | Affiliate link | Status (Live / Pending approval / No program) | Notes`
+>
+> **Priority — please do these in order:**
+>
+> **AI Chat & Reasoning**
+> 1. Claude — https://claude.ai
+> 2. Perplexity — https://perplexity.ai
+>
+> **AI Build & No-Code**
+> 3. Lovable — https://lovable.dev (referral program is live)
+> 4. Replit — https://replit.com
+> 5. Softr — https://softr.io
+>
+> **AI Agents & Research**
+> 6. Manus — https://manus.im
+> 7. GenSpark — https://genspark.ai
+>
+> **AI Voice & Audio**
+> 8. ElevenLabs — https://elevenlabs.io
+> 9. Descript — https://descript.com
+> 10. Krisp — https://krisp.ai
+> 11. Otter.ai — https://otter.ai
+>
+> **AI Video & Image**
+> 12. HeyGen — https://heygen.com
+> 13. Synthesia — https://synthesia.io
+> 14. HitPaw (FotorPea / VikPea) — https://www.hitpaw.com
+> 15. Topaz Labs — https://topazlabs.com
+> 16. Canva — https://canva.com
+>
+> **Productivity & Notes**
+> 17. Notion — https://notion.so
+> 18. Fathom — https://fathom.video
+>
+> **Automation & Ops**
+> 19. GoHighLevel — https://gohighlevel.com (this one pays best, prioritise)
+> 20. Make — https://make.com
+> 21. Zapier — https://zapier.com
+>
+> **Payments & Delivery**
+> 22. **Beehiiv** — https://beehiiv.com (Boosts / Partner program — apply ASAP)
+> 23. Kit (ConvertKit) — https://kit.com
+> 24. Whop — https://whop.com
+>
+> **Community & Booking**
+> 25. Skool — https://www.skool.com
+> 26. Circle — https://circle.so
+> 27. Calendly — https://calendly.com
+>
+> Once you have the links, paste the table back to me. I'll drop them into the site in one batch.
 
-Expand `src/data/ai-tools-directory.ts` from 23 → ~60+ tools across these categories (adding new ones in **bold**):
-
-- AI Chat & Reasoning — ChatGPT, Claude, Gemini, Perplexity, **Grok**, **DeepSeek**, **Kimi**, **Mistral Le Chat**
-- AI Build & No-Code — Lovable, Cursor, v0, Supabase, **Bolt.new**, **Replit Agent**, **Windsurf**, **Base44**, **Softr**, **Bubble**
-- AI Agents & Research — **Manus**, **GenSpark**, **Operator (OpenAI)**, **Claude Computer Use**, n8n, Make, **Zapier AI**
-- AI Voice & Audio — ElevenLabs, Descript, **Suno**, **Udio**, **Whisper / MacWhisper**, **Krisp**
-- AI Video & Image — Midjourney, Runway, Canva, **HeyGen**, **HitPaw** (image/video upscaler), **Synthesia**, **Pika**, **Kling**, **Luma Dream Machine**, **Sora**, **Ideogram**, **Flux / BlackForestLabs**, **Topaz Labs**
-- Productivity & Notes — Notion, Obsidian, Granola, **Fathom**, **Otter.ai**, **NotebookLM**, **Mem**
-- Automation & Ops — GoHighLevel, n8n, Make, **Pipedream**, **Airtable AI**
-- Payments & Delivery — Stripe, Beehiiv, **Resend**, **Kit (ConvertKit)**, **Whop**
-- Community — Skool, Calendly, **Circle**, **Discord**
-
-Each tool entry adds:
-```ts
-{
-  name: "HeyGen",
-  blurb: "...",
-  category: "AI Video & Image",
-  signup_url: "https://heygen.com",      // direct/public URL
-  affiliate_url?: "https://...",         // optional, overrides signup when present
-  affiliate_pending?: true,              // shows "Affiliate coming" instead of badge
-  pricing: "Freemium",
-}
-```
-UI: card shows "Try it →" (uses affiliate if set, else signup). If `affiliate_pending`, small gold note "Affiliate link coming — bookmark for later." Card link target is single-source-of-truth so when you paste affiliate URLs later, the whole card switches automatically.
-
-I'll seed sensible defaults; **you fill in affiliate URLs you sign up for** — easy diff, no schema migration.
-
-## B. Pause Hub — visible "Live" signal + real scams
-
-**Live indicator (UI only):**
-- Pulsing green dot + "Live feed · auto-updating" pill near the page header.
-- When a new alert arrives via realtime, the existing toast fires AND the new card flashes a gold ring for 2s.
-- "Last updated Xs ago" timestamp that ticks every 10s.
-
-**Replace seeded alerts with real, sourced incidents.** I'll wipe the 6 fakes and seed ~8 validated ones, each with `source_url` to mainstream reporting. Working list (final wording confirmed against sources at build time):
-
-1. **OpenAI Operator / Computer-Use agents — surveillance & credential exposure risk** (caution) — Wired/Ars coverage of agents that act on logged-in browsers.
-2. **WormGPT & FraudGPT — uncensored LLMs sold for phishing** (red_flag) — SlashNext/Krebs reporting.
-3. **Deepfake CFO video call — $25M Arup heist (Hong Kong, Feb 2024)** (red_flag) — CNN/FT reporting.
-4. **AI-generated voice clone scams targeting families** (red_flag) — FTC consumer alert.
-5. **Fake "ChatGPT" Chrome extensions stealing Facebook sessions** (red_flag) — Guardio Labs / BleepingComputer.
-6. **Air Canada chatbot hallucination ruled binding** (watch) — informational, BBC/CBC — what AI confidently lying costs.
-7. **"AI agency in a box" / done-for-you reseller funnels** (caution) — pattern alert, links to FTC guidance on biz-opp fraud.
-8. **Pig-butchering + AI trading bot romance scams** (red_flag) — FBI IC3 report + ProPublica.
-
-Each will have real `source_url`, real `body` with what happened + what to do, and `action_rules` you can actually follow. If a source doesn't pan out at build time I'll swap it for one that does — no fakes get re-seeded.
-
-**Migration:** one SQL file that `DELETE FROM scam_alerts WHERE source_url IS NULL;` then inserts the validated 8. Idempotent via slug.
-
-## C. Admin polish (small)
-
-`/admin/scam-alerts` form: make `source_url` **required** with a helper line "No source, no publish. This is a validated-resources hub." Prevents future fake-feeling entries.
+When the VA returns links, I'll bulk-paste them into `src/data/ai-tools-directory.ts` (one field per row, `affiliate_url: "..."`), flip `affiliate_pending` off, and ship.
 
 ---
 
-# What I am NOT touching this round
+## 2. Site Readiness Audit
 
-- F.O.C.U.S. pillar tags / `$0 only` toggle on the directory (still pending your earlier PRD answers).
-- `/scams` separate route (folded into `/pause-hub`).
-- Quiz, Poppins/Open Sans swap.
-- Truth About AI page edits — you mentioned "OpenAI surveillance" warnings belong there too. Worth doing, but it's a separate scope; flag it and I'll plan it next round if you want.
+### ✅ Solid / shippable
+- **Routing**: All 40+ routes registered in `App.tsx`. Legacy URLs (`/ai-starter-kit`, `/email-unsubscribe`, `/ai-tools-directory`, `/about`) redirect cleanly.
+- **Auth gating**: `ProtectedRoute` on Dashboard, Profile, Coach Chat, Mirror Challenge, all `/admin/*`.
+- **Pause Hub**: Now a real scam hub with 8 sourced incidents, live realtime feed, pulsing "Live" pill, gold flash on inserts. Admin form blocks publish without `source_url`.
+- **AI Tools Directory**: 63 tools, 9 categories, affiliate-aware CTA logic, "Affiliate soon" badge.
+- **Backend**: Cloud + RLS + edge functions wired. Stripe webhooks + tier mapping per memory.
+- **Memory rules** locked: Pause Hub purpose, animation constraints, persistence patterns.
 
-# Acceptance check
+### ⚠️ Thin / needs attention (not blockers, but visible)
+1. **Affiliate links** — 27 tools still on `affiliate_pending`. CTA works (falls back to signup), but money is left on the table until VA finishes (see brief above).
+2. **Beehiiv newsletter wiring** — `AdminNewsletter` exists, but I should verify the publish/sync path to Beehiiv actually fires once you have the API key. Worth a 5-min smoke test.
+3. **Scam alert volume** — 8 validated alerts is a good launch baseline but the feed will feel sparse after a week. Recommend: add a weekly cadence (you publish 2/week) OR an ingestion edge function pulling from FTC/FBI RSS.
+4. **Truth About AI** — Page exists but doesn't yet carry the OpenAI surveillance / agent-risk angle you mentioned last turn. Open question still on the table.
+5. **Mobile nav premium feel** — `DesktopNav` is the only nav file I see. Need to confirm the mobile drawer/menu has the same gold + Cormorant treatment, not a default shadcn sheet. Worth a quick QA pass on 647px viewport (your current preview).
 
-1. `/ai-tools` shows 60+ tools, filters still work, every card has a working "Try it" link (signup or affiliate).
-2. `/pause-hub` shows the pulsing "Live" pill; publishing from `/admin/scam-alerts` in tab A makes the card slide into tab B within ~1s with a gold flash.
-3. Every visible alert has a clickable source link to a real article/report.
-4. Admin form blocks publish without `source_url`.
+### 🚧 Potential blockers worth a decision
+- **Sign-in surface for premium pages**: confirm every premium-gated page redirects to `/auth` with a return URL, not a blank screen. I'd run through Dashboard / Coach / Mirror Challenge / Profile while signed out.
+- **Stripe live keys vs test keys** — confirm we're on live mode before publish; webhook secret must match.
+- **Custom domain SSL** — `coachkayai.life` and `www.coachkayai.life` are listed; make sure both resolve and one canonical-redirects to the other for SEO.
+- **Sitemap** — `/sitemap` page + `public/sitemap.xml` exist. Need to verify `/ai-tools` and `/pause-hub` are in the XML so Google indexes them.
+- **Beehiiv embed on `/`** — if newsletter capture above the fold is part of the funnel, make sure the form is live and posting somewhere real (not a stub).
 
-# One thing I need from you (after I build)
+### 🔍 Things I'd want you to look at before publish
+- Walk `/` → `/ai-tools` → `/pause-hub` → `/coach-kay` → `/store` on mobile (your current 647px) and tell me if any feel "off-brand."
+- Sign up as a brand-new user end-to-end and confirm: email verification → onboarding → dashboard → premium gate behavior.
+- Click 5 random tool cards on `/ai-tools` — confirm they open in a new tab.
 
-A list of which tools you already have affiliate links for, OR confirmation I should set them all to `affiliate_pending: true` and you'll paste URLs in batch. Either works — say the word and I'll start.
+### Suggested next move
+Send the VA brief today. While they work, I can:
+- **(a)** Add OpenAI surveillance / agent-risk content to `/truth`, **or**
+- **(b)** Build the FTC/FBI scam-alert ingestion function so Pause Hub stays fresh on its own, **or**
+- **(c)** Run the mobile-nav premium-feel pass.
+
+Tell me which of a/b/c to pick up next.
