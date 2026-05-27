@@ -70,6 +70,7 @@ const ADMIN_EXEMPT = new Set<string>([
   "/admin/analytics",
   "/admin/content",
   "/admin/orders",
+  "/admin/autism-orders",
   "/email-preview",
 ]);
 
