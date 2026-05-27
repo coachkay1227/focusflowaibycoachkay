@@ -51,12 +51,7 @@ const DesktopNav = () => {
   const workRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
-  const isHiddenRoute = NAV_HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
-  const isHome = location.pathname === "/";
-
-  if (isHiddenRoute || isHome) return null;
-
-  // Close menus on outside click / route change
+  // Close menus on outside click / route change — hooks MUST run unconditionally
   useEffect(() => {
     setWorkOpen(false);
     setAccountOpen(false);
@@ -70,6 +65,11 @@ const DesktopNav = () => {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
+
+  const isHiddenRoute = NAV_HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
+  const isHome = location.pathname === "/";
+
+  if (isHiddenRoute || isHome) return null;
 
   const isWorkActive = workWithMeGroups.some((g) =>
     g.items.some((i) => location.pathname.startsWith(i.path)),

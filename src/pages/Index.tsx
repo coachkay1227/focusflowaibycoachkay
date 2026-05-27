@@ -72,25 +72,28 @@ const Index = () => {
         FOCUSFLOW AI
       </div>
 
-      {/* Navigation — minimal hero bar: logo + Sign In + single CTA */}
-      <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
-        <div className="font-heading text-xl md:text-2xl font-light tracking-wide text-foreground" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
+      {/* Navigation — premium minimal bar mirroring global IA */}
+      <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5">
+        <div className="font-heading text-xl md:text-2xl font-light tracking-wide" role="img" aria-label="FocusFlow AI">
+          <span aria-hidden="true" className="text-primary font-medium">Focus</span>
+          <span aria-hidden="true" className="text-foreground font-light">Flow</span>
+          <span aria-hidden="true" className="text-primary font-medium ml-1">AI</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-1">
+          <button onClick={() => navigate("/modules")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Paths</button>
+          <button onClick={() => navigate("/store")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Studio</button>
+          <button onClick={() => navigate("/truth")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Truth</button>
+          <button onClick={() => navigate("/coach-kay")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Coach Kay</button>
+          <button onClick={() => navigate("/faq")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">FAQ</button>
+        </div>
+        <div className="flex items-center gap-3">
           {user ? (
             <>
               <button
                 onClick={() => navigate("/dashboard")}
-                className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block font-medium"
+                className="hidden md:inline-flex text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
               >
                 Dashboard
-              </button>
-              <button
-                onClick={() => navigate("/store")}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-              >
-                Studio
               </button>
               <Avatar className="h-8 w-8 border border-primary/30 hidden md:flex">
                 <AvatarImage src={user.user_metadata?.avatar_url || user.user_metadata?.picture} />
@@ -100,40 +103,26 @@ const Index = () => {
               </Avatar>
               <button
                 onClick={signOut}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
+                className="hidden md:flex items-center text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Sign out"
               >
                 <LogOut className="h-4 w-4" />
               </button>
             </>
           ) : (
-            <>
-              <button
-                onClick={() => navigate("/store")}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-              >
-                Studio
-              </button>
-              <button
-                onClick={() => navigate("/faq")}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block"
-              >
-                FAQ
-              </button>
-              <Button
-                onClick={() => navigate("/auth")}
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-foreground hidden md:inline-flex"
-              >
-                <User className="h-4 w-4 mr-1" /> Sign In
-              </Button>
-            </>
+            <Button
+              onClick={() => navigate("/auth")}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground hidden md:inline-flex"
+            >
+              <User className="h-4 w-4 mr-1" /> Sign In
+            </Button>
           )}
           <Button
             onClick={() => navigate("/clarity")}
             size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex rounded-full px-5"
           >
             Get My Clarity Code
           </Button>
@@ -240,7 +229,7 @@ const Index = () => {
             </div>
 
             {/* 40% — Portrait */}
-            <div className="w-full md:w-[40%] relative bg-card/50 overflow-hidden group min-h-[50vh] md:min-h-0">
+            <div className="w-full md:w-[40%] relative bg-navy-deep overflow-hidden group min-h-[50vh] md:min-h-0">
               {/* Overlays */}
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
@@ -517,7 +506,7 @@ const Index = () => {
               pillar: "O · OWNERSHIP  ·  S · SUSTAIN",
             },
           ].map((item, i) => (
-            <AnimatedSection key={item.name} delay={i * 120}>
+            <AnimatedSection key={item.name} delay={i * 120} className="h-full">
               <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8 flex flex-col h-full">
                 <p className="text-foreground/90 text-sm leading-relaxed italic flex-1">"{item.quote}"</p>
                 <div className="mt-6 pt-4 border-t border-border/50">
