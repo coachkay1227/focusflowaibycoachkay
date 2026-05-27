@@ -11,6 +11,8 @@ const coreLinks = [
   { path: "/mirror-challenge", label: "Mirror Challenge" },
   { path: "/coach", label: "Coach Kay AI Chat" },
   { path: "/clarity", label: "Clarity Session" },
+  { path: "/pause-hub", label: "Pause Hub" },
+  { path: "/ai-tools", label: "AI Tools Directory" },
   { path: "/community", label: "Community" },
   { path: "/dashboard", label: "Dashboard" },
   { path: "/auth", label: "Sign In / Sign Up" },

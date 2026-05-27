@@ -49,6 +49,8 @@ const Advisory = lazy(() => import("./pages/Advisory.tsx"));
 const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStudio.tsx"));
 const TruthAboutAI = lazy(() => import("./pages/TruthAboutAI.tsx"));
 const Collective = lazy(() => import("./pages/Collective.tsx"));
+const PauseHub = lazy(() => import("./pages/PauseHub.tsx"));
+const AiToolsDirectory = lazy(() => import("./pages/AiToolsDirectory.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
@@ -115,6 +117,9 @@ const App = () => (
             <Route path="/build-studio" element={<Suspense fallback={<PageSkeleton />}><CollectiveAIBuildStudio /></Suspense>} />
             <Route path="/truth" element={<Suspense fallback={<PageSkeleton />}><TruthAboutAI /></Suspense>} />
             <Route path="/collective" element={<Suspense fallback={<PageSkeleton />}><Collective /></Suspense>} />
+            <Route path="/pause-hub" element={<Suspense fallback={<PageSkeleton />}><PauseHub /></Suspense>} />
+            <Route path="/ai-tools" element={<Suspense fallback={<PageSkeleton />}><AiToolsDirectory /></Suspense>} />
+            <Route path="/ai-tools-directory" element={<Navigate to="/ai-tools" replace />} />
             <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
             <Route path="/audit/landing" element={<Suspense fallback={<PageSkeleton />}><AuditLanding /></Suspense>} />
             <Route path="/audit/intake" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
