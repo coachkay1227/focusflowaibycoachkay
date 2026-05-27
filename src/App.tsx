@@ -61,6 +61,7 @@ const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy.tsx"));
 // Lazy-load shell components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
 const DesktopNav = lazy(() => import("./components/DesktopNav.tsx"));
+const GlobalFooter = lazy(() => import("./components/GlobalFooter.tsx"));
 const AdminViewToggle = lazy(() =>
   import("./components/AccessGate.tsx").then((m) => ({ default: m.AdminViewToggle }))
 );
@@ -133,6 +134,7 @@ const App = () => (
           </Routes>
           </main>
           <Suspense fallback={null}><DesktopNav /></Suspense>
+          <Suspense fallback={null}><GlobalFooter /></Suspense>
           <Suspense fallback={null}><ChatWidget /></Suspense>
           <Suspense fallback={null}><AdminViewToggle /></Suspense>
           </ErrorBoundary>
