@@ -63,6 +63,46 @@ const FEARS = [
   { fear: "I don't know who to trust", truth: "Trust the people who tell you what AI can't do as clearly as what it can. That's the bar." },
 ];
 
+const ENVIRONMENT: { kind: "false" | "nuanced" | "true"; claim: string; truth: string }[] = [
+  {
+    kind: "false",
+    claim: "Every ChatGPT query uses a 500ml bottle of water",
+    truth: "The viral figure aggregates training + on-site cooling + power-plant water per session, not per query. Real per-query on-site water is closer to ~5ml — a teaspoon. Less than a Google image search, a rounding error next to one almond (3L). [3]",
+  },
+  {
+    kind: "true",
+    claim: "Global data-centre electricity use is rising fast",
+    truth: "The IEA puts data-centre demand at ~1.5% of global electricity today, projected to ~3% by 2030. Tracking firms count ~4,500 new data-centre projects in the pipeline before 2029. AI is the accelerant, but only ~10–20% of total data-centre load right now. [1][4]",
+  },
+  {
+    kind: "nuanced",
+    claim: "AI is destroying the climate",
+    truth: "Individual chatbot use is climate-negligible — one beef burger, one short drive, or one transatlantic flight dwarfs a year of prompts. Training frontier models is genuinely energy-intensive (one GPT-class run ≈ thousands of homes-years). The honest concern is grid pressure and power-source mix, not your prompts. [2]",
+  },
+  {
+    kind: "true",
+    claim: "Some local communities are getting hit hard",
+    truth: "Real and underreported. Data-centre clusters in Northern Virginia, Arizona, and parts of Ireland are straining local water tables and grid capacity. This is a siting and policy problem, not an 'AI is evil' problem. Pressure your utility commissioner, not your chatbot.",
+  },
+  {
+    kind: "false",
+    claim: "If I stop using AI, I'll save the planet",
+    truth: "You won't. A year of moderate ChatGPT use is roughly the carbon footprint of a single 1-hour drive. Skipping AI to save the planet is like skipping toast to fund a mortgage. Direct your effort at flying, driving, heating, and meat — that's where the leverage is. [2]",
+  },
+  {
+    kind: "nuanced",
+    claim: "The tech companies are going green",
+    truth: "Hyperscalers (Google, Microsoft, Amazon) are the largest corporate buyers of renewable energy on earth, and they're funding new nuclear (Three Mile Island restart, SMRs). Also true: their absolute emissions are rising because demand is outpacing renewable build-out. Both things at once.",
+  },
+];
+
+const ENVIRONMENT_SOURCES = [
+  { n: 1, label: "IEA — Energy and AI / 2025 data-centre update", url: "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary" },
+  { n: 2, label: "Hannah Ritchie — How much electricity does AI consume? [2025]", url: "https://hannahritchie.substack.com/p/ai-electricity-2025" },
+  { n: 3, label: "Sean Goedecke — Talking to ChatGPT costs 5ml of water, not 500ml", url: "https://www.seangoedecke.com/water-impact-of-ai/" },
+  { n: 4, label: "Industrial Info Resources — 4,500 data-centre projects in pipeline (2026)", url: "https://www.industrialinfo.com/iirenergy/industry-news/article/iea-data-centers-pose-challenge-to-global-power-industry--356703" },
+];
+
 const RED_FLAGS = [
   { claim: "Fully automated income with AI", truth: "Automation reduces work. It doesn't eliminate strategy, offers, or customers." },
   { claim: "Overpriced prompt packs", truth: "Prompting is a skill, not a product. Most $97 packs are free elsewhere." },
@@ -176,11 +216,18 @@ const PATHS = [
 const FAQ_LD = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FEARS.map((f) => ({
-    "@type": "Question",
-    name: f.fear,
-    acceptedAnswer: { "@type": "Answer", text: f.truth },
-  })),
+  mainEntity: [
+    ...FEARS.map((f) => ({
+      "@type": "Question",
+      name: f.fear,
+      acceptedAnswer: { "@type": "Answer", text: f.truth },
+    })),
+    ...ENVIRONMENT.map((e) => ({
+      "@type": "Question",
+      name: e.claim,
+      acceptedAnswer: { "@type": "Answer", text: e.truth },
+    })),
+  ],
 };
 
 const ARTICLE_LD = {
@@ -303,6 +350,56 @@ export default function TruthAboutAI() {
                     <p className="text-[13px] text-muted-foreground leading-relaxed">{m.truth}</p>
                   </div>
                 ))}
+              </div>
+            </Section>
+          </AnimatedSection>
+
+          {/* ENVIRONMENT — fact-cited */}
+          <AnimatedSection>
+            <Section
+              label="The environmental question"
+              title="Yes, AI uses energy and water. Here's what's actually true — and what's not."
+            >
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
+                You've seen the headlines. "Every ChatGPT query drinks a bottle of water." "AI is
+                boiling the planet." Some of that is real. Most of it is wildly out of context.
+                Here's the honest math — every number cited.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {ENVIRONMENT.map((e, i) => (
+                  <div key={i} className="rounded-xl border border-border/40 bg-card/40 p-5">
+                    <MythBadge kind={e.kind} />
+                    <p className="text-sm font-medium text-foreground mt-2 mb-1.5 leading-snug">
+                      "{e.claim}"
+                    </p>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">{e.truth}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-6 text-[14px] text-foreground/85 leading-relaxed font-light italic">
+                Use AI when it helps you. Vote and pressure your utility on where the power comes
+                from. Those are different problems — and pretending they're the same is its own kind
+                of dishonesty.
+              </p>
+              <div className="mt-6 rounded-lg border border-border/30 bg-card/30 p-4">
+                <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground/80 mb-2 font-medium">
+                  Sources
+                </p>
+                <ol className="space-y-1.5">
+                  {ENVIRONMENT_SOURCES.map((s) => (
+                    <li key={s.n} className="text-[12px] text-muted-foreground leading-relaxed">
+                      <span className="text-primary/80 mr-1.5">[{s.n}]</span>
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary underline-offset-2 hover:underline"
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
               </div>
             </Section>
           </AnimatedSection>
@@ -485,7 +582,7 @@ export default function TruthAboutAI() {
                 The stack behind every program. Affiliate links are tagged. No tool here gets a
                 placement it didn't earn in my own workflow first.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-stretch">
                 {TOOL_PICKS.map((tool) => (
                   <ToolPickCard key={tool.name} tool={tool} />
                 ))}
