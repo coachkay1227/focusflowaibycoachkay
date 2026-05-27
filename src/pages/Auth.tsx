@@ -243,7 +243,7 @@ const Auth = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 py-6"
+              className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/70 py-6"
             />
           </div>
 
@@ -259,7 +259,7 @@ const Auth = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
-                className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 py-6"
+                className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/70 py-6"
               />
             </div>
           )}

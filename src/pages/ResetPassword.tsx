@@ -123,7 +123,7 @@ const ResetPassword = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={8}
-              className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 py-6"
+              className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/70 py-6"
             />
           </div>
           <div className="relative">
@@ -135,7 +135,7 @@ const ResetPassword = () => {
               onChange={(e) => setConfirm(e.target.value)}
               required
               minLength={8}
-              className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 py-6"
+              className="pl-10 bg-card/30 border-border text-foreground placeholder:text-muted-foreground/70 py-6"
             />
           </div>
           <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6">

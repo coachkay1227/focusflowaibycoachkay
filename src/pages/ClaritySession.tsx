@@ -321,7 +321,8 @@ const ClaritySession = () => {
                 value={textValue}
                 onChange={(e) => setTextValue(e.target.value)}
                 placeholder={question.placeholder}
-                className="bg-card/30 border-border backdrop-blur-sm text-foreground placeholder:text-muted-foreground/40 min-h-[120px] text-base resize-none focus:border-primary/40"
+                aria-label={question.question}
+                className="bg-card/30 border-border backdrop-blur-sm text-foreground placeholder:text-muted-foreground/70 min-h-[120px] text-base resize-none focus:border-primary/40"
                 autoFocus
               />
               <div className="flex justify-end">
@@ -360,6 +361,7 @@ const ClaritySession = () => {
               <Input
                 type="text"
                 placeholder="First name (optional)"
+                aria-label="First name (optional)"
                 value={gateName}
                 onChange={(e) => setGateName(e.target.value)}
                 className="bg-background/50 border-border"
@@ -369,6 +371,7 @@ const ClaritySession = () => {
                 required
                 autoFocus
                 placeholder="you@email.com"
+                aria-label="Email address"
                 value={gateEmail}
                 onChange={(e) => setGateEmail(e.target.value)}
                 className="bg-background/50 border-border"

@@ -762,6 +762,7 @@ const Assessment = () => {
               <Input
                 type="text"
                 placeholder="First name (optional)"
+                aria-label="First name (optional)"
                 value={gateName}
                 onChange={(e) => setGateName(e.target.value)}
                 className="bg-background/50 border-border"
@@ -771,6 +772,7 @@ const Assessment = () => {
                 required
                 autoFocus
                 placeholder="you@email.com"
+                aria-label="Email address"
                 value={gateEmail}
                 onChange={(e) => setGateEmail(e.target.value)}
                 className="bg-background/50 border-border"
