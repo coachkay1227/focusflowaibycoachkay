@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import FAQSection from "@/components/FAQSection";
@@ -7,6 +7,8 @@ import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 import { Button } from "@/components/ui/button";
 import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
 import AutismIntakeModal from "@/components/autism/AutismIntakeModal";
+import OfferCard from "@/components/offers/OfferCard";
+import { getSymmetricGridClass } from "@/lib/grid";
 import {
   AUTISM_DISPLAY,
   AUTISM_GIFT_WRAP_LABEL,
@@ -16,29 +18,7 @@ import {
 const checkoutPackages = AUTISM_DISPLAY.filter((p) => !p.inquiryOnly);
 const inquiryPackages = AUTISM_DISPLAY.filter((p) => p.inquiryOnly);
 
-function useReveal() {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [shown, setShown] = useState(true);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") return;
-    // Only animate cards that start below the fold; in-view cards stay visible.
-    const rect = el.getBoundingClientRect();
-    const inView = rect.top < window.innerHeight && rect.bottom > 0;
-    if (inView) return;
-    setShown(false);
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setShown(true); obs.disconnect(); } },
-      { threshold: 0.15 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return { ref, shown };
-}
-
-function PackageCard({
+function AutismOfferCard({
   pkg,
   onBuy,
   onInquiry,
@@ -48,57 +28,35 @@ function PackageCard({
   onInquiry: (pkg: AutismDisplayPackage) => void;
 }) {
   const [giftWrap, setGiftWrap] = useState(false);
-  const { ref, shown } = useReveal();
+  const showGiftWrap = !!pkg.giftWrapEligible && !pkg.inquiryOnly;
+
   return (
-    <div
-      id={pkg.anchor}
-      ref={ref}
-      className={`scroll-mt-24 rounded-lg border border-border/60 bg-card/40 p-6 flex flex-col transition-all duration-700 ${
-        shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-      }`}
-    >
-      <h3 className="font-heading text-2xl text-foreground">{pkg.name}</h3>
-      <p className="font-heading text-4xl text-primary mt-3">{pkg.priceLabel}</p>
-      <p className="text-sm text-muted-foreground mt-2">{pkg.bestFor}</p>
-      <ul className="mt-5 space-y-2 text-sm text-foreground/85 flex-1">
-        {pkg.bullets.map((b) => (
-          <li key={b} className="flex items-start gap-2">
-            <span aria-hidden className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
-
-      {pkg.giftWrapEligible && !pkg.inquiryOnly && (
-        <label className="mt-5 flex items-start gap-3 text-sm text-foreground/85 cursor-pointer">
-          <input
-            type="checkbox"
-            className="mt-1 accent-[hsl(var(--primary))]"
-            checked={giftWrap}
-            onChange={(e) => setGiftWrap(e.target.checked)}
-          />
-          <span>Add gift wrap + personalized note (+{AUTISM_GIFT_WRAP_LABEL})</span>
-        </label>
-      )}
-
-      <div className="mt-6">
-        {pkg.inquiryOnly ? (
-          <Button
-            onClick={() => onInquiry(pkg)}
-            variant="outline"
-            className="w-full border-primary/40 text-primary hover:bg-primary/10"
-          >
-            Request Scope
-          </Button>
-        ) : (
-          <Button
-            onClick={() => onBuy(pkg.slug, giftWrap)}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            Buy Now — {pkg.priceLabel}
-          </Button>
-        )}
-      </div>
+    <div id={pkg.anchor} className="scroll-mt-24 h-full">
+      <OfferCard
+        eyebrow="Autism & Social Stories"
+        title={pkg.name}
+        tagline={pkg.bestFor}
+        features={pkg.bullets}
+        price={pkg.priceLabel}
+        primaryCta={
+          pkg.inquiryOnly
+            ? { label: "Request Scope", onClick: () => onInquiry(pkg) }
+            : { label: `Buy Now — ${pkg.priceLabel}`, onClick: () => onBuy(pkg.slug, giftWrap) }
+        }
+        footnote={
+          showGiftWrap ? (
+            <label className="inline-flex items-start gap-2 text-[11px] text-foreground/85 cursor-pointer text-left">
+              <input
+                type="checkbox"
+                className="mt-0.5 accent-[hsl(var(--primary))]"
+                checked={giftWrap}
+                onChange={(e) => setGiftWrap(e.target.checked)}
+              />
+              <span>Add gift wrap + personalized note (+{AUTISM_GIFT_WRAP_LABEL})</span>
+            </label>
+          ) : undefined
+        }
+      />
     </div>
   );
 }
@@ -200,15 +158,15 @@ export default function AutismSocialStories() {
           Every package includes an itemized HSA/FSA receipt, a Letter of Medical
           Necessity template, and IEP-aligned objective language.
         </p>
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className={`${getSymmetricGridClass(checkoutPackages.length)} gap-5 items-stretch`}>
           {checkoutPackages.map((p) => (
-            <PackageCard key={p.slug} pkg={p} onBuy={openBuy} onInquiry={openInquiry} />
+            <AutismOfferCard key={p.slug} pkg={p} onBuy={openBuy} onInquiry={openInquiry} />
           ))}
         </div>
 
-        <div className="mt-10 grid md:grid-cols-2 gap-5">
+        <div className={`mt-10 ${getSymmetricGridClass(inquiryPackages.length)} gap-5 items-stretch`}>
           {inquiryPackages.map((p) => (
-            <PackageCard key={p.slug} pkg={p} onBuy={openBuy} onInquiry={openInquiry} />
+            <AutismOfferCard key={p.slug} pkg={p} onBuy={openBuy} onInquiry={openInquiry} />
           ))}
         </div>
       </section>

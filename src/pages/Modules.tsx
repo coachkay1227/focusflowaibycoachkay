@@ -195,7 +195,7 @@ const Modules = () => {
                   {group.items.length} {group.items.length === 1 ? "PROGRAM" : "PROGRAMS"}
                 </span>
               </div>
-              <div className={`${getSymmetricGridClass(group.items.length)} gap-5`}>
+              <div className={`${getSymmetricGridClass(group.items.length)} gap-5 items-stretch`}>
                 {group.items.map((program, i) => {
                   const adminBypass = isAdmin && !userView;
                   const needsGate = !adminBypass && program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
