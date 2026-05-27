@@ -22,9 +22,11 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
   const pillar = FOCUS_PILLARS[program.pillar];
 
   const canStart = program.type === "assessment";
+  const detailsPath = `/programs/${program.slug}`;
+  const startPath = `/clarity/${program.id}`;
 
-  // Eyebrow combines pillar + category for fast scanning
-  const eyebrow = `${program.pillar} · ${pillar.full} · ${program.category}`;
+  // Eyebrow stays compact so it never wraps to 2 lines on narrow cards.
+  const eyebrow = `${pillar.full} · ${program.category}`;
 
   // Badge precedence: enrollment status > New > Featured
   let badge: string | undefined;
@@ -32,35 +34,49 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
   else if (program.isNew) badge = "New";
   else if (program.isFeatured) badge = "Featured";
 
-  // Primary CTA always opens the program detail page
-  const primaryCta = {
-    label: "View details",
-    onClick: () => navigate(`/programs/${program.slug}`),
-  };
+  // Primary CTA = the next funnel step. Secondary CTA = always "View details"
+  // so the geometry is identical across every card on the grid.
+  let primaryCta: { label: string; onClick: () => void; to?: string };
 
-  // Secondary CTA reflects gating + auth + enrollment state
-  let secondaryCta;
-  if (program.isGated) {
-    secondaryCta = {
-      label: program.cohortCode ? "Code required" : "Application required",
-      onClick: () => navigate(`/programs/${program.slug}`),
+  if (enrollment) {
+    primaryCta = {
+      label: enrollment.status === "completed" ? "Review program" : "Continue program",
+      onClick: () => navigate(detailsPath),
+    };
+  } else if (program.isGated) {
+    primaryCta = {
+      label: program.cohortCode ? "Enter cohort code" : "Apply for access",
+      onClick: () => navigate(detailsPath),
     };
   } else if (canStart) {
-    secondaryCta = {
-      label: "Start now",
-      onClick: () => navigate(`/clarity/${program.id}`),
-    };
-  } else if (user && !enrollment && onEnroll) {
-    secondaryCta = {
-      label: enrolling ? "Enrolling…" : "Enroll",
-      onClick: () => onEnroll(program.id),
+    primaryCta = {
+      label: "Start assessment",
+      onClick: () => navigate(startPath),
     };
   } else if (!user) {
-    secondaryCta = {
+    primaryCta = {
       label: "Sign in to enroll",
-      onClick: () => navigate("/auth"),
+      onClick: () =>
+        navigate(`/auth?next=${encodeURIComponent(detailsPath)}`),
+    };
+  } else if (onEnroll) {
+    primaryCta = {
+      label: enrolling ? "Enrolling…" : "Enroll now",
+      onClick: () => onEnroll(program.id),
+    };
+  } else {
+    primaryCta = {
+      label: "View details",
+      onClick: () => navigate(detailsPath),
     };
   }
+
+  // Secondary always routes to the same detail page so users have one
+  // consistent "learn more" affordance in the same slot on every card.
+  const secondaryCta =
+    primaryCta.label === "View details"
+      ? undefined
+      : { label: "View details", onClick: () => navigate(detailsPath) };
 
   return (
     <OfferCard
