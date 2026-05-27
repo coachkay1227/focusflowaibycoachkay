@@ -6,8 +6,8 @@ import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sparkles, ArrowRight, User, LogOut, Zap } from "lucide-react";
+import { Sparkles, ArrowRight, Zap } from "lucide-react";
+import DesktopNav from "@/components/DesktopNav";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
 import { getPublicPrograms } from "@/data/programs";
@@ -18,7 +18,7 @@ import { trackEvent } from "@/lib/analytics";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  useAuth();
   // Start fully visible so hero content appears immediately above the fold
   // (no animation gating). Transitions still apply on subsequent re-renders.
   const [phase, setPhase] = useState(4);
