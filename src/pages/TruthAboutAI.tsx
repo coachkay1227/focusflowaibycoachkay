@@ -1,12 +1,27 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, ShieldCheck, Eye, Compass, AlertTriangle, ArrowRight } from "lucide-react";
+import {
+  Sparkles,
+  Eye,
+  Compass,
+  AlertTriangle,
+  ArrowRight,
+  Unlock,
+  Tag,
+  HeartHandshake,
+  Clock,
+  ShieldOff,
+  Wrench,
+} from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import OfferCard from "@/components/offers/OfferCard";
 import SiteFooter from "@/components/SiteFooter";
 import MirrorReveal from "@/components/truth/MirrorReveal";
+import ToolPickCard from "@/components/truth/ToolPickCard";
+import { TOOL_PICKS } from "@/data/tool-picks";
+import { FOCUS_PILLARS } from "@/data/programs";
 import { SITE_URL, ORG_ID } from "@/lib/seo-schema";
 
 const TAGS = ["AI literacy", "No hype", "No fear", "Human-first", "Coach Kay"];
