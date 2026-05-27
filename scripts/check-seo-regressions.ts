@@ -33,6 +33,8 @@ const INDEXABLE: string[] = [
   "/autism-social-stories",
   "/faq",
   "/collective",
+  "/pause-hub",
+  "/ai-tools",
   "/privacy",
   "/terms",
   "/disclaimer",
