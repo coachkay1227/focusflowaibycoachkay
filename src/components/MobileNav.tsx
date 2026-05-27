@@ -7,42 +7,65 @@ import BrandLogo from "@/components/BrandLogo";
 import {
   Menu, X, LayoutDashboard, User, LogOut, Sparkles, ChevronDown, Shield,
   Eye, MessageCircle, HelpCircle, BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers, ArrowRight,
+  Rocket, ClipboardCheck, Flame, Library, ShieldAlert, FileSearch, Heart,
 } from "lucide-react";
 
-const workGroups = [
+type NavItem = { label: string; path: string; icon: any };
+type NavGroup = { key: string; label: string; items: NavItem[]; defaultOpen?: boolean };
+
+const navGroups: NavGroup[] = [
   {
-    label: "For Individuals",
+    key: "start",
+    label: "Start Here",
+    defaultOpen: true,
+    items: [
+      { label: "Clarity Session", path: "/clarity", icon: Sparkles },
+      { label: "Starter Kit", path: "/starter-kit", icon: Rocket },
+      { label: "Free Assessment", path: "/assessment", icon: ClipboardCheck },
+      { label: "Mirror Challenge", path: "/mirror-challenge", icon: Eye },
+      { label: "30-Day Challenges", path: "/challenges", icon: Flame },
+    ],
+  },
+  {
+    key: "work",
+    label: "Work With Me",
     items: [
       { label: "Transformation Paths", path: "/modules", icon: BookOpen },
       { label: "Books & AI Kits", path: "/store", icon: BookMarked },
       { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot },
-    ],
-  },
-  {
-    label: "For Organizations",
-    items: [
-      { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
       { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
+      { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
       { label: "Collective AI", path: "/collective", icon: Layers },
+      { label: "Business Audit", path: "/audit/landing", icon: FileSearch },
+      { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart },
     ],
   },
   {
-    label: "Connect",
+    key: "resources",
+    label: "Tools & Resources",
     items: [
+      { label: "AI Tools Directory", path: "/ai-tools", icon: Library },
+      { label: "Pause Hub — Scam Watch", path: "/pause-hub", icon: ShieldAlert },
+      { label: "Coach Chat (AI)", path: "/coach", icon: MessageCircle },
       { label: "Elevation Hub", path: "/community", icon: Users },
     ],
   },
-];
-
-const topLinks = [
-  { label: "The Truth About AI", path: "/truth", icon: Eye },
-  { label: "Meet Coach Kay", path: "/coach-kay", icon: MessageCircle },
-  { label: "FAQ", path: "/faq", icon: HelpCircle },
+  {
+    key: "truth",
+    label: "Truth & About",
+    items: [
+      { label: "The Truth About AI", path: "/truth", icon: Eye },
+      { label: "Meet Coach Kay", path: "/coach-kay", icon: User },
+      { label: "FAQ", path: "/faq", icon: HelpCircle },
+    ],
+  },
 ];
 
 const MobileNav = () => {
   const [open, setOpen] = useState(false);
-  const [workOpen, setWorkOpen] = useState(true);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(navGroups.map((g) => [g.key, !!g.defaultOpen])),
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -52,6 +75,9 @@ const MobileNav = () => {
     setOpen(false);
     navigate(path);
   };
+
+  const toggle = (key: string) =>
+    setOpenGroups((s) => ({ ...s, [key]: !s[key] }));
 
   return (
     <div className="md:hidden">
@@ -95,62 +121,45 @@ const MobileNav = () => {
               </div>
 
               <nav className="flex-1 overflow-y-auto px-4 space-y-1">
-                {/* Work With Me accordion */}
-                <button
-                  onClick={() => setWorkOpen((v) => !v)}
-                  className="w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm text-foreground hover:bg-muted/30 transition-colors"
-                >
-                  <span className="font-medium">Work With Me</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${workOpen ? "rotate-180" : ""}`} />
-                </button>
-                {workOpen && (
-                  <div className="pl-2 pb-2 space-y-4">
-                    {workGroups.map((group) => (
-                      <div key={group.label}>
-                        <div className="font-mono text-[10px] tracking-[0.18em] text-primary/70 uppercase px-3 mb-1">
-                          {group.label}
-                        </div>
-                        {group.items.map((item) => {
-                          const active = location.pathname === item.path;
-                          const Icon = item.icon;
-                          return (
-                            <button
-                              key={item.path}
-                              onClick={() => go(item.path)}
-                              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                                active
-                                  ? "bg-primary/10 text-primary"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                              }`}
-                            >
-                              <Icon className="h-4 w-4" />
-                              {item.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="my-2 border-t border-border/30" />
-
-                {topLinks.map((item) => {
-                  const active = location.pathname === item.path;
-                  const Icon = item.icon;
+                {navGroups.map((group) => {
+                  const isOpen = !!openGroups[group.key];
+                  const groupActive = group.items.some((i) => location.pathname.startsWith(i.path));
                   return (
-                    <button
-                      key={item.path}
-                      onClick={() => go(item.path)}
-                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-colors ${
-                        active
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                    </button>
+                    <div key={group.key}>
+                      <button
+                        onClick={() => toggle(group.key)}
+                        className={`w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm transition-colors ${
+                          groupActive
+                            ? "text-primary bg-primary/10"
+                            : "text-foreground hover:bg-muted/30"
+                        }`}
+                      >
+                        <span className="font-medium">{group.label}</span>
+                        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                      </button>
+                      {isOpen && (
+                        <div className="pl-2 pb-2 pt-1 space-y-0.5">
+                          {group.items.map((item) => {
+                            const active = location.pathname === item.path;
+                            const Icon = item.icon;
+                            return (
+                              <button
+                                key={item.path}
+                                onClick={() => go(item.path)}
+                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                                  active
+                                    ? "bg-primary/10 text-primary"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                                }`}
+                              >
+                                <Icon className="h-4 w-4" />
+                                {item.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </nav>
