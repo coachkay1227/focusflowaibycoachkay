@@ -62,6 +62,7 @@ export default function OfferCard({
 
   return (
     <article
+      data-offer-card
       className={`group relative h-full flex flex-col rounded-2xl border ${ring} bg-card/40 backdrop-blur-sm ${padding} transition-all hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-20px_hsl(43_75%_52%/0.25)]`}
     >
       {/* Zone 1 — eyebrow + badge */}
