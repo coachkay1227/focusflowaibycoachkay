@@ -582,7 +582,7 @@ export default function TruthAboutAI() {
                 The stack behind every program. Affiliate links are tagged. No tool here gets a
                 placement it didn't earn in my own workflow first.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-stretch">
                 {TOOL_PICKS.map((tool) => (
                   <ToolPickCard key={tool.name} tool={tool} />
                 ))}
