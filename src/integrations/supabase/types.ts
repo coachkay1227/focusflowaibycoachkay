@@ -91,6 +91,8 @@ export type Database = {
           client_name: string
           client_phone: string | null
           created_at: string
+          delivered_at: string | null
+          download_url: string | null
           gift_note: string | null
           gift_recipient: string | null
           gift_wrap: boolean
@@ -121,6 +123,8 @@ export type Database = {
           client_name: string
           client_phone?: string | null
           created_at?: string
+          delivered_at?: string | null
+          download_url?: string | null
           gift_note?: string | null
           gift_recipient?: string | null
           gift_wrap?: boolean
@@ -151,6 +155,8 @@ export type Database = {
           client_name?: string
           client_phone?: string | null
           created_at?: string
+          delivered_at?: string | null
+          download_url?: string | null
           gift_note?: string | null
           gift_recipient?: string | null
           gift_wrap?: boolean

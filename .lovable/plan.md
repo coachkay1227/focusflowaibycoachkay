@@ -1,61 +1,77 @@
-# Launch Audit — Status Report
+## Goal
 
-## ✅ Verified working (from yesterday's changes)
+Adopt the new autism purchase confirmation email design, fix the schema mismatch with the Stripe webhook, and wire a real `downloadUrl` path so the same template covers both async (default) and ready-now (future) delivery.
 
-- **Email rewire complete**: `send-transactional-email` and `auth-email-hook` both send via Resend API → `Coach Kay <noreply@coachkayai.life>`, Reply-To `Hello@coachkayelevates.org`. No stale `notify.coachkayelevates.org` / `SENDER_DOMAIN` references remain anywhere in the codebase.
-- **Autism purchase confirmation template** exists (`autism-purchase-confirmation.tsx`) and is registered.
-- **Stripe webhook** wired to invoke the new autism template with extended metadata.
-- **Templates registered** (11 total): application-received, audit-purchase-confirmation, autism-purchase-confirmation, book-order-paid, book-order-status-update, clarity-code-result, reset-welcome, transformation-welcome, webhook-failure-alert, welcome-to-focusflow.
-- **Edge function logs**: no recent errors on send-transactional-email or stripe-webhook (no traffic yet — these need a real test transaction to confirm).
+## Brand recommendation (since you're unsure)
 
-## ⚠️ Still broken / needs fixing
+Use a **hybrid header**: keep `FocusFlow AI` as the parent brand wordmark at the top, then `Lulu's Adventures · Personalized Social Stories` as the product-line sub-header. This way:
+- Customers still recognize the parent brand on receipts/HSA docs (matters for reimbursement paperwork)
+- "Lulu's Adventures" gets room to grow as the autism product line
+- We don't have to rebrand the landing page, store, etc. in this pass
 
-### Security findings (10 open from scanner, NEW since yesterday)
+If you'd rather go pure "Lulu's Adventures" (no FocusFlow mention), say so and I'll strip it.
 
-1. **`book_orders` — missing INSERT policy** (warn). Authenticated users can insert rows with arbitrary `user_id`. Need `WITH CHECK (auth.uid() = user_id)`.
-2. **`autism_orders` — missing INSERT policy** (warn). Same issue. Need ownership-enforcing INSERT policy.
-3. **`cohort_registrations`** — anon INSERT with no field validation / rate limit. Lower priority; add a CHECK on email format at minimum.
-4. **5× "RLS Policy Always True" warnings** — need to identify which UPDATE/DELETE/INSERT policies use `USING (true)` and tighten them.
-5. **3× "Authenticated Can Execute SECURITY DEFINER" warnings** — new definer functions exposed to `authenticated` role. Need to identify and either revoke EXECUTE or document as accepted risk in security memory.
-6. **1× "Anon Can Execute SECURITY DEFINER"** — likely `get_audit_by_token` (already in accepted-risk memory). Confirm and re-mark as fixed.
+## Changes
 
-### Email infrastructure gaps
+### 1. Rewrite `autism-purchase-confirmation.tsx`
 
-7. **Lovable Emails workspace still has stale `coachkayelevates.org` entry** with `provisioning_failed`. Should be deleted + Lovable Emails toggled off for the project (since we now send 100% via Resend) — otherwise it sits as a confusing artifact and the queue dispatcher cron may still try to drain.
-8. **`process-email-queue` cron** — confirm whether it's still scheduled. Since both senders now bypass the pgmq queue and call Resend directly, the queue tables (`email_send_log`, `email_unsubscribe_tokens`, `suppressed_emails`) are no longer being written to. Decision needed: (a) delete the queue infra, or (b) refactor the Resend senders to enqueue + dispatch (recommended for retry safety, suppression, unsubscribe).
-9. **No suppression / unsubscribe check** in the new Resend sender path. Recipients who unsubscribed previously will now receive emails again. Auth emails are fine (transactional/required), but app emails should respect `suppressed_emails`.
+Replace the current file. Key adjustments to the snippet you pasted:
+- Convert to project convention: `npm:react@18.3.1` + `npm:@react-email/components@0.0.22` imports, named `template` export `satisfies TemplateEntry`, `<Preview>` component, `previewData` block.
+- Apply hybrid header above.
+- Map props to what the webhook actually sends + new fields:
+  - `name` (existing) → greeting
+  - `packageName` → `bundleName`
+  - `orderTotal` (currency string) → `bundlePrice`
+  - `orderId` → `orderNumber`
+  - `childFirstName`, `scenarioFocus`, `isGift`, `giftRecipient` → kept (used in copy)
+  - **New:** `deliveryMethod`, `storyCount`, `includesHsaReceipt`, `downloadUrl` (all optional with sensible defaults)
+- HSA/FSA + LoMN + IEP bullets stay (you confirmed these are planned deliverables — I'll add a note in the security/follow-ups list to actually generate them before launch).
+- Keep dark navy palette as-is — this project bypasses the Lovable email gateway and sends directly via Resend, so the white-body convention doesn't apply, and the navy matches your existing brand memory.
+- Reply-to and footer continue to use `Hello@coachkayelevates.org` via the Resend sender (no template change needed there).
 
-### Code health
+### 2. Update `stripe-webhook/index.ts` autism branch
 
-10. **Stale references to send-transactional-email** in `client-notify`, `clarity-insight`, `apply-now`, `update-book-order`, `stripe-webhook`, `_shared/structured-log.ts` — verify each invocation still passes a valid `templateName` and that no caller still expects the old Lovable gateway response shape.
-11. **React Router v7 warnings** in console (non-blocking) — add `future` flags or accept.
+In the `templateData` block (lines ~276-285), add:
+- `deliveryMethod: pending.package_slug?.includes('illustrated') ? 'custom-illustrated PDF' : 'print-ready PDF'` (or pull from package metadata if you'd rather — tell me)
+- `storyCount: 1` for now (extend later if bundles ship)
+- `includesHsaReceipt: true`
+- `downloadUrl`: read from a new nullable column `autism_orders.download_url`; pass through if set, otherwise omit so the template's fallback copy fires
 
-## 📄 The "one more page" you mentioned
+### 3. Add `download_url` column + admin delivery flow
 
-You said you still have one more page to build — I don't know which one. Routes currently registered: Index, Auth, ResetPassword, Onboarding, Dashboard, Profile, Community, Modules, ProgramDetail, ClaritySession, ResultScreen, MirrorChallenge, Challenges, CoachChat, CoachKay, Store, OrderSuccess, AutismSocialStories, Assessment, StarterKit, RentAnAgent, Advisory, AuditIntake, AuditReport, AuditLanding, EmailPreview, EmailUnsubscribe, Unsubscribe, Kiosk, Sitemap, Faq, NotFound, Privacy, Terms, Disclaimer, RefundPolicy, plus Admin (Dashboard/Users/Analytics/Content/Orders). **Tell me which page is missing** and I'll build it.
+Migration:
+```sql
+ALTER TABLE public.autism_orders
+  ADD COLUMN download_url text,
+  ADD COLUMN delivered_at timestamptz;
+```
+(RLS already covers it via existing service-role and owner policies — no new GRANTs needed.)
 
-## 📧 Email campaign (next phase, not started)
+Then in `src/pages/admin/AdminOrders.tsx`, add a "Deliver Story" action for autism orders that:
+1. Prompts admin for the download URL (file is hosted wherever Coach Kay drops the PDF — Drive, Dropbox, or we can add a storage bucket later)
+2. PATCHes `autism_orders` with `download_url`, `delivered_at = now()`, `status = 'delivered'`
+3. Re-invokes `send-transactional-email` with `templateName: 'autism-purchase-confirmation'` and `idempotencyKey: 'autism-delivery-${id}'` so the customer gets a second email — same template, but the `downloadUrl` branch fires this time.
 
-Confirmed scope before building:
-- Welcome / nurture sequence for each access path?
-- Audit-buyer drip after $47 purchase?
-- Autism Studio post-purchase educational series?
-- Cohort enrollment campaign?
-- Marketing emails belong outside Lovable's transactional system (deliverability rule) — confirm you want these in GHL or Resend Broadcasts, not in our transactional pipeline.
+This means **the same template serves both the "order received" and "story ready" emails**, differentiated by whether `downloadUrl` is present. Simpler than two templates.
 
----
+### 4. Update plan.md follow-ups
 
-## Proposed fix order (if approved)
+Add to the launch checklist:
+- Build HSA itemized receipt generator
+- Build Letter of Medical Necessity PDF template
+- Decide PDF hosting (Supabase storage bucket vs external link)
 
-1. Add INSERT-with-ownership policies to `book_orders` + `autism_orders` (migration).
-2. Audit + tighten the 5 "always true" RLS policies (migration).
-3. Identify the 3 new authenticated-SECURITY-DEFINER functions; revoke or accept-risk + memory update.
-4. Re-mark `get_audit_by_token` finding as fixed (already in memory).
-5. Decide queue strategy: refactor Resend senders to enqueue+dispatch, OR delete queue infra. **Recommend refactor** so we keep suppression/unsubscribe.
-6. Add suppression check + unsubscribe footer support to the Resend send path.
-7. Delete stale Lovable Emails workspace entry; toggle Lovable Emails off.
-8. Sanity-check the 6 callers of `send-transactional-email`.
-9. Build the missing page (need name).
-10. Email campaign scoping → build.
+## Files touched
 
-**Tell me: which page is missing, and do you want me to proceed with items 1–8 as a single fix pass before we tackle the page + campaigns?**
+- `supabase/functions/_shared/transactional-email-templates/autism-purchase-confirmation.tsx` (rewrite)
+- `supabase/functions/stripe-webhook/index.ts` (extend templateData)
+- New migration: add `download_url` + `delivered_at` to `autism_orders`
+- `src/pages/admin/AdminOrders.tsx` (deliver action)
+- `.lovable/plan.md` (follow-ups)
+
+## Out of scope (call out if you want them in)
+
+- Actually generating the HSA receipt PDF / LoMN template
+- Setting up a storage bucket for hosted PDFs (using external URL paste-in for now)
+- Rebranding non-email autism surfaces (landing, store cards)
+- Second email template for "story ready" (reusing this one instead)
