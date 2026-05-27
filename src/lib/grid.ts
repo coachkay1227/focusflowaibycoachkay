@@ -20,6 +20,19 @@ export function getSymmetricGridClass(count: number): string {
 }
 
 /**
+ * Variant that prefers a 4-up row on large screens when count === 4.
+ * Use for pricing tiers where dense side-by-side comparison matters.
+ */
+export function getSymmetricPricingGridClass(count: number): string {
+  if (count <= 1) return "grid grid-cols-1 max-w-md mx-auto";
+  if (count === 2) return "grid grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto";
+  if (count === 3) return "grid grid-cols-1 md:grid-cols-3 max-w-5xl mx-auto";
+  if (count === 4) return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+  // 5, 6+
+  return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+}
+
+/**
  * Returns true when a grid of `count` cards should center the last row
  * (e.g. 5 cards on a 3-up grid leaves 2 orphans in the last row).
  * Use with `[&>*:nth-last-child(-n+2)]:lg:col-start-auto` patterns,
