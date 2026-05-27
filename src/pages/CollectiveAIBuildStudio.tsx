@@ -249,7 +249,7 @@ const CollectiveAIBuildStudio = () => {
         </div>
 
         {/* Offer grid */}
-        <div className={`${getSymmetricGridClass(activeOffers.length)} gap-5`}>
+        <div className={`${getSymmetricGridClass(activeOffers.length)} gap-5 items-stretch`}>
           {activeOffers.map((o) => {
             const tierLabel = BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.label ?? "";
             const isCheckout = Boolean(o.priceId);

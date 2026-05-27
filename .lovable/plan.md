@@ -1,67 +1,36 @@
-# Clean up the email mismatch — once and for all
+# Build Studio + PricingSection ↔ Truth page: geometry alignment
 
-## What's actually true in the code right now
+## What I found when I opened the files
 
-I read every email-related file. Here's the real picture:
+Both files **already use `OfferCard`** end to end:
+- `src/components/PricingSection.tsx` lines 240-254 — every offer renders through `OfferCard`.
+- `src/pages/CollectiveAIBuildStudio.tsx` lines 252-275 — every tier offer renders through `OfferCard`.
 
-**Sending (what runs in production today):**
-- `send-transactional-email/index.ts` → calls **Resend directly** with `Coach Kay <noreply@coachkayai.life>`
-- `auth-email-hook/index.ts` → calls **Resend directly** with `noreply@coachkayai.life`
-- `apply-now/index.ts` → calls **Resend directly** with `noreply@coachkayai.life`
-- `send-email/index.ts` → calls **Resend directly** with `noreply@coachkayai.life`
+So the migration isn't actually missing — it's already done. What **doesn't** match the Truth page is the *grid geometry around the cards*. Three concrete differences are making the cards look uneven compared to `/truth-about-ai`:
 
-All four use `RESEND_API_KEY` and the verified Resend domain `coachkayai.life`. None of them touch the Lovable Email queue.
+| Surface | Truth page (the reference) | What the other two do |
+|---|---|---|
+| Grid wrapper | `grid grid-cols-1 md:grid-cols-3 gap-5 **items-stretch**` | Build Studio: no `items-stretch`. PricingSection: no `items-stretch`. |
+| Grid helper | n/a (hand-rolled 3-up) | Build Studio uses `getSymmetricGridClass`. PricingSection uses a hand-rolled `lg:grid-cols-3`. |
+| Card wrapper | `<OfferCard>` is a direct grid child | PricingSection wraps each card in `<AnimatedSection className="h-full">`, which becomes the grid item — and because `AnimatedSection` applies an `opacity`/`transform` transition on its own `<div>`, it adds a stacking layer between the grid row and the card. With `items-stretch` missing this is what breaks height parity. |
 
-**Dead weight still sitting in the project:**
-- `notify.coachkayelevates.org` is registered as the project's Lovable Email domain, status **pending DNS forever**. Nothing sends through it. It keeps surfacing in scans/tooling and that's why you keep seeing it get flagged.
-- `process-email-queue/index.ts` is a queue dispatcher that calls `sendLovableEmail()` (Lovable Email infra, not Resend). It runs every 5 seconds via pg_cron but the queue is empty because no code enqueues anything — `send-transactional-email` and `auth-email-hook` skip the queue entirely.
-- Email queue tables (`email_send_log`, `email_send_state`, `email_unsubscribe_tokens`, `suppressed_emails`) — only `email_send_log` is actively written by the Resend path; the others are queue-only and unused.
-- A `welcome-to-focusflow` memory note still references `notify.coachkayelevates.org` as the sender subdomain.
-
-You're right — I've patched symptoms three times. The actual fix is to delete the dead Lovable Email pipe and the stale domain registration so nothing in the project ever points at `notify.coachkayelevates.org` again.
+That's why the Truth cards look symmetric and the other two don't — same component, different containers.
 
 ## The plan
 
-### 1. Remove the Lovable Email domain registration
-Disable Lovable Emails for the project so `notify.coachkayelevates.org` stops showing up as the configured sender. (Heads up: this will *not* auto-delete the NS records you added at your registrar months ago — those are inert as long as nothing points at them, but you can remove them at your DNS provider any time.) Auth emails will fall back to Lovable's default templates only if anything were still routing through the hook — but our hook calls Resend directly, so nothing changes for users.
+### 1. `src/components/PricingSection.tsx`
+- Add `items-stretch` to the grid wrapper.
+- Replace the hand-rolled `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3` with `getSymmetricGridClass(group.offers.length)` so a 3-card group locks 3-up and a single-card group (Partnership) centers naturally, removing the `centerSingle` hack (`[&>*]:lg:col-start-2`).
+- Keep the `AnimatedSection` wrapper for the entrance fade, but ensure it stays `h-full` so the inner OfferCard can stretch to the grid row.
 
-### 2. Delete the dead queue plumbing
-- Delete edge function: `process-email-queue` (cron will be orphaned and stop firing; we'll also drop the cron job in a migration).
-- Drop the pg_cron job `process-email-queue` and the `email_queue_service_role_key` vault secret in a migration.
-- Drop the unused tables: `email_send_state`, `email_unsubscribe_tokens`, `suppressed_emails`, plus the `enqueue_email` / `read_email_batch` / `delete_email` / `move_to_dlq` RPC functions.
-- Keep `email_send_log` — it's actively populated by the Resend path and is your only audit trail.
+### 2. `src/pages/CollectiveAIBuildStudio.tsx`
+- Add `items-stretch` to the offer grid (line 252) so all OfferCards in a tier render at the tallest sibling's height — matches Truth.
+- No other changes — it's already using `OfferCard` + `getSymmetricGridClass`.
 
-### 3. Clean residual references
-- `process-email-queue/index.ts` — delete.
-- `preview-transactional-email` — keep (it's a dev preview tool, doesn't touch the queue).
-- `handle-email-suppression` / `handle-email-unsubscribe` — these were scaffolded for Lovable Email's bounce/unsubscribe webhook. Since we send via Resend, hook them up to Resend's webhook **or** delete them. Recommendation: keep `handle-email-unsubscribe` (the in-app `/unsubscribe` page calls it) but rewrite it to use a simpler `email_send_log` + a fresh small `unsubscribes` table; delete `handle-email-suppression` unless you wire Resend webhooks to it.
-- Update memory note `mem://features/email-strategy` — replace `notify.coachkayelevates.org` with `noreply@coachkayai.life (Resend, verified)`.
-- Remove `sender_domain` references in any client code that passes it (search came up clean outside the dead queue, but I'll double-check during build).
+### 3. Leave alone
+- `OfferCard` itself — it's the locked-symmetry source of truth. No changes.
+- The PILLARS row (Speed / Systems / Sovereignty) and the PROCESS row on Build Studio — those are intentionally a different visual treatment (icon + paragraph cards, not pricing offers). Migrating them to `OfferCard` would add a price/CTA zone they don't need. **Confirm** before I touch them.
 
-### 4. Verify end-to-end after cleanup
-- Trigger a test signup → confirm auth email arrives from `noreply@coachkayai.life`.
-- Trigger an Apply Now submit → confirm both the coach notification and the applicant `application-received` email arrive.
-- Check `email_send_log` for `sent` rows; confirm no `pending` orphans.
-- Confirm `supabase/config.toml` no longer needs `process-email-queue` entry.
+## Open question
 
-## Files / surfaces touched
-
-```
-DELETE  supabase/functions/process-email-queue/
-EDIT    supabase/functions/handle-email-suppression/   (delete or rewrite)
-EDIT    supabase/functions/handle-email-unsubscribe/   (rewrite to not depend on queue tables)
-EDIT    supabase/config.toml                            (remove process-email-queue block)
-NEW     supabase/migrations/<ts>_drop_email_queue.sql   (drop tables, RPCs, cron job, vault secret)
-EDIT    mem://features/email-strategy                   (correct the sender)
-TOOL    email_domain--toggle_project_emails(false)      (disable Lovable Email domain)
-```
-
-## What this fixes for launch
-- Stops the `notify.coachkayelevates.org` ghost from getting re-flagged.
-- Removes a cron job that's been waking the DB every 5s for nothing.
-- Single, obvious source of truth: **all email = Resend, from `noreply@coachkayai.life`, replies to `Hello@coachkayelevates.org`**.
-- `email_send_log` becomes a clean audit trail you can actually trust.
-
-## Open question before I build
-
-**Do you want me to also delete `handle-email-suppression`?** It's only useful if you wire Resend's bounce/complaint webhook to it. If you don't want bounce tracking right now, I'll delete it. If you do, I'll keep it and rewrite it for the Resend webhook payload shape.
+Are the **PILLARS** cards or the **PROCESS** cards on Build Studio what you actually meant by "tier cards"? They're the only custom cards left on that page. If yes, I'll migrate them too — but they're informational, not priced offers, so I'd render them in `OfferCard` with `density="compact"`, no `price`, no CTAs, just title + tagline + bullet (or skip bullets entirely). Tell me which interpretation matches what you saw and I'll execute.
