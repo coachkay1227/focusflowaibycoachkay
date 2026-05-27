@@ -256,6 +256,60 @@ export type Database = {
         }
         Relationships: []
       }
+      build_inquiries: {
+        Row: {
+          budget_range: string | null
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          project_type: string
+          source: string | null
+          status: string
+          stripe_session_id: string | null
+          tier: string
+          timeline: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          project_type: string
+          source?: string | null
+          status?: string
+          stripe_session_id?: string | null
+          tier: string
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          project_type?: string
+          source?: string | null
+          status?: string
+          stripe_session_id?: string | null
+          tier?: string
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       business_audits: {
         Row: {
           created_at: string
