@@ -287,29 +287,42 @@ const RentAnAgent = () => {
               </div>
             );
           })}
+        </div>
 
-          {/* Enterprise — inquiry only */}
-          <div className="flex flex-col rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm p-6 hover:border-primary/40 transition-colors">
-            <Crown className="h-5 w-5 text-primary mb-3" strokeWidth={1.5} />
-            <h3 className="font-heading text-xl text-foreground">{RENT_AGENT_ENTERPRISE.name}</h3>
-            <p className="mt-1 text-sm text-muted-foreground min-h-[2.5rem]">{RENT_AGENT_ENTERPRISE.tagline}</p>
-            <div className="mt-4 text-xl font-semibold text-primary">{RENT_AGENT_ENTERPRISE.priceDisplay}</div>
-            <ul className="mt-5 space-y-2 flex-1">
-              {RENT_AGENT_ENTERPRISE.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-sm text-foreground/85">
-                  <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-xs text-muted-foreground italic">{RENT_AGENT_ENTERPRISE.best_for}</p>
-            <Button
-              variant="outline"
-              className="mt-6 w-full border-border"
-              onClick={() => openInquiry("Rent-an-Agent — Enterprise", "Tell us about the scope: number of agents, integrations, compliance needs, and timeline.")}
-            >
-              Request Enterprise Scope
-            </Button>
+        {/* Enterprise — centered banner, set apart from the tier grid */}
+        <div className="mt-10 max-w-3xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl border border-primary/40 ring-1 ring-primary/15 bg-gradient-to-br from-card/60 via-card/40 to-primary/5 backdrop-blur-sm p-8 md:p-10">
+            <div className="grid md:grid-cols-[1.4fr_1fr] gap-8 md:gap-10 items-center">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <Crown className="h-5 w-5 text-primary" strokeWidth={1.5} />
+                  <span className="font-mono-label text-[10px] tracking-[0.2em] uppercase text-primary bg-primary/10 border border-primary/30 rounded-full px-2 py-0.5">
+                    By application
+                  </span>
+                </div>
+                <h3 className="font-heading text-2xl text-foreground">{RENT_AGENT_ENTERPRISE.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{RENT_AGENT_ENTERPRISE.tagline}</p>
+                <ul className="mt-5 space-y-2">
+                  {RENT_AGENT_ENTERPRISE.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-foreground/85">
+                      <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground italic">{RENT_AGENT_ENTERPRISE.best_for}</p>
+              </div>
+              <div className="flex flex-col gap-4 md:items-end">
+                <div className="text-2xl font-semibold text-primary md:text-right">{RENT_AGENT_ENTERPRISE.priceDisplay}</div>
+                <Button
+                  variant="outline"
+                  className="w-full md:w-auto border-primary/50 text-primary hover:bg-primary/10"
+                  onClick={() => openInquiry("Rent-an-Agent — Enterprise", "Tell us about the scope: number of agents, integrations, compliance needs, and timeline.")}
+                >
+                  Request Enterprise Scope
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
