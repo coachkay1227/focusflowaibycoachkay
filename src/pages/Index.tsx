@@ -71,63 +71,11 @@ const Index = () => {
         FOCUSFLOW AI
       </div>
 
-      {/* Navigation — premium minimal bar mirroring global IA */}
-      <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5">
-        <div className="font-heading text-xl md:text-2xl font-light tracking-wide" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden="true" className="text-primary font-medium">Focus</span>
-          <span aria-hidden="true" className="text-foreground font-light">Flow</span>
-          <span aria-hidden="true" className="text-primary font-medium ml-1">AI</span>
-        </div>
-        <div className="hidden md:flex items-center gap-1">
-          <button onClick={() => navigate("/modules")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Paths</button>
-          <button onClick={() => navigate("/store")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Studio</button>
-          <button onClick={() => navigate("/truth")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Truth</button>
-          <button onClick={() => navigate("/coach-kay")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">Coach Kay</button>
-          <button onClick={() => navigate("/faq")} className="px-3 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">FAQ</button>
-        </div>
-        <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="hidden md:inline-flex text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
-              >
-                Dashboard
-              </button>
-              <Avatar className="h-8 w-8 border border-primary/30 hidden md:flex">
-                <AvatarImage src={user.user_metadata?.avatar_url || user.user_metadata?.picture} />
-                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                  {(user.email?.[0] || "U").toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <button
-                onClick={signOut}
-                className="hidden md:flex items-center text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Sign out"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </>
-          ) : (
-            <Button
-              onClick={() => navigate("/auth")}
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground hidden md:inline-flex"
-            >
-              <User className="h-4 w-4 mr-1" /> Sign In
-            </Button>
-          )}
-          <Button
-            onClick={() => navigate("/clarity")}
-            size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden md:inline-flex rounded-full px-5"
-          >
-            Get My Clarity Code
-          </Button>
-          <MobileNav />
-        </div>
-      </nav>
+      {/* Global navigation — single source of truth across all pages */}
+      <DesktopNav />
+      <div className="md:hidden relative z-10 flex items-center justify-end px-6 py-4">
+        <MobileNav />
+      </div>
 
       {/* Hero — Editorial Asymmetry (60/40) */}
       <section className="relative z-10 px-4 md:px-8 pb-6">
