@@ -240,7 +240,7 @@ const Index = () => {
             </div>
 
             {/* 40% — Portrait */}
-            <div className="w-full md:w-[40%] relative bg-card/50 overflow-hidden group min-h-[50vh] md:min-h-0">
+            <div className="w-full md:w-[40%] relative bg-navy-deep overflow-hidden group min-h-[50vh] md:min-h-0">
               {/* Overlays */}
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
@@ -517,7 +517,7 @@ const Index = () => {
               pillar: "O · OWNERSHIP  ·  S · SUSTAIN",
             },
           ].map((item, i) => (
-            <AnimatedSection key={item.name} delay={i * 120}>
+            <AnimatedSection key={item.name} delay={i * 120} className="h-full">
               <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8 flex flex-col h-full">
                 <p className="text-foreground/90 text-sm leading-relaxed italic flex-1">"{item.quote}"</p>
                 <div className="mt-6 pt-4 border-t border-border/50">
