@@ -1,44 +1,67 @@
-## What's actually wrong
+# Clean up the email mismatch — once and for all
 
-The home page (`src/pages/Index.tsx`) has its **own hand-rolled header** that was never updated when we restructured the global nav. That's why "everything doesn't feel aligned end-to-end" — because it literally isn't.
+## What's actually true in the code right now
 
-### Mismatches found
+I read every email-related file. Here's the real picture:
 
-1. **Nav items are stale.** Home shows `Paths · Studio · Truth · Coach Kay · FAQ` (old flat list). Every other page now shows the 4-group system: `Start Here · Work With Me · Tools & Resources · Truth & About`. So clicking the logo to go home makes the nav visibly change — confusing and unprofessional.
-2. **Wordmark drift.** Home renders the wordmark with inline `<span>`s (`Focus` + `Flow` + `AI`). Every other page uses `<BrandLogo />`. Any future tweak to the brand mark won't propagate to home.
-3. **CTA label drift.** Home CTA = "Get My Clarity Code". Global nav CTA = "Start Clarity". Pick one.
-4. **Account UI drift.** Home shows raw avatar + dashboard link + signout icon inline. Global nav uses a single account dropdown (Dashboard / Profile / Admin / Sign out). Two different account UIs depending on the page.
-5. **White sliver above the portrait** (the thing you flagged). The `coachKayPortrait` asset has white pixels at the top edge of the source image and `object-cover` reveals them inside the navy column. There's no top gradient masking it — the bottom has a fade-to-navy gradient but the top is unmasked.
+**Sending (what runs in production today):**
+- `send-transactional-email/index.ts` → calls **Resend directly** with `Coach Kay <noreply@coachkayai.life>`
+- `auth-email-hook/index.ts` → calls **Resend directly** with `noreply@coachkayai.life`
+- `apply-now/index.ts` → calls **Resend directly** with `noreply@coachkayai.life`
+- `send-email/index.ts` → calls **Resend directly** with `noreply@coachkayai.life`
 
-## The plan (frontend-only, zero functional changes)
+All four use `RESEND_API_KEY` and the verified Resend domain `coachkayai.life`. None of them touch the Lovable Email queue.
 
-### 1. Replace the inline home header with the global pattern
-In `src/pages/Index.tsx`:
-- Delete the entire custom `<nav>` block (lines ~74–130).
-- Render `<DesktopNav />` and `<MobileNav />` at the top of the page instead.
-- Update `DesktopNav.tsx`: remove the `isHome` early-return so it renders on `/` too. (It already hides on `/auth`, `/kiosk`, `/reset-password`, `/onboarding` via `NAV_HIDDEN_ROUTES` — that stays.)
-- Update Index's top padding so the hero clears the now-fixed 64px nav (`pt-16`).
+**Dead weight still sitting in the project:**
+- `notify.coachkayelevates.org` is registered as the project's Lovable Email domain, status **pending DNS forever**. Nothing sends through it. It keeps surfacing in scans/tooling and that's why you keep seeing it get flagged.
+- `process-email-queue/index.ts` is a queue dispatcher that calls `sendLovableEmail()` (Lovable Email infra, not Resend). It runs every 5 seconds via pg_cron but the queue is empty because no code enqueues anything — `send-transactional-email` and `auth-email-hook` skip the queue entirely.
+- Email queue tables (`email_send_log`, `email_send_state`, `email_unsubscribe_tokens`, `suppressed_emails`) — only `email_send_log` is actively written by the Resend path; the others are queue-only and unused.
+- A `welcome-to-focusflow` memory note still references `notify.coachkayelevates.org` as the sender subdomain.
 
-Result: identical header on every page, identical wordmark, identical account dropdown, identical CTA ("Start Clarity"). Single source of truth.
+You're right — I've patched symptoms three times. The actual fix is to delete the dead Lovable Email pipe and the stale domain registration so nothing in the project ever points at `notify.coachkayelevates.org` again.
 
-### 2. Fix the portrait white sliver
-In the `40% — Portrait` column:
-- Add a top-edge gradient overlay mirroring the existing bottom one:
-  ```text
-  linear-gradient(to bottom, hsl(220 40% 8%) 0%, transparent 12%)
-  ```
-- Also set `objectPosition: "center 20%"` on the `<img>` so the framing nudges down past the white edge.
+## The plan
 
-Both together guarantee the navy column reads as solid navy at the top regardless of source asset.
+### 1. Remove the Lovable Email domain registration
+Disable Lovable Emails for the project so `notify.coachkayelevates.org` stops showing up as the configured sender. (Heads up: this will *not* auto-delete the NS records you added at your registrar months ago — those are inert as long as nothing points at them, but you can remove them at your DNS provider any time.) Auth emails will fall back to Lovable's default templates only if anything were still routing through the hook — but our hook calls Resend directly, so nothing changes for users.
 
-### 3. Sanity sweep
-After the change, walk: `/` → `/modules` → `/ai-tools` → `/dashboard` → `/profile` and confirm the header is byte-identical (same groups, same logo, same CTA, same account dropdown). Mobile too.
+### 2. Delete the dead queue plumbing
+- Delete edge function: `process-email-queue` (cron will be orphaned and stop firing; we'll also drop the cron job in a migration).
+- Drop the pg_cron job `process-email-queue` and the `email_queue_service_role_key` vault secret in a migration.
+- Drop the unused tables: `email_send_state`, `email_unsubscribe_tokens`, `suppressed_emails`, plus the `enqueue_email` / `read_email_batch` / `delete_email` / `move_to_dlq` RPC functions.
+- Keep `email_send_log` — it's actively populated by the Resend path and is your only audit trail.
 
-## Out of scope
-- No route changes, no auth changes, no Stripe, no edge functions, no data shape changes.
-- Not re-cropping the source portrait asset (CSS masking is enough and reversible).
-- Not touching admin nav, footer, or legal pages.
+### 3. Clean residual references
+- `process-email-queue/index.ts` — delete.
+- `preview-transactional-email` — keep (it's a dev preview tool, doesn't touch the queue).
+- `handle-email-suppression` / `handle-email-unsubscribe` — these were scaffolded for Lovable Email's bounce/unsubscribe webhook. Since we send via Resend, hook them up to Resend's webhook **or** delete them. Recommendation: keep `handle-email-unsubscribe` (the in-app `/unsubscribe` page calls it) but rewrite it to use a simpler `email_send_log` + a fresh small `unsubscribes` table; delete `handle-email-suppression` unless you wire Resend webhooks to it.
+- Update memory note `mem://features/email-strategy` — replace `notify.coachkayelevates.org` with `noreply@coachkayai.life (Resend, verified)`.
+- Remove `sender_domain` references in any client code that passes it (search came up clean outside the dead queue, but I'll double-check during build).
 
-## Files touched
-- `src/pages/Index.tsx` — remove custom nav, mount global nav, fix portrait overlay + object-position.
-- `src/components/DesktopNav.tsx` — remove the `isHome` hide so the global nav renders on `/`.
+### 4. Verify end-to-end after cleanup
+- Trigger a test signup → confirm auth email arrives from `noreply@coachkayai.life`.
+- Trigger an Apply Now submit → confirm both the coach notification and the applicant `application-received` email arrive.
+- Check `email_send_log` for `sent` rows; confirm no `pending` orphans.
+- Confirm `supabase/config.toml` no longer needs `process-email-queue` entry.
+
+## Files / surfaces touched
+
+```
+DELETE  supabase/functions/process-email-queue/
+EDIT    supabase/functions/handle-email-suppression/   (delete or rewrite)
+EDIT    supabase/functions/handle-email-unsubscribe/   (rewrite to not depend on queue tables)
+EDIT    supabase/config.toml                            (remove process-email-queue block)
+NEW     supabase/migrations/<ts>_drop_email_queue.sql   (drop tables, RPCs, cron job, vault secret)
+EDIT    mem://features/email-strategy                   (correct the sender)
+TOOL    email_domain--toggle_project_emails(false)      (disable Lovable Email domain)
+```
+
+## What this fixes for launch
+- Stops the `notify.coachkayelevates.org` ghost from getting re-flagged.
+- Removes a cron job that's been waking the DB every 5s for nothing.
+- Single, obvious source of truth: **all email = Resend, from `noreply@coachkayai.life`, replies to `Hello@coachkayelevates.org`**.
+- `email_send_log` becomes a clean audit trail you can actually trust.
+
+## Open question before I build
+
+**Do you want me to also delete `handle-email-suppression`?** It's only useful if you wire Resend's bounce/complaint webhook to it. If you don't want bounce tracking right now, I'll delete it. If you do, I'll keep it and rewrite it for the Resend webhook payload shape.
