@@ -81,10 +81,46 @@ const SKILLS = [
 ];
 
 const TRUST_PILLARS = [
-  { icon: ShieldCheck, title: "Honest pricing", body: "Every offer's price is on the page. No discovery calls to unlock numbers." },
-  { icon: Eye, title: "No affiliate links", body: "I don't get paid by tool vendors. The recommendation is the recommendation." },
-  { icon: Compass, title: "Plain-language strategy", body: "If I can't explain it to your mom, I won't sell it to you." },
-  { icon: AlertTriangle, title: "I'll tell you 'no'", body: "If you don't need what I sell, I'll send you somewhere that fits. Trust over revenue." },
+  {
+    icon: Unlock,
+    title: "No gatekeeping",
+    body: "What I coach in a $5K container, I'll teach in a $0 module. The tier unlocks depth and access — never the truth itself.",
+  },
+  {
+    icon: Tag,
+    title: "Yes, affiliate links — flagged every time",
+    body: "I use the tools I recommend. When a link pays me, you'll see a clear tag. The pick is the pick whether it pays or not.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Mindset + strategy, not motivation theater",
+    body: "Life coaching belongs inside the system, not on a stage. Uplift and Support are pillars of F.O.C.U.S. — not upsells.",
+  },
+  {
+    icon: Clock,
+    title: "No fake scarcity",
+    body: "No 'doors close at midnight,' no countdown timers, no fabricated cohorts. If a seat is limited, it's because the room is.",
+  },
+  {
+    icon: Eye,
+    title: "No discovery-call paywall",
+    body: "Every price is on the page. You'll never have to book a call to find out what something costs.",
+  },
+  {
+    icon: ShieldOff,
+    title: "No screenshot flexing",
+    body: "I won't show you my income, my followers, or my Stripe dashboard to sell you anything. Results speak in your life, not mine.",
+  },
+  {
+    icon: Compass,
+    title: "Plain language, always",
+    body: "If I can't explain it to your grandma, I won't put it in front of you. AI is the tool — clarity is the product.",
+  },
+  {
+    icon: AlertTriangle,
+    title: "I'll tell you 'no'",
+    body: "If you don't need what I sell, I'll send you somewhere that fits — even if that somewhere is rest. Trust over revenue, every time.",
+  },
 ];
 
 const PATHS = [
