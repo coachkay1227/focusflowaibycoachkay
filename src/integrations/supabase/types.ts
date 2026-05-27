@@ -637,6 +637,42 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          beehiiv_subscription_id: string | null
+          created_at: string
+          email: string
+          id: string
+          metadata: Json
+          name: string | null
+          source: string | null
+          synced_to_beehiiv: boolean
+          updated_at: string
+        }
+        Insert: {
+          beehiiv_subscription_id?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json
+          name?: string | null
+          source?: string | null
+          synced_to_beehiiv?: boolean
+          updated_at?: string
+        }
+        Update: {
+          beehiiv_subscription_id?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json
+          name?: string | null
+          source?: string | null
+          synced_to_beehiiv?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       processed_stripe_events: {
         Row: {
           event_id: string
