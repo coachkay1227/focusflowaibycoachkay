@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import FAQSection from "@/components/FAQSection";
-import SiteFooter from "@/components/SiteFooter";
 import MobileNav from "@/components/MobileNav";
 import { FAQ_LANES, faqPageSchema } from "@/data/faqs";
 import { breadcrumb, webPage, SITE_URL } from "@/lib/seo-schema";
@@ -134,7 +133,7 @@ const Faq = () => {
         </p>
       </section>
 
-      <SiteFooter />
+
     </div>
   );
 };

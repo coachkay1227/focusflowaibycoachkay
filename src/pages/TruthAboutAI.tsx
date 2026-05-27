@@ -17,7 +17,6 @@ import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import OfferCard from "@/components/offers/OfferCard";
-import SiteFooter from "@/components/SiteFooter";
 import MirrorReveal from "@/components/truth/MirrorReveal";
 import ToolPickCard from "@/components/truth/ToolPickCard";
 import { TOOL_PICKS } from "@/data/tool-picks";
@@ -546,7 +545,7 @@ export default function TruthAboutAI() {
         </div>
       </main>
 
-      <SiteFooter />
+
     </>
   );
 }

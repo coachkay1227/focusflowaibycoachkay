@@ -3,7 +3,6 @@ import { ArrowLeft, ArrowRight, Layers, Users, ShieldCheck, Cog, Sparkles, Exter
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
-import SiteFooter from "@/components/SiteFooter";
 import { webPage, breadcrumb, SITE_URL, ORG_ID, PERSON_ID } from "@/lib/seo-schema";
 
 const ROLES = [
@@ -223,7 +222,7 @@ export default function Collective() {
         </div>
       </section>
 
-      <SiteFooter />
+
     </div>
   );
 }
