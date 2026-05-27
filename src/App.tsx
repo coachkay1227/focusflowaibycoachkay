@@ -50,6 +50,7 @@ const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStud
 const TruthAboutAI = lazy(() => import("./pages/TruthAboutAI.tsx"));
 const Collective = lazy(() => import("./pages/Collective.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
+const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
