@@ -18,9 +18,10 @@ export interface OfferCardProps {
   features: string[];
   price?: string;
   priceSuffix?: string;
-  primaryCta: OfferCardCta;
+  primaryCta?: OfferCardCta;
   secondaryCta?: OfferCardCta;
   variant?: "standard" | "featured" | "premium";
+  density?: "default" | "compact";
   footnote?: ReactNode;
 }
 
@@ -40,6 +41,7 @@ export default function OfferCard({
   primaryCta,
   secondaryCta,
   variant = "standard",
+  density = "default",
   footnote,
 }: OfferCardProps) {
   const ring =
@@ -49,12 +51,21 @@ export default function OfferCard({
       ? "border-primary/40 bg-gradient-to-b from-primary/[0.04] to-transparent"
       : "border-border/40";
 
+  const compact = density === "compact";
+  const padding = compact ? "p-5" : "p-7";
+  const titleSize = compact
+    ? "text-lg md:text-xl font-light leading-snug mb-2 min-h-0"
+    : "text-2xl md:text-[1.6rem] font-light leading-[1.15] mb-3 min-h-[3.6rem]";
+  const taglineCls = compact
+    ? "text-xs text-muted-foreground leading-relaxed mb-3 min-h-0"
+    : "text-sm text-muted-foreground italic leading-relaxed mb-5 min-h-[2.6rem] line-clamp-2";
+
   return (
     <article
-      className={`group relative h-full flex flex-col rounded-2xl border ${ring} bg-card/40 backdrop-blur-sm p-7 transition-all hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-20px_hsl(43_75%_52%/0.25)]`}
+      className={`group relative h-full flex flex-col rounded-2xl border ${ring} bg-card/40 backdrop-blur-sm ${padding} transition-all hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-20px_hsl(43_75%_52%/0.25)]`}
     >
       {/* Zone 1 — eyebrow + badge */}
-      <div className="flex items-start justify-between gap-3 mb-4 min-h-[20px]">
+      <div className={`flex items-start justify-between gap-3 ${compact ? "mb-3" : "mb-4"} min-h-[20px]`}>
         <span className="text-[10px] font-medium tracking-[0.18em] uppercase text-primary">
           {eyebrow}
         </span>
@@ -66,32 +77,34 @@ export default function OfferCard({
       </div>
 
       {/* Zone 2 — title (locked 2-line min height) */}
-      <h3 className="font-heading text-2xl md:text-[1.6rem] font-light leading-[1.15] text-foreground mb-3 min-h-[3.6rem]">
+      <h3 className={`font-heading text-foreground ${titleSize}`}>
         {title}
       </h3>
 
-      {/* Zone 3 — tagline (locked 2-line min height) */}
-      <p className="text-sm text-muted-foreground italic leading-relaxed mb-5 min-h-[2.6rem] line-clamp-2">
-        {tagline}
-      </p>
+      {/* Zone 3 — tagline */}
+      {tagline && <p className={taglineCls}>{tagline}</p>}
 
-      <div className="h-px bg-border/40 mb-5" />
+      {features.length > 0 && <div className={`h-px bg-border/40 ${compact ? "mb-4" : "mb-5"}`} />}
 
       {/* Zone 4 — features (stretches) */}
-      <ul className="space-y-2.5 mb-6 flex-1">
-        {features.map((f, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-[13px] text-foreground/80 leading-relaxed">
-            <Check className="h-3.5 w-3.5 text-primary shrink-0 mt-1" strokeWidth={2.5} />
-            <span>{f}</span>
-          </li>
-        ))}
-      </ul>
+      {features.length > 0 ? (
+        <ul className={`space-y-2.5 ${compact ? "mb-4" : "mb-6"} flex-1`}>
+          {features.map((f, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-[13px] text-foreground/80 leading-relaxed">
+              <Check className="h-3.5 w-3.5 text-primary shrink-0 mt-1" strokeWidth={2.5} />
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="flex-1" />
+      )}
 
       {/* Zone 5a — price */}
       {price && (
-        <div className="mb-5">
+        <div className={primaryCta || secondaryCta ? (compact ? "mb-4" : "mb-5") : ""}>
           <div className="flex items-baseline gap-1.5">
-            <span className="font-heading text-3xl font-light text-foreground">{price}</span>
+            <span className={`font-heading ${compact ? "text-2xl" : "text-3xl"} font-light text-foreground`}>{price}</span>
             {priceSuffix && (
               <span className="text-xs text-muted-foreground tracking-wide">{priceSuffix}</span>
             )}
@@ -100,10 +113,12 @@ export default function OfferCard({
       )}
 
       {/* Zone 5b — CTAs always anchored to bottom */}
-      <div className="flex flex-col gap-2 mt-auto">
-        <CtaButton cta={primaryCta} kind="primary" />
-        {secondaryCta && <CtaButton cta={secondaryCta} kind="ghost" />}
-      </div>
+      {(primaryCta || secondaryCta) && (
+        <div className="flex flex-col gap-2 mt-auto">
+          {primaryCta && <CtaButton cta={primaryCta} kind="primary" />}
+          {secondaryCta && <CtaButton cta={secondaryCta} kind="ghost" />}
+        </div>
+      )}
 
       {footnote && <div className="mt-4 text-[11px] text-muted-foreground/70 text-center">{footnote}</div>}
     </article>
