@@ -18,7 +18,7 @@ import {
 import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
-import { getSymmetricGridClass } from "@/lib/grid";
+import { getSymmetricGridClass, getSymmetricPricingGridClass } from "@/lib/grid";
 
 const FOUNDING_STORAGE_KEY = "raa.founding";
 
@@ -245,7 +245,7 @@ const RentAnAgent = () => {
           </div>
         </AnimatedSection>
 
-        <div className={`${getSymmetricGridClass(RENT_AGENT_TIERS.length)} gap-5`}>
+        <div className={`${getSymmetricPricingGridClass(RENT_AGENT_TIERS.length)} gap-5`}>
           {RENT_AGENT_TIERS.map((tier) => {
             const active = founding ? tier.founding : tier.standard;
             return (
