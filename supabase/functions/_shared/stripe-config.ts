@@ -37,6 +37,17 @@ export const PRODUCT_TIER_MAP: Record<string, string> = {
 export const NO_TIER_PRODUCTS = new Set<string>([
   "prod_U91GXGNgo01tYp", // AI Business Audit $47
   "prod_UaEUk39aCG5Jmh", // AI Strategy Intensive $497
+  // Collective AI Build Studio — Tier 1 one-time
+  "prod_UanJnSjXkY95Jg", // Link-in-Bio Hub $297
+  "prod_UanN2q8kUDOoMm", // Personal Brand Site $397
+  "prod_UanR2vRsQWOP4W", // Conversion Landing Page $497
+  "prod_UanRAhfgTRM9Sm", // Lead Magnet Funnel $697
+  "prod_UanZLlOaOMmDSm", // AI Chatbot Widget Setup $797
+  // Collective AI Build Studio — Tier 5 recurring care plans
+  "prod_UanZVfj8EZtZBH", // Site Care $97/mo
+  "prod_UaneP9ZBMIguZW", // Collective Membership $97/mo
+  "prod_UanfvkxzOOZu5u", // Agent Care $197/mo
+  "prod_UanfvQDmGtO89p", // Monthly Build Credits $497/mo
 ]);
 
 export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
@@ -63,6 +74,17 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   "price_1TbAhtBReje0oFcLscEqWHEK": "payment", // 90-Day Personal Transformation $997
   "price_1TbAiNBReje0oFcLrit7Ko5x": "payment", // 90-Day Business Transformation $1,497
   "price_1TbAimBReje0oFcL4Uti8udD": "payment", // 90-Day Full AI Transformation $2,497
+  // Collective AI Build Studio — Tier 1 one-time
+  "price_1Tbbj0BReje0oFcL4qqcndi2": "payment", // Link-in-Bio Hub $297
+  "price_1Tbbn5BReje0oFcLV5aYSxdp": "payment", // Personal Brand Site $397
+  "price_1TbbqcBReje0oFcLPvFHVSAJ": "payment", // Conversion Landing Page $497
+  "price_1TbbqyBReje0oFcL2lbGJDQl": "payment", // Lead Magnet Funnel $697
+  "price_1TbbxuBReje0oFcL07dnyiRf": "payment", // AI Chatbot Widget Setup $797
+  // Collective AI Build Studio — Tier 5 recurring care plans
+  "price_1TbbyIBReje0oFcL02mjIa6U": "subscription", // Site Care $97/mo
+  "price_1Tbc2mBReje0oFcLKStT1NEj": "subscription", // Collective Membership $97/mo
+  "price_1Tbc3yBReje0oFcLpQCYOLeJ": "subscription", // Agent Care $197/mo
+  "price_1Tbc4SBReje0oFcLeEXu6hlp": "subscription", // Monthly Build Credits $497/mo
 };
 
 export const PROTECTED_TIERS = ["reset_30", "transformation_90", "cohort", "premium", "rent_agent", "corporate"];
