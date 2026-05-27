@@ -91,9 +91,7 @@ const DesktopNav = () => {
   }, []);
 
   const isHiddenRoute = NAV_HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
-  const isHome = location.pathname === "/";
-
-  if (isHiddenRoute || isHome) return null;
+  if (isHiddenRoute) return null;
 
   const isGroupActive = (group: NavGroup) =>
     group.items.some((i) => location.pathname.startsWith(i.path));
