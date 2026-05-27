@@ -30,6 +30,7 @@ export function globalGraph(): Json {
           "5x Certified Life Coach",
           "AI Strategist",
           "AI Prompt Engineer",
+          "Operations Architect & Lead Developer, Collective AI",
         ],
         url: `${SITE_URL}/coach-kay`,
         email: "hello@coachkayelevates.org",
@@ -45,12 +46,18 @@ export function globalGraph(): Json {
           "https://forward-focus-elevation.org/",
           "https://www.linkedin.com/in/kenza-alaoui-ismaili",
         ],
+        memberOf: {
+          "@type": "Organization",
+          name: "Collective AI",
+          url: `${SITE_URL}/collective`,
+        },
       },
       {
         "@type": "Organization",
         "@id": ORG_ID,
         name: "Coach Kay Elevates",
-        alternateName: "FocusFlow AI by Coach Kay",
+        alternateName: ["FocusFlow AI by Coach Kay", "Focus Flow AI"],
+        legalName: "Focus Flow AI LLC",
         url: SITE_URL,
         founder: { "@id": PERSON_ID },
         sameAs: [
