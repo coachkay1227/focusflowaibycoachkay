@@ -1,72 +1,44 @@
-# Navigation Reorganization — "Can't Get Lost" Plan
+## What's actually wrong
 
-## The Problem
-- "For Individuals / For Organizations" forces a false split (Rent-an-Agent serves both).
-- 10 built pages are invisible: `/ai-tools`, `/pause-hub`, `/starter-kit`, `/challenges`, `/mirror-challenge`, `/assessment`, `/coach`, `/autism-social-stories`, `/audit/landing`, `/kiosk`.
-- We need one mental model that works for a curious visitor AND a paying client.
+The home page (`src/pages/Index.tsx`) has its **own hand-rolled header** that was never updated when we restructured the global nav. That's why "everything doesn't feel aligned end-to-end" — because it literally isn't.
 
-## New Structure — Organized by Intent, Not Audience
+### Mismatches found
 
-Four top-level groups. Each answers a different visitor question.
+1. **Nav items are stale.** Home shows `Paths · Studio · Truth · Coach Kay · FAQ` (old flat list). Every other page now shows the 4-group system: `Start Here · Work With Me · Tools & Resources · Truth & About`. So clicking the logo to go home makes the nav visibly change — confusing and unprofessional.
+2. **Wordmark drift.** Home renders the wordmark with inline `<span>`s (`Focus` + `Flow` + `AI`). Every other page uses `<BrandLogo />`. Any future tweak to the brand mark won't propagate to home.
+3. **CTA label drift.** Home CTA = "Get My Clarity Code". Global nav CTA = "Start Clarity". Pick one.
+4. **Account UI drift.** Home shows raw avatar + dashboard link + signout icon inline. Global nav uses a single account dropdown (Dashboard / Profile / Admin / Sign out). Two different account UIs depending on the page.
+5. **White sliver above the portrait** (the thing you flagged). The `coachKayPortrait` asset has white pixels at the top edge of the source image and `object-cover` reveals them inside the navy column. There's no top gradient masking it — the bottom has a fade-to-navy gradient but the top is unmasked.
 
-```
-[Logo]   Start Here ▾   Work With Me ▾   Tools & Resources ▾   Truth ▾        [Start Clarity] [Account]
-```
+## The plan (frontend-only, zero functional changes)
 
-### 1. Start Here  (the on-ramp — anyone, free)
-- Clarity Session — `/clarity`
-- Starter Kit — `/starter-kit`
-- Free Assessment — `/assessment`
-- Mirror Challenge — `/mirror-challenge`
-- 30-Day Challenges — `/challenges`
+### 1. Replace the inline home header with the global pattern
+In `src/pages/Index.tsx`:
+- Delete the entire custom `<nav>` block (lines ~74–130).
+- Render `<DesktopNav />` and `<MobileNav />` at the top of the page instead.
+- Update `DesktopNav.tsx`: remove the `isHome` early-return so it renders on `/` too. (It already hides on `/auth`, `/kiosk`, `/reset-password`, `/onboarding` via `NAV_HIDDEN_ROUTES` — that stays.)
+- Update Index's top padding so the hero clears the now-fixed 64px nav (`pt-16`).
 
-### 2. Work With Me  (paid engagements — by depth, not audience)
-- Transformation Paths — `/modules`  *(personal · business · full AI)*
-- Books & AI Kits — `/store`
-- Rent-an-Agent — `/rent-an-agent`  *(individuals + teams)*
-- AI Build Studio — `/build-studio`  *(custom builds)*
-- Advisory & Partnership — `/advisory`  *(fractional / enterprise)*
-- Collective AI — `/collective`  *(the delivery team)*
-- Business Audit — `/audit/landing`
-- Autism Social Stories — `/autism-social-stories`
+Result: identical header on every page, identical wordmark, identical account dropdown, identical CTA ("Start Clarity"). Single source of truth.
 
-### 3. Tools & Resources  (the public library — the orphans get a home)
-- AI Tools Directory — `/ai-tools`  *(63 vetted tools w/ affiliate links)*
-- Pause Hub (Scam Watch) — `/pause-hub`
-- Coach Chat (AI) — `/coach`
-- Elevation Hub (Skool Community) — `/community`
+### 2. Fix the portrait white sliver
+In the `40% — Portrait` column:
+- Add a top-edge gradient overlay mirroring the existing bottom one:
+  ```text
+  linear-gradient(to bottom, hsl(220 40% 8%) 0%, transparent 12%)
+  ```
+- Also set `objectPosition: "center 20%"` on the `<img>` so the framing nudges down past the white edge.
 
-### 4. Truth & About  (trust + voice)
-- The Truth About AI — `/truth`
-- Meet Coach Kay — `/coach-kay`
-- FAQ — `/faq`
+Both together guarantee the navy column reads as solid navy at the top regardless of source asset.
 
-### Always-visible
-- `[Start Clarity]` primary CTA (unchanged)
-- Account avatar → Dashboard / Profile / Admin / Sign out (unchanged)
-- `/kiosk` stays hidden (intentional — standalone display)
+### 3. Sanity sweep
+After the change, walk: `/` → `/modules` → `/ai-tools` → `/dashboard` → `/profile` and confirm the header is byte-identical (same groups, same logo, same CTA, same account dropdown). Mobile too.
 
-## Mobile
-Same 4 accordions in `MobileNav`, same items, same order. Each defaults closed except "Start Here" (the most common entry).
+## Out of scope
+- No route changes, no auth changes, no Stripe, no edge functions, no data shape changes.
+- Not re-cropping the source portrait asset (CSS masking is enough and reversible).
+- Not touching admin nav, footer, or legal pages.
 
-## What I Will NOT Touch
-- Auth, routing logic in `App.tsx`, access gates, tier logic
-- Any page content, Stripe, edge functions, RLS
-- Admin nav (already clean)
-- Footer legal links
-- The home page (nav hides on `/` — unchanged)
-
-## Files Changed (2)
-- `src/components/DesktopNav.tsx` — restructure the 2 dropdowns into 4 groups; widen mega-menu, add icons for new items.
-- `src/components/MobileNav.tsx` — mirror the 4 groups as accordions; import new icons.
-
-## Risk Mitigation
-- Pure presentational change. No route additions, no data shape changes, no auth changes.
-- All target routes already exist in `App.tsx` (verified in last audit).
-- Will visually QA both viewports after the edit.
-
-## Out of Scope (next moves, separate asks)
-- OpenAI surveillance content on `/truth`
-- FTC/FBI scam ingestion edge function
-- Beehiiv embed verification
-- Flipping affiliate_pending flags once VA returns links
+## Files touched
+- `src/pages/Index.tsx` — remove custom nav, mount global nav, fix portrait overlay + object-position.
+- `src/components/DesktopNav.tsx` — remove the `isHome` hide so the global nav renders on `/`.
