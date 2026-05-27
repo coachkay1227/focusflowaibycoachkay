@@ -105,12 +105,69 @@ export const RENT_AGENT_ENTERPRISE = {
 
 /** AI Lead Engine tiers — inquiry-only until per-account GHL provisioning is automated. */
 export const LEAD_ENGINE_TIERS = [
-  { name: "Essentials", price: "$697/mo intro (or $997/mo) + setup", description: "AI-scored, enriched lead lists." },
-  { name: "Pro", price: "$1,497/mo + setup", description: "Full GHL sub-account + automated outreach system." },
-  { name: "Growth", price: "$2,497/mo + setup", description: "Done-for-you outreach follow-up and reporting." },
-  { name: "Scale", price: "$2,997/mo + setup", description: "Voice AI + LinkedIn + auto appointment booking." },
-  { name: "Enterprise", price: "$4,997/mo + setup", description: "Full-channel custom build and integration." },
+  {
+    name: "Essentials",
+    headline: "Stop guessing who to call. Get a weekly list of pre-qualified, intent-scored leads.",
+    price: "$697/mo intro · $997/mo standard",
+    setup: "+ $1,500 one-time setup",
+    timeline: "Live in 7 days",
+    bullets: [
+      "Up to 500 enriched leads / month matched to your ICP",
+      "Intent + fit scoring (0–100) with reasoning per lead",
+      "Verified email + direct phone + LinkedIn URL per record",
+      "Weekly CSV drop into HubSpot, GHL, or Pipedrive",
+      "Monthly scoring tune-up call",
+    ],
+    best_for: "Founders doing outbound themselves who want a smarter list, not a bigger one.",
+  },
+  {
+    name: "Pro",
+    headline: "Replace your outbound SDR with a system that sends, follows up, and books.",
+    price: "$1,997/mo",
+    setup: "+ $2,500 one-time setup",
+    timeline: "Live in 14 days",
+    bullets: [
+      "Everything in Essentials",
+      "Dedicated GHL sub-account, fully provisioned + branded",
+      "3-channel sequence: email + LinkedIn + SMS, 8-touch cadence",
+      "AI-personalized first lines on every send",
+      "Reply detection auto-routes meetings to your calendar",
+      "Monthly performance review (open / reply / meeting rates)",
+    ],
+    best_for: "Operators with a clear ICP who need consistent pipeline without hiring.",
+    highlighted: true,
+  },
+  {
+    name: "Scale",
+    headline: "Run a full outbound floor — voice, social, inbox — without headcount.",
+    price: "$3,497/mo",
+    setup: "+ $5,000 one-time setup",
+    timeline: "Live in 21 days",
+    bullets: [
+      "Everything in Pro",
+      "Voice AI agent: outbound dialer + inbound qualification (1,000 calls/mo included)",
+      "LinkedIn automation with profile warming + connection sequencing",
+      "Calendar-integrated auto-booking with reminder cadence",
+      "Dedicated success engineer on a weekly call",
+      "Custom dashboard: pipeline, attribution, cost-per-meeting",
+    ],
+    best_for: "Teams targeting 30+ booked meetings / month across channels.",
+  },
 ] as const;
+
+export const LEAD_ENGINE_ENTERPRISE = {
+  name: "Lead Engine — Enterprise",
+  headline: "Custom-built outbound infrastructure for multi-brand, multi-region, or regulated GTM.",
+  priceDisplay: "By application",
+  bullets: [
+    "Custom-scoped agent fleet across channels",
+    "Dedicated success engineer + solutions architect",
+    "CRM / data-warehouse integration (Salesforce, HubSpot Enterprise, Snowflake)",
+    "SLA + compliance review (SOC 2, GDPR, TCPA)",
+    "Quarterly executive briefings on pipeline + system health",
+  ],
+  best_for: "Multi-brand operators, agencies, and regulated industries.",
+} as const;
 
 /** Low-ticket entry offers — direct Stripe Checkout (one-time payments). */
 export const ENTRY_OFFERS = {
