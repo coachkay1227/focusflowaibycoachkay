@@ -28,6 +28,7 @@ const INDEXABLE: string[] = [
   "/store",
   "/rent-an-agent",
   "/advisory",
+  "/build-studio",
   "/autism-social-stories",
   "/faq",
   "/privacy",
@@ -71,6 +72,7 @@ const ADMIN_EXEMPT = new Set<string>([
   "/admin/content",
   "/admin/orders",
   "/admin/autism-orders",
+  "/admin/build-inquiries",
   "/email-preview",
 ]);
 
