@@ -93,6 +93,14 @@ export default function AdminScamAlerts() {
       toast({ title: "Title and summary required", variant: "destructive" });
       return;
     }
+    if (editing.is_published && !editing.source_url?.trim()) {
+      toast({
+        title: "Source URL required to publish",
+        description: "This is a validated-resources hub. No source, no publish.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSaving(true);
     const slug = editing.slug.trim() || slugify(editing.title);
     const payload = {
@@ -210,12 +218,15 @@ export default function AdminScamAlerts() {
                 </select>
               </div>
               <div>
-                <Label>Source URL (optional)</Label>
+                <Label>Source URL <span className="text-destructive">*</span></Label>
                 <Input
                   value={editing.source_url ?? ""}
                   onChange={(e) => setEditing({ ...editing, source_url: e.target.value })}
                   placeholder="https://..."
                 />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Required to publish. No source, no publish — this hub is built on validated resources.
+                </p>
               </div>
               <div className="sm:col-span-2">
                 <Label>Summary (1-2 sentences)</Label>
