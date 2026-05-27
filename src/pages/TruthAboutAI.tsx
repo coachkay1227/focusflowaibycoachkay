@@ -212,12 +212,12 @@ export default function TruthAboutAI() {
           {/* OPENER */}
           <AnimatedSection>
             <Section label="Let's start here" title="Yes, AI is changing everything. That's not a reason to panic.">
-              <p className="ck-body">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
                 I'll be honest the way I am with every client: AI is a significant shift. It's not
                 going away. And most people are responding from one of two broken places — full
                 fear, or delusional hype.
               </p>
-              <p className="ck-body">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
                 Fear freezes you. Hype empties your wallet on things that don't work. Neither moves
                 you forward.
               </p>
@@ -227,7 +227,7 @@ export default function TruthAboutAI() {
                   They're the clearest thinkers."
                 </p>
               </blockquote>
-              <p className="ck-body">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
                 My job — whether I'm with a Fortune-500 board or a single mom rebuilding her life —
                 is to give you the clarity to make smart decisions. That's what this page is.
               </p>
@@ -237,7 +237,7 @@ export default function TruthAboutAI() {
           {/* MYTHS */}
           <AnimatedSection>
             <Section label="Myth busting" title="What people are getting wrong about AI right now">
-              <p className="ck-body mb-5">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 These are the myths I hear most. Some are fear-based. Some are hype-based. All cost
                 people time, money, or peace of mind.
               </p>
@@ -258,7 +258,7 @@ export default function TruthAboutAI() {
           {/* STRENGTHS / WEAKNESSES */}
           <AnimatedSection>
             <Section label="The real picture" title="What AI is actually good at — and where it still fails">
-              <p className="ck-body mb-5">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 The balanced truth most AI content skips. Knowing both sides makes you dangerous in
                 the best way.
               </p>
@@ -296,7 +296,7 @@ export default function TruthAboutAI() {
           {/* FEARS */}
           <AnimatedSection>
             <Section label="The fear conversation" title="Let's talk about what you're actually afraid of">
-              <p className="ck-body mb-5">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 The fear is real. Most of it is fed by incomplete information. Here's what I hear
                 most — and the honest truth behind it.
               </p>
@@ -319,7 +319,7 @@ export default function TruthAboutAI() {
           {/* RED FLAGS */}
           <AnimatedSection>
             <Section label="The AI scam economy" title="What to watch out for — nobody else says this clearly">
-              <p className="ck-body mb-5">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 This might be the most valuable thing on this page. The AI gold rush built a massive
                 scam layer. Here's how to spot it.
               </p>
@@ -342,7 +342,7 @@ export default function TruthAboutAI() {
           {/* SKILLS */}
           <AnimatedSection>
             <Section label="What actually matters now" title="The skills AI makes more valuable, not less">
-              <p className="ck-body mb-5">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 Certain human skills are becoming more valuable precisely because AI exists. Develop
                 these on purpose.
               </p>
@@ -382,7 +382,7 @@ export default function TruthAboutAI() {
                 label="Your next step"
                 title="Three paths. Pick the one that matches where you actually are."
               >
-                <p className="ck-body mb-7">
+                <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-7">
                   Personal, business, or full transformation. Each path is a real product with a
                   real price. Start small or go deep — but start.
                 </p>
