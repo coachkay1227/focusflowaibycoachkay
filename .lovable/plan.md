@@ -1,98 +1,62 @@
-# Final Plan — Phase 1 (Collective Trust Layer) + Phase 4 Surprise
+## What's changing
 
-Locked in based on your answers. Credit-aware: this is the **last build**. Two phases, shipped in one pass, audited before handoff.
+The "Pledges" section on `/truth` currently says four flat things — including one ("No affiliate links") that's *not true* and one ("Honest pricing") that's already covered elsewhere. We're rewriting it to:
 
----
+1. Tell the truth about affiliate links (transparency, not denial).
+2. Anti-position Kay against everything she's *not* — gatekeeping coaches, tier-locked wisdom, fake gurus, hype.
+3. Pull the mindset / life-coaching identity in through the **Uplift** and **Support** pillars of the F.O.C.U.S. framework.
+4. Add a new "Coach Kay's Tool Picks" surface so the affiliate transparency has a real home.
 
-## Decisions locked in
+## New pledges (replacing the 4 current ones)
 
-- **Logo**: extract from the onboarding packet PDF (Collective AI lockup). If extraction fails, ship a tasteful text lockup ("Collective AI") in brand fonts as fallback — no broken images.
-- **Entity**: Focus Flow AI LLC, DBA Coach Kay Elevates. Footer copyright updated to reflect this.
-- **Booking strategy**: **NO new `/book` route, no duplicate booking surface.** All "talk to Kay" / scoping / discovery CTAs across this site point to `https://coachkayelevates.org/` (your booking home). Single source of truth — your offers live here, your calendar lives there.
-- **Recommended booking tiers** for you to set up on coachkayelevates.org (not built here, just my recommendation):
-  - **15 min — Free Clarity Call** (qualifier, low friction, feeds Programs/Build Studio)
-  - **30 min — Free Discovery Scope** (Advisory/Build Studio/Local-Gov leads only — gated by inquiry form so it doesn't get abused)
-  - **45 min — Paid Strategy Session $67** ← your pick, confirmed. High-intent buyers, refundable into any program/audit purchase within 14 days (Hormozi risk-reversal).
-- **Donations**: external link to your nonprofit donation modal page (the "Choose Your Donation Amount" UI in your screenshot). Open in new tab, `rel="noopener"`. We do NOT rebuild that UI here.
-- **Phase 4 surprise**: scoped to ONE high-leverage wow moment — see below.
-- **All other phases (2, 3, 5)**: deferred. Documented in `.lovable/plan.md` as backlog so a future session can pick up cleanly.
+Eight pledges in a 2-column grid on desktop, single column on mobile. Each card keeps the existing OfferCard-adjacent geometry (icon, title, body), but uses stronger anti-positioning copy.
 
----
+1. **No gatekeeping** — *"What I coach in a $5K container, I'll teach in a $0 module. The tier unlocks depth and access — never the truth itself."* (icon: `Unlock`)
+2. **Yes, affiliate links — flagged every time** — *"I use the tools I recommend. When a link pays me, you'll see a clear tag. The pick is the pick whether it pays or not."* (icon: `Tag`)
+3. **Mindset + strategy, not motivation theater** — *"Life coaching belongs inside the system, not on a stage. Uplift and Support are pillars of F.O.C.U.S. — not upsells."* (icon: `HeartHandshake`)
+4. **No fake scarcity** — *"No 'doors close at midnight,' no countdown timers, no fabricated cohorts. If a seat is limited, it's because the room is."* (icon: `Clock`)
+5. **No discovery-call paywall** — *"Every price is on the page. You'll never have to book a call to find out what something costs."* (icon: `Eye`)
+6. **No screenshot flexing** — *"I won't show you my income, my followers, or my Stripe dashboard to sell you anything. Results speak in your life, not mine."* (icon: `ShieldOff`)
+7. **Plain language, always** — *"If I can't explain it to your grandma, I won't put it in front of you. AI is the tool — clarity is the product."* (icon: `Compass`)
+8. **I'll tell you 'no'** — *"If you don't need what I sell, I'll send you somewhere that fits — even if that somewhere is rest. Trust over revenue, every time."* (icon: `AlertTriangle`)
 
-## Phase 1 — Collective AI Trust Layer
+The section's eyebrow stays `Why people trust this room` and the title becomes **"What I'll never do — and what I promise instead."**
 
-### Build
-1. **`src/assets/collective-ai-logo.png`** — extract from onboarding packet via `document--parse_document`. Fallback: clean text lockup component.
-2. **`src/components/SiteFooter.tsx`** — replace existing footer:
-   - Add trust line under brand block: *"Coach Kay is Operations Architect & Lead Developer at **Collective AI** — a multidisciplinary AI delivery team. Solo coaching by Kay. Enterprise builds delivered with the collective."*
-   - Small Collective AI logo lockup beside it.
-   - Add **"Book with Coach Kay"** column linking out to `coachkayelevates.org` (15 / 30 / 45 min options described as labels, each linking to the same external home — they'll route correctly once you wire calendars there).
-   - Update copyright to "© {year} Focus Flow AI LLC · DBA Coach Kay Elevates."
-   - Footer-only link to `/collective`.
-3. **`src/pages/Collective.tsx`** (new) — single trust page (~600 words). Sections: who Collective AI is, Kay's two hats, what the team delivers, capability snapshot, single CTA "Start a Build Conversation" → `/build-studio`, secondary "Book 1:1 with Kay" → external `coachkayelevates.org`.
-4. **`src/App.tsx`** — register `/collective` lazy route.
-5. **`src/pages/CollectiveAIBuildStudio.tsx`** — hero eyebrow becomes "Collective AI Build Studio · Led by Coach Kay" + one-line "Delivered by the Collective AI team" strip.
-6. **`src/pages/Advisory.tsx`** — add compact "Who delivers" card (role-only: Operations Architect, Lead Engineer, AI Researcher, Designer). Replace existing inline Advisory booking CTAs to point to `coachkayelevates.org`.
-7. **`src/pages/CoachKay.tsx`** — add anchored "Two hats, one mission" section (~80 words) linking to `/collective`. Primary CTA → `coachkayelevates.org`.
-8. **`src/lib/seo-schema.ts`** — add `memberOf: { @type: Organization, name: "Collective AI" }` on Person schema. Update Organization `legalName` to "Focus Flow AI LLC".
-9. **`public/sitemap.xml` + `scripts/generate-sitemap.ts` + `scripts/check-seo-regressions.ts`** — include `/collective`.
-10. **External-link audit pass**: every "Book", "Schedule", "Talk to Kay", "Discovery Call" CTA on Coach Kay, Advisory, Build Studio, Rent-an-Agent, Index → `coachkayelevates.org` (target=_blank, rel=noopener).
+## Bridge to F.O.C.U.S. (mindset/life-coaching tie-in)
 
----
+Directly under the pledges grid, add a short bridge block — one sentence + a 2-tile mini-strip — that says:
 
-## Phase 4 Surprise — "The Mirror" (one wow moment on `/truth`)
+> "Mindset isn't a separate program. It lives inside **Uplift** (rebuild your inner operating system) and **Support** (have a coach in your corner when the work gets hard). Both are pillars of the F.O.C.U.S. framework."
 
-A single, memorable interaction that makes Truth feel alive without bloating credits or adding libraries. Pure CSS + IntersectionObserver, no new deps.
+Two compact tiles:
+- **Uplift** → links to `/modules?pillar=U`
+- **Support** → links to `/modules?pillar=S`
 
-**What it is**: a scroll-triggered "AI thought reveal" hero panel on `/truth` — when the user scrolls into the Myth-Busting section, a typewriter-style reveal types out: *"You came here for the truth. Here it is: AI won't replace you. But the version of you that ignores it... will be replaced by the version that doesn't."* — letter by letter, gold cursor blinking, then the rest of the page unlocks with a soft fade-up cascade.
+Each tile uses the existing `PillarBadge` color and a 1-line description from `FOCUS_PILLARS`.
 
-Why this and not the full Phase 4: it gives the "blow my mind" moment for free (no edge function call, no API cost, no library), works on mobile, and gives Truth a signature beat that nothing else on the site has. It's the kind of thing people screenshot.
+## New section: Coach Kay's Tool Picks
 
-**Built in**: `src/pages/TruthAboutAI.tsx` + one small `src/components/truth/MirrorReveal.tsx`.
+Add a new section on `/truth` directly after the bridge (before the existing Skills section), so the affiliate-links pledge has a real, transparent home.
 
----
+- Eyebrow: `What I actually use`
+- Title: **"Coach Kay's tool picks"**
+- Subhead: *"The stack behind every program. Affiliate links are tagged. No tool here gets a placement it didn't earn in my own workflow."*
+- 6–8 cards in a responsive grid. Each card: tool name, 1-line "why I use it," category chip (AI / Productivity / Coaching / Build), outbound link, and an `Affiliate` tag when applicable.
+- Cards are a small new component `src/components/truth/ToolPickCard.tsx` (reuses the OfferCard visual language — border, padding, hover lift — but slimmer, since these aren't priced offers).
+- Data lives in a new file `src/data/tool-picks.ts` so Kay can edit the list without touching the page.
 
-## Verification gate (before I tell you it's done)
+Initial seed list (Kay can edit later): Lovable, ChatGPT, Claude, Notion, ElevenLabs, Descript, Stripe, Skool. Affiliate flags default to `false`; Kay flips them on per-tool.
 
-1. `bun run scripts/generate-sitemap.ts` + `bun run scripts/check-seo-regressions.ts` both pass.
-2. Read every changed page back, walk at 1280px and 375px.
-3. Click-test every external booking CTA → confirms it opens `coachkayelevates.org` in new tab.
-4. `/collective` renders, JSON-LD valid, indexable.
-5. Footer trust line + logo render sitewide.
-6. `/truth` Mirror reveal triggers on scroll, no jank, mobile-safe.
-7. Console + network log scan, zero new errors.
-8. Backlog written to `.lovable/plan.md` so Phases 2, 3, 5 can resume cleanly later.
+## Files touched
 
----
+- `src/pages/TruthAboutAI.tsx` — replace `TRUST_PILLARS` array (4 → 8), retitle the section, add F.O.C.U.S. bridge block, add new Tool Picks section.
+- `src/components/truth/ToolPickCard.tsx` — new component.
+- `src/data/tool-picks.ts` — new data file with the seed list and a `Tool` type.
 
-## Two tiny confirmations before I switch to build
+No backend, no schema, no edge functions. Pure presentation + content.
 
-1. **Booking link target** — confirm `https://coachkayelevates.org/` (root) is correct, or do you have a deeper path like `/book` on that site I should use?
-2. **Mirror Reveal copy** — keep the line above as-is, or want to write your own? (I can ship with mine and you can tweak after.)
+## Out of scope
 
-Answer those and I'll build straight through.
-
----
-
-## ✅ Shipped (this session)
-
-**Phase 1 — Collective AI Trust Layer**
-- New `/collective` page (trust + roles + capabilities + FAQ + JSON-LD)
-- `SiteFooter`: Collective trust line, "Book with Kay" column (15 / 30 / 45min · $67 external), entity updated to Focus Flow AI LLC · DBA Coach Kay Elevates
-- `CoachKay`: primary CTA → external `coachkayelevates.org`, new "Two hats · one mission" section linking to `/collective`
-- `CollectiveAIBuildStudio`: hero eyebrow "Led by Coach Kay" + "Delivered by the Collective AI team" strip
-- `Advisory`: "Talk to Kay first" external CTA + "Who delivers" Collective trust strip
-- `seo-schema.ts`: Person `memberOf: Collective AI`, Organization `legalName: Focus Flow AI LLC`
-- Sitemap + SEO regression include `/collective`
-
-**Phase 4 surprise — "The Mirror"**
-- New `src/components/truth/MirrorReveal.tsx` — scroll-triggered typewriter signature line + 3-card cascade. Pure CSS + IntersectionObserver, respects `prefers-reduced-motion`. Injected on `/truth` between OPENER and MYTHS sections.
-
----
-
-## 🗂 Backlog (future sessions, in order)
-
-1. **Phase 2 — Offer Symmetry**: migrate `ProgramCard`, `PackageCard`, `AddonCard`, Advisory cards, Build Studio tier cards, Rent-an-Agent tier cards, Autism package cards → `OfferCard`. Delete dead components.
-2. **Phase 3 — Doorway + Nav**: canonical `/start`, trim nav to 7 items, footer 3-column audience nav (Individuals/Businesses/Institutions), `RelatedOffers` strip on every offer page.
-3. **Phase 5 — New audiences**: `/local` (B2G/B2B2C + capability statement PDF), `/nonprofit` (donate→external, sponsor form, applicant form), `audience` column on `build_inquiries`, admin inbox tabs.
-4. **Logo**: drop a transparent PNG into `src/assets/collective-ai-logo.png` to replace the text lockup in the footer + `/collective` hero.
+- No new program data, pricing, or routes.
+- No changes to the existing OfferCard, ProgramCard, or pricing geometry.
+- No edits to other pages — the FOCUS framing already lives on `/modules` and `/programs/*`.
