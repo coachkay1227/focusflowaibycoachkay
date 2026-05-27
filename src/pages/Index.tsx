@@ -78,7 +78,7 @@ const Index = () => {
       </div>
 
       {/* Hero — Editorial Asymmetry (60/40) */}
-      <section className="relative z-10 px-4 md:px-8 pb-6">
+      <section className="relative z-10 px-4 md:px-8 pb-6 md:pt-20">
         <div className="w-full max-w-7xl mx-auto relative overflow-hidden border border-foreground/5 bg-background/40 backdrop-blur-sm shadow-2xl">
           <div className="flex flex-col md:flex-row min-h-[78vh]">
             {/* 60% — Content */}
@@ -178,6 +178,15 @@ const Index = () => {
             {/* 40% — Portrait */}
             <div className="w-full md:w-[40%] relative bg-navy-deep overflow-hidden group min-h-[50vh] md:min-h-0">
               {/* Overlays */}
+              {/* Top fade — masks any white edge in the source asset */}
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, hsl(220 40% 8%) 0%, transparent 14%)",
+                }}
+                aria-hidden="true"
+              />
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
@@ -200,6 +209,7 @@ const Index = () => {
                 className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[1200ms] ease-in-out"
                 style={{
                   opacity: phase >= 2 ? 1 : 0,
+                  objectPosition: "center 20%",
                   transition: "opacity 1.4s ease-out, filter 1.2s ease-in-out",
                 }}
               />
