@@ -1,45 +1,71 @@
-# Visual regression check for OfferCard symmetry
+# Path card CTAs → clean funnel into program detail + enrollment
 
-## Reality check on "visual regression"
+## What's actually happening today
 
-True pixel-diff visual regression needs Playwright + baseline screenshots + a CI runner that stores artifacts — none of which is wired into this project, and it would mean adding Playwright as a new dependency just for this. That's heavy for what we actually care about.
+The three path cards on `/truth-about-ai` (lines 125-174 of `src/pages/TruthAboutAI.tsx`) already render through `OfferCard` with bottom-anchored CTAs and `items-stretch` parity. Geometry is fine.
 
-What we actually care about is preventing two specific regressions:
-1. A grid that renders `<OfferCard>` siblings forgets `items-stretch` → cards stop matching height.
-2. `OfferCard` itself loses its `h-full` / `flex-col` / `mt-auto` invariants → CTAs stop bottom-anchoring.
+The real funnel friction is in the **CTA copy and routing**, not the pixels. Each card's `primaryCta` label promises plurality (*"See personal paths"*) but routes to a single program detail page. That makes users expect an overview/landing and land on an enroll page — a small but real cognitive break right at the conversion moment.
 
-Both are structural invariants — detectable without rendering pixels. The right tool is the **vitest + jsdom** setup already in the project (`vitest.config.ts`, `src/test/setup.ts`).
+### Current state
 
-## Plan
+| Card | Primary CTA label | → Routes to | Lands on | Next step there |
+|---|---|---|---|---|
+| Personal | "See personal paths" | `/programs/30-day-personal-reset` | ProgramDetail | "Enroll Now" button (`ProgramDetail.tsx:319`) |
+| Business | "See business paths" | `/programs/30-day-business-reset` | ProgramDetail | "Enroll Now" |
+| Full Transformation | "See transformation paths" | `/programs/90-day-full-ai-transformation` | ProgramDetail | "Enroll Now" |
 
-Add **two test files** that together act as the regression check.
+| Card | Secondary CTA label | → Routes to |
+|---|---|---|
+| Personal | "Talk to Kay first" | `/coach-kay` |
+| Business | "Have us build it" | `/build-studio` |
+| Full Transformation | "Apply for partnership" | `/programs/6-month-private-partnership` |
 
-### 1. `src/components/offers/OfferCard.symmetry.test.tsx`
-- Render an `OfferCard` and assert the article element has `data-offer-card`, `h-full`, `flex`, `flex-col` on its className.
-- Render with and without `secondaryCta` and confirm the CTA wrapper carries `mt-auto`.
-- Render with and without `price` and confirm the title and tagline keep their locked `min-h` classes (`min-h-[3.6rem]` / `min-h-[2.6rem]` for default density).
-- Render with 0 features → assert the spacer `<div className="flex-1" />` exists so empty-feature cards still push CTAs to the bottom.
-- Render two siblings inside a `<div className="grid grid-cols-2 items-stretch">` with wildly different feature counts (1 vs 6) and confirm both root articles render `h-full` (jsdom won't measure pixels, but the className contract is what guarantees parity when the browser does layout).
+Routes are correct. Labels are not parallel and over-promise breadth on the primary, while the secondaries use three different verb shapes ("Talk to…", "Have us…", "Apply for…") which makes the row look uneven at a glance even when the geometry is perfect.
 
-### 2. `src/components/offers/OfferCard.gridUsage.test.ts`
-A static-analysis test that reads every project source file once and asserts: **every JSX grid that contains an `<OfferCard>` (directly or via the known wrapper components `ProgramCard`, `PackageCard`, `AddonCard`, `AutismOfferCard`) declares `items-stretch` on its grid wrapper.**
+## The plan
 
-Implementation:
-- Walk `src/pages/**/*.tsx` and `src/components/**/*.tsx` with `fs.readdirSync` recursively.
-- For each file, find every `className=` that contains `grid` AND any line within the same JSX block that renders one of the known offer components.
-- Maintain an allowlist of known-good files mapped to the expected grid classes (Pricing, Build Studio, Truth, Store, Autism, Modules). If a new file uses an offer card in a grid without `items-stretch`, the test fails with a clear message naming the file and line.
+### 1. Parallel, funnel-honest primary CTA copy
+Rewrite each primary label to match what the user actually lands on — the specific program — and use a verb that mirrors the enrollment step on the destination page ("Enroll Now"):
 
-This is the actually-load-bearing check — the OfferCard internals rarely change, but new grids are added all the time. The test makes it impossible to add a new offer-card grid without remembering `items-stretch`.
+| Card | New primary label | Route (unchanged) |
+|---|---|---|
+| Personal | "Start the 30-day Personal Reset" | `/programs/30-day-personal-reset` |
+| Business | "Start the 30-day Business Reset" | `/programs/30-day-business-reset` |
+| Full Transformation | "Start 90-day Full Transformation" | `/programs/90-day-full-ai-transformation` |
 
-### 3. Tiny prep edit (already done in earlier turn)
-`OfferCard` already emits `data-offer-card` on its root, so the unit test can target it without coupling to className strings. No production code change needed.
+Three labels, same verb (*Start*), same structure (verb + duration + program name). Each lands on a ProgramDetail page whose primary action is "Enroll Now" — so the funnel reads: *Start →  Enroll → Dashboard*.
 
-## What I am NOT doing and why
+### 2. Parallel secondary CTA copy
+Same trick on the secondaries — different destinations are fine, but the verb shape should be consistent:
 
-- **Playwright / pixel diffs** — would require a new dependency, a baseline image store, and a CI runner. Disproportionate for the failure mode we've actually seen (forgotten `items-stretch`). Happy to scope this as a follow-up if you want true cross-browser screenshot regression — say the word and I'll spec it separately.
-- **Browser-tool live screenshot** — useful for one-time verification (and I can run it on request), but it's not a "check" that re-runs.
-- **Storybook visual regression** — no Storybook in this project; not adding one for two tests.
+| Card | Secondary label (was → is) | Route |
+|---|---|---|
+| Personal | "Talk to Kay first" → **"Talk to Kay first"** (keep — already conversational) | `/coach-kay` |
+| Business | "Have us build it" → **"Have the Studio build it"** | `/build-studio` |
+| Full Transformation | "Apply for partnership" → **"Apply for the Partnership"** | `/programs/6-month-private-partnership` |
+
+Minor; keeps proper noun capitalization parallel.
+
+### 3. OfferCard CTA spacing — tiny tightening (optional, ask before applying)
+Inside `OfferCard.tsx` line 118 the dual-CTA stack uses `flex flex-col gap-2`. On dual-CTA cards (Personal, Business, Full Transformation all have two CTAs) the secondary button currently sits with `gap-2` (8px) under the primary, which reads slightly cramped against the larger button padding. Bumping to `gap-2.5` (10px) gives the pair a calmer rhythm without affecting single-CTA cards.
+
+Risk: this change touches *every* OfferCard usage site-wide, not just the path cards. If you want the spacing change localized to the path cards only, I'll skip it — say the word.
+
+### 4. Verify the funnel end-to-end after the copy change
+Once the labels ship, walk one path in the preview (Personal):
+- Click "Start the 30-day Personal Reset" → confirm ProgramDetail loads.
+- Confirm "Enroll Now" is visible above the fold for a logged-in user.
+- Click and confirm the success toast + dashboard redirect.
+
+I'll do this with the browser tool right after the edits land.
+
+## What I am NOT touching
+
+- The `PATHS` *destinations* — they're correct.
+- `ProgramDetail.tsx` enrollment logic — already working.
+- `OfferCard` structural classes — locked by the regression tests added last turn.
+- The Modules-page `PATHS` (different surface, different intent — that's a category nav, not a conversion card).
 
 ## Open question
 
-Do you want me to also run the live browser tool right now to capture **before/after screenshots** at mobile (375×812) and desktop (1366×768) for the four offer surfaces (Truth, Pricing, Build Studio, Store) as a one-time human-verifiable QA pass alongside the test suite? It's a separate thing from the regression *check* itself, but it's the fastest way to confirm "yes, everything looks symmetric today." If yes, I'll do both in the build pass.
+Do you want CTA labels to include the **price** (e.g. *"Start the 30-day Personal Reset — $97"*) for stronger conversion signal, or keep price in the dedicated price zone above the CTA (current behavior, cleaner geometry)? Default is keep price separate.
