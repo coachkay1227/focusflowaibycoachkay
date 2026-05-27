@@ -1,42 +1,56 @@
-## Continuing Phases 2 → 4 while you're out
 
-Phase 1 (newsletter waitlist) is shipped. You'll add `BEEHIIV_API_KEY` + `BEEHIIV_PUBLICATION_ID` when you're back — until then captures land safely in the database and the admin CSV export covers you.
+# Fix: Rebuild `/pause-hub` as the P.A.U.S.E. Scam Hub
 
-Here's what I'll do next, in order, without further check-ins (you said keep moving):
+## What went wrong
+In msgs #897–#902 we locked the plan: Pause Hub = **P.A.U.S.E. Check** — a consumer-protection hub for AI scams, overhyped trends, and productivity traps, auto-refreshing via Supabase Realtime, published from `/admin`. In #914 I re-offered it as a vague "Pause practice/tool" and built a box-breathing meditation page. Wrong feature. Discarding it.
 
-### Phase 2 — Link sweep + SEO sanity
+## What we build instead
 
-- Grep every `to="/..."` and `href="/..."` across the app; cross-reference with `App.tsx` routes; fix or redirect any mismatch.
-- Manually walk every public route (Index, Modules, ProgramDetail sample, Store, StarterKit, CoachKay, Community, RentAnAgent, Advisory, BuildStudio, Collective, Truth, FAQ, Autism, AuditLanding, Sitemap, Privacy, Terms, Disclaimer, RefundPolicy, Unsubscribe, 404) — confirm render + footer + nav.
-- Confirm legacy redirects still resolve: `/about`, `/ai-starter-kit`, `/email-unsubscribe`.
-- Regenerate `public/sitemap.xml` so every live public route is included (skips admin/auth/dashboard/clarity/etc.).
-- Audit `robots.txt` — confirm private routes are disallowed.
-- Confirm each public page has unique `<SEOHead>` title + description; add any missing.
-- Pull SEO findings from the scanner and resolve anything actionable.
+### 1. Database (one migration)
+- `scam_alerts` table: `id`, `title`, `slug`, `summary`, `body` (markdown), `threat_level` (enum: `red_flag`, `caution`, `watch`, `resolved`), `category` (e.g. "AI scam", "Overhyped trend", "Productivity trap"), `action_rules` (jsonb array of short do/don't bullets), `source_url`, `published_at`, `created_by`, `is_published`.
+- RLS:
+  - `anon` + `authenticated`: SELECT where `is_published = true`
+  - `admin` role: full INSERT/UPDATE/DELETE
+- Grants per public-schema rule.
+- `ALTER PUBLICATION supabase_realtime ADD TABLE public.scam_alerts;`
+- Seed 6–8 starter alerts so the page isn't empty on launch.
 
-### Phase 3 — Email backbone verification
+### 2. `/pause-hub` page — rebuild from scratch
+Delete the current breathwork implementation. New page:
+- Hero: "The P.A.U.S.E. Check — before you click, swipe, or pay." Subtext on consumer protection mission.
+- Live alert feed: cards sorted by `published_at desc`, grouped or filterable by `threat_level`. Each card shows threat badge (color-coded, no red as primary — gold/amber for caution, deep crimson reserved only for `red_flag`), category chip, title, summary, action rules as a checklist, "Read full alert" expand, source link.
+- Filter chips: All / Red Flag / Caution / Watch / Resolved + category filter.
+- Realtime subscription: `supabase.channel('scam_alerts').on('postgres_changes', ...)` — new alerts slide in at top, no refresh button, no polling. Toast on new alert while page is open.
+- Empty state + skeleton loading.
+- SEO: JSONLD `CollectionPage` + `ItemList` of alerts.
 
-- Read the three existing GHL triggers (signup, clarity-complete, application) + confirm the new `newsletter_signup` trigger payload matches the same shape.
-- Document all four payloads in `.lovable/memory/features/email-strategy.md` so your GHL workflows know exactly what fields to expect.
-- Confirm `welcome-to-focusflow` and `application-received` transactional templates are wired to their trigger points.
-- Note in CHANGELOG: ready for GHL/Beehiiv sequencing.
+### 3. Admin publishing UI — `/admin/scam-alerts`
+- List view of all alerts (published + drafts).
+- Create / edit form: title, summary, body (markdown textarea), threat level, category, action rules (repeatable input), source URL, publish toggle.
+- Wire into existing `AdminNav.tsx`.
+- Service-role gated via existing `has_role(auth.uid(), 'admin')`.
 
-### Phase 4 — Pre-launch polish + smoke
+### 4. Cleanup
+- Remove breathwork-only code: box-breathing orb, daily prompts list, ritual cards.
+- Keep route `/pause-hub` (already in nav, sitemap, MobileNav) — only the contents change.
+- Update memory: `mem://features/pause-hub` describing the scam-hub purpose so this never drifts again.
+- Update `CHANGELOG.md`.
 
-- Console scrub: remove stray `console.log` from production paths (keep `console.error`).
-- Mobile pass at 369px: footer + nav + popup don't overflow; newsletter card stacks cleanly.
-- Confirm chat widget loads on every public page; no console errors.
-- Run type-check (`tsc --noEmit`); fix any drift.
-- Bump CHANGELOG with launch entry.
-- Produce a final "launch checklist" report — pass/fail per item — so when you're back you only have 3 steps: (1) drop in Beehiiv keys, (2) review the checklist, (3) hit Publish.
+## What I am NOT touching this round
+- `/ai-tools` directory (separate PRD question, still open)
+- `/scams` route from the PRD — folding into `/pause-hub` since Pause Hub IS the scam hub per original plan. If you'd rather have both `/scams` and `/pause-hub`, say so and I'll split.
+- Quiz, F.O.C.U.S. pillar tags on the tool directory, Poppins/Open Sans font swap — all still pending answers from my earlier 4 questions.
 
-### Guardrails I'm keeping
+## Technical notes
+- Pure CSS animations only (per memory rule, no Framer/GSAP).
+- Realtime free tier: 200 concurrent connections, 2M msgs/month — way under projected traffic.
+- Edge functions: none needed; admin writes go through Supabase client with RLS.
+- No new secrets required.
 
-- No new features beyond what's listed.
-- No touching coachkayelevates.org or forwardfocuselevation.org references.
-- No marketing copy written.
-- If a deeper issue surfaces (e.g. a whole page that needs rebuild), I stop and leave a note in the report instead of expanding scope.
+## Acceptance check before I say it's done
+1. Visit `/pause-hub` while logged out → see live alerts.
+2. Publish a new alert from `/admin/scam-alerts` in one tab → it appears in `/pause-hub` in another tab within ~1s, no refresh.
+3. Unpublish → it disappears live.
+4. Filter chips work; threat badges render correctly; mobile layout clean at 375px.
 
-After each phase I'll only write back a short status line + what's next. Final report at the end.
-
-Approve and I'll work straight through.
+Ready to switch to build mode and execute.

@@ -712,6 +712,57 @@ export type Database = {
         }
         Relationships: []
       }
+      scam_alerts: {
+        Row: {
+          action_rules: Json
+          body: string
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_published: boolean
+          published_at: string | null
+          slug: string
+          source_url: string | null
+          summary: string
+          threat_level: Database["public"]["Enums"]["scam_threat_level"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action_rules?: Json
+          body?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug: string
+          source_url?: string | null
+          summary: string
+          threat_level?: Database["public"]["Enums"]["scam_threat_level"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          action_rules?: Json
+          body?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug?: string
+          source_url?: string | null
+          summary?: string
+          threat_level?: Database["public"]["Enums"]["scam_threat_level"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       starter_kit_reports: {
         Row: {
           bottleneck: string
@@ -964,6 +1015,7 @@ export type Database = {
         | "reset_30"
         | "transformation_90"
       app_role: "admin" | "moderator" | "user"
+      scam_threat_level: "red_flag" | "caution" | "watch" | "resolved"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1102,6 +1154,7 @@ export const Constants = {
         "transformation_90",
       ],
       app_role: ["admin", "moderator", "user"],
+      scam_threat_level: ["red_flag", "caution", "watch", "resolved"],
     },
   },
 } as const
