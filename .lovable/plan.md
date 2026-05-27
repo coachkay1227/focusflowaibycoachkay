@@ -1,98 +1,73 @@
-## Two deliverables: The Truth Page + sitewide offer-card symmetry
+# Final Plan — Phase 1 (Collective Trust Layer) + Phase 4 Surprise
+
+Locked in based on your answers. Credit-aware: this is the **last build**. Two phases, shipped in one pass, audited before handoff.
 
 ---
 
-### Part 1 — `/truth` — "The AI Reality Guide" (100x'd)
+## Decisions locked in
 
-A new long-form page that becomes the gravitational center of the site: the page people land on, finally exhale, and *then* convert. It replaces the attached HTML's flat layout with the cinematic FocusFlow shell (deep navy, gold, Cormorant + DM Sans, IntersectionObserver reveals — no Framer/GSAP per project rule).
-
-**Proposed positioning (the "100x" rewrite)**
-
-- **Promise**: *"The truth about AI — for your life, your business, and what comes next."*
-- **Sub-promise**: *"No hype. No fear. No gurus. Just the clearest thinker in the room walking you through what AI actually is, what it isn't, and the exact next step for you — personal, business, or full transformation."*
-- **Voice**: First-person Kay. Direct. Calm authority. The page reads like a single conversation, not a brochure.
-- **Funnel logic**: every section earns trust; the page ends by routing the reader into one of three paths based on *where their fear is*:
-  - **Personal** → 30/90-day personal reset
-  - **Business** → 30/90-day business reset + Build Studio
-  - **Full AI Transformation** → 90-day Full AI + 6-month Private Partnership
-
-**Page structure (top → bottom)**
-
-1. **Hero** — eyebrow "The AI Reality Guide", title "The truth about AI. *No hype. No fear. Just clarity.*", trust tags, one primary CTA "Find your path" (scrolls to path picker).
-2. **The honest opener** — "Yes, AI is changing everything. That's not a reason to panic." + pull-quote.
-3. **Myth-busting grid** — 6 cards (False / Nuanced / True badges) from the attached HTML, restyled in FocusFlow tokens.
-4. **What AI is actually good at / where it fails** — two-column truth list.
-5. **The fear conversation** — six "Fear → Truth" cards.
-6. **The AI scam economy** — red-flag cards (Kay's unique angle, none of the competition says this).
-7. **Skills that matter more now** — six skill cards.
-8. **The Three Paths** *(new — the conversion engine)* — three symmetric path cards: Personal Reset / Business Reset / Full AI Transformation. Each card: outcome, who it's for, starting price, primary CTA → program detail, secondary "Talk to Kay first" → `/coach-kay`.
-9. **Trust strip** — "Why people trust this room": 4 micro-proof badges (years of practice, # transformations, honest-pricing pledge, no-affiliate pledge).
-10. **Final CTA** — "Still unsure? Take the 60-second Clarity Check." → `/clarity`.
-11. **SEO**: SEOHead with title "The Truth About AI — Personal, Business & Full Transformation | Coach Kay", strong meta description, FAQPage + Article JSON-LD, added to sitemap + check-seo-regressions INDEXABLE.
-12. **Nav**: add "Truth" link in Desktop/Mobile nav (before Build Studio) so it's the most prominent doorway.
-
-**Files**
-- `src/pages/TruthAboutAI.tsx` (new)
-- `src/App.tsx` — add `/truth` route + lazy import
-- `src/components/DesktopNav.tsx` and `src/components/MobileNav.tsx` — add "Truth" entry
-- `public/sitemap.xml` + `scripts/generate-sitemap.ts` + `scripts/check-seo-regressions.ts` — register `/truth`
-- Reuse the new `OfferCard` (see Part 2) for the Three Paths block
+- **Logo**: extract from the onboarding packet PDF (Collective AI lockup). If extraction fails, ship a tasteful text lockup ("Collective AI") in brand fonts as fallback — no broken images.
+- **Entity**: Focus Flow AI LLC, DBA Coach Kay Elevates. Footer copyright updated to reflect this.
+- **Booking strategy**: **NO new `/book` route, no duplicate booking surface.** All "talk to Kay" / scoping / discovery CTAs across this site point to `https://coachkayelevates.org/` (your booking home). Single source of truth — your offers live here, your calendar lives there.
+- **Recommended booking tiers** for you to set up on coachkayelevates.org (not built here, just my recommendation):
+  - **15 min — Free Clarity Call** (qualifier, low friction, feeds Programs/Build Studio)
+  - **30 min — Free Discovery Scope** (Advisory/Build Studio/Local-Gov leads only — gated by inquiry form so it doesn't get abused)
+  - **45 min — Paid Strategy Session $67** ← your pick, confirmed. High-intent buyers, refundable into any program/audit purchase within 14 days (Hormozi risk-reversal).
+- **Donations**: external link to your nonprofit donation modal page (the "Choose Your Donation Amount" UI in your screenshot). Open in new tab, `rel="noopener"`. We do NOT rebuild that UI here.
+- **Phase 4 surprise**: scoped to ONE high-leverage wow moment — see below.
+- **All other phases (2, 3, 5)**: deferred. Documented in `.lovable/plan.md` as backlog so a future session can pick up cleanly.
 
 ---
 
-### Part 2 — Sitewide offer-card symmetry
+## Phase 1 — Collective AI Trust Layer
 
-Today the site has at least 5 different offer-card shapes: `ProgramCard`, `PackageCard`, `AddonCard`, the inline tier cards on `CollectiveAIBuildStudio.tsx`, the pricing rows in `PricingSection.tsx`, and ad-hoc cards on `Advisory.tsx` / `RentAnAgent.tsx` / `Store.tsx`. They have different heights, paddings, button placements, badge styles, and price formatting — visually inconsistent.
-
-**Fix**: introduce one shared primitive and migrate every offer surface to it.
-
-**New component**: `src/components/offers/OfferCard.tsx`
-
-A single locked layout with five vertical zones (every card, every page):
-
-```text
-┌───────────────────────────────┐
-│ [eyebrow tag]   [optional badge]│  ← zone 1 (fixed height)
-│ Title (Cormorant, 2 lines max)│  ← zone 2 (min-h locked)
-│ Short positioning line        │  ← zone 3 (min-h locked, 2 lines)
-│ ─────────────                  │
-│ • feature                     │  ← zone 4 (flex-1, equal stretch)
-│ • feature                     │
-│ • feature                     │
-│ ─────────────                  │
-│ Price block (locked baseline) │  ← zone 5a
-│ Primary CTA  /  ghost CTA     │  ← zone 5b (always bottom)
-└───────────────────────────────┘
-```
-
-Props: `eyebrow`, `badge?`, `title`, `tagline`, `features[]`, `price`, `priceSuffix?`, `primaryCta`, `secondaryCta?`, `variant: "standard" | "featured" | "premium"`, `pillar?`.
-
-Rules baked in:
-- `display: flex; flex-direction: column; h-full` so every card in a grid is the same height.
-- `min-h` on title (2-line clamp) and tagline (2-line clamp) so short copy doesn't shrink the card.
-- Features list uses `flex-1` so the price/CTA block always sticks to the bottom.
-- One radius (`rounded-2xl`), one border (`border border-border/40`), one hover (`hover:border-primary/40 hover:shadow-elegant`), one focus ring.
-- Price uses a single formatter (`formatPrice` helper) — no more mixed `$X / mo` vs `$X USD/month`.
-
-**Migrations** (each replaces ad-hoc markup with `<OfferCard …>`):
-1. `src/components/ProgramCard.tsx` → thin wrapper around OfferCard
-2. `src/components/store/PackageCard.tsx` → wrapper
-3. `src/components/store/AddonCard.tsx` → wrapper (compact variant)
-4. `src/pages/CollectiveAIBuildStudio.tsx` — replace inline tier cards
-5. `src/components/PricingSection.tsx` — replace
-6. `src/pages/Advisory.tsx`, `src/pages/RentAnAgent.tsx`, `src/pages/Store.tsx`, `src/pages/Index.tsx`, `src/pages/AutismSocialStories.tsx` — replace any remaining offer markup
-7. New Truth page Three Paths block uses it natively
-
-**Visual QA**
-- Walk every offer page in the preview at 1280px and 375px, confirm equal card heights per row and aligned CTAs.
-- Run the SEO regression script after the new `/truth` route lands.
+### Build
+1. **`src/assets/collective-ai-logo.png`** — extract from onboarding packet via `document--parse_document`. Fallback: clean text lockup component.
+2. **`src/components/SiteFooter.tsx`** — replace existing footer:
+   - Add trust line under brand block: *"Coach Kay is Operations Architect & Lead Developer at **Collective AI** — a multidisciplinary AI delivery team. Solo coaching by Kay. Enterprise builds delivered with the collective."*
+   - Small Collective AI logo lockup beside it.
+   - Add **"Book with Coach Kay"** column linking out to `coachkayelevates.org` (15 / 30 / 45 min options described as labels, each linking to the same external home — they'll route correctly once you wire calendars there).
+   - Update copyright to "© {year} Focus Flow AI LLC · DBA Coach Kay Elevates."
+   - Footer-only link to `/collective`.
+3. **`src/pages/Collective.tsx`** (new) — single trust page (~600 words). Sections: who Collective AI is, Kay's two hats, what the team delivers, capability snapshot, single CTA "Start a Build Conversation" → `/build-studio`, secondary "Book 1:1 with Kay" → external `coachkayelevates.org`.
+4. **`src/App.tsx`** — register `/collective` lazy route.
+5. **`src/pages/CollectiveAIBuildStudio.tsx`** — hero eyebrow becomes "Collective AI Build Studio · Led by Coach Kay" + one-line "Delivered by the Collective AI team" strip.
+6. **`src/pages/Advisory.tsx`** — add compact "Who delivers" card (role-only: Operations Architect, Lead Engineer, AI Researcher, Designer). Replace existing inline Advisory booking CTAs to point to `coachkayelevates.org`.
+7. **`src/pages/CoachKay.tsx`** — add anchored "Two hats, one mission" section (~80 words) linking to `/collective`. Primary CTA → `coachkayelevates.org`.
+8. **`src/lib/seo-schema.ts`** — add `memberOf: { @type: Organization, name: "Collective AI" }` on Person schema. Update Organization `legalName` to "Focus Flow AI LLC".
+9. **`public/sitemap.xml` + `scripts/generate-sitemap.ts` + `scripts/check-seo-regressions.ts`** — include `/collective`.
+10. **External-link audit pass**: every "Book", "Schedule", "Talk to Kay", "Discovery Call" CTA on Coach Kay, Advisory, Build Studio, Rent-an-Agent, Index → `coachkayelevates.org` (target=_blank, rel=noopener).
 
 ---
 
-### Out of scope (this turn)
-- No Stripe / pricing changes — symmetry is purely presentational.
-- No copy changes to existing programs beyond what `OfferCard` requires (eyebrow + tagline). Where copy is missing I'll derive it from the program catalog.
-- No new images generated unless you ask — I'll lean on type and tokens.
+## Phase 4 Surprise — "The Mirror" (one wow moment on `/truth`)
 
-### One thing to confirm before I start
-The "Three Paths" CTAs on the Truth page — should the Business path point at `/programs/30-day-business-reset` (program) or `/build-studio` (done-for-you)? My default is **program → reset for under $5k buyers, Build Studio as the secondary CTA** on that card. Say the word if you want them swapped.
+A single, memorable interaction that makes Truth feel alive without bloating credits or adding libraries. Pure CSS + IntersectionObserver, no new deps.
+
+**What it is**: a scroll-triggered "AI thought reveal" hero panel on `/truth` — when the user scrolls into the Myth-Busting section, a typewriter-style reveal types out: *"You came here for the truth. Here it is: AI won't replace you. But the version of you that ignores it... will be replaced by the version that doesn't."* — letter by letter, gold cursor blinking, then the rest of the page unlocks with a soft fade-up cascade.
+
+Why this and not the full Phase 4: it gives the "blow my mind" moment for free (no edge function call, no API cost, no library), works on mobile, and gives Truth a signature beat that nothing else on the site has. It's the kind of thing people screenshot.
+
+**Built in**: `src/pages/TruthAboutAI.tsx` + one small `src/components/truth/MirrorReveal.tsx`.
+
+---
+
+## Verification gate (before I tell you it's done)
+
+1. `bun run scripts/generate-sitemap.ts` + `bun run scripts/check-seo-regressions.ts` both pass.
+2. Read every changed page back, walk at 1280px and 375px.
+3. Click-test every external booking CTA → confirms it opens `coachkayelevates.org` in new tab.
+4. `/collective` renders, JSON-LD valid, indexable.
+5. Footer trust line + logo render sitewide.
+6. `/truth` Mirror reveal triggers on scroll, no jank, mobile-safe.
+7. Console + network log scan, zero new errors.
+8. Backlog written to `.lovable/plan.md` so Phases 2, 3, 5 can resume cleanly later.
+
+---
+
+## Two tiny confirmations before I switch to build
+
+1. **Booking link target** — confirm `https://coachkayelevates.org/` (root) is correct, or do you have a deeper path like `/book` on that site I should use?
+2. **Mirror Reveal copy** — keep the line above as-is, or want to write your own? (I can ship with mine and you can tweak after.)
+
+Answer those and I'll build straight through.
