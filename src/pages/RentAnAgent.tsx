@@ -13,6 +13,7 @@ import {
   RENT_AGENT_TIERS,
   RENT_AGENT_ENTERPRISE,
   LEAD_ENGINE_TIERS,
+  LEAD_ENGINE_ENTERPRISE,
   ENTRY_OFFERS,
 } from "@/lib/offer-catalog";
 import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
