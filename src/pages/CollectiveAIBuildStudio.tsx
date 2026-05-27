@@ -20,6 +20,7 @@ import {
   type BuildTierOffer,
 } from "@/lib/build-studio-catalog";
 import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
+import { getSymmetricGridClass } from "@/lib/grid";
 
 const PILLARS = [
   { icon: Zap, title: "Speed", body: "Most builds ship in days, not months. We use AI to compress 4 months of agency work into 14 days." },
@@ -248,7 +249,7 @@ const CollectiveAIBuildStudio = () => {
         </div>
 
         {/* Offer grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className={`${getSymmetricGridClass(activeOffers.length)} gap-5`}>
           {activeOffers.map((o) => {
             const tierLabel = BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.label ?? "";
             const isCheckout = Boolean(o.priceId);
