@@ -41,6 +41,7 @@ const Store = lazy(() => import("./pages/Store.tsx"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess.tsx"));
 const AutismSocialStories = lazy(() => import("./pages/AutismSocialStories.tsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.tsx"));
+const AdminAutismOrders = lazy(() => import("./pages/admin/AdminAutismOrders.tsx"));
 const Assessment = lazy(() => import("./pages/Assessment.tsx"));
 const StarterKit = lazy(() => import("./pages/StarterKit.tsx"));
 const RentAnAgent = lazy(() => import("./pages/RentAnAgent.tsx"));
@@ -110,6 +111,7 @@ const App = () => (
             <Route path="/audit/intake/:id" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
             <Route path="/audit/report/:id" element={<Suspense fallback={<PageSkeleton />}><AuditReport /></Suspense>} />
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/autism-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAutismOrders /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />

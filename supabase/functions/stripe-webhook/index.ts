@@ -220,7 +220,7 @@ serve(async (req) => {
         const pi = typeof session.payment_intent === "string" ? session.payment_intent : null;
         const { data: pending, error: pendingErr } = await supabaseClient
           .from("autism_orders")
-          .select("id, order_total, client_email, client_name, package_name, child_first_name, scenario_focus, gift_wrap, gift_recipient")
+          .select("id, order_total, client_email, client_name, package_name, package_slug, child_first_name, scenario_focus, gift_wrap, gift_recipient, download_url")
           .eq("id", autismOrderId)
           .eq("stripe_session_id", session.id)
           .eq("status", "pending_payment")
@@ -282,6 +282,12 @@ serve(async (req) => {
                     scenarioFocus: pending.scenario_focus,
                     isGift: !!pending.gift_wrap,
                     giftRecipient: pending.gift_recipient,
+                    deliveryMethod: typeof pending.package_slug === "string" && pending.package_slug.includes("illustrated")
+                      ? "custom-illustrated PDF"
+                      : "print-ready PDF",
+                    storyCount: 1,
+                    includesHsaReceipt: true,
+                    downloadUrl: pending.download_url ?? undefined,
                   },
                 },
               });
