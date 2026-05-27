@@ -279,7 +279,7 @@ const CoachChat = () => {
             onKeyDown={handleKeyDown}
             placeholder={user ? "Share what's on your mind..." : "Sign in to chat with Coach Kay"}
             disabled={!user}
-            className="bg-card/30 border-border text-foreground placeholder:text-muted-foreground/40 min-h-[48px] max-h-[120px] resize-none focus:border-primary/40"
+            className="bg-card/30 border-border text-foreground placeholder:text-muted-foreground/70 min-h-[48px] max-h-[120px] resize-none focus:border-primary/40"
             rows={1}
             aria-label="Message input"
           />

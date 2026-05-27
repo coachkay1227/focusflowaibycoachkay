@@ -294,7 +294,7 @@ const MirrorChallenge = () => {
                     value={journalText}
                     onChange={(e) => setJournalText(e.target.value)}
                     placeholder="Write honestly. No one else will see this."
-                    className="bg-card/30 border-border backdrop-blur-sm text-foreground placeholder:text-muted-foreground/40 min-h-[150px] text-base resize-none focus:border-primary/40"
+                    className="bg-card/30 border-border backdrop-blur-sm text-foreground placeholder:text-muted-foreground/70 min-h-[150px] text-base resize-none focus:border-primary/40"
                     disabled={isDayCompleted && selectedDay !== data.currentDay}
                   />
                   {!isDayCompleted && (
