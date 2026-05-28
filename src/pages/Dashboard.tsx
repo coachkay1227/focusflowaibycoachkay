@@ -133,9 +133,14 @@ const Dashboard = () => {
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
-        <div className="font-heading text-xl font-light cursor-pointer" onClick={() => navigate("/")} role="img" aria-label="FocusFlow AI">
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="font-heading text-xl font-light cursor-pointer bg-transparent border-0 p-0"
+          aria-label="FocusFlow AI — go to home"
+        >
           <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
-        </div>
+        </button>
         <div className="flex items-center gap-4">
           {isAdmin && (
             <button onClick={() => navigate("/admin")} className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block">Admin</button>
