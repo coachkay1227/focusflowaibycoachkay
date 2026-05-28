@@ -87,8 +87,7 @@ const Index = () => {
               <div
                 className="absolute left-4 md:left-8 top-12 bottom-12 w-px pointer-events-none"
                 style={{
-                  background:
-                    "linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.3), transparent)",
+                  background: "linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.3), transparent)",
                 }}
                 aria-hidden="true"
               />
@@ -110,14 +109,13 @@ const Index = () => {
                   className="font-heading text-4xl md:text-6xl lg:text-7xl font-light leading-[1.05] text-foreground"
                   style={{ textShadow: "0 0 40px hsl(var(--primary) / 0.12)" }}
                 >
-                  For high-achievers stuck in{" "}
-                  <span className="italic">decision loops</span>: get one clear next move in{" "}
+                  For high-achievers stuck in <span className="italic">decision loops</span>: get one clear next move in{" "}
                   <span className="text-primary">90 seconds.</span>
                 </h1>
 
                 <p className="text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
-                  No planner. No journal. No coaching call. Six honest questions and a
-                  personalized Clarity Code from Master Certified Coach Kay.
+                  No planner. No journal. No coaching call. Six honest questions and a personalized Clarity Code from
+                  Master Certified Coach Kay.
                 </p>
 
                 <div className="pt-2 flex flex-col gap-10">
@@ -146,9 +144,7 @@ const Index = () => {
                       <p className="font-mono-label text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70">
                         Level
                       </p>
-                      <p className="font-heading text-lg italic text-foreground">
-                        Master Certified
-                      </p>
+                      <p className="font-heading text-lg italic text-foreground">Master Certified</p>
                     </div>
                     <div className="w-px h-8 bg-foreground/10" aria-hidden="true" />
                     <div className="space-y-1">
@@ -182,16 +178,14 @@ const Index = () => {
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
-                  background:
-                    "linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%)",
+                  background: "linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%)",
                 }}
                 aria-hidden="true"
               />
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
-                  background:
-                    "linear-gradient(to top, hsl(var(--background)) 0%, transparent 55%)",
+                  background: "linear-gradient(to top, hsl(var(--background)) 0%, transparent 55%)",
                 }}
                 aria-hidden="true"
               />
@@ -246,14 +240,62 @@ const Index = () => {
               href="#how-it-works"
               className="group flex items-center gap-3 md:gap-4 text-muted-foreground/60 hover:text-primary transition-colors"
             >
-              <span className="font-mono-label text-[9px] tracking-[0.2em] uppercase font-bold">
-                Scroll to Begin
-              </span>
+              <span className="font-mono-label text-[9px] tracking-[0.2em] uppercase font-bold">Scroll to Begin</span>
               <span
                 className="w-10 md:w-12 h-px bg-current transition-all duration-500 group-hover:w-16"
                 aria-hidden="true"
               />
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PATH FORK — Where are you stuck? ─────────────────────────────── */}
+      <section className="relative z-10 px-4 md:px-8 py-10 md:py-14">
+        <div className="max-w-4xl mx-auto">
+          <p className="font-mono-label text-primary tracking-[0.2em] text-center mb-6 text-xs">
+            WHERE DO YOU WANT TO START?
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Card A — Clarity / Thinking lane */}
+            <button
+              onClick={() => navigate("/modules")}
+              className="group relative text-left p-8 border border-primary/20 bg-background/60 backdrop-blur-sm hover:border-primary/60 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              <span className="font-mono-label text-primary text-xs tracking-[0.2em] mb-3 block">PATH A · CLARITY</span>
+              <h3 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
+                My thinking is foggy —<br />I need clarity &amp; direction.
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                Decisions, focus, and mental clarity. Start with the F.O.C.U.S. framework and find your next move in 90
+                seconds.
+              </p>
+              <span className="inline-flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all">
+                Start the Clarity Check
+                <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
+              </span>
+            </button>
+
+            {/* Card B — AI Systems lane */}
+            <button
+              onClick={() => navigate("/rent-an-agent")}
+              className="group relative text-left p-8 border border-foreground/10 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              <span className="font-mono-label text-foreground/40 text-xs tracking-[0.2em] mb-3 block">
+                PATH B · AI SYSTEMS
+              </span>
+              <h3 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
+                My business systems need AI —<br />I need to automate &amp; scale.
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                AI-powered systems, workflows, and builds. Explore the tools and services that run Coach Kay's client
+                engine.
+              </p>
+              <span className="inline-flex items-center gap-2 text-foreground/60 text-sm font-medium group-hover:text-primary group-hover:gap-3 transition-all">
+                Explore AI Systems
+                <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
+              </span>
+            </button>
           </div>
         </div>
       </section>
@@ -301,9 +343,7 @@ const Index = () => {
           ].map((item, i) => (
             <AnimatedSection key={item.title} delay={i * 100}>
               <div className="clarity-card h-full rounded-lg border border-border bg-card/40 backdrop-blur-sm p-5 flex flex-col">
-                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
-                  {item.label}
-                </span>
+                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">{item.label}</span>
                 <h3 className="font-heading text-lg font-medium text-foreground mt-2">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mt-2 flex-1">{item.desc}</p>
                 <Button
@@ -311,7 +351,7 @@ const Index = () => {
                     void trackEvent(
                       "path_card_clicked",
                       { card: item.label, title: item.title, to: item.to },
-                      item.to === "/clarity" ? "personal" : item.to === "/assessment" ? "business" : "ai"
+                      item.to === "/clarity" ? "personal" : item.to === "/assessment" ? "business" : "ai",
                     );
                     navigate(item.to);
                   }}
@@ -331,8 +371,6 @@ const Index = () => {
           ))}
         </div>
       </section>
-
-
 
       {/* F.O.C.U.S. Framework */}
       <section id="how-it-works" className="relative z-10 py-24 md:py-32 px-6">
@@ -506,7 +544,6 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-
     </div>
   );
 };
