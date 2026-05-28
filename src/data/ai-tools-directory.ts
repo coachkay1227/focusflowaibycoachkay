@@ -32,7 +32,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   // -------------------------- AI Chat & Reasoning --------------------------
   {
     name: "Claude",
-    blurb: "First brain in the room. Long-form thinking, nuance, tone — the one Coach Kay runs everything through.",
+    blurb: "First brain in the room. Long-form thinking, nuance, tone: the one Coach Kay runs everything through.",
     category: "AI Chat & Reasoning",
     signup_url: "https://claude.ai",
     pricing: "Freemium",
@@ -94,7 +94,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   {
     name: "Gamma",
     blurb:
-      "AI-powered presentation and document builder. Turn rough notes into polished decks in seconds — perfect for coaching offers and content.",
+      "AI-powered presentation and document builder. Turn rough notes into polished decks in seconds, perfect for coaching offers and content.",
     category: "AI Build & No-Code",
     signup_url: "https://gamma.app",
     affiliate_url: "https://gamma.app?via=coachkay",
@@ -217,7 +217,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   {
     name: "AdCreative.ai",
     blurb:
-      "AI-generated ad creatives and social content — trained on high-performing ads. Saves hours designing content that actually converts.",
+      "AI-generated ad creatives and social content, trained on high-performing ads. Saves hours designing content that actually converts.",
     category: "AI Video & Image",
     signup_url: "https://www.adcreative.ai",
     affiliate_url: "https://www.adcreative.ai/signup?fpr=coachkay",
@@ -362,7 +362,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   // -------------------------- Community & Booking --------------------------
   {
     name: "Skool",
-    blurb: "Home of the FocusFlow Elevation Hub — where support happens between sessions.",
+    blurb: "Home of the FocusFlow Elevation Hub: where support happens between sessions.",
     category: "Community & Booking",
     signup_url: "https://www.skool.com",
     affiliate_url: "https://www.skool.com/signup?ref=e641155cc53a431c8387d590ba785dea",
@@ -379,7 +379,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   {
     name: "Stan Store",
     blurb:
-      "Coach Kay's creator storefront — digital products, session bookings, and community access all in one place.",
+      "Coach Kay's creator storefront: digital products, session bookings, and community access all in one place.",
     category: "Community & Booking",
     signup_url: "https://join.stan.store/coachkay_ai",
     affiliate_url: "https://join.stan.store/coachkay_ai",

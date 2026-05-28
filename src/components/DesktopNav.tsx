@@ -36,7 +36,7 @@ const workGroup: NavGroup = {
     { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
     { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
-    { label: "Business Audit", path: "/audit/landing", icon: FileSearch, desc: "Where AI fits in your business — in 24 hours" },
+    { label: "Business Audit", path: "/audit/landing", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
     { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart, desc: "AI-personalized stories for families" },
   ],
 };
@@ -46,9 +46,9 @@ const resourcesGroup: NavGroup = {
   label: "Tools & Resources",
   items: [
     { label: "AI Tools Directory", path: "/ai-tools", icon: Library, desc: "63 vetted tools, scored & reviewed" },
-    { label: "Pause Hub — Scam Watch", path: "/pause-hub", icon: ShieldAlert, desc: "Live AI scam & threat alerts" },
+    { label: "Pause Hub: Scam Watch", path: "/pause-hub", icon: ShieldAlert, desc: "Live AI scam & threat alerts" },
     { label: "Coach Chat (AI)", path: "/coach", icon: MessageCircle, desc: "Talk to Coach Kay's AI anytime" },
-    { label: "Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
+    { label: "FocusFlow Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
   ],
 };
 
@@ -56,7 +56,7 @@ const truthGroup: NavGroup = {
   key: "truth",
   label: "Truth & About",
   items: [
-    { label: "The Truth About AI", path: "/truth", icon: Eye, desc: "What AI really is — no hype, no fear" },
+    { label: "The Truth About AI", path: "/truth", icon: Eye, desc: "What AI really is: no hype, no fear" },
     { label: "Meet Coach Kay", path: "/coach-kay", icon: User, desc: "The human behind the mission" },
     { label: "FAQ", path: "/faq", icon: HelpCircle, desc: "Answers to the questions you're about to ask" },
   ],

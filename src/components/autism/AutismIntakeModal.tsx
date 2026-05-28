@@ -210,7 +210,7 @@ export function AutismIntakeModal({ open, onOpenChange, packageSlug, initialGift
           </section>
 
           <section className="space-y-3">
-            <h3 className="font-heading text-lg text-primary">3. Provider info (optional — for LMN routing)</h3>
+            <h3 className="font-heading text-lg text-primary">3. Provider info (optional, for LMN routing)</h3>
             <div className="grid sm:grid-cols-2 gap-3">
               <div>
                 <Label className={labelCls}>Provider name</Label>
@@ -282,7 +282,7 @@ export function AutismIntakeModal({ open, onOpenChange, packageSlug, initialGift
             <span>
               I understand work begins once intake is reviewed and all sales are final
               once production starts. Reimbursement eligibility is determined by my plan
-              or provider — Coach Kay Elevates provides documentation only.
+              or provider. Coach Kay Elevates provides documentation only.
             </span>
           </label>
 

@@ -364,7 +364,7 @@ const ClaritySession = () => {
               Your Clarity Code is ready.
             </h3>
             <p className="text-muted-foreground text-sm mb-6">
-              Enter your email and I'll unlock it now — and send you a copy you can come back to.
+              Enter your email and I'll unlock it now, and send you a copy you can come back to.
             </p>
             <div className="space-y-3">
               <Input

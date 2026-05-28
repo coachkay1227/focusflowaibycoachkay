@@ -63,7 +63,7 @@ const GROUPS: Group[] = [
       {
         title: "30-Day AI Reset",
         price: "$997",
-        tagline: "Use AI intentionally in your life or business — clarity, systems, growth.",
+        tagline: "Use AI intentionally in your life or business: clarity, systems, growth.",
         features: [
           "Personalized AI workflow audit",
           "Custom prompts and automations",

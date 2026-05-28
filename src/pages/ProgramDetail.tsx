@@ -217,7 +217,7 @@ const ProgramDetail = () => {
                 <Sparkles className="h-4 w-4 text-primary" /> Not sure yet? Try a free Clarity Check
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Get a personalized insight session — no subscription needed.
+                Get a personalized insight session. No subscription needed.
               </p>
             </div>
             <Button

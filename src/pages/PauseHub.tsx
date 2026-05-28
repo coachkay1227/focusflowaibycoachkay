@@ -242,7 +242,7 @@ export default function PauseHub() {
           Before you click, swipe, or pay.
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Active AI scams, overhyped trends, and productivity traps — tracked in plain English for
+          Active AI scams, overhyped trends, and productivity traps: tracked in plain English for
           single parents, second-chance seekers, and working families. Updated live. No paywall.
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

@@ -25,7 +25,7 @@ interface NewsletterWaitlistProps {
 const NewsletterWaitlist = ({
   source,
   variant = "inline",
-  heading = "FocusFlow Newsletter — coming soon",
+  heading = "FocusFlow Newsletter, coming soon",
   subheading = "Weekly clarity drops, AI plays, and Coach Kay's no-fluff field notes.",
   className,
   onSuccess,

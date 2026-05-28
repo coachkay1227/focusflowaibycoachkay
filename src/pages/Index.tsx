@@ -307,7 +307,7 @@ const Index = () => {
       <section className="relative z-10 py-16 md:py-20 px-6">
         <AnimatedSection className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <span className="font-mono-label text-primary tracking-[0.2em]">START HERE — FREE</span>
+            <span className="font-mono-label text-primary tracking-[0.2em]">START HERE · FREE</span>
             <h2
               className="font-heading text-3xl md:text-5xl font-light mt-4"
               style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
@@ -388,7 +388,7 @@ const Index = () => {
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Every module, challenge, and coaching session maps to one of five transformational pillars. This is your
-              roadmap — not a course, a life system.
+              roadmap, not a course, a life system.
             </p>
           </div>
         </AnimatedSection>
@@ -431,7 +431,7 @@ const Index = () => {
               step: "05",
               letter: "S",
               name: "Support",
-              desc: "Community, accountability, and ongoing coaching. You don't grow alone — this is where it compounds.",
+              desc: "Community, accountability, and ongoing coaching. You don't grow alone. This is where it compounds.",
               tag: "Community + Coaching",
               highlight: false,
             },
@@ -488,21 +488,21 @@ const Index = () => {
           {[
             {
               quote:
-                "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone — I knew exactly which one thing to protect every morning.",
+                "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone. I knew exactly which one thing to protect every morning.",
               name: "Sheila",
               role: "Cohort Member · Reset 30",
               pillar: "F · FOCUS",
             },
             {
               quote:
-                "Coach Kay made AI feel like a journal that actually answers back. The Clarity Check named the pattern I'd been dancing around for years — in one paragraph. That's when I stopped second-guessing and started building.",
+                "Coach Kay made AI feel like a journal that actually answers back. The Clarity Check named the pattern I'd been dancing around for years, in one paragraph. That's when I stopped second-guessing and started building.",
               name: "Starr",
               role: "Life Coaching Client · Transformation 90",
               pillar: "C · CLARITY  ·  U · UPLEVEL",
             },
             {
               quote:
-                "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own — not one I rented from a YouTube video.",
+                "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own, not one I rented from a YouTube video.",
               name: "Buzz",
               role: "Founder · AI Simplified Track",
               pillar: "O · OWNERSHIP  ·  S · SUSTAIN",

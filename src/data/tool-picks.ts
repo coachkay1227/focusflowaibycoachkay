@@ -29,7 +29,7 @@ export const TOOL_PICKS: ToolPick[] = [
   },
   {
     name: "Manus",
-    why: "General-purpose AI agent for deep research and multi-step browser work. When I need a task done — not just an answer — Manus is the one I trust.",
+    why: "General-purpose AI agent for deep research and multi-step browser work. When I need a task done, not just an answer, Manus is the one I trust.",
     category: "AI",
     url: "https://manus.im",
     affiliate: false,
@@ -64,14 +64,14 @@ export const TOOL_PICKS: ToolPick[] = [
   },
   {
     name: "ElevenLabs",
-    why: "Voice work for guided rituals and audio coaching — the only AI voice I trust on tone.",
+    why: "Voice work for guided rituals and audio coaching: the only AI voice I trust on tone.",
     category: "AI",
     url: "https://elevenlabs.io",
     affiliate: true,
   },
   {
     name: "Skool",
-    why: "Home of the FocusFlow Elevation Hub — where Support actually happens between sessions.",
+    why: "Home of the FocusFlow Elevation Hub: where Support actually happens between sessions.",
     category: "Community",
     url: "https://www.skool.com",
     affiliate: true,

@@ -139,7 +139,7 @@ const StarterKit = () => {
               <Sparkles className="h-4 w-4" /> TELL COACH KAY ABOUT YOU
             </div>
             <p className="text-muted-foreground text-sm mb-5">
-              Four quick fields. Coach Kay generates your report instantly — no waiting, no downloads.
+              Four quick fields. Coach Kay generates your report instantly, no waiting, no downloads.
             </p>
             <div className="space-y-3">
               <Input

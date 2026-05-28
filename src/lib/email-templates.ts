@@ -394,7 +394,7 @@ export const TEMPLATE_PREVIEWS = {
       moduleName: "Clarity Check",
       completedAt: "April 1, 2026",
       insightPattern: "You tend to overthink when you're avoiding a decision you've already made.",
-      insightTruth: "You already know what you need to do — the hesitation is fear of commitment, not lack of clarity.",
+      insightTruth: "You already know what you need to do. The hesitation is fear of commitment, not lack of clarity.",
       insightAction: "Write down the decision you've been avoiding. Set a 24-hour deadline to act on it.",
       clarityScore: 42,
       clarityLevel: "Reflecting",

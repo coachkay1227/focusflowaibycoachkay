@@ -107,7 +107,7 @@ export function globalGraph(): Json {
         "@id": WEBSITE_ID,
         url: SITE_URL,
         name: "FocusFlow AI — Coach Kay",
-        description: "Master AI coach platform — clarity sessions, transformation programs, AI business audits, and done-for-you AI agent systems.",
+        description: "Master AI coach platform: clarity sessions, transformation programs, AI business audits, and done-for-you AI agent systems.",
         publisher: { "@id": ORG_ID },
         potentialAction: {
           "@type": "SearchAction",

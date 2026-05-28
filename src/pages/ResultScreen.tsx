@@ -202,7 +202,7 @@ const ResultScreen = () => {
 
   const handleShare = async () => {
     const url = `${window.location.origin}/clarity?ref=share`;
-    const text = "I just took the Clarity Check by Coach Kay — 5 minutes, no sign-up. It cut through more than I expected.";
+    const text = "I just took the Clarity Check by Coach Kay. 5 minutes, no sign-up. It cut through more than I expected.";
     if (typeof navigator !== "undefined" && (navigator as Navigator).share) {
       try {
         await (navigator as Navigator).share({ title: "Clarity Check by Coach Kay", text, url });
@@ -340,9 +340,9 @@ const ResultScreen = () => {
                           <span className="text-primary">{sentToEmail}</span>. Check your inbox (and spam, just in case).
                         </>
                       )}
-                      {emailStatus === "sending" && "Hold tight — your Clarity Code is on its way to your inbox."}
+                      {emailStatus === "sending" && "Hold tight. Your Clarity Code is on its way to your inbox."}
                       {emailStatus === "failed" &&
-                        "Your report is right here on this page. We couldn't email a copy — you can still take your next step below."}
+                        "Your report is right here on this page. We couldn't email a copy. You can still take your next step below."}
                     </p>
 
                     {emailStatus === "sent" && (
@@ -535,7 +535,7 @@ const ResultScreen = () => {
           <AnimatedSection delay={1300} className="text-center space-y-6">
             <h3 className="font-heading text-2xl md:text-3xl font-light mb-2">Your path forward</h3>
             <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
-              This pattern won't change on its own — here's where to start.
+              This pattern won't change on its own. Here's where to start.
             </p>
 
             {/* Primary CTA — apply for the 30-Day Personal Reset */}
