@@ -25,11 +25,6 @@ const Advisory = () => {
   });
 
   const startCheckout = async (priceId: string, name: string, successPath?: string) => {
-    if (!user) {
-      toast({ title: "Sign in to continue", description: "Create an account so we can attach your purchase." });
-      navigate(`/auth?next=${encodeURIComponent("/advisory")}`);
-      return;
-    }
     setBusyPriceId(priceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -54,8 +49,7 @@ const Advisory = () => {
     }
   };
 
-  const openInquiry = (lane: string, context?: string) =>
-    setInquiry({ open: true, lane, context });
+  const openInquiry = (lane: string, context?: string) => setInquiry({ open: true, lane, context });
 
   const jsonLd = [
     webPage("/advisory", "Advisory, Events & Premium Education", "CollectionPage"),
@@ -64,7 +58,7 @@ const Advisory = () => {
         { name: "Home", path: "/" },
         { name: "Advisory & Events", path: "/advisory" },
       ],
-      "/advisory"
+      "/advisory",
     ),
     {
       "@context": "https://schema.org",
@@ -100,10 +94,7 @@ const Advisory = () => {
         })),
       ],
     },
-    faqPageSchema(
-      getFaqLane("advisory")?.items ?? [],
-      `${SITE_URL}/advisory#faq`
-    ),
+    faqPageSchema(getFaqLane("advisory")?.items ?? [], `${SITE_URL}/advisory#faq`),
   ];
 
   return (
@@ -123,8 +114,12 @@ const Advisory = () => {
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
         <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden="true" className="text-primary font-medium">Focus</span>
-          <span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
+          <span aria-hidden="true" className="text-primary font-medium">
+            Focus
+          </span>
+          <span aria-hidden="true" className="text-foreground font-light">
+            Flow AI
+          </span>
         </div>
         <MobileNav />
       </header>
@@ -134,12 +129,15 @@ const Advisory = () => {
         <span className="font-mono-label text-primary tracking-[0.28em] text-xs">
           ADVISORY · EVENTS · PREMIUM EDUCATION
         </span>
-        <h1 className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
-          style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}>
+        <h1
+          className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
+          style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
+        >
           Bring Coach Kay <span className="text-primary italic">into the room.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Strategy intensives, executive advisory, corporate trainings, cohorts, the Collective AI Summit, and AI University roadmap tracks — built for founders, teams, and institutions ready to compound clarity.
+          Strategy intensives, executive advisory, corporate trainings, cohorts, the Collective AI Summit, and AI
+          University roadmap tracks — built for founders, teams, and institutions ready to compound clarity.
         </p>
       </section>
 
@@ -149,7 +147,9 @@ const Advisory = () => {
           <div className="rounded-2xl border border-primary/40 bg-primary/5 backdrop-blur-sm p-8 sm:p-10">
             <div className="flex flex-col sm:flex-row items-start justify-between gap-6">
               <div className="flex-1">
-                <span className="font-mono-label text-primary tracking-[0.28em] text-xs">FEATURED · DIRECT CHECKOUT</span>
+                <span className="font-mono-label text-primary tracking-[0.28em] text-xs">
+                  FEATURED · DIRECT CHECKOUT
+                </span>
                 <h2 className="font-heading text-2xl sm:text-3xl mt-3 text-foreground">
                   {ENTRY_OFFERS.intensive.name}
                 </h2>
@@ -187,13 +187,17 @@ const Advisory = () => {
           <span className="font-mono-label text-primary tracking-[0.28em] text-xs">SCOPED ENGAGEMENTS</span>
           <h2 className="font-heading text-3xl sm:text-4xl mt-3">Choose the right format</h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto text-sm">
-            Every engagement below is scoped on a discovery call before pricing is finalized. Coach Kay reviews each inquiry personally.
+            Every engagement below is scoped on a discovery call before pricing is finalized. Coach Kay reviews each
+            inquiry personally.
           </p>
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {ADVISORY_LANES.map((lane) => (
-            <div key={lane.key} className="flex flex-col rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm p-6 hover:border-primary/40 transition-colors">
+            <div
+              key={lane.key}
+              className="flex flex-col rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm p-6 hover:border-primary/40 transition-colors"
+            >
               <h3 className="font-heading text-lg text-foreground">{lane.name}</h3>
               <div className="mt-2 text-primary font-semibold">{lane.price}</div>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{lane.description}</p>
@@ -221,11 +225,10 @@ const Advisory = () => {
       <section className="relative z-10 px-6 sm:px-10 pb-24 max-w-4xl mx-auto">
         <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm p-8 text-center">
           <span className="font-mono-label text-primary tracking-[0.28em] text-xs">DIAGNOSTIC FIRST</span>
-          <h2 className="font-heading text-2xl sm:text-3xl mt-3">
-            Unsure which engagement fits?
-          </h2>
+          <h2 className="font-heading text-2xl sm:text-3xl mt-3">Unsure which engagement fits?</h2>
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-            Start with the $47 AI Business Audit. We'll route you to the right advisory, training, or cohort path based on what surfaces.
+            Start with the $47 AI Business Audit. We'll route you to the right advisory, training, or cohort path based
+            on what surfaces.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
             <Button
@@ -255,17 +258,15 @@ const Advisory = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
               <Layers className="h-5 w-5 text-primary" />
             </div>
-            <span className="font-mono-label text-primary tracking-[0.22em] text-[10px]">
-              WHO DELIVERS
-            </span>
+            <span className="font-mono-label text-primary tracking-[0.22em] text-[10px]">WHO DELIVERS</span>
           </div>
           <h2 className="font-heading text-2xl text-foreground mb-3">
             Advisory is led by Coach Kay, delivered with the Collective.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-            For trainings, cohorts, and enterprise advisory, your engagement is staffed with
-            the right roles around your scope — Operations Architect (Kay), Lead Engineer,
-            AI Researcher, and Designer/QA. Same point of contact, more horsepower.
+            For trainings, cohorts, and enterprise advisory, your engagement is staffed with the right roles around your
+            scope — Operations Architect (Kay), Lead Engineer, AI Researcher, and Designer/QA. Same point of contact,
+            more horsepower.
           </p>
           <Link
             to="/collective"
@@ -276,10 +277,7 @@ const Advisory = () => {
         </div>
       </section>
 
-      <FAQSection
-        eyebrow="Advisory & Cohorts"
-        items={getFaqLane("advisory")?.items ?? []}
-      />
+      <FAQSection eyebrow="Advisory & Cohorts" items={getFaqLane("advisory")?.items ?? []} />
 
       <OfferInquiryDialog
         open={inquiry.open}
