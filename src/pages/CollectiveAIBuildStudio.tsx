@@ -175,7 +175,7 @@ const CollectiveAIBuildStudio = () => {
       <SEOHead
         title="Collective AI Build Studio — From Idea to Live in Days"
         description="Custom AI websites, dashboards, lead-gen tools, and SaaS apps built in days, not months. Productized AI build studio by Coach Kay. Tier 1 from $297, full builds from $2,497."
-        path="/collective-ai-build-studio"
+        path="/build-studio"
         jsonLd={jsonLd}
       />
 
