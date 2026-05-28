@@ -19,6 +19,7 @@ import { template as auditPurchaseConfirmation } from './audit-purchase-confirma
 import { template as resetWelcome } from './reset-welcome.tsx'
 import { template as transformationWelcome } from './transformation-welcome.tsx'
 import { template as autismPurchaseConfirmation } from './autism-purchase-confirmation.tsx'
+import { template as onboardingCompletion } from './onboarding-completion.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -31,4 +32,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'reset-welcome': resetWelcome,
   'transformation-welcome': transformationWelcome,
   'autism-purchase-confirmation': autismPurchaseConfirmation,
+  'onboarding-completion': onboardingCompletion,
 }
