@@ -105,7 +105,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   { name: "Whop", blurb: "Sell digital products, communities, and software. Built-in audience + payments.", category: "Payments & Delivery", signup_url: "https://whop.com", pricing: "Freemium", affiliate_pending: true },
 
   // ────────────────────────────── Community & Booking ──────────────────────────────
-  { name: "Skool", blurb: "Home of the FocusFlow Elevation Hub — where support happens between sessions.", category: "Community & Booking", signup_url: "https://www.skool.com", pricing: "Paid", affiliate_pending: true },
+  { name: "Skool", blurb: "Home of the FocusFlow Elevation Hub — where support happens between sessions.", category: "Community & Booking", signup_url: "https://www.skool.com/signup?ref=e641155cc53a431c8387d590ba785dea", pricing: "Paid", affiliate_pending: false },
   { name: "Circle", blurb: "Premium community platform when you outgrow free options.", category: "Community & Booking", signup_url: "https://circle.so", pricing: "Paid", affiliate_pending: true },
   { name: "Discord", blurb: "Free community spaces with voice, video, and bots. Where most AI-curious folks already live.", category: "Community & Booking", signup_url: "https://discord.com", pricing: "Freemium" },
   { name: "Calendly", blurb: "Booking without back-and-forth. Used for every clarity call Coach Kay runs.", category: "Community & Booking", signup_url: "https://calendly.com", pricing: "Freemium", affiliate_pending: true },
