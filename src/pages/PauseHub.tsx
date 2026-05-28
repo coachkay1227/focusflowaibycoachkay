@@ -7,6 +7,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 import { toast } from "@/hooks/use-toast";
+import NewsletterWaitlist from "@/components/NewsletterWaitlist";
 
 type ThreatLevel = "red_flag" | "caution" | "watch" | "resolved";
 
@@ -376,30 +377,16 @@ export default function PauseHub() {
         )}
       </section>
 
-      {/* CTA */}
+      {/* Email Capture CTA */}
       <section className="relative z-10 px-6 sm:px-10 max-w-3xl mx-auto pb-20 text-center">
         <div className="rounded-2xl border border-border/40 bg-card/40 p-8">
           <h2 className="font-heading text-2xl sm:text-3xl font-light mb-3">
-            Want help wiring AI into your business — without falling for the trap?
+            Stay ahead of every AI threat.
           </h2>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto mb-6">
-            The AI Business Audit walks you through what's real, what's hype, and what
-            actually moves the needle for your situation.
+            Get real-time scam alerts and safety insights delivered to your inbox.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/audit/landing"
-              className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium tracking-wide hover:opacity-90 transition-opacity"
-            >
-              Run the AI Business Audit
-            </Link>
-            <Link
-              to="/ai-tools"
-              className="inline-flex items-center gap-2 rounded-full border border-border/60 text-foreground px-5 py-2.5 text-sm font-medium tracking-wide hover:border-primary/40 transition-colors"
-            >
-              Browse the tool stack
-            </Link>
-          </div>
+          <NewsletterWaitlist source="pause-hub" />
         </div>
       </section>
     </div>

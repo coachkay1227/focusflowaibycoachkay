@@ -47,7 +47,7 @@ const WelcomeToFocusflowEmail = ({ name }: WelcomeProps) => (
           </Text>
 
           <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
-            <Button style={ctaButton} href="https://focusflowaibycoachkay.lovable.app/clarity">
+            <Button style={ctaButton} href="https://coachkayai.life/clarity">
               Start Your First Clarity Session
             </Button>
           </Section>

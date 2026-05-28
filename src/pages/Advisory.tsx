@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ENTRY_OFFERS, ADVISORY_LANES } from "@/lib/offer-catalog";
-import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
+import { webPage, breadcrumb, serviceSchema, SITE_URL, ORG_ID } from "@/lib/seo-schema";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
 
@@ -53,6 +53,12 @@ const Advisory = () => {
 
   const jsonLd = [
     webPage("/advisory", "Advisory, Events & Premium Education", "CollectionPage"),
+    serviceSchema({
+      name: "Fractional AI Advisory — Coach Kay",
+      description: "Fractional AI advisory and strategic partnership with Coach Kay. For leaders, founders, and organizations ready to integrate AI into their business at scale.",
+      url: `${SITE_URL}/advisory`,
+      idSuffix: "fractional-ai-advisory",
+    }),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -101,7 +107,7 @@ const Advisory = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Advisory, Speaking & Cohorts — Coach Kay"
-        description="1-on-1 AI strategy intensives, executive advisory, corporate trainings, EAP, cohorts, and the Collective AI Summit. Pricing from $497 — enterprise scopes available."
+        description="Fractional AI advisory and strategic partnership with Coach Kay. For leaders, founders, and organizations ready to integrate AI into their business at scale."
         path="/advisory"
         jsonLd={jsonLd}
       />

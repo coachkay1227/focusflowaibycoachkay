@@ -10,7 +10,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 // client-supplied input — so the endpoint cannot be abused to spam
 // arbitrary addresses.
 
-type Action = "welcome" | "clarity_complete";
+type Action = "welcome" | "clarity_complete" | "onboarding_complete";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -107,6 +107,34 @@ serve(async (req) => {
         payload: { email: user.email, user_id: user.id, moduleId, phase, track },
       },
     });
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { ...cors, "Content-Type": "application/json" },
+    });
+  }
+
+  if (action === "onboarding_complete") {
+    const goal = typeof data.goal === "string" ? data.goal.slice(0, 100) : undefined;
+    const name =
+      (user.user_metadata?.full_name as string | undefined) ||
+      (user.user_metadata?.name as string | undefined) ||
+      undefined;
+
+    await Promise.allSettled([
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "onboarding-completion",
+          recipientEmail: user.email,
+          idempotencyKey: `onboarding-complete-${user.id}`,
+          templateData: { name, goal },
+        },
+      }),
+      supabase.functions.invoke("ghl-webhook", {
+        body: {
+          event: "onboarding_complete",
+          payload: { email: user.email, user_id: user.id, goal },
+        },
+      }),
+    ]);
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...cors, "Content-Type": "application/json" },
     });

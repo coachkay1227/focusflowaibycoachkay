@@ -5,7 +5,7 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, Lock, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const ResetPassword = () => {
@@ -102,6 +102,13 @@ const ResetPassword = () => {
       <SEOHead title="Reset Password — FocusFlow AI" description="Set a new password for your FocusFlow AI account. Secure password recovery for returning members of FocusFlow AI by Coach Kay." path="/reset-password" noIndex />
       <FloatingOrbs />
       <div className="mouse-glow" />
+
+      {/* Back button */}
+      <div className="absolute top-6 left-6 z-20">
+        <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" /> Home
+        </button>
+      </div>
 
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-10">

@@ -125,5 +125,21 @@ Deno.serve(async (req) => {
     })
     .catch(() => {});
 
+  // Send newsletter welcome email (best-effort, fire-and-forget).
+  // Only fires if this is a new subscriber (not a re-subscribe).
+  // Uses a stable idempotency key so repeat calls don't re-send.
+  if (!existing) {
+    admin.functions
+      .invoke("send-transactional-email", {
+        body: {
+          templateName: "newsletter-welcome",
+          recipientEmail: email,
+          idempotencyKey: `newsletter-welcome-${email}`,
+          templateData: { name: name ?? null },
+        },
+      })
+      .catch(() => {});
+  }
+
   return json(200, { ok: true, synced });
 });

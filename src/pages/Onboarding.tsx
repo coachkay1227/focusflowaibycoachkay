@@ -3,6 +3,7 @@ import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveUserPreferences, enrollInModule } from "@/lib/enrollment-store";
+import { supabase } from "@/integrations/supabase/client";
 import { coachingModules } from "@/lib/modules";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
@@ -68,6 +69,10 @@ const Onboarding = () => {
       lifeStage,
     });
     await Promise.all(selectedModules.map((id) => enrollInModule(id)));
+    // Fire-and-forget: send onboarding completion email + CRM event
+    supabase.functions.invoke("client-notify", {
+      body: { action: "onboarding_complete", data: { goal } },
+    }).catch(() => { /* non-blocking */ });
     setSaving(false);
     let returnTo: string | null = null;
     try {

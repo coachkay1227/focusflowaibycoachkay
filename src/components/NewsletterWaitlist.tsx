@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { trackNewsletterSignup } from "@/lib/gtag";
 
 const EmailSchema = z.string().trim().toLowerCase().email("Enter a valid email");
 
@@ -48,6 +49,7 @@ const NewsletterWaitlist = ({
       if (error) throw error;
       setDone(true);
       toast.success("You're on the list. Watch your inbox.");
+      trackNewsletterSignup();
       onSuccess?.();
     } catch (err) {
       console.error("newsletter subscribe failed", err);

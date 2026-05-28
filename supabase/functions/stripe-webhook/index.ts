@@ -399,6 +399,20 @@ serve(async (req) => {
             }
           }
 
+          // GHL: fire purchase event for the audit (best-effort, fire-and-forget)
+          supabaseClient.functions.invoke("ghl-webhook", {
+            body: {
+              event: "purchase",
+              payload: {
+                email: customerEmail || null,
+                user_id: auditUserId || null,
+                tier: "audit",
+                product: "AI Business Audit",
+                amount: session.amount_total ?? null,
+              },
+            },
+          }).catch(() => {});
+
           log.info("audit_purchase_processed", {
             ctx: { audit_id: inserted.id, session_id: session.id, has_user: !!auditUserId },
           });
@@ -500,6 +514,24 @@ serve(async (req) => {
             });
           }
         }
+
+        // GHL: fire purchase event for tier upgrades (best-effort, fire-and-forget)
+        const purchaseEmail =
+          (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+          (typeof session.customer_email === "string" && session.customer_email) ||
+          null;
+        supabaseClient.functions.invoke("ghl-webhook", {
+          body: {
+            event: "purchase",
+            payload: {
+              email: purchaseEmail,
+              user_id: userId,
+              tier: mappedTier,
+              product: productId,
+              amount: session.amount_total ?? null,
+            },
+          },
+        }).catch(() => {});
       }
     } else if (event.type === "customer.subscription.deleted") {
       // Subscription cancelled — downgrade to free

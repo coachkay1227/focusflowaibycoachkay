@@ -6,15 +6,13 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { webPage, breadcrumb } from "@/lib/seo-schema";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles, ExternalLink, Users, BookOpen, MessageCircle, Calendar } from "lucide-react";
+import { ArrowLeft, Sparkles, ExternalLink, BookOpen, Calendar } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 
 const SKOOL_URL = "https://www.skool.com/focusflow-elevation-hub";
 
 const highlights = [
   { icon: BookOpen, text: "12+ coaching modules" },
-  { icon: MessageCircle, text: "Weekly group coaching & Q&A" },
-  { icon: Users, text: "24/7 community support" },
   { icon: Calendar, text: "Specialty prompts & tools" },
 ];
 

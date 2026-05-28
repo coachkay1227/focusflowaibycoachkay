@@ -100,8 +100,8 @@ const Modules = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="Transformation Paths — FocusFlow by Coach Kay"
-        description="Three transformation paths — Personal, Business, and Full AI — plus free clarity entries to find your starting point with Coach Kay."
+        title="AI Transformation Programs — FocusFlow by Coach Kay"
+        description="AI-powered transformation programs by Coach Kay. Personal clarity, business growth, and full AI integration paths. Free and paid programs starting at $27/month."
         path="/modules"
         jsonLd={jsonLd}
       />

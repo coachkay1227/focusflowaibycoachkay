@@ -23,9 +23,7 @@ const SiteFooter = () => {
     {
       title: "Work With Kay",
       links: [
-        { label: "Free 15-min Clarity Call", to: "https://coachkayelevates.org/", external: true },
-        { label: "45-min Strategy · $67", to: "https://coachkayelevates.org/", external: true },
-        { label: "Advisory & Partnership", to: "/advisory" },
+        { label: "Coaching & Advisory", to: "/advisory" },
         { label: "AI Build Studio", to: "/build-studio" },
         { label: "Rent-an-Agent", to: "/rent-an-agent" },
         { label: "Collective AI", to: "/collective" },
@@ -34,7 +32,7 @@ const SiteFooter = () => {
     {
       title: "Company",
       links: [
-        { label: "About", to: "/about" },
+        { label: "About", to: "/coach-kay" },
         { label: "Elevation Hub (Community)", to: "/community" },
         { label: "FAQ", to: "/faq" },
         { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },

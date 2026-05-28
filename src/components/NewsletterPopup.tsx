@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import NewsletterWaitlist from "@/components/NewsletterWaitlist";
 
 const STORAGE_KEY = "ff_newsletter_popup_v1";
+const SESSION_SHOWN_KEY = "ff_newsletter_popup_shown";
 const DELAY_MS = 30_000;
 const SCROLL_THRESHOLD = 0.5;
 
@@ -56,6 +57,7 @@ const NewsletterPopup = () => {
     const trigger = () => {
       if (opened) return;
       opened = true;
+      try { sessionStorage.setItem(SESSION_SHOWN_KEY, "1"); } catch { /* ignore */ }
       setOpen(true);
     };
 
