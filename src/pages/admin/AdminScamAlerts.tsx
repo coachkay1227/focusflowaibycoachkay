@@ -251,7 +251,7 @@ export default function AdminScamAlerts() {
                   {editing.action_rules.map((r, i) => (
                     <div key={i} className="flex gap-2">
                       <Input value={r} onChange={(e) => updateRule(i, e.target.value)} placeholder="What to do" />
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeRule(i)}>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeRule(i)} aria-label={`Remove rule ${i + 1}`}>
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
