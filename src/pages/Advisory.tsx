@@ -143,7 +143,7 @@ const Advisory = () => {
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Strategy intensives, executive advisory, corporate trainings, cohorts, the Collective AI Summit, and AI
-          University roadmap tracks — built for founders, teams, and institutions ready to compound clarity.
+          University roadmap tracks, built for founders, teams, and institutions ready to compound clarity.
         </p>
       </section>
 
@@ -271,7 +271,7 @@ const Advisory = () => {
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
             For trainings, cohorts, and enterprise advisory, your engagement is staffed with the right roles around your
-            scope — Operations Architect (Kay), Lead Engineer, AI Researcher, and Designer/QA. Same point of contact,
+            scope: Operations Architect (Kay), Lead Engineer, AI Researcher, and Designer/QA. Same point of contact,
             more horsepower.
           </p>
           <Link

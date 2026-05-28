@@ -158,7 +158,7 @@ const ExitIntentPopup = () => {
 
         {/* Copy */}
         <h2 className="font-heading text-2xl md:text-3xl font-light text-foreground mb-2">
-          Wait — before you go.
+          Wait. Before you go.
         </h2>
         <p className="text-muted-foreground text-sm mb-6">
           Get your free AI readiness score. 90 seconds. No card.

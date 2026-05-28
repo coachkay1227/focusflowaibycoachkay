@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 const testimonials = [
   {
     name: "Sheila",
-    text: "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone — I knew exactly which one thing to protect every morning.",
+    text: "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone. I knew exactly which one thing to protect every morning.",
     role: "Cohort Member · Reset 30",
     pillar: "F · FOCUS",
   },
@@ -23,7 +23,7 @@ const testimonials = [
   },
   {
     name: "Buzz",
-    text: "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own — not one I rented from a YouTube video.",
+    text: "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own, not one I rented from a YouTube video.",
     role: "Founder · AI Simplified Track",
     pillar: "O · OWNERSHIP  ·  S · SUSTAIN",
   },
@@ -114,14 +114,13 @@ const CoachKay = () => {
                 Coach Kay
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
-                Kenza Alaoui — AI &amp; Life Transformation Coach
+                Kenza Alaoui · AI &amp; Life Transformation Coach
               </p>
               <p className="mb-6 text-foreground/80 leading-relaxed">
                 Warm but direct. Emotionally intelligent. Pattern-aware. Coach Kay
                 doesn't sugarcoat, but she never shames. She sees people deeply and
-                speaks truth with care — blending cutting-edge AI technology with
-                genuine human insight to help you find clarity, alignment, and
-                intentional action.
+                speaks truth with care, blending practical AI with genuine human
+                insight to help you find clarity, alignment, and intentional action.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button
@@ -162,7 +161,7 @@ const CoachKay = () => {
                 Coach Kay is both the coach and the builder.
               </h2>
               <p className="text-[15px] text-muted-foreground leading-[1.8]">
-                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs — solo and high-touch.
+                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs, solo and high-touch.
                 As <strong className="text-foreground/85">Operations Architect &amp; Lead Developer at Collective AI</strong>, she leads
                 the multidisciplinary team that ships enterprise builds, automations, and AI systems.
               </p>
@@ -188,12 +187,12 @@ const CoachKay = () => {
               <p>
                 Coach Kay is a Columbus-based founder, 5x certified life coach,
                 full-time banking professional, and single mom to a daughter with
-                autism. Her frameworks weren't built in a classroom — they were
+                autism. Her frameworks weren't built in a classroom. They were
                 built in the margins of a real life, for people doing the same.
               </p>
               <p>
                 She leads two parallel missions. <strong>Coach Kay Elevates</strong>{" "}
-                is her for-profit workforce-readiness and AI-literacy program — a
+                is her for-profit workforce-readiness and AI-literacy program, a
                 COED partner serving working families across Central Ohio with
                 cohort-based learning, live sessions, and pilot programs for
                 organizations. <strong>Forward Focus Elevation</strong> is her
@@ -382,7 +381,7 @@ const CoachKay = () => {
               Ready to Get Unstuck?
             </h2>
             <p className="mb-8 text-muted-foreground">
-              Start with a free Clarity Check — no sign-up required — and see
+              Start with a free Clarity Check, no sign-up required, and see
               what Coach Kay's approach can reveal about where you are and where
               you're headed.
             </p>

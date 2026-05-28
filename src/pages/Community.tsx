@@ -20,12 +20,12 @@ const testimonials = [
   {
     name: "Jordan K.",
     tag: "Mirror Challenge",
-    content: "Day 6 of the Mirror Challenge. I realized I've been performing confidence instead of building it. The prompt about 'what would you do if no one was watching' wrecked me — in the best way.",
+    content: "Day 6 of the Mirror Challenge. I realized I've been performing confidence instead of building it. The prompt about 'what would you do if no one was watching' wrecked me, in the best way.",
   },
   {
     name: "Serena L.",
     tag: "Clarity Session",
-    content: "Just finished my first Clarity Session. The pattern it identified — 'using variety as a distraction from depth' — hit different. I've started 12 projects this year. Finished zero. That's the real pattern.",
+    content: "Just finished my first Clarity Session. The pattern it identified, 'using variety as a distraction from depth,' hit different. I've started 12 projects this year. Finished zero. That's the real pattern.",
   },
   {
     name: "Marcus W.",
@@ -42,8 +42,8 @@ const Community = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="The Elevation Hub — FocusFlow Community"
-        description="Join the Focus Flow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."
+        title="FocusFlow Elevation Hub — Community"
+        description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."
         path="/community"
         jsonLd={[
           webPage("/community", "Community"),
@@ -73,7 +73,7 @@ const Community = () => {
       <div className="relative z-10 px-6 py-12 max-w-3xl mx-auto">
         {/* Hero */}
         <AnimatedSection className="text-center mb-16">
-          <span className="font-mono-label text-primary tracking-[0.2em]">The Elevation Hub</span>
+          <span className="font-mono-label text-primary tracking-[0.2em]">FocusFlow Elevation Hub</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
             style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
@@ -108,7 +108,7 @@ const Community = () => {
               Master Certified Life Coach with 600+ hours of client coaching. Trained in transformation, mindfulness, purpose, and goal-setting. Creator of the Clarity Code framework and the F.O.C.U.S. methodology.
             </p>
             <p className="text-foreground/70 leading-relaxed text-sm">
-              My tools are powered by the latest in technology — but my approach is rooted in real coaching science. I built FocusFlow so you can compress years of growth into months.
+              My tools are built on the latest technology, but my approach is rooted in real coaching science. I built FocusFlow so you can compress years of growth into months.
             </p>
           </div>
         </AnimatedSection>
@@ -151,7 +151,7 @@ const Community = () => {
               </div>
             ))}
             <p className="text-center text-xs text-muted-foreground/50 mt-2">
-              Member testimonials from the Focus Flow Elevation Hub
+              Member testimonials from the FocusFlow Elevation Hub
             </p>
           </div>
         </AnimatedSection>

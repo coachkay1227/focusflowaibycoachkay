@@ -14,30 +14,30 @@ interface InsightResult {
 }
 
 const truthMap: Record<string, string> = {
-  overwhelmed: "You're not broken — you're carrying too much without a system to process it. The overwhelm isn't about capacity, it's about clarity. You have more than enough strength. What you need is direction.",
-  stuck: "Being stuck isn't a failure — it's a signal that something deeper needs your attention. You're not behind. You're at the exact point where a breakthrough becomes possible, if you stop forcing and start listening.",
+  overwhelmed: "You're not broken. You're carrying too much without a system to process it. The overwhelm isn't about capacity, it's about clarity. You have more than enough strength. What you need is direction.",
+  stuck: "Being stuck isn't a failure. It's a signal that something deeper needs your attention. You're not behind. You're at the exact point where a breakthrough becomes possible, if you stop forcing and start listening.",
   anxious: "Your anxiety is your intelligence trying to protect you from uncertainty. But here's the truth: you don't need certainty to move. You need clarity about what matters most right now.",
-  disconnected: "That sense of disconnection? It's not apathy — it's your soul asking for realignment. You've been operating from obligation, not intention. It's time to come back to yourself.",
+  disconnected: "That sense of disconnection? It's not apathy. It's your soul asking for realignment. You've been operating from obligation, not intention. It's time to come back to yourself.",
   frustrated: "Frustration is unprocessed ambition. You know you're capable of more, and the gap between where you are and where you know you could be is creating friction. That friction is fuel, not a flaw.",
-  uncertain: "Uncertainty isn't weakness — it's the space where new possibilities live. You're not lost. You're standing at a crossroads, and the fact that you're here means you're ready to choose.",
+  uncertain: "Uncertainty isn't weakness. It's the space where new possibilities live. You're not lost. You're standing at a crossroads, and the fact that you're here means you're ready to choose.",
 };
 
 const patternMap: Record<string, string> = {
-  career: "You keep optimizing externally — new roles, new skills, new strategies — but the real bottleneck is internal. The pattern is seeking validation through achievement instead of building from alignment.",
+  career: "You keep optimizing externally: new roles, new skills, new strategies, but the real bottleneck is internal. The pattern is seeking validation through achievement instead of building from alignment.",
   relationships: "You show up for everyone else before yourself. The pattern is over-giving to feel worthy of love, which leaves you depleted. Your relationships will transform when you stop performing and start being honest.",
-  purpose: "You've been waiting for a moment of absolute certainty before you commit. The pattern is perfectionism disguised as patience. Purpose isn't found — it's built through consistent, imperfect action.",
-  confidence: "You collect evidence of your inadequacy while dismissing proof of your competence. The pattern is a protection mechanism — if you never fully believe in yourself, rejection can't surprise you.",
-  health: "You know what to do. The pattern isn't about information — it's about using busyness as a shield against confronting what's really draining your energy. Your body is keeping score.",
+  purpose: "You've been waiting for a moment of absolute certainty before you commit. The pattern is perfectionism disguised as patience. Purpose isn't found. It's built through consistent, imperfect action.",
+  confidence: "You collect evidence of your inadequacy while dismissing proof of your competence. The pattern is a protection mechanism. If you never fully believe in yourself, rejection can't surprise you.",
+  health: "You know what to do. The pattern isn't about information. It's about using busyness as a shield against confronting what's really draining your energy. Your body is keeping score.",
   focus: "You scatter your energy across too many directions because commitment feels risky. The pattern is using variety as a distraction from depth. Real progress requires you to choose one thing and stay.",
 };
 
 const actionMap: Record<string, string> = {
-  peace: "Start each morning with 2 minutes of silence. Not meditation — just silence. Before the phone, before the plan. Let your mind settle. Then write one sentence about what matters today. Just one.",
+  peace: "Start each morning with 2 minutes of silence. Not meditation, just silence. Before the phone, before the plan. Let your mind settle. Then write one sentence about what matters today. Just one.",
   clarity: "Write down the three decisions you've been avoiding. Circle the one that would change everything else if you made it. That's your only job this week. Make that one decision.",
-  courage: "Do the thing you've been rehearsing in your head. Today. Not perfectly — just do it. Send the message, make the call, take the step. Courage isn't the absence of fear. It's one action despite it.",
-  freedom: "Identify the one obligation, relationship, or commitment that drains you most. Create a boundary around it this week. Freedom isn't about having nothing to do — it's about choosing what you carry.",
-  joy: "Schedule 30 minutes this week that exist purely for you. No productivity, no output, no justification. Joy isn't a reward — it's a requirement. You've been treating it as optional.",
-  strength: "Write a letter to yourself from the version of you who already has what you're seeking. What does that person tell you? That voice — that's your real voice. Start listening to it.",
+  courage: "Do the thing you've been rehearsing in your head. Today. Not perfectly, just do it. Send the message, make the call, take the step. Courage isn't the absence of fear. It's one action despite it.",
+  freedom: "Identify the one obligation, relationship, or commitment that drains you most. Create a boundary around it this week. Freedom isn't about having nothing to do. It's about choosing what you carry.",
+  joy: "Schedule 30 minutes this week that exist purely for you. No productivity, no output, no justification. Joy isn't a reward. It's a requirement. You've been treating it as optional.",
+  strength: "Write a letter to yourself from the version of you who already has what you're seeking. What does that person tell you? That voice. That's your real voice. Start listening to it.",
 };
 
 /**
@@ -88,7 +88,7 @@ export const clarityQuestions = [
   {
     id: "emotionalState",
     label: "STEP 01",
-    question: "Right now, in this moment — how do you honestly feel?",
+    question: "Right now, in this moment, how do you honestly feel?",
     subtitle: "No right answer. Just the truth.",
     type: "options" as const,
     options: [
@@ -119,7 +119,7 @@ export const clarityQuestions = [
     id: "triedSoFar",
     label: "STEP 03",
     question: "What have you already tried to change this?",
-    subtitle: "Be honest — even if the answer is 'nothing yet.'",
+    subtitle: "Be honest, even if the answer is 'nothing yet.'",
     type: "text" as const,
     placeholder: "I've tried...",
   },

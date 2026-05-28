@@ -45,9 +45,9 @@ const navGroups: NavGroup[] = [
     label: "Tools & Resources",
     items: [
       { label: "AI Tools Directory", path: "/ai-tools", icon: Library },
-      { label: "Pause Hub — Scam Watch", path: "/pause-hub", icon: ShieldAlert },
+      { label: "Pause Hub: Scam Watch", path: "/pause-hub", icon: ShieldAlert },
       { label: "Coach Chat (AI)", path: "/coach", icon: MessageCircle },
-      { label: "Elevation Hub", path: "/community", icon: Users },
+      { label: "FocusFlow Elevation Hub", path: "/community", icon: Users },
     ],
   },
   {

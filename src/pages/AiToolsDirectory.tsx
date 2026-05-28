@@ -77,7 +77,7 @@ export default function AiToolsDirectory() {
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Every tool here earns its keep in real client work. No affiliate dumping, no
           chase-the-shiny. If a tool stops working, it gets removed. Affiliate links are
-          marked honestly — they don't change the price you pay.
+          marked honestly. They don't change the price you pay.
         </p>
         <div className="mt-6 inline-flex items-center gap-2 text-xs text-muted-foreground/80">
           <Sparkles className="h-3.5 w-3.5 text-primary/80" strokeWidth={1.5} />

@@ -13,7 +13,7 @@ import { ArrowLeft, Save, User, Camera } from "lucide-react";
 import { toast } from "sonner";
 
 const COACHING_STYLES = [
-  { id: "direct", label: "Direct & Bold", desc: "No fluff — tell me what I need to hear" },
+  { id: "direct", label: "Direct & Bold", desc: "No fluff. Tell me what I need to hear." },
   { id: "gentle", label: "Gentle & Supportive", desc: "Warm encouragement with soft nudges" },
   { id: "analytical", label: "Analytical & Strategic", desc: "Data-driven, pattern-focused coaching" },
   { id: "motivational", label: "Motivational & Energizing", desc: "High energy, action-oriented push" },

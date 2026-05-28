@@ -156,7 +156,7 @@ const AuditIntake = () => {
     const parsed = intakeSchema.safeParse(data);
     if (!parsed.success) {
       const first = parsed.error.errors[0];
-      toast.error(`Please check: ${first.path.join(".")} — ${first.message}`);
+      toast.error(`Please check: ${first.path.join(".")}: ${first.message}`);
       return;
     }
     setSubmitting(true);
@@ -176,7 +176,7 @@ const AuditIntake = () => {
       const qs = token ? `?token=${encodeURIComponent(token)}` : "";
       navigate(`/audit/report/${audit.id}${qs}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Generation failed — please retry");
+      toast.error(e instanceof Error ? e.message : "Generation failed. Please retry.");
     } finally {
       setSubmitting(false);
     }
@@ -193,7 +193,7 @@ const AuditIntake = () => {
           </h1>
           <p className="text-muted-foreground mt-2">Step {step} of 3 · ~5–7 minutes</p>
           {(isRetry || (audit.intake && Object.keys(audit.intake).length > 0)) && (
-            <p className="mt-2 text-xs text-primary/80">Your previous answers have been pre-filled — edit anything, then regenerate.</p>
+            <p className="mt-2 text-xs text-primary/80">Your previous answers have been pre-filled. Edit anything, then regenerate.</p>
           )}
           <div className="mt-4 h-2 w-full rounded-full bg-card/40 overflow-hidden">
             <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />

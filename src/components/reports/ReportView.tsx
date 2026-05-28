@@ -53,7 +53,7 @@ const ReportView = ({
       await navigator.clipboard.writeText(text);
       toast.success("Report copied to clipboard");
     } catch {
-      toast.error("Couldn't copy — try Print instead");
+      toast.error("Couldn't copy. Try Print instead.");
     }
   };
 
@@ -64,7 +64,7 @@ const ReportView = ({
       await onEmail();
       toast.success(userEmail ? `Sent to ${userEmail}` : "Email sent");
     } catch {
-      toast.error("Couldn't send email — please try again");
+      toast.error("Couldn't send email. Please try again.");
     } finally {
       setEmailing(false);
     }

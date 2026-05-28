@@ -448,7 +448,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
             <p className="flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-primary/80" />
               {isInquiry
-                ? "Custom-quote inquiry — no payment now"
+                ? "Custom-quote inquiry, no payment now"
                 : "Secure checkout powered by Stripe"}
             </p>
             <Button

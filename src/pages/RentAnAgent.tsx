@@ -32,12 +32,12 @@ const HOW_IT_WORKS = [
   {
     icon: Bot,
     title: "2. Deploy",
-    body: "Coach Kay's team configures your agent(s) on your stack — inbox, CRM, calendar, content, or custom flows.",
+    body: "Coach Kay's team configures your agent(s) on your stack: inbox, CRM, calendar, content, or custom flows.",
   },
   {
     icon: Zap,
     title: "3. Iterate",
-    body: "Weekly check-ins, transparent dashboards, and continuous routing improvements. You scale outcomes — not headcount.",
+    body: "Weekly check-ins, transparent dashboards, and continuous routing improvements. You scale outcomes, not headcount.",
   },
 ];
 
@@ -100,13 +100,13 @@ const RentAnAgent = () => {
     webPage("/rent-an-agent", "Rent-an-Agent — Automation & Agent Systems", "CollectionPage"),
     serviceSchema({
       name: "Rent-an-Agent — Done-for-You AI Agent System",
-      description: "Rent a fully-managed AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows — built, deployed, and maintained for you.",
+      description: "Rent a fully-managed AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows, built, deployed, and maintained for you.",
       url: `${SITE_URL}/rent-an-agent`,
       idSuffix: "rent-an-agent",
     }),
     serviceSchema({
       name: "AI Business Audit",
-      description: "Get a personalized AI Business Audit for $47. Discover exactly where AI fits in your business — delivered within 24 hours by Coach Kay's AI coaching platform.",
+      description: "Get a personalized AI Business Audit for $47. Discover exactly where AI fits in your business, delivered within 24 hours by Coach Kay's AI coaching platform.",
       url: `${SITE_URL}/rent-an-agent`,
       price: 47,
       idSuffix: "ai-business-audit",
@@ -190,7 +190,7 @@ const RentAnAgent = () => {
           Rent the agent. <span className="text-primary italic">Keep the leverage.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Subscribe to a dedicated AI agent — or a full squad — tuned to your business by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer.
+          Subscribe to a dedicated AI agent, or a full squad, tuned to your business by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer.
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -259,7 +259,7 @@ const RentAnAgent = () => {
           </div>
         </AnimatedSection>
 
-        <p className="text-xs text-center text-primary/80 mb-4">⚡ Founding pricing — locks in your rate permanently. Limited cohort.</p>
+        <p className="text-xs text-center text-primary/80 mb-4">⚡ Founding pricing: locks in your rate permanently. Limited cohort.</p>
 
         <div className={`${getSymmetricPricingGridClass(RENT_AGENT_TIERS.length)} gap-5`}>
           {[...RENT_AGENT_TIERS].reverse().map((tier) => {
@@ -372,7 +372,7 @@ const RentAnAgent = () => {
                     Most Popular
                   </span>
                 )}
-                <h3 className="font-heading text-xl text-foreground">Lead Engine — {tier.name}</h3>
+                <h3 className="font-heading text-xl text-foreground">Lead Engine: {tier.name}</h3>
                 <p className="mt-2 text-sm text-foreground/85 font-medium leading-snug min-h-[3.5rem]">
                   {tier.headline}
                 </p>
