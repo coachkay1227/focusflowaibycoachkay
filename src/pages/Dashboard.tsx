@@ -126,7 +126,7 @@ const Dashboard = () => {
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "You";
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead title="Dashboard — FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />

@@ -31,7 +31,7 @@ const Index = () => {
   useMouseGlow(containerRef);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay grid-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay grid-overlay">
       <SEOHead
         title="FocusFlow AI — Clarity Coaching by Coach Kay"
         description="See clearly. Move with purpose. Master-certified clarity coaching that helps you cut through mental fog, identify patterns, and take meaningful action."

@@ -261,7 +261,7 @@ export default function TruthAboutAI() {
         <MobileNav />
       </div>
 
-      <main className="min-h-screen bg-background text-foreground pt-24 md:pt-28 pb-20">
+      <main className="min-h-dvh bg-background text-foreground pt-24 md:pt-28 pb-20">
         <div className="max-w-5xl mx-auto px-5 md:px-8">
           {/* HERO */}
           <AnimatedSection>

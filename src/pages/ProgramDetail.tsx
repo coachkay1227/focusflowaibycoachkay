@@ -52,7 +52,7 @@ const ProgramDetail = () => {
 
   if (!program) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-dvh bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="font-heading text-2xl mb-2">Program not found</h1>
           <button onClick={() => navigate("/modules")} className="text-primary hover:underline text-sm">
@@ -66,7 +66,7 @@ const ProgramDetail = () => {
   // Retired: contextual replacement screen
   if (program.visibility === "retired") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+      <div className="min-h-dvh bg-background flex items-center justify-center px-6">
         <div className="max-w-md text-center">
           <span className="font-mono-label text-primary/70 tracking-[0.2em] text-xs">PROGRAM UPDATED</span>
           <h1 className="font-heading text-2xl md:text-3xl font-light mt-3 mb-3">{program.title} has evolved</h1>
@@ -108,7 +108,7 @@ const ProgramDetail = () => {
   const jsonLd = programSchema(program);
 
   return (
-    <div className="relative min-h-screen overflow-hidden grain-overlay">
+    <div className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
         title={`${program.title} — FocusFlow AI`}
         description={program.tagline}

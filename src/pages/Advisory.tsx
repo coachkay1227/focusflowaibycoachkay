@@ -107,7 +107,7 @@ const Advisory = () => {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Advisory, Speaking & Cohorts — Coach Kay"
         description="1-on-1 AI strategy intensives, executive advisory, corporate trainings, EAP, cohorts, and the Collective AI Summit. Pricing from $497 — enterprise scopes available."

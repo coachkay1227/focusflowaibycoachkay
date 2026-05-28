@@ -208,7 +208,7 @@ const MirrorChallenge = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead title={`${challengeType.replace("-", " ").replace(/\b\w/g, c => c.toUpperCase())} Challenge — FocusFlow AI`} description="Take on a transformative clarity challenge. Daily prompts, honest reflection, and real breakthroughs." path={`/challenges/${challengeType}`} noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />

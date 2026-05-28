@@ -98,7 +98,7 @@ const Modules = () => {
   ];
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
         title="Transformation Paths — FocusFlow by Coach Kay"
         description="Three transformation paths — Personal, Business, and Full AI — plus free clarity entries to find your starting point with Coach Kay."

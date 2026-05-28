@@ -70,7 +70,7 @@ export default function Collective() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Collective AI — The Team Behind Coach Kay's Builds"
         description="Collective AI is the multidisciplinary delivery team Coach Kay leads for enterprise builds, automation, and AI systems. Solo coaching by Kay. Heavy lifts delivered with the collective."

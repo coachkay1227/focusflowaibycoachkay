@@ -107,7 +107,7 @@ export default function Store() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="Story, Legacy & Publishing Studio | FocusFlow AI"
         description="Turn stories, expertise, and lived experience into powerful assets. Storybooks, legacy memoirs, expert books, creator bundles, and autism social stories — done-for-you with AI-enhanced speed."

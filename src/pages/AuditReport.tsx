@@ -121,11 +121,11 @@ const AuditReport = () => {
     ];
   }, [report]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading audit…</div>;
+  if (loading) return <div className="min-h-dvh flex items-center justify-center text-muted-foreground">Loading audit…</div>;
 
   if (!canAccess || !audit) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
         <SEOHead title="Audit Access Required" description="Sign in or use your magic link to access this audit." path="/audit/report" noIndex />
         <h1 className="font-heading text-3xl text-primary mb-3">This audit requires access</h1>
         <p className="text-muted-foreground max-w-md mb-6">Sign in or check your magic link to view this report.</p>
@@ -136,7 +136,7 @@ const AuditReport = () => {
 
   if (!report) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
         <SEOHead title="Audit In Progress" description="Your audit is still generating." path="/audit/report" noIndex />
         <h1 className="font-heading text-3xl text-primary mb-3">Audit not yet generated</h1>
         <p className="text-muted-foreground mb-6">Your intake was saved. Return to the intake to finish.</p>
@@ -180,7 +180,7 @@ const AuditReport = () => {
   const pillarLabels = { foundation: "Foundation", opportunity: "Opportunity", create: "Create", uplift: "Uplift", support: "Support" };
 
   return (
-    <div className="min-h-screen bg-background text-foreground report-view">
+    <div className="min-h-dvh bg-background text-foreground report-view">
       <SEOHead title="Your AI Business Audit — FocusFlow AI" description="Your custom AI Business Audit by Coach Kay." path="/audit/report" noIndex />
       <style>{`
         @media print {

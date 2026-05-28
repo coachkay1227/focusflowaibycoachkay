@@ -145,7 +145,7 @@ const RentAnAgent = () => {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Rent-an-Agent — AI Agent Systems by Coach Kay"
         description="Subscribe to dedicated AI agents for inbox, sales, content, and ops support. Founding pricing from $297/mo. Built and tuned by Coach Kay's team."

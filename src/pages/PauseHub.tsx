@@ -210,7 +210,7 @@ export default function PauseHub() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="P.A.U.S.E. Check — AI Scams, Traps & Safety Alerts"
         description="Before you click, swipe, or pay — the P.A.U.S.E. Check tracks active AI scams, overhyped trends, and productivity traps targeting working families."

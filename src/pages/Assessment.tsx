@@ -481,7 +481,7 @@ const Assessment = () => {
   const alternatePaths = result ? result.alternatePaths.map((k) => PATHS[k]) : [];
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay grid-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay grid-overlay">
       <SEOHead
         title="Operator × Bottleneck Map — FocusFlow AI"
         description="Six business scenarios. One named pattern. Discover the exact combination of how you operate and where you're stuck — and the one move that unlocks it. Free, ~3 minutes."

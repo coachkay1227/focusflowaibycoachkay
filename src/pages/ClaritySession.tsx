@@ -244,7 +244,7 @@ const ClaritySession = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
         title={`${moduleTitle} — FocusFlow AI`}
         description={`Begin the ${moduleTitle} clarity check. Answer honest questions and receive personalized insights about your patterns, blockers, and next clear action.`}

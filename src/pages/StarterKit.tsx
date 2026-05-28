@@ -89,7 +89,7 @@ const StarterKit = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
         title="Free AI-Powered Quick Start Report — FocusFlow AI"
         description="A personalized 3-section snapshot from Coach Kay: where you are, what to focus on first, and your one action this week."

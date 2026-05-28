@@ -13,7 +13,7 @@ interface LegalLayoutProps {
 }
 
 const LegalLayout = ({ title, description, path, eyebrow, lastUpdated, children }: LegalLayoutProps) => (
-  <div className="relative min-h-screen overflow-hidden grain-overlay">
+  <div className="relative min-h-dvh overflow-hidden grain-overlay">
     <FloatingOrbs />
 
     <div className="relative z-10 px-6 md:px-12 py-6">

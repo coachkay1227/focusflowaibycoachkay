@@ -46,7 +46,7 @@ const EmailUnsubscribe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
       <SEOHead
         title="Unsubscribe — FocusFlow AI"
         description="Confirm unsubscribing from FocusFlow AI emails. Manage your communication preferences for coaching updates, weekly insights, and transactional notifications."

@@ -40,7 +40,7 @@ const Unsubscribe = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+    <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
       <SEOHead title="Unsubscribe — FocusFlow AI" description="Manage your FocusFlow AI email preferences. Unsubscribe from coaching updates, weekly insights, or transactional notifications at any time." path="/unsubscribe" noIndex />
       <FloatingOrbs />
 

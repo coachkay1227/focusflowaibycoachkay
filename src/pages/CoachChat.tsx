@@ -157,7 +157,7 @@ const CoachChat = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay flex flex-col">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay flex flex-col">
       <SEOHead
         title="Talk to Coach Kay — Personalized Clarity Coaching"
         description="Chat with Coach Kay for personalized clarity insights. Get real coaching, challenge your thinking, and unlock deeper self-awareness."

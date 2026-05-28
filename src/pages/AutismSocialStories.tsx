@@ -79,7 +79,7 @@ export default function AutismSocialStories() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="Autism & Social Stories — Coach Kay Elevates"
         description="AI-personalized, therapist-grade social stories for autism and special needs. HSA/FSA-ready, IEP-aligned, with a Letter of Medical Necessity included."

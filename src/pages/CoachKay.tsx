@@ -53,7 +53,7 @@ const CoachKay = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
         description="Kenza Alaoui (Coach Kay) — founder of Coach Kay Elevates (for-profit workforce & AI literacy) and Forward Focus Elevation (nonprofit support for justice-impacted families). Pattern-aware coaching that blends AI with human insight."

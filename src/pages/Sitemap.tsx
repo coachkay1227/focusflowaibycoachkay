@@ -28,7 +28,7 @@ const legalLinks = [
 const paths: PublicPath[] = ["personal", "business", "ai"];
 
 const Sitemap = () => (
-  <div className="relative min-h-screen overflow-hidden grain-overlay">
+  <div className="relative min-h-dvh overflow-hidden grain-overlay">
     <FloatingOrbs />
     <SEOHead
       noIndex

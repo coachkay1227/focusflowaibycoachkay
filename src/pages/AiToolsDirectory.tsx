@@ -44,7 +44,7 @@ export default function AiToolsDirectory() {
   const filters: Filter[] = ["All", ...DIRECTORY_CATEGORIES];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="AI Tools Directory — Coach Kay's Working Stack"
         description="The curated AI tools Coach Kay actually uses to build, coach, and ship. No hype, no fluff — only tools that earn their seat at the table."

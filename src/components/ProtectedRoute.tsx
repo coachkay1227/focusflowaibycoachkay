@@ -27,7 +27,7 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
   }, [user, authLoading, isAdmin, rolesLoading, requireAdmin, navigate, location]);
 
   if (authLoading || rolesLoading) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
+    return <div className="min-h-dvh flex items-center justify-center text-muted-foreground">Loading...</div>;
   }
 
   if (!user || (requireAdmin && !isAdmin)) return null;
