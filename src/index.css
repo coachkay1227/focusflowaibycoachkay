@@ -75,6 +75,26 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
   }
+
+  /* WCAG 2.4.7 — sitewide focus-visible safety net for every interactive element.
+     Uses :where() so specificity stays 0; explicit focus-visible utilities on
+     shadcn primitives (Button, Input, Textarea, Radix triggers, etc.) continue
+     to win. Skinned over native focus outline so keyboard users always see a
+     gold ring on background, even on raw <button>/<a> elements that bypassed
+     the Button component. */
+  :where(a, button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], summary, select):focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--ring));
+    border-radius: 4px;
+  }
+
+  :where(input, textarea):focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+    border-color: hsl(var(--primary));
+  }
 }
 
 /* Cinematic Animations */
