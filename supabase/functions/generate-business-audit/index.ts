@@ -333,6 +333,58 @@ serve(async (req) => {
       console.error("intake update failed:", intakeErr);
     }
 
+    // Resolve the user's email for notification emails.
+    let userEmail: string | null = null;
+    let userName: string | null = null;
+    if (authedUserId) {
+      try {
+        const { data: authUser } = await supabase.auth.admin.getUserById(authedUserId);
+        userEmail = authUser?.user?.email ?? null;
+        const meta = authUser?.user?.user_metadata ?? {};
+        userName = (meta.full_name as string | undefined) || (meta.name as string | undefined) || null;
+      } catch (e) {
+        console.warn("[generate-business-audit] Could not fetch user email:", e);
+      }
+    }
+    // Fall back to guest_email stored on the audit row.
+    if (!userEmail) {
+      const { data: auditForEmail } = await supabase
+        .from("business_audits")
+        .select("guest_email, guest_name")
+        .eq("id", auditId)
+        .maybeSingle();
+      userEmail = auditForEmail?.guest_email ?? null;
+      if (!userName) userName = auditForEmail?.guest_name ?? null;
+    }
+
+    // Fire audit-intake-submitted email + GHL event (best-effort, non-blocking).
+    const businessName = typeof intake.business_name === "string" ? intake.business_name : undefined;
+    const industry = typeof intake.industry === "string" ? intake.industry : undefined;
+    await Promise.allSettled([
+      userEmail
+        ? supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "audit-intake-submitted",
+              recipientEmail: userEmail,
+              idempotencyKey: `audit-intake-${auditId}`,
+              templateData: { name: userName, business_name: businessName, audit_id: auditId },
+            },
+          })
+        : Promise.resolve(),
+      supabase.functions.invoke("ghl-webhook", {
+        body: {
+          event: "audit_intake_submitted",
+          payload: {
+            email: userEmail,
+            user_id: authedUserId,
+            audit_id: auditId,
+            business_name: businessName,
+            industry,
+          },
+        },
+      }),
+    ]);
+
     const result = await generateReport({
       systemPrompt: SYSTEM_PROMPT,
       userPrompt: formatIntake(intake),
@@ -358,6 +410,20 @@ serve(async (req) => {
     if (updateErr) {
       console.error("report update failed:", updateErr);
       return json(500, { error: "Failed to save report" });
+    }
+
+    // Fire audit-report-ready email (best-effort, non-blocking).
+    if (userEmail) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "audit-report-ready",
+          recipientEmail: userEmail,
+          idempotencyKey: `audit-ready-${auditId}`,
+          templateData: { name: userName, audit_id: auditId },
+        },
+      }).catch((e: unknown) => {
+        console.warn("[generate-business-audit] audit-report-ready email failed:", e);
+      });
     }
 
     return json(200, { ok: true, audit_id: auditId, report: result.data });
