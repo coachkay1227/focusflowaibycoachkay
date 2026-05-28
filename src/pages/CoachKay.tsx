@@ -56,7 +56,7 @@ const CoachKay = () => {
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
-        description="Kenza Alaoui (Coach Kay) — founder of Coach Kay Elevates (for-profit workforce & AI literacy) and Forward Focus Elevation (nonprofit support for justice-impacted families). Pattern-aware coaching that blends AI with human insight."
+        description="Meet Coach Kay — Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum through AI-powered coaching."
         path="/coach-kay"
         jsonLd={[
           webPage("/coach-kay", "Coach Kay", "AboutPage"),

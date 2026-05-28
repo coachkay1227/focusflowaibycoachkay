@@ -148,7 +148,7 @@ const RentAnAgent = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Rent-an-Agent — AI Agent Systems by Coach Kay"
-        description="Subscribe to dedicated AI agents for inbox, sales, content, and ops support. Founding pricing from $297/mo. Built and tuned by Coach Kay's team."
+        description="Rent a done-for-you AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows — delivered and maintained for you."
         path="/rent-an-agent"
         jsonLd={jsonLd}
       />
