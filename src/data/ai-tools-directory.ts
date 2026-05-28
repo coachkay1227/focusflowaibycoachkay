@@ -65,7 +65,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   { name: "Suno", blurb: "Generate full songs from a prompt. Good for intros, hooks, and brand audio stings.", category: "AI Voice & Audio", signup_url: "https://suno.com", pricing: "Freemium" },
   { name: "Udio", blurb: "Suno's main rival for AI-generated music. Different vibe, often cleaner vocals.", category: "AI Voice & Audio", signup_url: "https://udio.com", pricing: "Freemium" },
   { name: "Krisp", blurb: "Background noise + echo removal on every call. The single best $0 add-on for coaches.", category: "AI Voice & Audio", signup_url: "https://krisp.ai", pricing: "Freemium", affiliate_pending: true },
-  { name: "Otter.ai", blurb: "Real-time meeting transcription and summaries. Strong free tier.", category: "AI Voice & Audio", signup_url: "https://otter.ai", pricing: "Freemium", affiliate_pending: true },
+  { name: "Otter.ai", blurb: "Real-time meeting transcription and summaries. Strong free tier.", category: "AI Voice & Audio", signup_url: "https://otter.ai/referrals/LLFONTHH", pricing: "Freemium", affiliate_pending: false },
 
   // ────────────────────────────── AI Video & Image ──────────────────────────────
   { name: "HeyGen", blurb: "AI avatars, voice clones, and translated video. Scale your face without losing it.", category: "AI Video & Image", signup_url: "https://heygen.com", pricing: "Freemium", affiliate_pending: true },
