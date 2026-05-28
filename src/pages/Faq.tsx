@@ -27,7 +27,7 @@ const Faq = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="FAQ — Coaching, AI Agents, Advisory & Studio | FocusFlow AI"
         description="Answers about Coach Kay's clarity coaching, Rent-an-Agent subscriptions, advisory engagements, AI Business Audit, autism social stories, and the publishing studio."

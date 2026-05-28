@@ -124,12 +124,12 @@ const AuditIntake = () => {
   const progress = useMemo(() => (step === 1 ? 33 : step === 2 ? 66 : 100), [step]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading…</div>;
+    return <div className="min-h-dvh flex items-center justify-center text-muted-foreground">Loading…</div>;
   }
 
   if (!canAccess || !audit) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
         <SEOHead title="AI Business Audit — Access Needed" description="Purchase or sign in to access your audit intake." path="/audit/intake" noIndex />
         <h1 className="font-heading text-3xl text-primary mb-3">Audit access required</h1>
         <p className="text-muted-foreground max-w-md mb-6">
@@ -183,7 +183,7 @@ const AuditIntake = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <SEOHead title="AI Business Audit Intake — FocusFlow AI" description="Complete your 17-field intake. Custom audit generates in under 2 minutes." path="/audit/intake" noIndex />
       <div className="max-w-3xl mx-auto px-6 py-10">
         <header className="mb-8">

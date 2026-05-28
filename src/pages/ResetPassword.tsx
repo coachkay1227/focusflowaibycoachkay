@@ -74,7 +74,7 @@ const ResetPassword = () => {
 
   if (checking) {
     return (
-      <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
         <FloatingOrbs />
         <div className="relative z-10 text-center">
           <p className="text-muted-foreground">Verifying reset link...</p>
@@ -85,7 +85,7 @@ const ResetPassword = () => {
 
   if (!valid) {
     return (
-      <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+      <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
         <FloatingOrbs />
         <div className="relative z-10 text-center">
           <p className="text-muted-foreground">Invalid or expired reset link.</p>
@@ -98,7 +98,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden grain-overlay flex items-center justify-center px-6">
+    <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
       <SEOHead title="Reset Password — FocusFlow AI" description="Set a new password for your FocusFlow AI account. Secure password recovery for returning members of FocusFlow AI by Coach Kay." path="/reset-password" noIndex />
       <FloatingOrbs />
       <div className="mouse-glow" />

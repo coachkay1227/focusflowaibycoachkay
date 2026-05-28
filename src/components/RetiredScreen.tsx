@@ -39,7 +39,7 @@ const RetiredScreen = ({
   }, [delayMs, navigate, redirectTo]);
 
   return (
-    <div className="relative min-h-screen bg-background overflow-hidden grain-overlay flex items-center justify-center px-6">
+    <div className="relative min-h-dvh bg-background overflow-hidden grain-overlay flex items-center justify-center px-6">
       <SEOHead
         title={`${legacyName} has moved — FocusFlow AI`}
         description={`The ${legacyName} questionnaire has evolved and now lives inside ${redirectLabel}. You'll be redirected automatically.`}

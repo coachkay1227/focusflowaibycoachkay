@@ -127,14 +127,14 @@ const AdminAnalytics = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-muted-foreground">
+      <div className="min-h-dvh flex items-center justify-center text-muted-foreground">
         Loading analytics...
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden grain-overlay">
+    <div className="relative min-h-dvh overflow-hidden grain-overlay">
       <div className="mouse-glow" />
       <div className="relative z-10 px-6 py-8 max-w-5xl mx-auto">
         <AnimatedSection>

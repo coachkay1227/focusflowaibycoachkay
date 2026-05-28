@@ -42,7 +42,7 @@ const Community = () => {
   useMouseGlow(containerRef);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
         title="The Elevation Hub — FocusFlow Community"
         description="Join the Focus Flow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."

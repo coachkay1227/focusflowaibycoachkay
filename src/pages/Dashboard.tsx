@@ -126,16 +126,21 @@ const Dashboard = () => {
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "You";
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden grain-overlay">
+    <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead title="Dashboard — FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
-        <div className="font-heading text-xl font-light cursor-pointer" onClick={() => navigate("/")} role="img" aria-label="FocusFlow AI">
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="font-heading text-xl font-light cursor-pointer bg-transparent border-0 p-0"
+          aria-label="FocusFlow AI — go to home"
+        >
           <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
-        </div>
+        </button>
         <div className="flex items-center gap-4">
           {isAdmin && (
             <button onClick={() => navigate("/admin")} className="text-sm text-primary hover:text-primary/80 transition-colors hidden md:block">Admin</button>

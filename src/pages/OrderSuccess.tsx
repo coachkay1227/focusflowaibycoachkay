@@ -67,7 +67,7 @@ export default function OrderSuccess() {
 
   if (mode === "non_book") {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
+      <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
         <SEOHead
           title="Payment Confirmed — FocusFlow AI"
           description="Thank you — your purchase is confirmed. Coach Kay's team will be in touch shortly with next steps."
@@ -125,7 +125,7 @@ export default function OrderSuccess() {
     : "We've received your order and your vision. Coach Kay's team will review your intake and be in touch within 24 hours.";
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
+    <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
       <SEOHead
         title="Order Confirmed — FocusFlow AI"
         description="Thank you for your FocusFlow AI order. We've received your intake and Coach Kay's team will be in touch within 24 hours with next steps."
