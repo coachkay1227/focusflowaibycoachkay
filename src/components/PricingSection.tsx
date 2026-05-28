@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import OfferCard from "@/components/offers/OfferCard";
 import { getSymmetricGridClass } from "@/lib/grid";
+import { trackCheckoutStart } from "@/lib/gtag";
 
 const PARTNERSHIP_BOOKING_URL =
   "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp";
@@ -192,6 +193,9 @@ export default function PricingSection() {
       return;
     }
     if (!offer.priceId) return;
+    // GA4: fire begin_checkout with tier name and numeric price
+    const numericPrice = parseFloat(offer.price.replace(/[^0-9.]/g, "")) || 0;
+    trackCheckoutStart(offer.title, numericPrice);
     if (!user) {
       try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, offer.priceId); } catch { /* noop */ }
       navigate(`/auth?next=${encodeURIComponent("/#pricing")}`);

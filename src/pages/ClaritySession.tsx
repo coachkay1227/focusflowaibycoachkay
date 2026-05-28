@@ -125,6 +125,14 @@ const ClaritySession = () => {
     );
   }
 
+  // GA4: fire clarity_session_start once per real session mount
+  useEffect(() => {
+    if (!legacyRedirect && !isUnknownModule) {
+      trackClarityStart();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Admin-only preview: ?preview=1 prefills answers with the first option of each question
   // and immediately routes to the result screen — no public exposure.
   useEffect(() => {
