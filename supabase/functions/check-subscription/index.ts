@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, PROTECTED_TIERS } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, PROTECTED_TIERS, NO_TIER_PRODUCTS } from "../_shared/stripe-config.ts";
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
@@ -26,7 +26,12 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
@@ -40,7 +45,7 @@ serve(async (req) => {
       .from("user_access_levels")
       .select("tier")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     const currentTier = accessRow?.tier ?? "free";
     logStep("Current tier", { currentTier });
@@ -85,42 +90,54 @@ serve(async (req) => {
       productId = subscription.items.data[0].price.product as string;
       logStep("Active subscription found", { productId, subscriptionEnd });
 
-      const tier = PRODUCT_TIER_MAP[productId] || "subscriber";
-      await supabaseClient
-        .from("user_access_levels")
-        .upsert({ id: user.id, tier }, { onConflict: "id" });
-      logStep("Tier synced from subscription", { tier });
+      // Care-plan / no-tier subscriptions (Site Care, Collective Membership,
+      // Agent Care, Monthly Build Credits) must NOT change access tier.
+      if (NO_TIER_PRODUCTS.has(productId)) {
+        logStep("Active sub is NO_TIER product — preserving current tier", { productId, currentTier });
+      } else {
+        const tier = PRODUCT_TIER_MAP[productId] || "subscriber";
+        await supabaseClient
+          .from("user_access_levels")
+          .upsert({ id: user.id, tier }, { onConflict: "id" });
+        logStep("Tier synced from subscription", { tier });
+      }
     } else {
       // 2. Check completed one-time checkout sessions
       const sessions = await stripe.checkout.sessions.list({
         customer: customerId,
         status: "complete",
-        limit: 10,
+        limit: 25,
       });
 
-      const paidOneTime = sessions.data.find(
+      // Iterate paid one-time sessions and pick the first whose product is in
+      // PRODUCT_TIER_MAP — skips no-tier purchases (audit/book/autism) that
+      // would otherwise mask a real transformation_90 / reset_30 upgrade.
+      const paidOneTimes = sessions.data.filter(
         (s: { mode: string; payment_status: string }) => s.mode === "payment" && s.payment_status === "paid"
       );
 
-      if (paidOneTime) {
-        const lineItems = await stripe.checkout.sessions.listLineItems(paidOneTime.id, { limit: 1 });
-        const oneTimeProductId = lineItems.data[0]?.price?.product as string;
+      let upgraded = false;
+      for (const s of paidOneTimes) {
+        const lineItems = await stripe.checkout.sessions.listLineItems(s.id, { limit: 1 });
+        const oneTimeProductId = lineItems.data[0]?.price?.product as string | undefined;
         if (oneTimeProductId && PRODUCT_TIER_MAP[oneTimeProductId]) {
           const tier = PRODUCT_TIER_MAP[oneTimeProductId];
           productId = oneTimeProductId;
-          logStep("One-time purchase found", { productId, tier });
-
+          logStep("Tier-bearing one-time purchase found", { productId, tier });
           await supabaseClient
             .from("user_access_levels")
             .upsert({ id: user.id, tier }, { onConflict: "id" });
-          logStep("Tier synced from one-time purchase", { tier });
+          upgraded = true;
+          break;
         }
-      } else if (currentTier === "subscriber") {
+      }
+
+      if (!upgraded && currentTier === "subscriber") {
         logStep("Stripe sub lapsed — downgrading subscriber to free");
         await supabaseClient
           .from("user_access_levels")
           .upsert({ id: user.id, tier: "free" }, { onConflict: "id" });
-      } else {
+      } else if (!upgraded) {
         logStep("No active subscription — preserving existing tier", { currentTier });
       }
     }
