@@ -60,12 +60,12 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   { name: "Elicit", blurb: "AI research assistant for academic and primary sources. Built for evidence, not vibes.", category: "AI Agents & Research", signup_url: "https://elicit.com", pricing: "Freemium" },
 
   // ────────────────────────────── AI Voice & Audio ──────────────────────────────
-  { name: "ElevenLabs", blurb: "Voice work for guided rituals and audio coaching. The only AI voice Coach Kay trusts on tone.", category: "AI Voice & Audio", signup_url: "https://try.elevenlabs.io/ss73od7oz8wm", pricing: "Freemium", affiliate_pending: false },
+  { name: "ElevenLabs", blurb: "Voice work for guided rituals and audio coaching. The only AI voice Coach Kay trusts on tone.", category: "AI Voice & Audio", signup_url: "https://elevenlabs.io", affiliate_url: "https://try.elevenlabs.io/ss73od7oz8wm", pricing: "Freemium" },
   { name: "Descript", blurb: "Edit video and audio like a doc. How Coach Kay batches content without burning a week.", category: "AI Voice & Audio", signup_url: "https://descript.com", pricing: "Freemium", affiliate_pending: true },
   { name: "Suno", blurb: "Generate full songs from a prompt. Good for intros, hooks, and brand audio stings.", category: "AI Voice & Audio", signup_url: "https://suno.com", pricing: "Freemium" },
   { name: "Udio", blurb: "Suno's main rival for AI-generated music. Different vibe, often cleaner vocals.", category: "AI Voice & Audio", signup_url: "https://udio.com", pricing: "Freemium" },
   { name: "Krisp", blurb: "Background noise + echo removal on every call. The single best $0 add-on for coaches.", category: "AI Voice & Audio", signup_url: "https://krisp.ai", pricing: "Freemium", affiliate_pending: true },
-  { name: "Otter.ai", blurb: "Real-time meeting transcription and summaries. Strong free tier.", category: "AI Voice & Audio", signup_url: "https://otter.ai/referrals/LLFONTHH", pricing: "Freemium", affiliate_pending: false },
+  { name: "Otter.ai", blurb: "Real-time meeting transcription and summaries. Strong free tier.", category: "AI Voice & Audio", signup_url: "https://otter.ai", affiliate_url: "https://otter.ai/referrals/LLFONTHH", pricing: "Freemium" },
 
   // ────────────────────────────── AI Video & Image ──────────────────────────────
   { name: "HeyGen", blurb: "AI avatars, voice clones, and translated video. Scale your face without losing it.", category: "AI Video & Image", signup_url: "https://heygen.com", pricing: "Freemium", affiliate_pending: true },
@@ -99,13 +99,13 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
 
   // ────────────────────────────── Payments & Delivery ──────────────────────────────
   { name: "Stripe", blurb: "Every payment in this room runs through Stripe. Honest pricing needs honest checkout.", category: "Payments & Delivery", signup_url: "https://stripe.com", pricing: "Freemium" },
-  { name: "Beehiiv", blurb: "Newsletter platform that doesn't fight you on deliverability.", category: "Payments & Delivery", signup_url: "https://www.beehiiv.com/?via=coach-kay", pricing: "Freemium", affiliate_pending: false },
+  { name: "Beehiiv", blurb: "Newsletter platform that doesn't fight you on deliverability.", category: "Payments & Delivery", signup_url: "https://beehiiv.com", affiliate_url: "https://www.beehiiv.com/?via=coach-kay", pricing: "Freemium" },
   { name: "Kit (ConvertKit)", blurb: "Creator-focused email + automations. The other newsletter platform worth your time.", category: "Payments & Delivery", signup_url: "https://kit.com", pricing: "Freemium", affiliate_pending: true },
   { name: "Resend", blurb: "Modern transactional email API. What sends every receipt and welcome in this app.", category: "Payments & Delivery", signup_url: "https://resend.com", pricing: "Freemium" },
   { name: "Whop", blurb: "Sell digital products, communities, and software. Built-in audience + payments.", category: "Payments & Delivery", signup_url: "https://whop.com", pricing: "Freemium", affiliate_pending: true },
 
   // ────────────────────────────── Community & Booking ──────────────────────────────
-  { name: "Skool", blurb: "Home of the FocusFlow Elevation Hub — where support happens between sessions.", category: "Community & Booking", signup_url: "https://www.skool.com/signup?ref=e641155cc53a431c8387d590ba785dea", pricing: "Paid", affiliate_pending: false },
+  { name: "Skool", blurb: "Home of the FocusFlow Elevation Hub — where support happens between sessions.", category: "Community & Booking", signup_url: "https://www.skool.com", affiliate_url: "https://www.skool.com/signup?ref=e641155cc53a431c8387d590ba785dea", pricing: "Paid" },
   { name: "Circle", blurb: "Premium community platform when you outgrow free options.", category: "Community & Booking", signup_url: "https://circle.so", pricing: "Paid", affiliate_pending: true },
   { name: "Discord", blurb: "Free community spaces with voice, video, and bots. Where most AI-curious folks already live.", category: "Community & Booking", signup_url: "https://discord.com", pricing: "Freemium" },
   { name: "Calendly", blurb: "Booking without back-and-forth. Used for every clarity call Coach Kay runs.", category: "Community & Booking", signup_url: "https://calendly.com", pricing: "Freemium", affiliate_pending: true },
