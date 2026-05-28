@@ -4,7 +4,7 @@ const orbConfigs = [
   {
     className: "animate-float-1",
     top: "10%", left: "5%", size: 600,
-    bg: "radial-gradient(circle, hsl(43 75% 52% / 0.16), transparent 70%)",
+    bg: "radial-gradient(circle, hsl(var(--primary) / 0.16), transparent 70%)",
   },
   {
     className: "animate-float-2",

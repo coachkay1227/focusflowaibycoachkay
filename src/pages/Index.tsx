@@ -60,7 +60,7 @@ const Index = () => {
           fontSize: "6rem",
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 300,
-          color: "hsl(43 75% 52% / 0.04)",
+          color: "hsl(var(--primary) / 0.04)",
           filter: "blur(60px)",
           pointerEvents: "none",
           zIndex: 0,
@@ -88,7 +88,7 @@ const Index = () => {
                 className="absolute left-4 md:left-8 top-12 bottom-12 w-px pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(to bottom, transparent, hsl(43 75% 52% / 0.3), transparent)",
+                    "linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.3), transparent)",
                 }}
                 aria-hidden="true"
               />
@@ -108,7 +108,7 @@ const Index = () => {
 
                 <h1
                   className="font-heading text-4xl md:text-6xl lg:text-7xl font-light leading-[1.05] text-foreground"
-                  style={{ textShadow: "0 0 40px hsl(43 75% 52% / 0.12)" }}
+                  style={{ textShadow: "0 0 40px hsl(var(--primary) / 0.12)" }}
                 >
                   For high-achievers stuck in{" "}
                   <span className="italic">decision loops</span>: get one clear next move in{" "}
@@ -130,7 +130,7 @@ const Index = () => {
                   >
                     <span
                       className="absolute -inset-3 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{ background: "hsl(43 75% 52% / 0.25)" }}
+                      style={{ background: "hsl(var(--primary) / 0.25)" }}
                       aria-hidden="true"
                     />
                     <span className="relative inline-flex items-center gap-2 bg-primary text-primary-foreground px-9 py-5 rounded-full font-bold text-sm tracking-[0.05em] uppercase transition-transform duration-300 group-hover:-translate-y-0.5">
@@ -183,7 +183,7 @@ const Index = () => {
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(to bottom, hsl(220 40% 8%) 0%, transparent 14%)",
+                    "linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%)",
                 }}
                 aria-hidden="true"
               />
@@ -191,13 +191,13 @@ const Index = () => {
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(to top, hsl(220 40% 8%) 0%, transparent 55%)",
+                    "linear-gradient(to top, hsl(var(--background)) 0%, transparent 55%)",
                 }}
                 aria-hidden="true"
               />
               <div
                 className="absolute inset-0 z-10 pointer-events-none mix-blend-overlay"
-                style={{ background: "hsl(43 75% 52% / 0.05)" }}
+                style={{ background: "hsl(var(--primary) / 0.05)" }}
                 aria-hidden="true"
               />
 
@@ -221,14 +221,14 @@ const Index = () => {
               {/* Gold frame */}
               <div
                 className="absolute inset-6 md:inset-8 border z-20 pointer-events-none transition-all duration-[1200ms] ease-in-out group-hover:inset-7 md:group-hover:inset-10"
-                style={{ borderColor: "hsl(43 75% 52% / 0.25)" }}
+                style={{ borderColor: "hsl(var(--primary) / 0.25)" }}
                 aria-hidden="true"
               />
 
               {/* Soft glow */}
               <div
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full blur-[100px] pointer-events-none animate-brand-pulse"
-                style={{ background: "hsl(43 75% 52% / 0.12)" }}
+                style={{ background: "hsl(var(--primary) / 0.12)" }}
                 aria-hidden="true"
               />
             </div>
@@ -265,7 +265,7 @@ const Index = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">START HERE — FREE</span>
             <h2
               className="font-heading text-3xl md:text-5xl font-light mt-4"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
             >
               Find Your Path in 5 Minutes.
             </h2>
@@ -341,7 +341,7 @@ const Index = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">THE FRAMEWORK</span>
             <h2
               className="font-heading text-3xl md:text-5xl font-light mt-4"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
             >
               Your F.O.C.U.S. Journey
             </h2>
@@ -437,7 +437,7 @@ const Index = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">Transformations</span>
             <h2
               className="font-heading text-3xl md:text-5xl font-light mt-4"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
             >
               What they're saying
             </h2>
@@ -486,7 +486,7 @@ const Index = () => {
         <AnimatedSection className="max-w-2xl mx-auto text-center">
           <h2
             className="font-heading text-3xl md:text-5xl font-light mb-6"
-            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+            style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
           >
             Ready to see clearly?
           </h2>

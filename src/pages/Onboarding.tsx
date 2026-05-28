@@ -108,7 +108,7 @@ const Onboarding = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">Step 1 of {TOTAL_STEPS}</span>
             <h1
               className="font-heading text-3xl md:text-5xl font-light mt-4 mb-3"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
             >
               Where are you right now?
             </h1>
@@ -136,7 +136,7 @@ const Onboarding = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">Step 2 of {TOTAL_STEPS}</span>
             <h1
               className="font-heading text-3xl md:text-5xl font-light mt-4 mb-3"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
             >
               What brought you here?
             </h1>
@@ -164,7 +164,7 @@ const Onboarding = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">Step 3 of {TOTAL_STEPS}</span>
             <h1
               className="font-heading text-3xl md:text-5xl font-light mt-4 mb-3"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
             >
               How do you like to be coached?
             </h1>
@@ -192,7 +192,7 @@ const Onboarding = () => {
             <span className="font-mono-label text-primary tracking-[0.2em]">Step {TOTAL_STEPS} of {TOTAL_STEPS}</span>
             <h1
               className="font-heading text-3xl md:text-5xl font-light mt-4 mb-3"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
             >
               Pick your starting modules
             </h1>

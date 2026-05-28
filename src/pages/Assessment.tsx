@@ -540,7 +540,7 @@ const Assessment = () => {
             </span>
             <h1
               className="font-heading text-3xl md:text-4xl font-light mt-3 leading-tight"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.12)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.12)" }}
             >
               {current.question}
             </h1>
@@ -588,7 +588,7 @@ const Assessment = () => {
             </span>
             <h1
               className="font-heading text-4xl md:text-6xl font-light mt-3 text-primary leading-tight"
-              style={{ textShadow: "0 0 50px hsl(43 75% 52% / 0.25)" }}
+              style={{ textShadow: "0 0 50px hsl(var(--primary) / 0.25)" }}
             >
               {comboHeadline}
             </h1>

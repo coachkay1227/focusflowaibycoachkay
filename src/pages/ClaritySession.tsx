@@ -291,7 +291,7 @@ const ClaritySession = () => {
 
           <h2
             className="font-heading text-3xl md:text-4xl lg:text-5xl font-light mt-4 mb-3 leading-tight"
-            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+            style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
           >
             {question.question}
           </h2>

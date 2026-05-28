@@ -58,7 +58,7 @@ const Kiosk = () => {
         {/* Reflective headline */}
         <h1
           className="font-heading text-4xl md:text-6xl lg:text-7xl font-light leading-tight mb-6"
-          style={{ textShadow: "0 0 40px hsl(43 75% 52% / 0.15)" }}
+          style={{ textShadow: "0 0 40px hsl(var(--primary) / 0.15)" }}
         >
           What would you change
           <br />
