@@ -23,9 +23,7 @@ const SiteFooter = () => {
     {
       title: "Work With Kay",
       links: [
-        { label: "Free 15-min Clarity Call", to: "/advisory" },
-        { label: "Strategy Session", to: "/advisory" },
-        { label: "Advisory & Partnership", to: "/advisory" },
+        { label: "Coaching & Advisory", to: "/advisory" },
         { label: "AI Build Studio", to: "/build-studio" },
         { label: "Rent-an-Agent", to: "/rent-an-agent" },
         { label: "Collective AI", to: "/collective" },
