@@ -153,7 +153,7 @@ const ProgramDetail = () => {
         {/* Title & Tagline */}
         <h1
           className="font-heading text-3xl md:text-5xl font-light mb-3"
-          style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+          style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
         >
           {program.title}
         </h1>

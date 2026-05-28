@@ -173,7 +173,7 @@ const RentAnAgent = () => {
           AUTOMATION &amp; AGENT SYSTEMS
         </span>
         <h1 className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
-          style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}>
+          style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}>
           Rent the agent. <span className="text-primary italic">Keep the leverage.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">

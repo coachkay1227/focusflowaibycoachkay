@@ -207,7 +207,7 @@ export default function PricingSection() {
           <div className="text-center mb-16">
             <h2
               className="font-heading text-3xl md:text-5xl font-light"
-              style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.1)" }}
+              style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.1)" }}
             >
               Choose Your Transformation Path
             </h2>

@@ -78,7 +78,7 @@ const Community = () => {
           <span className="font-mono-label text-primary tracking-[0.2em]">The Elevation Hub</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
-            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+            style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
           >
             You're not alone in this.
           </h1>

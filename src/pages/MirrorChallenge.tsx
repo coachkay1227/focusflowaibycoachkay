@@ -228,7 +228,7 @@ const MirrorChallenge = () => {
           <span className="font-mono-label text-primary tracking-[0.2em]">{challengeTitle}</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
-            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+            style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
           >
             Look inward. Write honestly.
           </h1>
@@ -247,7 +247,7 @@ const MirrorChallenge = () => {
         {(showCelebration || isCompleted) && (
           <AnimatedSection className="text-center mb-12">
             <div className="animate-celebration">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full border-2 border-primary/40 flex items-center justify-center" style={{ boxShadow: "0 0 40px hsl(43 75% 52% / 0.2)" }}>
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full border-2 border-primary/40 flex items-center justify-center" style={{ boxShadow: "0 0 40px hsl(var(--primary) / 0.2)" }}>
                 <Trophy className="h-8 w-8 text-primary" />
               </div>
               <h2 className="font-heading text-2xl md:text-3xl font-light text-primary mb-4">Challenge Complete</h2>
@@ -283,7 +283,7 @@ const MirrorChallenge = () => {
 
               <h3
                 className="font-heading text-xl md:text-2xl font-light mb-8 text-foreground leading-relaxed"
-                style={{ textShadow: "0 0 20px hsl(43 75% 52% / 0.08)" }}
+                style={{ textShadow: "0 0 20px hsl(var(--primary) / 0.08)" }}
               >
                 {prompt.prompt}
               </h3>

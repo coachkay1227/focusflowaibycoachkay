@@ -166,7 +166,7 @@ const CollectiveAIBuildStudio = () => {
         </span>
         <h1
           className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
-          style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+          style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
         >
           From idea to live in days. <br />
           <span className="text-primary italic">From launch to scale on autopilot.</span>

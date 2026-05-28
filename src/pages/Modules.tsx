@@ -125,7 +125,7 @@ const Modules = () => {
           <span className="font-mono-label text-primary tracking-[0.2em]">TRANSFORMATION PATHS</span>
           <h1
             className="font-heading text-3xl md:text-5xl font-light mt-4"
-            style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+            style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
           >
             Personal · Business · Full AI
           </h1>

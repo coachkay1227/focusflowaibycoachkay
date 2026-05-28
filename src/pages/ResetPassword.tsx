@@ -108,7 +108,7 @@ const ResetPassword = () => {
           <div className="w-14 h-14 mx-auto mb-6 rounded-full border border-primary/30 flex items-center justify-center">
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="font-heading text-3xl font-light" style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}>
+          <h1 className="font-heading text-3xl font-light" style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}>
             Set New Password
           </h1>
         </div>

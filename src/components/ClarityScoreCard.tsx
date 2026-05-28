@@ -34,7 +34,7 @@ const ClarityScoreCard = () => {
   const strokeDashoffset = circumference - (score.total / 100) * circumference;
 
   const breakdownItems = [
-    { label: "Sessions", value: score.breakdown.sessions, max: 30, icon: Zap, color: "hsl(43 75% 52%)" },
+    { label: "Sessions", value: score.breakdown.sessions, max: 30, icon: Zap, color: "hsl(var(--primary))" },
     { label: "Challenges", value: score.breakdown.challenges, max: 25, icon: Flame, color: "hsl(43 60% 65%)" },
     { label: "Consistency", value: score.breakdown.consistency, max: 25, icon: TrendingUp, color: "hsl(210 40% 60%)" },
     { label: "Depth", value: score.breakdown.depth, max: 20, icon: Layers, color: "hsl(210 35% 50%)" },
@@ -51,7 +51,7 @@ const ClarityScoreCard = () => {
               ref={circleRef}
               cx="60" cy="60" r="52"
               fill="none"
-              stroke="hsl(43 75% 52%)"
+              stroke="hsl(var(--primary))"
               strokeWidth="6"
               strokeLinecap="round"
               strokeDasharray={circumference}
