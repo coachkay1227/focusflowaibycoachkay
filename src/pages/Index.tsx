@@ -15,6 +15,7 @@ import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import coachKayPortrait from "@/assets/coach-kay.jpeg";
 import { trackEvent } from "@/lib/analytics";
+import SocialProofCounter from "@/components/SocialProofCounter";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -138,6 +139,7 @@ const Index = () => {
                     </span>
                   </button>
                   <p className="text-xs text-muted-foreground mt-2">Free to start · No credit card required</p>
+                  <SocialProofCounter />
 
                   {/* Trust strip */}
                   <div className="flex flex-wrap items-center gap-6 md:gap-8 border-t border-foreground/10 pt-6 md:pt-8">

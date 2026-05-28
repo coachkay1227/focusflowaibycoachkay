@@ -15,6 +15,7 @@ import { ArrowRight, ArrowLeft, Sparkles, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
+import { trackClarityStart } from "@/lib/gtag";
 import RetiredScreen from "@/components/RetiredScreen";
 import { isAdminPreviewArmed } from "@/lib/admin-preview";
 
