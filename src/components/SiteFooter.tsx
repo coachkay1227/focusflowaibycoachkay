@@ -32,7 +32,7 @@ const SiteFooter = () => {
     {
       title: "Company",
       links: [
-        { label: "About", to: "/about" },
+        { label: "About", to: "/coach-kay" },
         { label: "Elevation Hub (Community)", to: "/community" },
         { label: "FAQ", to: "/faq" },
         { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },

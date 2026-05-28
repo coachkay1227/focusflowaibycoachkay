@@ -9,6 +9,8 @@ import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
 import AutismIntakeModal from "@/components/autism/AutismIntakeModal";
 import OfferCard from "@/components/offers/OfferCard";
 import { getSymmetricGridClass } from "@/lib/grid";
+import MobileNav from "@/components/MobileNav";
+import { ArrowLeft } from "lucide-react";
 import {
   AUTISM_DISPLAY,
   AUTISM_GIFT_WRAP_LABEL,
@@ -104,8 +106,16 @@ export default function AutismSocialStories() {
         ]}
       />
 
+      {/* Mobile nav header */}
+      <header className="relative z-10 px-6 sm:px-10 pt-6 flex items-center justify-between md:hidden">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" /> Home
+        </Link>
+        <MobileNav />
+      </header>
+
       {/* Hero */}
-      <section className="px-6 pt-24 pb-16 max-w-5xl mx-auto text-center">
+      <section className="px-6 pt-8 md:pt-24 pb-16 max-w-5xl mx-auto text-center">
         <p className="text-xs uppercase tracking-[0.25em] text-primary/80 mb-4">
           Coach Kay Elevates Studio
         </p>

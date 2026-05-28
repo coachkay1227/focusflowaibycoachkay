@@ -13,6 +13,7 @@ import { CategoryTabs } from "@/components/store/CategoryTabs";
 import { PackageCard } from "@/components/store/PackageCard";
 import { AddonCard } from "@/components/store/AddonCard";
 import { IntakeFormModal } from "@/components/store/IntakeFormModal";
+import MobileNav from "@/components/MobileNav";
 import {
   ADDONS,
   CATEGORY_LABELS,
@@ -157,7 +158,7 @@ export default function Store() {
         }}
       />
 
-      <header className="relative z-10 px-6 sm:px-10 pt-8">
+      <header className="relative z-10 px-6 sm:px-10 pt-8 flex items-center justify-between md:justify-start">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -165,6 +166,9 @@ export default function Store() {
           <ArrowLeft className="h-4 w-4" />
           Home
         </Link>
+        <div className="md:hidden ml-auto">
+          <MobileNav />
+        </div>
       </header>
 
       <section className="relative z-10 px-6 sm:px-10 pt-16 pb-12 max-w-5xl mx-auto text-center">
