@@ -99,6 +99,8 @@ const CoachKay = () => {
                   alt="Coach Kay — Kenza Alaoui, AI & Life Transformation Coach"
                   className="relative rounded-2xl object-cover shadow-2xl w-full"
                   loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
             </AnimatedSection>
