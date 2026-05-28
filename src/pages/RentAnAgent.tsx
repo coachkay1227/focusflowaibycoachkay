@@ -16,7 +16,7 @@ import {
   LEAD_ENGINE_ENTERPRISE,
   ENTRY_OFFERS,
 } from "@/lib/offer-catalog";
-import { webPage, breadcrumb, SITE_URL, ORG_ID } from "@/lib/seo-schema";
+import { webPage, breadcrumb, serviceSchema, SITE_URL, ORG_ID } from "@/lib/seo-schema";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
 import { getSymmetricPricingGridClass } from "@/lib/grid";
@@ -98,6 +98,19 @@ const RentAnAgent = () => {
 
   const jsonLd = [
     webPage("/rent-an-agent", "Rent-an-Agent — Automation & Agent Systems", "CollectionPage"),
+    serviceSchema({
+      name: "Rent-an-Agent — Done-for-You AI Agent System",
+      description: "Rent a fully-managed AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows — built, deployed, and maintained for you.",
+      url: `${SITE_URL}/rent-an-agent`,
+      idSuffix: "rent-an-agent",
+    }),
+    serviceSchema({
+      name: "AI Business Audit",
+      description: "Get a personalized AI Business Audit for $47. Discover exactly where AI fits in your business — delivered within 24 hours by Coach Kay's AI coaching platform.",
+      url: `${SITE_URL}/rent-an-agent`,
+      price: 47,
+      idSuffix: "ai-business-audit",
+    }),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -246,8 +259,10 @@ const RentAnAgent = () => {
           </div>
         </AnimatedSection>
 
+        <p className="text-xs text-center text-primary/80 mb-4">⚡ Founding pricing — locks in your rate permanently. Limited cohort.</p>
+
         <div className={`${getSymmetricPricingGridClass(RENT_AGENT_TIERS.length)} gap-5`}>
-          {RENT_AGENT_TIERS.map((tier) => {
+          {[...RENT_AGENT_TIERS].reverse().map((tier) => {
             const active = founding ? tier.founding : tier.standard;
             return (
               <div

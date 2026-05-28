@@ -47,7 +47,7 @@ export default function AiToolsDirectory() {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="AI Tools Directory — Coach Kay's Working Stack"
-        description="The curated AI tools Coach Kay actually uses to build, coach, and ship. No hype, no fluff — only tools that earn their seat at the table."
+        description="63 vetted AI tools scored and reviewed by Coach Kay. The only AI tools directory curated by a Master Certified Coach — practical, honest, no affiliate fluff."
         path="/ai-tools"
         jsonLd={jsonLd}
       />

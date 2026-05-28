@@ -53,6 +53,33 @@ const AuditLanding = () => {
           Sign in to access your audit
         </button>
       </p>
+
+      {/* Sample Audit Preview */}
+      <div className="mt-12 max-w-xl mx-auto">
+        <p className="text-xs text-muted-foreground text-center mb-4 tracking-widest uppercase">Sample Audit Preview</p>
+        <div className="rounded-xl border border-primary/20 bg-card/40 p-6 space-y-4">
+          <div>
+            <p className="text-xs text-primary font-mono tracking-wider uppercase mb-1">AI Readiness Score</p>
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-light text-foreground">72<span className="text-lg text-muted-foreground">/100</span></div>
+              <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-full">High Potential</span>
+            </div>
+          </div>
+          <div className="border-t border-border/30 pt-4">
+            <p className="text-xs text-primary font-mono tracking-wider uppercase mb-2">Top 3 Quick Wins</p>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2"><span className="text-primary">→</span> Automate client onboarding emails (saves 4 hrs/week)</li>
+              <li className="flex gap-2"><span className="text-primary">→</span> Replace 3 manual reporting tasks with a Zapier + ChatGPT flow</li>
+              <li className="flex gap-2"><span className="text-primary">→</span> Add AI to your content pipeline (2× output, same effort)</li>
+            </ul>
+          </div>
+          <div className="border-t border-border/30 pt-4">
+            <p className="text-xs text-primary font-mono tracking-wider uppercase mb-2">Recommended Path</p>
+            <p className="text-sm text-muted-foreground">Based on your stage and stack, Rent-an-Agent Starter tier would recoup its cost within 2 weeks of implementation.</p>
+          </div>
+          <p className="text-xs text-muted-foreground/60 italic text-center pt-2">* Sample only — your audit is personalized to your business</p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -25,12 +25,28 @@ export function globalGraph(): Json {
         "@type": "Person",
         "@id": PERSON_ID,
         name: "Kenza Alaoui Ismaili",
-        alternateName: ["Coach Kay", "Kenza Dawkins"],
+        alternateName: ["Coach Kay", "Coach Kay Elevates", "Kenza Dawkins"],
+        description: "Master Certified Life Coach and AI integration strategist specializing in AI coaching, clarity coaching, and business transformation through AI-powered programs.",
         jobTitle: [
           "5x Certified Life Coach",
           "AI Strategist",
           "AI Prompt Engineer",
           "Operations Architect & Lead Developer, Collective AI",
+        ],
+        knowsAbout: [
+          "AI coaching",
+          "life coaching",
+          "business transformation",
+          "AI integration",
+          "clarity coaching",
+          "focus and productivity",
+          "AI-powered coaching",
+          "AI tools for coaches",
+          "rent an AI agent",
+          "AI build studio",
+          "coaching with AI",
+          "autism social stories",
+          "AI business audit",
         ],
         url: `${SITE_URL}/coach-kay`,
         email: "hello@coachkayelevates.org",
@@ -58,6 +74,7 @@ export function globalGraph(): Json {
         name: "Coach Kay Elevates",
         alternateName: ["FocusFlow AI by Coach Kay", "Focus Flow AI"],
         legalName: "Focus Flow AI LLC",
+        description: "AI-powered clarity coaching platform offering AI life coaching, transformation programs, AI business audits, rent-an-agent services, and custom AI builds.",
         url: SITE_URL,
         founder: { "@id": PERSON_ID },
         sameAs: [
@@ -73,13 +90,33 @@ export function globalGraph(): Json {
             email: "hello@coachkayelevates.org",
           },
         ],
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "FocusFlow AI Services",
+          itemListElement: [
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Life Coaching" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Business Audit" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Rent-an-Agent" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Collective AI Build Studio" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Fractional AI Advisory" } },
+          ],
+        },
       },
       {
         "@type": "WebSite",
         "@id": WEBSITE_ID,
         url: SITE_URL,
         name: "FocusFlow AI — Coach Kay",
+        description: "Master AI coach platform — clarity sessions, transformation programs, AI business audits, and done-for-you AI agent systems.",
         publisher: { "@id": ORG_ID },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${SITE_URL}/ai-tools?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
       },
     ],
   };
@@ -143,6 +180,49 @@ export function offerCatalog(offers: Program[]): Json {
         },
       }),
     })),
+  };
+}
+
+/**
+ * Standalone Service schema for landing pages that represent a single
+ * purchasable service (e.g. AI Business Audit, Rent-an-Agent tiers).
+ *
+ * @param opts.name       Human-readable service name
+ * @param opts.description  1–2 sentence description (used by AI search engines)
+ * @param opts.url        Canonical URL of the service page
+ * @param opts.price      Numeric price in USD (omit for inquiry-only)
+ * @param opts.idSuffix   Unique slug for the @id anchor (e.g. "ai-business-audit")
+ */
+export function serviceSchema(opts: {
+  name: string;
+  description: string;
+  url: string;
+  price?: number;
+  idSuffix: string;
+}): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${SITE_URL}/#service-${opts.idSuffix}`,
+    name: opts.name,
+    description: opts.description,
+    provider: { "@id": ORG_ID },
+    url: opts.url,
+    serviceType: "AI Coaching",
+    areaServed: {
+      "@type": "Country",
+      name: "United States",
+    },
+    ...(opts.price !== undefined && {
+      offers: {
+        "@type": "Offer",
+        price: opts.price.toFixed(2),
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        url: opts.url,
+        seller: { "@id": ORG_ID },
+      },
+    }),
   };
 }
 

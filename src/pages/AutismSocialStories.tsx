@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import FAQSection from "@/components/FAQSection";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
-import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
+import { webPage, breadcrumb, serviceSchema, SITE_URL } from "@/lib/seo-schema";
 import { Button } from "@/components/ui/button";
 import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
 import AutismIntakeModal from "@/components/autism/AutismIntakeModal";
@@ -84,7 +84,7 @@ export default function AutismSocialStories() {
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="Autism & Social Stories — Coach Kay Elevates"
-        description="AI-personalized, therapist-grade social stories for autism and special needs. HSA/FSA-ready, IEP-aligned, with a Letter of Medical Necessity included."
+        description="AI-personalized social stories for autism families. Customized by behavior, communication style, and learning goals. HSA/FSA reimbursement eligible."
         path="/autism-social-stories"
         jsonLd={[
           webPage(
@@ -99,6 +99,13 @@ export default function AutismSocialStories() {
             ],
             "/autism-social-stories"
           ),
+          serviceSchema({
+            name: "Autism & Social Stories — AI-Personalized",
+            description: "AI-personalized social stories for autism families. Customized by behavior, communication style, and learning goals. HSA/FSA reimbursement eligible.",
+            url: `${SITE_URL}/autism-social-stories`,
+            price: 47,
+            idSuffix: "autism-social-stories",
+          }),
           faqPageSchema(
             getFaqLane("autism")?.items ?? [],
             `${SITE_URL}/autism-social-stories#faq`

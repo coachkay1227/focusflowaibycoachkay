@@ -253,7 +253,7 @@ export default function TruthAboutAI() {
     <>
       <SEOHead
         title="The Truth About AI — Personal, Business & Full Transformation"
-        description="No hype. No fear. A grounded breakdown of what AI is, what it isn't, the scams to avoid, and the exact next step for your life or business. From Coach Kay."
+        description="The honest truth about AI in 2026 — no hype, no fear. Coach Kay breaks down what AI actually is, what it can do for you, and how to use it with clarity."
         path="/truth"
         jsonLd={[ARTICLE_LD, FAQ_LD]}
       />
