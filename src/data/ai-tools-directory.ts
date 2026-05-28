@@ -99,7 +99,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
 
   // ────────────────────────────── Payments & Delivery ──────────────────────────────
   { name: "Stripe", blurb: "Every payment in this room runs through Stripe. Honest pricing needs honest checkout.", category: "Payments & Delivery", signup_url: "https://stripe.com", pricing: "Freemium" },
-  { name: "Beehiiv", blurb: "Newsletter platform that doesn't fight you on deliverability.", category: "Payments & Delivery", signup_url: "https://beehiiv.com", pricing: "Freemium", affiliate_pending: true },
+  { name: "Beehiiv", blurb: "Newsletter platform that doesn't fight you on deliverability.", category: "Payments & Delivery", signup_url: "https://www.beehiiv.com/?via=coach-kay", pricing: "Freemium", affiliate_pending: false },
   { name: "Kit (ConvertKit)", blurb: "Creator-focused email + automations. The other newsletter platform worth your time.", category: "Payments & Delivery", signup_url: "https://kit.com", pricing: "Freemium", affiliate_pending: true },
   { name: "Resend", blurb: "Modern transactional email API. What sends every receipt and welcome in this app.", category: "Payments & Delivery", signup_url: "https://resend.com", pricing: "Freemium" },
   { name: "Whop", blurb: "Sell digital products, communities, and software. Built-in audience + payments.", category: "Payments & Delivery", signup_url: "https://whop.com", pricing: "Freemium", affiliate_pending: true },
