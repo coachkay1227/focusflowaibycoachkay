@@ -60,7 +60,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
   { name: "Elicit", blurb: "AI research assistant for academic and primary sources. Built for evidence, not vibes.", category: "AI Agents & Research", signup_url: "https://elicit.com", pricing: "Freemium" },
 
   // ────────────────────────────── AI Voice & Audio ──────────────────────────────
-  { name: "ElevenLabs", blurb: "Voice work for guided rituals and audio coaching. The only AI voice Coach Kay trusts on tone.", category: "AI Voice & Audio", signup_url: "https://elevenlabs.io", pricing: "Freemium", affiliate_pending: true },
+  { name: "ElevenLabs", blurb: "Voice work for guided rituals and audio coaching. The only AI voice Coach Kay trusts on tone.", category: "AI Voice & Audio", signup_url: "https://try.elevenlabs.io/ss73od7oz8wm", pricing: "Freemium", affiliate_pending: false },
   { name: "Descript", blurb: "Edit video and audio like a doc. How Coach Kay batches content without burning a week.", category: "AI Voice & Audio", signup_url: "https://descript.com", pricing: "Freemium", affiliate_pending: true },
   { name: "Suno", blurb: "Generate full songs from a prompt. Good for intros, hooks, and brand audio stings.", category: "AI Voice & Audio", signup_url: "https://suno.com", pricing: "Freemium" },
   { name: "Udio", blurb: "Suno's main rival for AI-generated music. Different vibe, often cleaner vocals.", category: "AI Voice & Audio", signup_url: "https://udio.com", pricing: "Freemium" },
