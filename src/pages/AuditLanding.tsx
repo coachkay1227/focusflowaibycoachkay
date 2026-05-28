@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import SEOHead from "@/components/SEOHead";
+import BrandLogo from "@/components/BrandLogo";
 
 const AuditLanding = () => {
   const [params] = useSearchParams();
@@ -27,8 +28,10 @@ const AuditLanding = () => {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
       <SEOHead title="AI Business Audit — Ready to Begin" description="Your AI Business Audit is ready. Check your email or sign in to continue." path="/audit/landing" noIndex />
-      <span className="font-mono-label text-primary tracking-[0.2em] text-xs">PAYMENT CONFIRMED</span>
-      <h1 className="font-heading text-3xl md:text-4xl text-primary mt-3 mb-4">Your AI Business Audit is ready to begin</h1>
+      <BrandLogo size="md" />
+      <span className="font-mono-label text-primary tracking-[0.2em] text-xs mt-6">PAYMENT CONFIRMED</span>
+      <h1 className="font-heading text-3xl md:text-4xl text-primary mt-3 mb-2">Your AI Business Audit is ready to begin</h1>
+      <p className="text-base text-muted-foreground max-w-xl mb-2">Your clarity is on the way — check your email for next steps.</p>
       <p className="text-muted-foreground max-w-xl mb-8">
         Check your email for the magic link to start your 5–7 minute intake. Already signed in? Continue below.
       </p>
@@ -43,7 +46,13 @@ const AuditLanding = () => {
         )}
         <Button variant="outline" onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
       </div>
-      <p className="mt-8 text-xs text-muted-foreground">Your magic link is valid for 90 days.</p>
+      <p className="mt-8 text-xs text-muted-foreground">Your magic link is valid for 30 days.</p>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Didn't get the email?{" "}
+        <button onClick={() => navigate("/auth")} className="text-primary hover:underline">
+          Sign in to access your audit
+        </button>
+      </p>
     </div>
   );
 };

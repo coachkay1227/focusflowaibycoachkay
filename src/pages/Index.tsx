@@ -33,8 +33,8 @@ const Index = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay grid-overlay">
       <SEOHead
-        title="FocusFlow AI — Clarity Coaching by Coach Kay"
-        description="See clearly. Move with purpose. Master-certified clarity coaching that helps you cut through mental fog, identify patterns, and take meaningful action."
+        title="FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay"
+        description="Master Certified Life Coach meets AI. Get clarity in 90 seconds, transform in 30 days. Free clarity session, AI business audit, and 1:1 coaching programs by Coach Kay."
         path="/"
         jsonLd={[
           webPage("/", "Home"),
@@ -137,6 +137,7 @@ const Index = () => {
                       <ArrowRight className="h-4 w-4" />
                     </span>
                   </button>
+                  <p className="text-xs text-muted-foreground mt-2">Free to start · No credit card required</p>
 
                   {/* Trust strip */}
                   <div className="flex flex-wrap items-center gap-6 md:gap-8 border-t border-foreground/10 pt-6 md:pt-8">

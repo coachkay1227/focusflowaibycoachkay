@@ -134,6 +134,7 @@ export default function AutismSocialStories() {
             <a href="#reimbursement">Reimbursement & eligibility</a>
           </Button>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">HSA · FSA · Insurance reimbursement may apply</p>
       </section>
 
       {/* This is for you */}
