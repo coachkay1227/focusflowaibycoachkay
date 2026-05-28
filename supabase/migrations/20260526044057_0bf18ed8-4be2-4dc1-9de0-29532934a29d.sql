@@ -48,3 +48,25 @@ CREATE TRIGGER update_autism_orders_updated_at
 CREATE INDEX idx_autism_orders_user_id ON public.autism_orders(user_id);
 CREATE INDEX idx_autism_orders_stripe_session_id ON public.autism_orders(stripe_session_id);
 CREATE INDEX idx_autism_orders_status ON public.autism_orders(status);
+
+-- =============================================
+-- RLS FIX: Enable Row Level Security on realtime.messages
+-- Fixes: Any authenticated user can subscribe to any channel
+-- =============================================
+ALTER TABLE realtime.messages ENABLE ROW LEVEL SECURITY;
+
+DO $fixrls$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'realtime' AND tablename = 'messages' AND policyname = 'authenticated can read scam_alerts') THEN
+    CREATE POLICY "authenticated can read scam_alerts"
+    ON realtime.messages FOR SELECT TO authenticated
+    USING (realtime.topic() = 'scam_alerts');
+  END IF;
+END $fixrls$;
+
+DO $fixsvc$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'realtime' AND tablename = 'messages' AND policyname = 'service_role full access realtime') THEN
+    CREATE POLICY "service_role full access realtime"
+    ON realtime.messages FOR ALL TO service_role
+    USING (true) WITH CHECK (true);
+  END IF;
+END $fixsvc$;
