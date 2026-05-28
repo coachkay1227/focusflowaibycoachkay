@@ -386,3 +386,20 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
     pricing: "Freemium",
   },
 ];
+
+export const DIRECTORY_CATEGORIES: DirCategory[] = [
+  "AI Chat & Reasoning",
+  "AI Build & No-Code",
+  "AI Agents & Research",
+  "AI Voice & Audio",
+  "AI Video & Image",
+  "Productivity & Notes",
+  "Automation & Ops",
+  "Payments & Delivery",
+  "Community & Booking",
+];
+
+/** The URL the CTA opens – affiliate beats signup, falls back to signup. */
+export function ctaUrl(tool: DirectoryTool): string {
+  return tool.affiliate_url || tool.signup_url;
+}
