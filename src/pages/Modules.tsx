@@ -20,7 +20,6 @@ import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSymmetricGridClass } from "@/lib/grid";
 import { startProgramCheckout, PENDING_CHECKOUT_KEY } from "@/lib/start-program-checkout";
-import { getPublicPrograms as _getPublicPrograms } from "@/data/programs";
 
 const PATHS: PublicPath[] = ["personal", "business", "ai"];
 const PILLAR_ORDER: FocusPillar[] = ["F", "O", "C", "U", "S"];
