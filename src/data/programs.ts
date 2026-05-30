@@ -62,6 +62,9 @@ export interface Program {
   visibility: Visibility;
   /** For backend programs: which public paid offer unlocks it. */
   parentOfferId?: string;
+  /** Stripe price ID for instant-buy public offers. When set, cards and
+   *  detail pages render a Buy-now CTA instead of the Apply dialog. */
+  stripePriceId?: string;
 }
 
 export const FOCUS_PILLARS: Record<FocusPillar, { full: string; color: string; description: string }> = {
