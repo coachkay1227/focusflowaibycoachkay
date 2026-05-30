@@ -2039,6 +2039,7 @@ const PUBLIC_OFFERS: Program[] = [
     cohortCode: false, tags: ["personal", "reset", "30-day", "clarity", "identity"],
     audience: ["general", "reentry"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
     order: 200, path: "personal", visibility: "public",
+    stripePriceId: "price_1TbAaPBReje0oFcLts5JuE5a",
   },
   {
     id: "offer-30-day-business-reset",
@@ -2056,6 +2057,7 @@ const PUBLIC_OFFERS: Program[] = [
     cohortCode: false, tags: ["business", "reset", "30-day", "execution", "strategy"],
     audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
     order: 201, path: "business", visibility: "public",
+    stripePriceId: "price_1TbAguBReje0oFcL3Qh5pIiH",
   },
   {
     id: "offer-30-day-ai-reset",
@@ -2073,6 +2075,7 @@ const PUBLIC_OFFERS: Program[] = [
     cohortCode: false, tags: ["ai", "reset", "30-day", "systems", "productivity"],
     audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
     order: 202, path: "ai", visibility: "public",
+    stripePriceId: "price_1TbAhOBReje0oFcL87MVrKFy",
   },
   {
     id: "offer-90-day-personal",
@@ -2090,6 +2093,7 @@ const PUBLIC_OFFERS: Program[] = [
     cohortCode: false, tags: ["personal", "90-day", "transformation", "identity"],
     audience: ["general", "reentry"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
     order: 210, path: "personal", visibility: "public",
+    stripePriceId: "price_1TbAhtBReje0oFcLscEqWHEK",
   },
   {
     id: "offer-90-day-business",
@@ -2107,6 +2111,7 @@ const PUBLIC_OFFERS: Program[] = [
     cohortCode: false, tags: ["business", "90-day", "leadership", "execution"],
     audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
     order: 211, path: "business", visibility: "public",
+    stripePriceId: "price_1TbAiNBReje0oFcLrit7Ko5x",
   },
   {
     id: "offer-90-day-ai",
@@ -2124,6 +2129,7 @@ const PUBLIC_OFFERS: Program[] = [
     cohortCode: false, tags: ["ai", "90-day", "transformation", "systems", "strategy"],
     audience: ["general", "corporate"], isFeatured: true, isGated: true, isNew: true, wrdLink: false,
     order: 212, path: "ai", visibility: "public",
+    stripePriceId: "price_1TbAimBReje0oFcL4Uti8udD",
   },
   {
     id: "offer-6-month-partnership",
