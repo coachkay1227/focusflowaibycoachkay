@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Lock, Star, Users, CheckCircle2, Sparkles, ArrowRight, CreditCard, Download } from "lucide-react";
 import { toast } from "sonner";
 import ApplyNowDialog from "@/components/ApplyNowDialog";
+import { startProgramCheckout, PENDING_CHECKOUT_KEY } from "@/lib/start-program-checkout";
 
 const ProgramDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -25,6 +26,7 @@ const ProgramDetail = () => {
   const { startCheckout } = useSubscription();
   const [enrolling, setEnrolling] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [buying, setBuying] = useState(false);
 
   const program = slug ? getProgramBySlug(slug) : undefined;
   const replacement = program ? getReplacementOffer(program) : undefined;
@@ -249,7 +251,33 @@ const ProgramDetail = () => {
             </div>
 
             <div className="flex flex-col gap-2">
-              {isPublicOffer ? (
+              {isPublicOffer && program.stripePriceId ? (
+                <Button
+                  disabled={buying}
+                  onClick={async () => {
+                    if (!user) {
+                      try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, program.stripePriceId!); } catch { /* noop */ }
+                      navigate(`/auth?next=${encodeURIComponent(`/programs/${program.slug}`)}`);
+                      return;
+                    }
+                    setBuying(true);
+                    try {
+                      await startProgramCheckout(program.stripePriceId!, {
+                        title: program.title,
+                        price: program.price,
+                        cancelPath: `/programs/${program.slug}`,
+                      });
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : "Could not start checkout. Please try again.");
+                      setBuying(false);
+                    }
+                  }}
+                  className="gap-2"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  {buying ? "Opening checkout…" : `Buy now — ${program.priceDisplay}`}
+                </Button>
+              ) : isPublicOffer ? (
                 <Button onClick={() => setApplyOpen(true)} className="gap-2">
                   <Sparkles className="h-4 w-4" /> Apply for {program.title}
                 </Button>

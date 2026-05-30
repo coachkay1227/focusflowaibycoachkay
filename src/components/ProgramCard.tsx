@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { type Program, FOCUS_PILLARS } from "@/data/programs";
 import OfferCard from "@/components/offers/OfferCard";
+import { startProgramCheckout, PENDING_CHECKOUT_KEY } from "@/lib/start-program-checkout";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProgramCardProps {
   program: Program;
@@ -19,6 +22,8 @@ const statusLabels: Record<string, string> = {
 export default function ProgramCard({ program, enrollment, onEnroll, enrolling }: ProgramCardProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [buying, setBuying] = useState(false);
   const pillar = FOCUS_PILLARS[program.pillar];
 
   const canStart = program.type === "assessment";
@@ -42,6 +47,36 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
     primaryCta = {
       label: enrollment.status === "completed" ? "Review program" : "Continue program",
       onClick: () => navigate(detailsPath),
+    };
+  } else if (program.stripePriceId) {
+    const label = buying
+      ? "Opening checkout…"
+      : user
+        ? `Buy now — ${program.priceDisplay}`
+        : `Sign in to buy — ${program.priceDisplay}`;
+    primaryCta = {
+      label,
+      onClick: async () => {
+        if (!user) {
+          try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, program.stripePriceId!); } catch { /* noop */ }
+          navigate(`/auth?next=${encodeURIComponent("/modules")}`);
+          return;
+        }
+        setBuying(true);
+        try {
+          await startProgramCheckout(program.stripePriceId!, {
+            title: program.title,
+            price: program.price,
+          });
+        } catch (e) {
+          toast({
+            title: "Couldn't start checkout",
+            description: e instanceof Error ? e.message : "Please try again.",
+            variant: "destructive",
+          });
+          setBuying(false);
+        }
+      },
     };
   } else if (program.isGated) {
     primaryCta = {
