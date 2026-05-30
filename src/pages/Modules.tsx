@@ -53,7 +53,7 @@ const Modules = () => {
     try { pending = sessionStorage.getItem(PENDING_CHECKOUT_KEY); } catch { /* noop */ }
     if (!pending) return;
     try { sessionStorage.removeItem(PENDING_CHECKOUT_KEY); } catch { /* noop */ }
-    const match = _getPublicPrograms().find((p) => p.stripePriceId === pending);
+    const match = getPublicPrograms().find((p) => p.stripePriceId === pending);
     void startProgramCheckout(pending, {
       title: match?.title ?? "Program",
       price: match?.price ?? 0,
