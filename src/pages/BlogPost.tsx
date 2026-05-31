@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Calendar, Clock, Tag } from "lucide-react";
 import { getPostBySlug } from "@/data/blogPosts";
+import SEOHead from "@/components/SEOHead";
 
 const SITE = "https://coachkayai.life";
 
@@ -138,23 +139,19 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        path={`/blog/${post.slug}`}
+        ogImage={imageUrl}
+        jsonLd={[articleSchema, faqSchema, eventSchema, breadcrumb]}
+      />
       <Helmet>
-        <title>{`${seoTitle} | FocusFlow AI by Coach Kay`}</title>
-        <meta name="description" content={seoDescription} />
         {post.keywords?.length ? (
           <meta name="keywords" content={post.keywords.join(", ")} />
         ) : null}
-        <link rel="canonical" href={url} />
         <meta name="robots" content="index, follow, max-image-preview:large" />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="FocusFlow AI by Coach Kay" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content={url} />
-        <meta property="og:image" content={imageUrl} />
+        {/* Article-specific OG extras not handled by SEOHead */}
         <meta property="og:image:alt" content={post.title} />
         <meta property="og:image:width" content="1600" />
         <meta property="og:image:height" content="1000" />
@@ -162,22 +159,11 @@ const BlogPost = () => {
         <meta property="article:modified_time" content={post.dateModified} />
         <meta property="article:author" content="Coach Kay" />
         <meta property="article:section" content={post.category} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={imageUrl} />
         <meta name="twitter:image:alt" content={post.title} />
         <meta name="twitter:label1" content="Reading time" />
         <meta name="twitter:data1" content={post.readingTime} />
         <meta name="twitter:label2" content="Written by" />
         <meta name="twitter:data2" content="Coach Kay" />
-
-        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumb)}</script>
       </Helmet>
 
       {/* Header */}
