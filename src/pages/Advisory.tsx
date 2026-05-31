@@ -109,6 +109,14 @@ const Advisory = () => {
         title="Advisory, Speaking & Cohorts — Coach Kay"
         description="Fractional AI advisory and strategic partnership with Coach Kay. For leaders, founders, and organizations ready to integrate AI into their business at scale."
         path="/advisory"
+        keywords={[
+          "fractional AI advisory",
+          "AI consultant for small business",
+          "corporate AI training Columbus",
+          "AI keynote speaker Ohio",
+          "executive AI strategy coaching",
+          "Coach Kay advisory",
+        ]}
         jsonLd={jsonLd}
       />
 
@@ -204,6 +212,7 @@ const Advisory = () => {
               key={lane.key}
               className="flex flex-col rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm p-6 hover:border-primary/40 transition-colors"
             >
+              <h4 className="text-[10px] uppercase tracking-[0.16em] text-primary/75">Advisory Lane</h4>
               <h3 className="font-heading text-lg text-foreground">{lane.name}</h3>
               <div className="mt-2 text-primary font-semibold">{lane.price}</div>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{lane.description}</p>

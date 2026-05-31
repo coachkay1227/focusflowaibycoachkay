@@ -163,6 +163,14 @@ const RentAnAgent = () => {
         title="Rent-an-Agent — AI Agent Systems by Coach Kay"
         description="Rent a done-for-you AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows — delivered and maintained for you."
         path="/rent-an-agent"
+        keywords={[
+          "rent an AI agent",
+          "done for you AI automation",
+          "AI lead generation system",
+          "AI sales follow up automation",
+          "business process automation service",
+          "Coach Kay rent an agent",
+        ]}
         jsonLd={jsonLd}
       />
 
@@ -276,6 +284,7 @@ const RentAnAgent = () => {
                     Most Popular
                   </span>
                 )}
+                <h4 className="text-[10px] uppercase tracking-[0.16em] text-primary/75">Subscription Tier</h4>
                 <h3 className="font-heading text-xl text-foreground">{tier.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground min-h-[2.5rem]">{tier.tagline}</p>
                 <div className="mt-4 text-3xl font-bold text-primary">{active.priceDisplay}</div>
@@ -372,6 +381,7 @@ const RentAnAgent = () => {
                     Most Popular
                   </span>
                 )}
+                <h4 className="text-[10px] uppercase tracking-[0.16em] text-primary/75">Lead Engine Tier</h4>
                 <h3 className="font-heading text-xl text-foreground">Lead Engine — {tier.name}</h3>
                 <p className="mt-2 text-sm text-foreground/85 font-medium leading-snug min-h-[3.5rem]">
                   {tier.headline}

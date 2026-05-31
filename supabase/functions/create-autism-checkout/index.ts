@@ -29,7 +29,7 @@ const BodySchema = z.object({
   gift_note: z.string().trim().max(500).optional().or(z.literal("")),
 });
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   const cors = getCorsHeaders(req);
 

@@ -13,13 +13,21 @@ const AdminViewContext = createContext<AdminViewContextType>({
 
 export function AdminViewProvider({ children }: { children: ReactNode }) {
   const [userView, setUserView] = useState(() => {
-    try { return localStorage.getItem("admin-user-view") === "true"; } catch { return false; }
+    try {
+      return localStorage.getItem("admin-user-view") === "true";
+    } catch (_err) {
+      return false;
+    }
   });
 
   const toggleView = () => {
     setUserView((prev) => {
       const next = !prev;
-      try { localStorage.setItem("admin-user-view", String(next)); } catch {}
+      try {
+        localStorage.setItem("admin-user-view", String(next));
+      } catch (_err) {
+        // Ignore storage write failures (private mode / blocked storage).
+      }
       return next;
     });
   };

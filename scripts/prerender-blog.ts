@@ -6,7 +6,7 @@
 // og:* /twitter:* tags and append route-specific JSON-LD. React still hydrates on
 // top — Helmet's runtime updates are a no-op since the tags already match.
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 
 const SITE = "https://coachkayai.life";
@@ -78,7 +78,6 @@ function findAssetUrl(basename: string): string {
   // Fallback: search asset manifest by scanning all built JS for the basename.
   // Vite inlines image imports as URLs in the JS chunks; grep the dist tree.
   try {
-    const { readdirSync, statSync } = require("node:fs") as typeof import("node:fs");
     const stack = [resolve(DIST, "assets")];
     while (stack.length) {
       const dir = stack.pop()!;

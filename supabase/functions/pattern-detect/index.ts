@@ -3,6 +3,74 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 
+interface SessionInsight {
+  truth: string;
+  pattern: string;
+  action: string;
+}
+
+interface SessionSummary {
+  timestamp: number;
+  answers: Record<string, string>;
+  insight?: SessionInsight;
+}
+
+interface PatternDetectionRequest {
+  sessions: SessionSummary[];
+}
+
+interface PatternDetectionResult {
+  summary: string;
+  recurring: string;
+  growth: string;
+  callout: string;
+}
+
+interface ToolFunction {
+  arguments: string;
+}
+
+interface ToolCall {
+  function: ToolFunction;
+}
+
+interface Message {
+  tool_calls?: ToolCall[];
+}
+
+interface Choice {
+  message?: Message;
+}
+
+interface ChatCompletionResponse {
+  choices?: Choice[];
+}
+
+interface PatternDetectionResponse {
+  summary: string;
+  recurring: string;
+  growth: string;
+  callout: string;
+}
+
+interface AuthError {
+  error: string;
+}
+
+interface ValidationError {
+  error: string;
+}
+
+interface ApiError {
+  error: string;
+}
+
+interface SessionFormatted {
+  date: string;
+  answers: string;
+  insight: string;
+}
+
 const SYSTEM_PROMPT = `You are Coach Kay analyzing multiple coaching sessions from the same person to detect patterns across time.
 
 Look for:

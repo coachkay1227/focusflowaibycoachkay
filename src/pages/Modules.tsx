@@ -120,6 +120,14 @@ const Modules = () => {
         title="AI Transformation Programs — FocusFlow by Coach Kay"
         description="AI-powered transformation programs by Coach Kay. Personal clarity, business growth, and full AI integration paths. Free and paid programs starting at $27/month."
         path="/modules"
+        keywords={[
+          "AI transformation programs",
+          "clarity coaching programs",
+          "business growth coaching with AI",
+          "AI integration training",
+          "personal development programs online",
+          "FocusFlow programs",
+        ]}
         jsonLd={jsonLd}
       />
       <div className="mouse-glow" />

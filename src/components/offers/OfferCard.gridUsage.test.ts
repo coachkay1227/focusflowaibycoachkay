@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, sep } from "node:path";
 
 /**
  * Static-analysis regression check.
@@ -29,7 +29,7 @@ const DEFINITION_FILES = new Set(
     "src/components/ProgramCard.tsx",
     "src/components/store/PackageCard.tsx",
     "src/components/store/AddonCard.tsx",
-  ].map((p) => p.replace(/\//g, require("node:path").sep)),
+  ].map((p) => p.replace(/\//g, sep)),
 );
 
 const OFFER_COMPONENT_RE =

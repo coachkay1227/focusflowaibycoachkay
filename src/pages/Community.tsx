@@ -4,10 +4,10 @@ import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
-import { webPage, breadcrumb } from "@/lib/seo-schema";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Sparkles, ExternalLink, BookOpen, Calendar } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
+import { webPage, breadcrumb } from "@/lib/seo-schema";
 
 const SKOOL_URL = "https://www.skool.com/focusflow-elevation-hub";
 

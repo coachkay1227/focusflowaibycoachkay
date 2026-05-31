@@ -56,7 +56,7 @@ const ResetWelcomeEmail = ({ name, programName, dashboardUrl, communityUrl }: Re
 
 export const template = {
   component: ResetWelcomeEmail,
-  subject: (d: Record<string, any>) => `You're in — ${d.programName ?? 'your 30-Day Reset'} starts now`,
+  subject: (d: { programName?: string }) => `You're in — ${d.programName ?? 'your 30-Day Reset'} starts now`,
   displayName: '30-Day Reset Welcome',
   previewData: {
     name: 'Jane',

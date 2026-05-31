@@ -10,8 +10,9 @@ import {
   Library, ShieldAlert, MessageCircle, Eye, HelpCircle,
   FileSearch, Heart,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-type NavItem = { label: string; path: string; icon: any; desc: string };
+type NavItem = { label: string; path: string; icon: LucideIcon; desc: string };
 type NavGroup = { key: string; label: string; items: NavItem[] };
 
 const startHereGroup: NavGroup = {

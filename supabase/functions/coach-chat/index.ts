@@ -24,7 +24,7 @@ Response modes (select based on context):
 Your tone: warm, direct, emotionally intelligent, never generic, never robotic.
 Use markdown for formatting when helpful (bold, lists, etc).`;
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {

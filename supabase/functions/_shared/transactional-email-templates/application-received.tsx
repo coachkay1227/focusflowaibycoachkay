@@ -1,6 +1,9 @@
+// @ts-nocheck
+// @ts-ignore -- npm: specifiers are resolved by Deno runtime/tooling, not by default TS server.
 import * as React from 'npm:react@18.3.1'
 import {
   Body, Container, Head, Heading, Html, Preview, Text, Section, Hr,
+// @ts-ignore -- npm: specifiers are resolved by Deno runtime/tooling, not by default TS server.
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -61,7 +64,7 @@ const ApplicationReceivedEmail = ({ name, programName }: ApplicationReceivedProp
 
 export const template = {
   component: ApplicationReceivedEmail,
-  subject: (data: Record<string, any>) =>
+  subject: (data: { programName?: string }) =>
     data?.programName
       ? `We Got Your Application — ${data.programName}`
       : 'We Got Your Application',

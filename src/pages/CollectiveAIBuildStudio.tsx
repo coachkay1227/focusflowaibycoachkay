@@ -176,6 +176,14 @@ const CollectiveAIBuildStudio = () => {
         title="Collective AI Build Studio — From Idea to Live in Days"
         description="Custom AI builds delivered end-to-end by Coach Kay's Collective AI team. From idea to live AI system in days. Web apps, automations, agents, and more."
         path="/build-studio"
+        keywords={[
+          "AI build studio",
+          "custom AI app development",
+          "business automation development",
+          "AI workflow implementation",
+          "rapid MVP development with AI",
+          "Collective AI build team",
+        ]}
         jsonLd={jsonLd}
       />
 

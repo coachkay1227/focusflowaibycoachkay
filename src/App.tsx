@@ -140,7 +140,15 @@ const App = () => (
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
             <Route path="/blog" element={<Suspense fallback={<PageSkeleton />}><Blog /></Suspense>} />
             <Route path="/blog/:slug" element={<Suspense fallback={<PageSkeleton />}><BlogPost /></Suspense>} />
-            <Route path="/events/claude-accelerator" element={<Suspense fallback={<PageSkeleton />}><ClaudeAccelerator /></Suspense>} />
+            
+            {/* ═══════════════════════════════════════════════════════ */}
+            {/* EVENT PAGES */}
+            {/* ═══════════════════════════════════════════════════════ */}
+            {/* Old slug redirect → new SEO-friendly URL */}
+            <Route path="/events/claude-accelerator" element={<Navigate to="/events/claude-ai-business-accelerator-june-2026" replace />} />
+            {/* Main event page */}
+            <Route path="/events/claude-ai-business-accelerator-june-2026" element={<Suspense fallback={<PageSkeleton />}><ClaudeAccelerator /></Suspense>} />
+            
             <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><Privacy /></Suspense>} />
             <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><Terms /></Suspense>} />
             <Route path="/disclaimer" element={<Suspense fallback={<PageSkeleton />}><Disclaimer /></Suspense>} />

@@ -23,7 +23,7 @@ const BodySchema = z.object({
   addons: z.array(z.string()).default([]),
 });
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const cors = getCorsHeaders(req);

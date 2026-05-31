@@ -16,7 +16,7 @@ Your job: name the specific pattern this exact Operator × Bottleneck combinatio
 
 Respond using the elaborate_operator_bottleneck tool.`;
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const cors = getCorsHeaders(req);

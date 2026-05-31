@@ -148,7 +148,7 @@ const AutismPurchaseConfirmationEmail = ({
 
 export const template = {
   component: AutismPurchaseConfirmationEmail,
-  subject: (data: Record<string, any>) =>
+  subject: (data: { downloadUrl?: string; packageName?: string }) =>
     data?.downloadUrl
       ? `Your ${data?.packageName ?? 'social story'} is ready to download`
       : data?.packageName

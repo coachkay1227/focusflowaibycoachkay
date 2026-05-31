@@ -16,7 +16,7 @@ Your tone: warm, direct, emotionally intelligent, never generic. Speak as if you
 
 Respond using the suggest_insight tool.`;
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
@@ -138,7 +138,7 @@ serve(async (req) => {
             },
           },
         })
-        .catch((e) => console.warn("clarity-insight email enqueue failed:", e));
+        .catch((e: unknown) => console.warn("clarity-insight email enqueue failed:", e));
       supabase.functions
         .invoke("ghl-webhook", {
           body: {
@@ -151,7 +151,7 @@ serve(async (req) => {
             },
           },
         })
-        .catch((e) => console.warn("clarity-insight ghl webhook failed:", e));
+        .catch((e: unknown) => console.warn("clarity-insight ghl webhook failed:", e));
     }
 
     return new Response(JSON.stringify(result.data), {

@@ -8,6 +8,7 @@ interface SEOHeadProps {
   title: string;
   description: string;
   path: string;
+  keywords?: string[];
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   ogImage?: string;
   injectGlobalGraph?: boolean;
@@ -45,6 +46,7 @@ const SEOHead = ({
   ogImage = `${BASE_URL}/og-image.png`,
   injectGlobalGraph = true,
   noIndex = false,
+  keywords = [],
   publishedTime,
   modifiedTime,
   articleSection = "AI for Business",
@@ -67,12 +69,15 @@ const SEOHead = ({
       : "website";
 
   // Find Event for special OG tags
-  const eventSchema = allSchemas.find((s) => s?.["@type"] === "Event") as any;
+  const eventSchema = allSchemas.find(
+    (s) => s?.["@type"] === "Event"
+  ) as { startDate?: string; endDate?: string; location?: { name?: string }; offers?: { price?: string } } | undefined;
 
   return (
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      {keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
       <link rel="canonical" href={canonical} />
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
 

@@ -1,5 +1,9 @@
+// @ts-nocheck
+// @ts-ignore -- Deno URL imports are resolved by Deno runtime/tooling, not by default TS server.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+// @ts-ignore -- Deno URL imports are resolved by Deno runtime/tooling, not by default TS server.
 import Stripe from "https://esm.sh/stripe@18.5.0";
+// @ts-ignore -- Deno URL imports are resolved by Deno runtime/tooling, not by default TS server.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { PRICE_MODE_MAP } from "../_shared/stripe-config.ts";
@@ -8,13 +12,16 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
-serve(async (req) => {
+// @ts-ignore -- In non-Deno TS projects, the imported `serve` type cannot be resolved.
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabaseClient = createClient(
+    // @ts-ignore -- Deno global is provided at edge runtime.
     Deno.env.get("SUPABASE_URL") ?? "",
+    // @ts-ignore -- Deno global is provided at edge runtime.
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
   );
 
@@ -50,7 +57,7 @@ serve(async (req) => {
     // percent-encoded query strings and common URL-safe punctuation so
     // callers can pass human-readable context (e.g. ?tier=...).
     const safePath = (p: unknown, fallback: string): string =>
-      typeof p === "string" && /^\/[A-Za-z0-9\-\/\_.():~]+$/.test(p) ? p : fallback;
+      typeof p === "string" && /^\/[A-Za-z0-9/_.():~-]+$/.test(p) ? p : fallback;
     const rawSuccess = safePath(successPath, "/dashboard?checkout=success");
     // Ensure Stripe substitutes its session id into the redirect so the
     // success page can verify/inspect the order. Preserve any existing
@@ -67,6 +74,7 @@ serve(async (req) => {
       throw new Error(`Invalid priceId: ${priceId}. Not a recognized product price.`);
     }
 
+    // @ts-ignore -- Deno global is provided at edge runtime.
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("Stripe secret key not configured");
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });

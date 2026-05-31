@@ -7,7 +7,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[MANAGE-USERS] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
@@ -233,7 +233,7 @@ serve(async (req) => {
         });
 
         (enrollmentsRes.data ?? []).forEach((e: { user_id: string; module_id: string; status: string; enrolled_at: string | null }) => {
-          if (e.enrolled_at) events.push({ type: "enrollment", name: nameMap.get(e.user_id) ?? "User", detail: `enrolled in ${e.module_id}`, timestamp: e.enrolled_at });
+          if (e.enrolled_at) events.push({ type: "enrollment", name: nameMap.get(e.user_id) ?? "User", detail: `enrolled in ${String(e.module_id)}`, timestamp: e.enrolled_at });
         });
 
         events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());

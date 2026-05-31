@@ -63,7 +63,7 @@ const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUr
 
 export const template = {
   component: TransformationWelcomeEmail,
-  subject: (d: Record<string, any>) => `You're in — ${d.programName ?? 'your 90-Day Transformation'} starts now`,
+  subject: (d: { programName?: string }) => `You're in — ${d.programName ?? 'your 90-Day Transformation'} starts now`,
   displayName: '90-Day Transformation Welcome',
   previewData: {
     name: 'Jane',

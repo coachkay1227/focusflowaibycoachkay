@@ -92,7 +92,7 @@ const BookOrderStatusUpdateEmail = ({ name, packageName, status, orderId, note }
 
 export const template = {
   component: BookOrderStatusUpdateEmail,
-  subject: (data: Record<string, any>) => {
+  subject: (data: { status?: string }) => {
     const s = data?.status as string | undefined
     const c = (s && STATUS_COPY[s]) || null
     return c ? `Order update: ${c.label}` : 'Update on your book order'

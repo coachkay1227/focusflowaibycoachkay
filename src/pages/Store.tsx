@@ -113,6 +113,14 @@ export default function Store() {
         title="Story, Legacy & Publishing Studio | FocusFlow AI"
         description="Turn stories, expertise, and lived experience into powerful assets. Storybooks, legacy memoirs, expert books, creator bundles, and autism social stories — done-for-you with AI-enhanced speed."
         path="/store"
+        keywords={[
+          "done for you book creation",
+          "legacy memoir writing service",
+          "authority book publishing studio",
+          "autism social stories custom books",
+          "AI enhanced publishing studio",
+          "FocusFlow story studio",
+        ]}
         jsonLd={[
           webPage(
             "/store",

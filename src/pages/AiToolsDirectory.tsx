@@ -49,6 +49,14 @@ export default function AiToolsDirectory() {
         title="AI Tools Directory — Coach Kay's Working Stack"
         description="63 vetted AI tools scored and reviewed by Coach Kay. The only AI tools directory curated by a Master Certified Coach — practical, honest, no affiliate fluff."
         path="/ai-tools"
+        keywords={[
+          "AI tools directory",
+          "best AI tools for business",
+          "AI tools for entrepreneurs",
+          "Coach Kay AI stack",
+          "AI productivity tools",
+          "AI automation software list",
+        ]}
         jsonLd={jsonLd}
       />
 
@@ -124,15 +132,15 @@ export default function AiToolsDirectory() {
                 className="group flex flex-col rounded-xl border border-border/40 bg-card/40 p-5 transition-all hover:border-primary/40 hover:bg-card/60 hover:-translate-y-0.5"
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
-                  <span className="text-[10px] tracking-[0.18em] uppercase text-primary/80">
+                  <h4 className="text-[10px] tracking-[0.18em] uppercase text-primary/80">
                     {tool.category}
-                  </span>
+                  </h4>
                   <ArrowUpRight
                     className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors"
                     strokeWidth={1.5}
                   />
                 </div>
-                <p className="text-base font-medium text-foreground mb-1.5">{tool.name}</p>
+                <h3 className="text-base font-medium text-foreground mb-1.5">{tool.name}</h3>
                 <p className="text-[12px] text-muted-foreground leading-relaxed flex-1">
                   {tool.blurb}
                 </p>

@@ -8,9 +8,15 @@
  */
 export const GA_TRACKING_ID = 'G-XXXXXXXXXX'
 
+declare global {
+  interface Window {
+    gtag?: (command: "event", action: string, params?: Record<string, unknown>) => void;
+  }
+}
+
 export function gtagEvent(action: string, params: Record<string, unknown> = {}) {
-  if (typeof window === 'undefined' || !(window as any).gtag) return
-  ;(window as any).gtag('event', action, params)
+  if (typeof window === 'undefined' || !window.gtag) return
+  window.gtag('event', action, params)
 }
 
 // Pre-defined conversion events

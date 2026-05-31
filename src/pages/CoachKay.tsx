@@ -58,6 +58,14 @@ const CoachKay = () => {
         title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
         description="Meet Coach Kay — Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum through AI-powered coaching."
         path="/coach-kay"
+        keywords={[
+          "Coach Kay",
+          "AI life coach",
+          "clarity coach Columbus Ohio",
+          "transformation coaching",
+          "mindset and AI strategy coaching",
+          "FocusFlow coach profile",
+        ]}
         jsonLd={[
           webPage("/coach-kay", "Coach Kay", "AboutPage"),
           breadcrumb(
