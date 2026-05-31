@@ -10,6 +10,7 @@ export const SITE_URL = "https://coachkayai.life";
 export const PERSON_ID = `${SITE_URL}/#person`;
 export const ORG_ID = `${SITE_URL}/#organization`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
+export const LOCAL_BUSINESS_ID = `${SITE_URL}/#localbusiness`;
 
 type Json = Record<string, unknown>;
 
@@ -117,6 +118,37 @@ export function globalGraph(): Json {
           },
           "query-input": "required name=search_term_string",
         },
+      },
+      {
+        "@type": ["ProfessionalService", "LocalBusiness"],
+        "@id": LOCAL_BUSINESS_ID,
+        name: "FocusFlow AI — Coach Kay",
+        image: `${SITE_URL}/og-image.png`,
+        url: SITE_URL,
+        telephone: "+1-380-287-7936",
+        email: "hello@coachkayelevates.org",
+        priceRange: "$$",
+        parentOrganization: { "@id": ORG_ID },
+        founder: { "@id": PERSON_ID },
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "1890 E. Main Street",
+          addressLocality: "Columbus",
+          addressRegion: "OH",
+          postalCode: "43205",
+          addressCountry: "US",
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: 39.9612,
+          longitude: -82.9988,
+        },
+        areaServed: {
+          "@type": "City",
+          name: "Columbus",
+          containedInPlace: { "@type": "State", name: "Ohio" },
+        },
+        serviceType: ["AI Coaching", "Business Automation", "Clarity Coaching"],
       },
     ],
   };
