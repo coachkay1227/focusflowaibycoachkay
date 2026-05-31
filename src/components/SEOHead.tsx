@@ -10,11 +10,32 @@ interface SEOHeadProps {
   path: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   ogImage?: string;
-  /** Inject sitewide Person + Organization + WebSite graph. Default: true. */
   injectGlobalGraph?: boolean;
-  /** When true, emits <meta name="robots" content="noindex, nofollow"> for private/utility pages. */
   noIndex?: boolean;
+  /** Article-specific dates for BlogPosting/NewsArticle */
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Section/category for article OG */
+  articleSection?: string;
+  /** Tags for article OG */
+  articleTags?: string[];
 }
+
+const generateBreadcrumbs = (path: string) => {
+  const segments = path.split("/").filter(Boolean);
+  const items = segments.map((segment, i) => ({
+    "@type": "ListItem",
+    position: i + 2,
+    name: segment.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+    item: `${BASE_URL}/${segments.slice(0, i + 1).join("/")}`,
+  }));
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: BASE_URL }, ...items],
+  };
+};
 
 const SEOHead = ({
   title,
@@ -24,13 +45,29 @@ const SEOHead = ({
   ogImage = `${BASE_URL}/og-image.png`,
   injectGlobalGraph = true,
   noIndex = false,
+  publishedTime,
+  modifiedTime,
+  articleSection = "AI for Business",
+  articleTags = ["AI automation", "small business", "Columbus Ohio"],
 }: SEOHeadProps) => {
   const canonical = `${BASE_URL}${path}`;
   const pageSchemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
-  // Suppress sitewide graph on noindex pages — keeps Google's knowledge graph anchored on indexable URLs.
   const schemas = injectGlobalGraph && !noIndex ? [globalGraph(), ...pageSchemas] : pageSchemas;
-  // Append brand suffix when missing — keeps every <title> branded for SERP while preserving hand-crafted heads.
+
+  // Auto-inject breadcrumbs
+  const allSchemas = [...schemas, generateBreadcrumbs(path)];
+
   const fullTitle = /coach kay/i.test(title) ? title : `${title} | ${BRAND_SUFFIX}`;
+
+  // Dynamic OG type detection
+  const ogType = allSchemas.some((s) => s?.["@type"] === "Event")
+    ? "event"
+    : allSchemas.some((s) => /BlogPosting|Article|NewsArticle/.test(s?.["@type"] as string))
+      ? "article"
+      : "website";
+
+  // Find Event for special OG tags
+  const eventSchema = allSchemas.find((s) => s?.["@type"] === "Event") as any;
 
   return (
     <Helmet>
@@ -43,10 +80,33 @@ const SEOHead = ({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonical} />
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={ogType} />
       <meta property="og:locale" content="en_US" />
       <meta property="og:site_name" content="FocusFlow AI by Coach Kay" />
       <meta property="og:image" content={ogImage} />
+
+      {/* Article-specific OG */}
+      {ogType === "article" && (
+        <>
+          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+          <meta property="article:author" content="Coach Kay" />
+          <meta property="article:section" content={articleSection} />
+          {articleTags.map((tag, i) => (
+            <meta key={i} property="article:tag" content={tag} />
+          ))}
+        </>
+      )}
+
+      {/* Event-specific OG */}
+      {ogType === "event" && eventSchema && (
+        <>
+          <meta property="event:start_time" content={eventSchema?.startDate} />
+          <meta property="event:end_time" content={eventSchema?.endDate} />
+          <meta property="event:location" content={eventSchema?.location?.name} />
+          <meta property="event:price" content={eventSchema?.offers?.price} />
+        </>
+      )}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -55,7 +115,7 @@ const SEOHead = ({
       <meta name="twitter:image" content={ogImage} />
 
       {/* JSON-LD */}
-      {schemas.map((schema, i) => (
+      {allSchemas.map((schema, i) => (
         <script key={i} type="application/ld+json">
           {JSON.stringify(schema)}
         </script>
