@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock, Tag } from "lucide-react";
 import { blogPosts } from "@/data/blogPosts";
+import SEOHead from "@/components/SEOHead";
 
 const SITE = "https://coachkayai.life";
 
@@ -19,22 +20,12 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>Blog — FocusFlow AI by Coach Kay | AI for Small Business</title>
-        <meta
-          name="description"
-          content="Practical AI workflows, prompts, and systems for small business owners. Real strategies from Coach Kay — built for salons, real estate, coaches, notaries, and service founders."
-        />
-        <link rel="canonical" href={`${SITE}/blog`} />
-        <meta property="og:title" content="FocusFlow AI Blog — Practical AI for Small Business" />
-        <meta
-          property="og:description"
-          content="Real AI workflows for small business owners. No fluff, no theory — just systems you can run today."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${SITE}/blog`} />
-        <script type="application/ld+json">{JSON.stringify(itemList)}</script>
-      </Helmet>
+      <SEOHead
+        title="Blog — AI for Small Business"
+        description="Practical AI workflows, prompts, and systems for small business owners. Real strategies from Coach Kay — built for salons, real estate, coaches, notaries, and service founders."
+        path="/blog"
+        jsonLd={itemList}
+      />
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-primary/10">

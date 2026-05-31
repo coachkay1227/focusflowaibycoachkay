@@ -41,6 +41,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/terms", priority: "0.4", changefreq: "yearly" },
   { path: "/disclaimer", priority: "0.4", changefreq: "yearly" },
   { path: "/refund-policy", priority: "0.4", changefreq: "yearly" },
+  { path: "/blog", priority: "0.8", changefreq: "weekly" },
 ];
 
 // --- Dynamic: clarity modules from src/lib/modules.ts ---
@@ -84,6 +85,16 @@ function extractPublicProgramSlugs(): string[] {
   return Array.from(new Set(slugs));
 }
 
+// --- Dynamic: blog posts from src/data/blogPosts.ts ---
+function extractBlogSlugs(): string[] {
+  const src = readFileSync(resolve("src/data/blogPosts.ts"), "utf8");
+  const slugs: string[] = [];
+  const re = /\bslug:\s*"([^"]+)"/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(src)) !== null) slugs.push(m[1]);
+  return slugs;
+}
+
 function buildEntries(): SitemapEntry[] {
   const entries: SitemapEntry[] = staticEntries.map((e) => ({ ...e, lastmod: TODAY }));
 
@@ -103,6 +114,15 @@ function buildEntries(): SitemapEntry[] {
       lastmod: TODAY,
       changefreq: "monthly",
       priority: "0.8",
+    });
+  }
+
+  for (const slug of extractBlogSlugs()) {
+    entries.push({
+      path: `/blog/${slug}`,
+      lastmod: TODAY,
+      changefreq: "monthly",
+      priority: "0.7",
     });
   }
 
