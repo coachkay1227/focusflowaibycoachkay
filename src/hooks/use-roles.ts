@@ -41,9 +41,11 @@ export function useRoles() {
           setLoading(false);
           return;
         }
-        // 3. Fallback: known admin email (bootstrap access before DB role is assigned)
-        const ADMIN_EMAILS = ["hello@coachkayelevates.org", "kizzy.alaoui@gmail.com"];
-        setIsAdmin(ADMIN_EMAILS.includes(user.email ?? ""));
+        // No email-based fallback: admin is only granted via the server-side
+        // user_roles table (checked above via has_role RPC). Hardcoding admin
+        // emails client-side is unsafe — anyone re-registering that address
+        // would inherit admin UI access.
+        setIsAdmin(false);
       } catch {
         setIsAdmin(false);
       } finally {
