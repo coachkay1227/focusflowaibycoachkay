@@ -22,6 +22,7 @@ Disallow: /mirror-challenge
 Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
+Disallow: /challenges/
 
 User-agent: Googlebot-Image
 Allow: /
@@ -46,21 +47,25 @@ Disallow: /mirror-challenge
 Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
+Disallow: /challenges/
 
 User-agent: Slurp
 Allow: /
 Disallow: /admin
 Disallow: /email-preview
+Disallow: /challenges/
 
 User-agent: DuckDuckBot
 Allow: /
 Disallow: /admin
 Disallow: /email-preview
+Disallow: /challenges/
 
 User-agent: Applebot
 Allow: /
 Disallow: /admin
 Disallow: /email-preview
+Disallow: /challenges/
 
 User-agent: Yandex
 Allow: /
@@ -73,6 +78,7 @@ Disallow: /profile
 Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /result
+Disallow: /challenges/
 
 User-agent: Baiduspider
 Allow: /
@@ -83,6 +89,7 @@ Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Sogou
 Allow: /
@@ -93,6 +100,7 @@ Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 # Social media crawlers
 User-agent: Twitterbot
@@ -117,22 +125,26 @@ Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /admin
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Google-Extended
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /challenges/
 
 User-agent: Claude-Web
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /challenges/
 
 User-agent: anthropic-ai
 Allow: /
@@ -142,21 +154,25 @@ Disallow: /audit/intake
 Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Amazonbot
 Allow: /
 Disallow: /admin
+Disallow: /challenges/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /challenges/
 
 User-agent: CCBot
 Allow: /
 Disallow: /admin
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Bytespider
 Allow: /
@@ -167,6 +183,7 @@ Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: meta-externalagent
 Allow: /
@@ -176,6 +193,7 @@ Disallow: /audit/intake
 Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Cohere-ai
 Allow: /
@@ -185,6 +203,7 @@ Disallow: /audit/intake
 Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: ia_archiver
 Allow: /
@@ -194,6 +213,7 @@ Disallow: /audit/intake
 Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 # Default
 User-agent: *
@@ -221,5 +241,6 @@ Disallow: /clarity/emotional-reset
 Disallow: /clarity/focus-flow
 Disallow: /clarity/purpose-happiness
 Disallow: /clarity/goal-shift
+Disallow: /challenges/
 
 Sitemap: https://coachkayai.life/sitemap.xml
