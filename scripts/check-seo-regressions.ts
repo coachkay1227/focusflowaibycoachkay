@@ -35,6 +35,8 @@ const INDEXABLE: string[] = [
   "/collective",
   "/pause-hub",
   "/ai-tools",
+  "/blog",
+  "/blog/:slug",
   "/privacy",
   "/terms",
   "/disclaimer",
