@@ -25,9 +25,15 @@ jobs:
           bun run seo:check 2>&1 | tee seo-results.txt
           exit ${PIPESTATUS[0]}
 
+      - name: Generate HTML summary
+        if: always()
+        run: bun run scripts/seo-results-to-html.ts seo-results.txt seo-results.html
+
       - name: Upload SEO regression results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: seo-regression-results
-          path: seo-results.txt
+          path: |
+            seo-results.txt
+            seo-results.html
