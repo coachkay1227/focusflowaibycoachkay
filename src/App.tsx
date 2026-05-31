@@ -61,6 +61,8 @@ const Privacy = lazy(() => import("./pages/legal/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 const Disclaimer = lazy(() => import("./pages/legal/Disclaimer.tsx"));
 const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy.tsx"));
+const Blog = lazy(() => import("./pages/Blog.tsx"));
+const BlogPost = lazy(() => import("./pages/BlogPost.tsx"));
 
 // Lazy-load shell components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
@@ -135,6 +137,8 @@ const App = () => (
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
+            <Route path="/blog" element={<Suspense fallback={<PageSkeleton />}><Blog /></Suspense>} />
+            <Route path="/blog/:slug" element={<Suspense fallback={<PageSkeleton />}><BlogPost /></Suspense>} />
             <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><Privacy /></Suspense>} />
             <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><Terms /></Suspense>} />
             <Route path="/disclaimer" element={<Suspense fallback={<PageSkeleton />}><Disclaimer /></Suspense>} />
