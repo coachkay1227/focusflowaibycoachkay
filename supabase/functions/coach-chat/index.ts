@@ -58,8 +58,15 @@ serve(async (req: Request) => {
       });
     }
 
+    const ALLOWED_ROLES = new Set(["user", "assistant"]);
     for (const msg of messages) {
-      if (!msg.role || !msg.content || typeof msg.content !== "string" || msg.content.length > 10000) {
+      if (
+        !msg.role ||
+        !ALLOWED_ROLES.has(msg.role) ||
+        !msg.content ||
+        typeof msg.content !== "string" ||
+        msg.content.length > 10000
+      ) {
         return new Response(JSON.stringify({ error: "Invalid message format" }), {
           status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
@@ -69,11 +76,18 @@ serve(async (req: Request) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Sanitize+truncate context to mitigate prompt-injection via user-supplied
+    // clarity-session fields that get interpolated into the system prompt.
+    const clean = (v: unknown, max = 2000): string => {
+      if (typeof v !== "string") return "";
+      return v.replace(/[\u0000-\u001F\u007F]/g, " ").slice(0, max);
+    };
     let systemContent = SYSTEM_PROMPT;
-    if (context) {
-      systemContent += `\n\nThe user's latest clarity session results:\n- Truth: ${context.truth}\n- Pattern: ${context.pattern}\n- Action: ${context.action}`;
-      if (context.answers) {
-        systemContent += `\n\nTheir answers:\n${Object.entries(context.answers).map(([k, v]) => `- ${k}: ${v}`).join("\n")}`;
+    if (context && typeof context === "object") {
+      systemContent += `\n\nThe user's latest clarity session results:\n- Truth: ${clean(context.truth)}\n- Pattern: ${clean(context.pattern)}\n- Action: ${clean(context.action)}`;
+      if (context.answers && typeof context.answers === "object") {
+        const entries = Object.entries(context.answers).slice(0, 20);
+        systemContent += `\n\nTheir answers:\n${entries.map(([k, v]) => `- ${clean(k, 100)}: ${clean(v, 500)}`).join("\n")}`;
       }
     }
 
@@ -116,7 +130,7 @@ serve(async (req: Request) => {
     });
   } catch (e) {
     console.error("coach-chat error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }

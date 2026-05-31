@@ -4,20 +4,18 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 // Auth: this function MUST only be invoked server-side using the service_role
 // key. It proxies arbitrary payloads to an external CRM webhook, so allowing
 // anonymous browser callers (with the public anon key) would let anyone on
-// the internet inject fake CRM events.
-function decodeJwtRole(authHeader: string | null): string | null {
-  if (!authHeader?.startsWith("Bearer ")) return null;
-  const token = authHeader.slice("Bearer ".length);
-  const parts = token.split(".");
-  if (parts.length !== 3) return null;
-  try {
-    const payload = JSON.parse(
-      atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
-    );
-    return typeof payload?.role === "string" ? payload.role : null;
-  } catch {
-    return null;
-  }
+// the internet inject fake CRM events. We enforce this by comparing the
+// bearer token directly to SUPABASE_SERVICE_ROLE_KEY — never trust
+// unverified JWT role claims (alg:none forgery).
+function isServiceRoleCaller(authHeader: string | null): boolean {
+  if (!authHeader?.startsWith("Bearer ")) return false;
+  const token = authHeader.slice("Bearer ".length).trim();
+  const expected = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  if (!token || !expected) return false;
+  if (token.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
 }
 
 serve(async (req) => {
@@ -25,8 +23,7 @@ serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
-  const callerRole = decodeJwtRole(req.headers.get("Authorization"));
-  if (callerRole !== "service_role") {
+  if (!isServiceRoleCaller(req.headers.get("Authorization"))) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
@@ -83,9 +80,8 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    console.error("[ghl-webhook] Error:", msg);
-    return new Response(JSON.stringify({ error: msg }), {
+    console.error("[ghl-webhook] Error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

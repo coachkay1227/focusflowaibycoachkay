@@ -125,6 +125,6 @@ serve(async (req) => {
     return json(200, { id: insert.data?.id ?? null, report: result.data });
   } catch (e) {
     console.error("generate-starter-report error:", e);
-    return json(500, { error: e instanceof Error ? e.message : "Unknown error" });
+    return json(500, { error: "Internal server error" });
   }
 });
