@@ -35,7 +35,15 @@ const BlogPost = () => {
   if (!post) return <Navigate to="/blog" replace />;
 
   const url = `${SITE}/blog/${post.slug}`;
-  const imageUrl = `${SITE}${post.image.startsWith("/") ? post.image : "/" + post.image.split("/").pop()}`;
+  // Vite-imported assets resolve to an absolute path like `/assets/xyz.jpg`.
+  // Prepend SITE for crawlers/social previews; allow an explicit ogImage override.
+  const imageUrl = post.ogImage
+    ? post.ogImage
+    : post.image.startsWith("http")
+      ? post.image
+      : `${SITE}${post.image.startsWith("/") ? post.image : "/" + post.image}`;
+  const seoTitle = post.seoTitle ?? post.title;
+  const seoDescription = post.seoDescription ?? post.excerpt;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -131,17 +139,41 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Helmet>
-        <title>{`${post.title} | FocusFlow AI`}</title>
-        <meta name="description" content={post.excerpt} />
+        <title>{`${seoTitle} | FocusFlow AI by Coach Kay`}</title>
+        <meta name="description" content={seoDescription} />
+        {post.keywords?.length ? (
+          <meta name="keywords" content={post.keywords.join(", ")} />
+        ) : null}
         <link rel="canonical" href={url} />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+
+        {/* Open Graph */}
         <meta property="og:type" content="article" />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:site_name" content="FocusFlow AI by Coach Kay" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
         <meta property="og:url" content={url} />
         <meta property="og:image" content={imageUrl} />
+        <meta property="og:image:alt" content={post.title} />
+        <meta property="og:image:width" content="1600" />
+        <meta property="og:image:height" content="1000" />
+        <meta property="article:published_time" content={post.datePublished} />
+        <meta property="article:modified_time" content={post.dateModified} />
+        <meta property="article:author" content="Coach Kay" />
+        <meta property="article:section" content={post.category} />
+
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="article:published_time" content={post.datePublished} />
-        <meta name="article:author" content="Coach Kay" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={imageUrl} />
+        <meta name="twitter:image:alt" content={post.title} />
+        <meta name="twitter:label1" content="Reading time" />
+        <meta name="twitter:data1" content={post.readingTime} />
+        <meta name="twitter:label2" content="Written by" />
+        <meta name="twitter:data2" content="Coach Kay" />
+
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
