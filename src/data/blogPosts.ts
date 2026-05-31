@@ -11,6 +11,14 @@ export interface BlogPost {
   dateModified: string;
   image: string;
   author: string;
+  /** Optional <title> override for SEO/social. Falls back to `title`. */
+  seoTitle?: string;
+  /** Optional meta description override. Falls back to `excerpt`. */
+  seoDescription?: string;
+  /** Optional absolute OG image URL. Falls back to bundled `image`. */
+  ogImage?: string;
+  /** Optional keyword list for <meta name="keywords">. */
+  keywords?: string[];
 }
 
 export const blogPosts: BlogPost[] = [
@@ -26,6 +34,18 @@ export const blogPosts: BlogPost[] = [
     dateModified: new Date().toISOString(),
     image: featuredImage,
     author: "Coach Kay",
+    seoTitle:
+      "The $20 AI System That Saves Small Business Owners 10 Hours a Week",
+    seoDescription:
+      "A practical $20/month AI workflow for small business owners — replies, follow-ups, content, scheduling, and admin. Built by Coach Kay (FocusFlow AI).",
+    keywords: [
+      "AI for small business",
+      "ChatGPT for small business",
+      "Claude AI workflows",
+      "AI tools Columbus",
+      "Coach Kay",
+      "FocusFlow AI",
+    ],
   },
 ];
 
