@@ -5,6 +5,9 @@
 User-agent: Googlebot
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
@@ -26,6 +29,9 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
@@ -59,6 +65,9 @@ Disallow: /email-preview
 User-agent: Yandex
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
@@ -68,6 +77,9 @@ Disallow: /result
 User-agent: Baiduspider
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
@@ -75,6 +87,9 @@ Disallow: /dashboard
 User-agent: Sogou
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
@@ -96,6 +111,9 @@ Allow: /
 User-agent: GPTBot
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
@@ -119,6 +137,9 @@ Disallow: /profile
 User-agent: anthropic-ai
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
 
@@ -140,6 +161,9 @@ Disallow: /dashboard
 User-agent: Bytespider
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
@@ -147,18 +171,27 @@ Disallow: /dashboard
 User-agent: meta-externalagent
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
 
 User-agent: Cohere-ai
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
 
 User-agent: ia_archiver
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
 
@@ -166,6 +199,9 @@ Disallow: /dashboard
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
