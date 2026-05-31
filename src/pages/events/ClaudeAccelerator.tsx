@@ -1,6 +1,7 @@
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import eventImage from "/images/event-june-4-2026.jpg";
+
+const eventImage = "/images/event-june-4-2026.jpg";
 
 const EVENTBRITE_URL = "https://TheClaudeAIBusinessAccelerator.eventbrite.com";
 
