@@ -107,7 +107,8 @@ const NewsletterWaitlist = ({
       )}
       {variant !== "compact" && !done && (
         <p className="text-[11px] text-muted-foreground/60 mt-3">
-          No spam. Unsubscribe anytime. We'll never share your email.
+          No spam. Unsubscribe anytime. We'll never share your email.{" "}
+          <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
         </p>
       )}
     </div>

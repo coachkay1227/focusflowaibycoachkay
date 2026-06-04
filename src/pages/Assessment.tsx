@@ -554,6 +554,7 @@ const Assessment = () => {
                   <button
                     key={value}
                     onClick={() => select(value)}
+                    onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); select(value); } }}
                     className={`text-left rounded-lg border p-4 transition-all backdrop-blur-sm ${
                       isSel
                         ? "border-primary/70 bg-primary/10 shadow-[0_0_30px_hsl(43_75%_52%/0.15)]"
@@ -790,6 +791,10 @@ const Assessment = () => {
               <Zap className="h-3 w-3" />
               NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
             </div>
+            <p className="text-center text-[11px] text-muted-foreground/40 mt-2">
+              By continuing you agree to our{" "}
+              <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
+            </p>
           </form>
         </div>
       )}

@@ -313,6 +313,7 @@ const ClaritySession = () => {
                 <button
                   key={opt.value}
                   onClick={() => selectOption(opt.value)}
+                  onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); selectOption(opt.value); } }}
                   className={`option-card text-left rounded-lg border border-border bg-card/30 backdrop-blur-sm p-5 ${
                     answers[question.id] === opt.value ? "selected" : ""
                   }`}
@@ -398,6 +399,10 @@ const ClaritySession = () => {
               <Zap className="h-3 w-3" />
               NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
             </div>
+            <p className="text-center text-[11px] text-muted-foreground/40 mt-2">
+              By continuing you agree to our{" "}
+              <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
+            </p>
           </form>
         </div>
       )}
