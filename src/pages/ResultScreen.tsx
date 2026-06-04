@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { generateInsight, type ClarityAnswers } from "@/lib/clarity-engine";
 import { saveSessionCloud, getRecentSessionsCloud, hasHistoryCloud, type SessionRecord } from "@/lib/session-store";
 import { updateModuleProgress, getUserPreferences } from "@/lib/enrollment-store";
-import { resolveTrack, type TrackResult } from "@/lib/track-resolver";
+import { resolveTrack, programsForPhase, type TrackResult } from "@/lib/track-resolver";
 import { getModule } from "@/lib/modules";
 import { getProgramBySlug } from "@/data/programs";
 import { supabase } from "@/integrations/supabase/client";
@@ -182,6 +182,13 @@ const ResultScreen = () => {
   const recommendedProgram = useMemo(() => {
     if (!trackResult?.recommendedProgramSlugs?.[0]) return null;
     return getProgramBySlug(trackResult.recommendedProgramSlugs[0]);
+  }, [trackResult]);
+
+  // Phase-aware primary offer — matches the track recommendation instead of always showing the same program
+  const primaryOffer = useMemo(() => {
+    if (!trackResult) return getProgramBySlug("30-day-personal-reset");
+    const slug = programsForPhase(trackResult.likelyPhase)[0] ?? "30-day-personal-reset";
+    return getProgramBySlug(slug) ?? getProgramBySlug("30-day-personal-reset");
   }, [trackResult]);
 
   const challengeLabel = useMemo(() => {
@@ -501,15 +508,20 @@ const ResultScreen = () => {
                     {recommendedProgram && (
                       <button
                         onClick={() => navigate(`/programs/${recommendedProgram.slug}`)}
-                        className="w-full text-left p-5 rounded-lg border border-border/50 bg-card/20 hover:border-primary/30 transition-all group"
+                        className="w-full text-left p-5 rounded-lg border border-primary/20 bg-primary/[0.04] hover:border-primary/40 hover:bg-primary/[0.07] transition-all group"
                       >
-                        <span className="font-mono-label text-primary/50 text-xs">Recommended Program</span>
-                        <h4 className="font-heading text-lg font-light mt-1 group-hover:text-primary transition-colors">
-                          {recommendedProgram.title}
-                        </h4>
+                        <span className="font-mono-label text-primary/60 text-xs">Recommended Program</span>
+                        <div className="flex items-start justify-between mt-1">
+                          <h4 className="font-heading text-lg font-light group-hover:text-primary transition-colors">
+                            {recommendedProgram.title}
+                          </h4>
+                          {recommendedProgram.price && (
+                            <span className="text-primary font-mono text-sm ml-3 shrink-0">{recommendedProgram.price}</span>
+                          )}
+                        </div>
                         <p className="text-muted-foreground text-sm mt-1">{recommendedProgram.tagline}</p>
-                        <span className="inline-flex items-center gap-1 text-primary/60 text-xs mt-2 group-hover:text-primary transition-colors">
-                          Learn more <ArrowRight className="h-3 w-3" />
+                        <span className="inline-flex items-center gap-1 text-primary text-xs font-medium mt-2 group-hover:gap-2 transition-all">
+                          See full details <ArrowRight className="h-3 w-3" />
                         </span>
                       </button>
                     )}
@@ -538,16 +550,16 @@ const ResultScreen = () => {
               This pattern won't change on its own. Here's where to start.
             </p>
 
-            {/* Primary CTA — apply for the 30-Day Personal Reset */}
+            {/* Primary CTA — phase-matched program offer */}
             <Button
               onClick={() => {
-                trackCta("apply_personal_reset", "personal", { moduleId });
+                trackCta("apply_primary_offer", "personal", { moduleId, offer: primaryOffer?.slug });
                 setApplyOpen(true);
               }}
               className="animate-pulse-glow bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] transition-transform px-10 py-6 text-lg shadow-lg shadow-primary/20"
             >
               <Sparkles className="mr-2 h-5 w-5" />
-              Apply for the 30-Day Personal Reset
+              Apply for the {primaryOffer?.title ?? "30-Day Personal Reset"}
             </Button>
 
             {/* Secondary CTAs */}

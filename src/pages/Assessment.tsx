@@ -93,8 +93,8 @@ const PATHS: Record<PathKey, { name: string; tagline: string; route: string; cta
   uplevel60: {
     name: "Uplevel 60 · 1:1 with Coach Kay",
     tagline: "60 days, direct line, custom build. For operators ready to be seen.",
-    route: "/coach-kay",
-    ctaLabel: "See if Uplevel 60 fits",
+    route: "/advisory",
+    ctaLabel: "See Advisory options",
   },
   rentAgent: {
     name: "Rent-an-Agent",

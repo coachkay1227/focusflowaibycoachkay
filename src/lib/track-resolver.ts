@@ -112,15 +112,15 @@ function challengeForPhase(phase: LifePhase): string {
   }
 }
 
-function programsForPhase(phase: LifePhase): string[] {
+export function programsForPhase(phase: LifePhase): string[] {
   switch (phase) {
-    case "burnout": return ["discover-energy-patterns", "emotional-reset-sprint"];
-    case "identity-shift": return ["mirror-challenge", "unshakable-self-assurance"];
-    case "reinvention": return ["alignment-accelerator", "mastering-peace-purpose"];
-    case "overwhelm": return ["clarity-check", "private-reflection-challenge"];
-    case "transition": return ["letting-go", "mastering-peace-purpose"];
-    case "seeking": return ["mastering-peace-purpose", "alignment-accelerator"];
-    default: return ["clarity-check"];
+    case "burnout":        return ["30-day-personal-reset"];
+    case "identity-shift": return ["90-day-personal-transformation"];
+    case "reinvention":    return ["90-day-personal-transformation", "6-month-private-partnership"];
+    case "overwhelm":      return ["30-day-personal-reset"];
+    case "transition":     return ["30-day-personal-reset", "90-day-personal-transformation"];
+    case "seeking":        return ["90-day-personal-transformation"];
+    default:               return ["30-day-personal-reset"];
   }
 }
 
