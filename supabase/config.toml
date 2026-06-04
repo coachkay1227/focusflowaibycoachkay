@@ -8,13 +8,13 @@ project_id = "rarawrpajilqqlcxdzpj"
   [functions.clarity-insight]
     verify_jwt = false
   [functions.coach-chat]
-    verify_jwt = false
+    verify_jwt = true
   [functions.ghl-webhook]
     verify_jwt = true
   [functions.handle-email-unsubscribe]
     verify_jwt = false
   [functions.pattern-detect]
-    verify_jwt = false
+    verify_jwt = true
   [functions.preview-transactional-email]
     verify_jwt = false
   [functions.send-transactional-email]
@@ -39,3 +39,5 @@ project_id = "rarawrpajilqqlcxdzpj"
     verify_jwt = false
   [functions.generate-business-audit]
     verify_jwt = false
+  [functions.update-autism-order]
+    verify_jwt = true
