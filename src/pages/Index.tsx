@@ -7,7 +7,6 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, Zap } from "lucide-react";
-import DesktopNav from "@/components/DesktopNav";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
 import { getPublicPrograms } from "@/data/programs";
@@ -82,7 +81,6 @@ const Index = () => {
       </div>
 
       {/* Global navigation — single source of truth across all pages */}
-      <DesktopNav />
       <div className="md:hidden relative z-10 flex items-center justify-end px-6 py-4">
         <MobileNav />
       </div>
