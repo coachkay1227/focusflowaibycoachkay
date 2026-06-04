@@ -43,7 +43,7 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found customer", { customerId });
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    const origin = req.headers.get("origin") || "https://coachkayai.life";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: `${origin}/dashboard`,
