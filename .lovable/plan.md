@@ -1,29 +1,36 @@
-## Problem
+## Security scan result: 0 critical, 8 warnings
 
-The Meta Pixel block in `index.html` (lines ~47-64) is malformed and will not load correctly:
+The earlier critical fixes held. The remaining items are all `warn` level — none are exploitable today, but here is the plan to clear them so the scan goes green.
 
-1. The closing `</script` tag is missing its `>` — it reads `</script` followed by a newline, which breaks parsing of everything after it.
-2. The `<noscript>` fallback is mangled: `</noscript>noscript>` (stray trailing `noscript>`).
-3. Per project rules, `<noscript>` containing an `<img>` is not valid inside `<head>` — only metadata tags are allowed there. The pixel `<noscript><img>` fallback must live in `<body>`, not `<head>`.
-4. Indentation is inconsistent with the surrounding block.
+### 1. SECURITY DEFINER functions callable by anon/authenticated (5 findings)
+Several `SECURITY DEFINER` functions in the `public` schema have default `EXECUTE` to `PUBLIC`. They're safe (each gates on `auth.uid()` or service role internally) but the linter flags broad EXECUTE grants.
 
-Because of #1, the browser likely never executes `fbq('init', ...)` / `fbq('track', 'PageView')`, so the pixel is not actually firing despite being "present".
+Fix via new migration:
+- `REVOKE EXECUTE ... FROM PUBLIC, anon` on each flagged function.
+- `GRANT EXECUTE ... TO authenticated, service_role` only where the app actually calls them (e.g. `has_role`, `get_user_tier`).
+- For ones only the backend should call, grant to `service_role` only.
 
-## Fix
+### 2. `autism_orders` guest rows invisible to buyer (warn)
+No exploit — guest rows are admin-only by design. Document via `security--update_memory` that guest order retrieval is intentionally admin/service-role only (no token link flow exists), then mark finding as acceptable.
 
-Edit `index.html` only:
+### 3. `business_audits` guest rows (warn)
+Same shape: confirmed token flow is the only guest retrieval path. Document in security memory and mark acceptable.
 
-1. In `<head>`, replace the broken Meta Pixel block with a clean version:
-   - Properly closed `<script>...</script>` containing the standard `fbq` loader, `fbq('init', '627115437126553')`, and `fbq('track', 'PageView')`.
-   - Remove the `<noscript>` from `<head>` entirely.
-2. In `<body>` (right after the opening `<body>` tag, alongside the existing skip link), add the Meta Pixel `<noscript><img .../></noscript>` fallback using pixel ID `627115437126553`.
-3. Keep the surrounding GA block, fonts preconnect, OG/Twitter meta, and JSON-LD schemas unchanged.
+### 4. `content_settings` no service_role write policy (warn)
+Add a policy:
+```sql
+CREATE POLICY "service_role manages content_settings"
+  ON public.content_settings FOR ALL
+  TO service_role USING (true) WITH CHECK (true);
+```
 
-## Verification
+### Verification
+- Re-run `security--run_security_scan` — expect 0 critical, near-zero warns.
+- Confirm no build errors (Vite already clean per dev log).
+- Then publish.
 
-After the edit:
-- Reload the preview and confirm no HTML parse errors in console.
-- Check the Network tab for a request to `https://connect.facebook.net/en_US/fbevents.js` (script load) and a request to `https://www.facebook.com/tr?id=627115437126553&ev=PageView...` (PageView beacon).
-- Confirm `window.fbq` is defined in the console.
+### Files touched
+- New migration: `supabase/migrations/<ts>_tighten_definer_grants_and_content_settings.sql`
+- `security--update_memory` to note accepted guest-data warnings.
 
-No other files change.
+No frontend or edge function code changes required.
