@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -424,6 +424,97 @@ serve(async (req) => {
           context: { session_id: session.id },
         });
         // fall through to default behavior
+      }
+
+      // Agent Build branch — GPT Agent & Claude Project Agent purchases.
+      // Creates agent_orders row + fires intake confirmation email + GHL event.
+      // Runs before user_id check so guest checkouts also work.
+      try {
+        const liForAgent = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const agentProductRef = liForAgent.data?.[0]?.price?.product;
+        const agentProductId = typeof agentProductRef === "string"
+          ? agentProductRef
+          : (agentProductRef && typeof agentProductRef === "object" && typeof (agentProductRef as { id?: unknown }).id === "string")
+            ? (agentProductRef as { id: string }).id
+            : null;
+
+        if (agentProductId && AGENT_BUILD_PRODUCTS.has(agentProductId)) {
+          const agentUserId = readMetaString(session.metadata, "supabase_user_id");
+          const agentEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const agentName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+          const agentType = agentProductId === "prod_Ul02esdwy10Ylm" ? "claude" : "gpt";
+          const priceId = readMetaString(session.metadata, "price_id") ?? "";
+          const isHosted = priceId.startsWith("price_1TlU2t") || priceId.startsWith("price_1TlU2v") || priceId.startsWith("price_1TlU33");
+          const agentTier = "single";
+
+          const { data: existingAgent } = await supabaseClient
+            .from("agent_orders")
+            .select("id")
+            .eq("stripe_session_id", session.id)
+            .maybeSingle();
+
+          if (!existingAgent?.id) {
+            const { data: insertedAgent, error: agentInsertErr } = await supabaseClient
+              .from("agent_orders")
+              .insert({
+                user_id: agentUserId && UUID_RE.test(agentUserId) ? agentUserId : null,
+                guest_email: agentEmail || null,
+                agent_type: agentType,
+                agent_tier: agentTier,
+                agent_count: 1,
+                ownership_pref: isHosted ? "hosted" : "own",
+                stripe_session_id: session.id,
+                status: "pending",
+                quoted_price_cents: session.amount_total ?? null,
+              })
+              .select("id")
+              .single();
+
+            if (agentInsertErr) {
+              await fail("agent_order", "insert_failed", { message: agentInsertErr.message, context: { session_id: session.id } });
+            } else if (insertedAgent?.id && agentEmail) {
+              const origin = req.headers.get("origin") || "https://coachkayai.life";
+              await supabaseClient.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: "agent-order-confirmation",
+                  recipientEmail: agentEmail,
+                  idempotencyKey: `agent-confirm-${insertedAgent.id}`,
+                  templateData: {
+                    name: agentName,
+                    agentType: agentType === "claude" ? "Claude Project Agent" : "Custom GPT Agent",
+                    intakeUrl: `${origin}/agent-intake`,
+                    orderId: insertedAgent.id,
+                  },
+                },
+              }).catch(() => {});
+
+              supabaseClient.functions.invoke("ghl-webhook", {
+                body: {
+                  event: "purchase",
+                  payload: {
+                    email: agentEmail,
+                    user_id: agentUserId || null,
+                    tier: "agent_build",
+                    product: agentType === "claude" ? "Claude Project Agent" : "Custom GPT Agent",
+                    amount: session.amount_total ?? null,
+                  },
+                },
+              }).catch(() => {});
+
+              log.info("agent_order_created", { ctx: { agent_id: insertedAgent.id, agent_type: agentType } });
+            }
+          }
+          return ok(req, { received: true, agent_order: true });
+        }
+      } catch (e) {
+        await fail("agent_order", "agent_branch_exception", {
+          message: e instanceof Error ? e.message : String(e),
+          context: { session_id: session.id },
+        });
       }
 
       // Get user ID from metadata
