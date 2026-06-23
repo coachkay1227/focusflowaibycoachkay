@@ -17,7 +17,7 @@ const Privacy = () => (
   >
     <p>
       FocusFlow AI ("we", "us", "our") is a coaching and AI-productivity service operated by{" "}
-      <strong>Shield Her Elevation LLC</strong>. This Privacy Policy explains what we collect when
+      <strong>Focus Flow AI LLC (DBA Coach Kay Elevates)</strong>. This Privacy Policy explains what we collect when
       you use coachkayai.life, our Clarity Check, our programs, and our AI tools.
     </p>
 

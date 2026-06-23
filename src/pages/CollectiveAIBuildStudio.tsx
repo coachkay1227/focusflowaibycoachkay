@@ -386,8 +386,8 @@ const CollectiveAIBuildStudio = () => {
           <p className="mt-8 text-xs text-muted-foreground/80 max-w-xl mx-auto leading-relaxed">
             <strong className="text-foreground/80">By invitation:</strong> Fractional AI Product Lead retainers,
             enterprise build pods, and equity builds. Email{" "}
-            <a href="mailto:Hello@coachkayelevates.org" className="text-primary underline">
-              Hello@coachkayelevates.org
+            <a href="mailto:hello@coachkayelevates.org" className="text-primary underline">
+              hello@coachkayelevates.org
             </a>{" "}
             for institutional scopes.
           </p>

@@ -194,8 +194,8 @@ export default function Collective() {
               All work contracted under Focus Flow AI LLC (DBA Coach Kay Elevates).
               Delivered with the Collective AI team. For institutional procurement,
               email{" "}
-              <a href="mailto:Hello@coachkayelevates.org" className="text-primary underline">
-                Hello@coachkayelevates.org
+              <a href="mailto:hello@coachkayelevates.org" className="text-primary underline">
+                hello@coachkayelevates.org
               </a>
               .
             </p>

@@ -71,7 +71,7 @@ const ApplyNowDialog = ({ open, onOpenChange, mode, programName }: ApplyNowDialo
       setOrganization("");
       setMessage("");
     } catch {
-      toast({ title: "Something went wrong", description: "Please try again or email Hello@coachkayelevates.org directly.", variant: "destructive" });
+      toast({ title: "Something went wrong", description: "Please try again or email hello@coachkayelevates.org directly.", variant: "destructive" });
     } finally {
       setSubmitting(false);
     }

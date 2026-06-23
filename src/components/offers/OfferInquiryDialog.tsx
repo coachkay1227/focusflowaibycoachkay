@@ -58,7 +58,7 @@ const OfferInquiryDialog = ({ open, onOpenChange, lane, context }: OfferInquiryD
     } catch {
       toast({
         title: "Something went wrong",
-        description: "Please try again or email Hello@coachkayelevates.org directly.",
+        description: "Please try again or email hello@coachkayelevates.org directly.",
         variant: "destructive",
       });
     } finally {

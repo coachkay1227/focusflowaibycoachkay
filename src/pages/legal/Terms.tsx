@@ -18,7 +18,7 @@ const Terms = () => (
     <p>
       These Terms of Service ("Terms") govern your access to and use of FocusFlow AI, including
       coachkayai.life, the Clarity Check, coaching programs, AI tools, and any related services
-      (collectively, the "Service"), operated by <strong>Shield Her Elevation LLC</strong>. By
+      (collectively, the "Service"), operated by <strong>Focus Flow AI LLC (DBA Coach Kay Elevates)</strong>. By
       using the Service you agree to these Terms.
     </p>
 
@@ -83,7 +83,7 @@ const Terms = () => (
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">8. Limitation of liability</h2>
     <p>
-      To the maximum extent permitted by law, Shield Her Elevation LLC and Coach Kay shall not be
+      To the maximum extent permitted by law, Focus Flow AI LLC and Coach Kay shall not be
       liable for any indirect, incidental, special, consequential, or punitive damages. Our total
       liability for any claim is limited to the amount you paid us in the 12 months preceding the
       claim.
@@ -91,7 +91,7 @@ const Terms = () => (
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">9. Governing law</h2>
     <p>
-      These Terms are governed by the laws of the state in which Shield Her Elevation LLC is
+      These Terms are governed by the laws of the state in which Focus Flow AI LLC is
       registered, without regard to conflict-of-laws principles. Disputes will be resolved by
       binding arbitration in that jurisdiction, except for small-claims matters and intellectual
       property claims.
@@ -105,7 +105,7 @@ const Terms = () => (
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">11. Contact</h2>
     <p>
-      Shield Her Elevation LLC · <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>
+      Focus Flow AI LLC (DBA Coach Kay Elevates) · <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>
     </p>
   </LegalLayout>
   </>

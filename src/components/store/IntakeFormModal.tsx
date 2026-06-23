@@ -476,10 +476,10 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
             By submitting you agree that work begins on intake approval and all
             sales are final once production starts. Questions? Email{" "}
             <a
-              href="mailto:Hello@coachkayelevates.org"
+              href="mailto:hello@coachkayelevates.org"
               className="text-primary hover:underline"
             >
-              Hello@coachkayelevates.org
+              hello@coachkayelevates.org
             </a>
             .
           </p>
