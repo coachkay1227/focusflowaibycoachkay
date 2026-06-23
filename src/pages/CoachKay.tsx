@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart, Layers } from "lucide-react";
+import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart, Layers, Phone, Mail, MapPin, Building2 } from "lucide-react";
 import coachKayImg from "@/assets/coach-kay.jpeg";
 import { webPage, breadcrumb } from "@/lib/seo-schema";
 import MobileNav from "@/components/MobileNav";
@@ -96,7 +96,7 @@ const CoachKay = () => {
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/20 blur-lg" />
                 <img
                   src={coachKayImg}
-                  alt="Coach Kay — Kenza Alaoui, AI & Life Transformation Coach"
+                  alt="Coach Kay — Kenza Alaoui Ismaili, AI & Life Transformation Coach"
                   className="relative rounded-2xl object-cover shadow-2xl w-full"
                   loading="eager"
                   fetchPriority="high"
@@ -114,7 +114,7 @@ const CoachKay = () => {
                 Coach Kay
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
-                Kenza Alaoui · AI &amp; Life Transformation Coach
+                Kenza Alaoui Ismaili · AI &amp; Life Transformation Coach
               </p>
               <p className="mb-6 text-foreground/80 leading-relaxed">
                 Warm but direct. Emotionally intelligent. Pattern-aware. Coach Kay
@@ -252,7 +252,7 @@ const CoachKay = () => {
             </h2>
             <p className="mx-auto mb-12 max-w-xl text-center text-muted-foreground">
               Real stories from people who've worked with Coach Kay to find
-              clarity and take action.
+              clarity and take action. Individual results vary.
             </p>
           </AnimatedSection>
           <div className="grid gap-6 md:grid-cols-2">
@@ -370,6 +370,56 @@ const CoachKay = () => {
             and privacy policy. Coach Kay Elevates is a for-profit woman-owned
             business.
           </p>
+        </div>
+      </section>
+
+      {/* Business Info & AI Compliance */}
+      <section className="py-12 md:py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <AnimatedSection>
+            <div className="rounded-2xl border border-border bg-card/40 p-7 md:p-9">
+              <p className="font-mono text-[10px] text-primary/70 tracking-[0.18em] uppercase mb-4">Business Information</p>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <div className="flex items-start gap-3">
+                  <Building2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Legal Entity</p>
+                    <p className="text-muted-foreground">Focus Flow AI LLC</p>
+                    <p className="text-muted-foreground">DBA Coach Kay Elevates</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Location</p>
+                    <p className="text-muted-foreground">Columbus, OH</p>
+                    <p className="text-muted-foreground">Serving clients nationwide</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Mail className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Email</p>
+                    <a href="mailto:hello@coachkayelevates.org" className="text-primary hover:underline">
+                      hello@coachkayelevates.org
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Phone</p>
+                    <a href="tel:+13802877936" className="text-primary hover:underline">
+                      +1 (380) 287-7936
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-6 text-[11px] text-muted-foreground/60 leading-relaxed border-t border-border/40 pt-4">
+                <strong className="text-muted-foreground/80">AI Disclosure:</strong> FocusFlow AI uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
+              </p>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
