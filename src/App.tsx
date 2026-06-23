@@ -57,6 +57,9 @@ const AdminScamAlerts = lazy(() => import("./pages/admin/AdminScamAlerts.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
+const AgentBuilder = lazy(() => import("./pages/AgentBuilder.tsx"));
+const AgentResult = lazy(() => import("./pages/AgentResult.tsx"));
+const AgentIntake = lazy(() => import("./pages/AgentIntake.tsx"));
 const Privacy = lazy(() => import("./pages/legal/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 const Disclaimer = lazy(() => import("./pages/legal/Disclaimer.tsx"));
@@ -127,6 +130,9 @@ const App = () => (
             <Route path="/audit/intake" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
             <Route path="/audit/intake/:id" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
             <Route path="/audit/report/:id" element={<Suspense fallback={<PageSkeleton />}><AuditReport /></Suspense>} />
+            <Route path="/agent-builder" element={<Suspense fallback={<PageSkeleton />}><AgentBuilder /></Suspense>} />
+            <Route path="/agent-result" element={<Suspense fallback={<PageSkeleton />}><AgentResult /></Suspense>} />
+            <Route path="/agent-intake" element={<Suspense fallback={<PageSkeleton />}><AgentIntake /></Suspense>} />
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/autism-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAutismOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/build-inquiries" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBuildInquiries /></Suspense></ProtectedRoute>} />

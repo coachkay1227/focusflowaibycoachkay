@@ -23,6 +23,8 @@ import { template as onboardingCompletion } from './onboarding-completion.tsx'
 import { template as auditIntakeSubmitted } from './audit-intake-submitted.tsx'
 import { template as auditReportReady } from './audit-report-ready.tsx'
 import { template as newsletterWelcome } from './newsletter-welcome.tsx'
+import { template as agentOrderConfirmation } from './agent-order-confirmation.tsx'
+import { template as agentIntakeReceived } from './agent-intake-received.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -39,4 +41,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'audit-intake-submitted': auditIntakeSubmitted,
   'audit-report-ready': auditReportReady,
   'newsletter-welcome': newsletterWelcome,
+  'agent-order-confirmation': agentOrderConfirmation,
+  'agent-intake-received': agentIntakeReceived,
 }
