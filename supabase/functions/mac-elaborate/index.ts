@@ -149,12 +149,21 @@ serve(async (req) => {
       return json(200, { id: null, code, insight: result.data });
     }
 
+    // Resolve recipient email: guest provided it in body, or look up authenticated user.
+    let emailToNotify = guestEmail;
+    if (!emailToNotify && userId) {
+      try {
+        const { data: authUser } = await supabase.auth.admin.getUserById(userId);
+        emailToNotify = authUser?.user?.email ?? null;
+      } catch { /* non-critical */ }
+    }
+
     // Fire GHL webhook after successful assessment (best-effort, non-blocking).
     supabase.functions.invoke("ghl-webhook", {
       body: {
         event: "assessment_completed",
         payload: {
-          email: guestEmail,
+          email: emailToNotify,
           user_id: userId,
           assessment_type: "mac-type",
           bottleneck: primaryBucket,
@@ -164,6 +173,26 @@ serve(async (req) => {
     }).catch((e: unknown) => {
       console.warn("[mac-elaborate] ghl-webhook failed:", e);
     });
+
+    // Send assessment result email to user (best-effort, idempotent).
+    if (emailToNotify) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "assessment-result",
+          recipientEmail: emailToNotify,
+          idempotencyKey: `mac-result-${insert.data?.id ?? crypto.randomUUID()}`,
+          templateData: {
+            name: guestName,
+            archetypeName: (result.data as { archetype_name?: string })?.archetype_name ?? null,
+            comboLine: (result.data as { combo_line?: string })?.combo_line ?? null,
+            patternLine: (result.data as { pattern_line?: string })?.pattern_line ?? null,
+            primaryBucket,
+          },
+        },
+      }).catch((e: unknown) => {
+        console.warn("[mac-elaborate] assessment-result email failed:", e);
+      });
+    }
 
     return json(200, { id: insert.data?.id ?? null, code, insight: result.data });
   } catch (e) {

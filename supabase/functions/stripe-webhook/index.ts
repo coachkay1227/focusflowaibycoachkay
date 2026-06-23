@@ -14,6 +14,44 @@ const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
     status: 200,
   });
 
+/** Fires cancellation email + GHL event after a successful subscription downgrade.
+ *  Resolves the user's email from Stripe customer data (most reliable source). */
+async function _fireCancellationNotifications(
+  supabase: ReturnType<typeof createClient>,
+  stripe: Stripe,
+  subscription: Stripe.Subscription,
+  userId: string,
+  fromTier: string | null,
+  log: ReturnType<typeof createLogger>,
+) {
+  try {
+    const customerId = typeof subscription.customer === "string" ? subscription.customer : null;
+    if (!customerId) return;
+    const customer = await stripe.customers.retrieve(customerId);
+    const cancelEmail = !customer.deleted && customer.email ? customer.email : null;
+    if (!cancelEmail) return;
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "subscription-cancelled",
+        recipientEmail: cancelEmail,
+        idempotencyKey: `sub-cancelled-${subscription.id}`,
+        templateData: { name: !customer.deleted ? customer.name : null },
+      },
+    }).catch(() => {});
+    supabase.functions.invoke("ghl-webhook", {
+      body: {
+        event: "subscription_cancelled",
+        payload: { email: cancelEmail, user_id: userId, from_tier: fromTier },
+      },
+    }).catch(() => {});
+    log.info("cancellation_notifications_sent", { ctx: { user_id: userId, from_tier: fromTier } });
+  } catch (e) {
+    log.warn("cancellation_notification_error", {
+      message: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -204,6 +242,17 @@ serve(async (req) => {
                 context: { book_order_id: order.id },
               });
             }
+            supabaseClient.functions.invoke("ghl-webhook", {
+              body: {
+                event: "purchase",
+                payload: {
+                  email: order.client_email,
+                  tier: "book_product",
+                  product: order.package_name,
+                  amount: order.order_total ?? null,
+                },
+              },
+            }).catch(() => {});
           }
         }
         return ok(req);
@@ -297,6 +346,17 @@ serve(async (req) => {
                 context: { autism_order_id: pending.id },
               });
             }
+            supabaseClient.functions.invoke("ghl-webhook", {
+              body: {
+                event: "purchase",
+                payload: {
+                  email: pending.client_email,
+                  tier: "autism_product",
+                  product: pending.package_name,
+                  amount: pending.order_total ?? null,
+                },
+              },
+            }).catch(() => {});
           }
         }
         return ok(req);
@@ -667,6 +727,34 @@ serve(async (req) => {
           }
         }
 
+        // Rent-an-Agent welcome email — fires when mappedTier is rent_agent.
+        // Transformation paths (reset_30, transformation_90) are handled by
+        // TRANSFORMATION_PROGRAM_MAP above; rent_agent needs its own onboarding.
+        if (mappedTier === "rent_agent") {
+          const rentEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            null;
+          const rentName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+          if (rentEmail) {
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "rent-agent-welcome",
+                recipientEmail: rentEmail,
+                idempotencyKey: `rent-agent-welcome-${session.id}`,
+                templateData: {
+                  name: rentName,
+                  planName: null,
+                  dashboardUrl: `${origin}/dashboard?welcome=rent-agent`,
+                  intakeUrl: `${origin}/agent-intake`,
+                },
+              },
+            }).catch(() => {});
+            log.info("rent_agent_welcome_sent", { ctx: { user_id: userId } });
+          }
+        }
+
         // GHL: fire purchase event for tier upgrades (best-effort, fire-and-forget)
         const purchaseEmail =
           (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
@@ -723,6 +811,7 @@ serve(async (req) => {
               });
             } else {
               log.info("rent_agent_downgraded_to_free", { ctx: { user_id: userId } });
+              await _fireCancellationNotifications(supabaseClient, stripe, subscription, userId, current.tier, log);
             }
           } else {
             log.info("protected_tier_downgrade_skipped", {
@@ -741,16 +830,56 @@ serve(async (req) => {
             });
           } else {
             log.info("user_downgraded_to_free", { ctx: { user_id: userId, from_tier: current?.tier ?? null } });
+            await _fireCancellationNotifications(supabaseClient, stripe, subscription, userId, current?.tier ?? null, log);
           }
         }
       }
     } else if (event.type === "invoice.payment_failed") {
-      // Payment failed — log for monitoring (user still has access until period ends)
       const invoice = event.data.object as Stripe.Invoice;
       const customerId = typeof invoice?.customer === "string" ? invoice.customer : null;
       log.warn("invoice_payment_failed", {
         ctx: { invoice_id: invoice?.id, customer_id: customerId, attempt_count: invoice?.attempt_count },
       });
+      // Notify user so they can update their card before Stripe auto-cancels.
+      if (customerId) {
+        try {
+          const customer = await stripe.customers.retrieve(customerId);
+          const failEmail = !customer.deleted && customer.email ? customer.email : null;
+          if (failEmail) {
+            const nextRetryDate = typeof (invoice as any).next_payment_attempt === "number"
+              ? new Date((invoice as any).next_payment_attempt * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric" })
+              : null;
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "payment-failed",
+                recipientEmail: failEmail,
+                idempotencyKey: `payment-failed-${invoice.id}`,
+                templateData: {
+                  attemptCount: invoice.attempt_count ?? 1,
+                  nextRetryDate,
+                },
+              },
+            }).catch(() => {});
+            supabaseClient.functions.invoke("ghl-webhook", {
+              body: {
+                event: "payment_failed",
+                payload: {
+                  email: failEmail,
+                  customer_id: customerId,
+                  attempt: invoice.attempt_count ?? 1,
+                },
+              },
+            }).catch(() => {});
+            log.info("payment_failed_notifications_sent", {
+              ctx: { customer_id: customerId, attempt: invoice.attempt_count },
+            });
+          }
+        } catch (e) {
+          log.warn("payment_failed_notification_error", {
+            message: e instanceof Error ? e.message : String(e),
+          });
+        }
+      }
     }
 
     return ok(req);
