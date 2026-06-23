@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS, BUILD_STUDIO_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -515,6 +515,67 @@ serve(async (req) => {
           message: e instanceof Error ? e.message : String(e),
           context: { session_id: session.id },
         });
+      }
+
+      // Build Studio branch — one-time quick-win builds + recurring care plans.
+      // Runs before the user_id check so guest checkouts also get an email + GHL event.
+      try {
+        const liForBs = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const bsProductRef = liForBs.data?.[0]?.price?.product;
+        const bsProductId = typeof bsProductRef === "string"
+          ? bsProductRef
+          : (bsProductRef && typeof bsProductRef === "object" && typeof (bsProductRef as { id?: unknown }).id === "string")
+            ? (bsProductRef as { id: string }).id
+            : null;
+
+        if (bsProductId && BUILD_STUDIO_PRODUCTS[bsProductId]) {
+          const bsProductName = BUILD_STUDIO_PRODUCTS[bsProductId];
+          const bsEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const bsName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+          const bsIsSubscription = session.mode === "subscription";
+
+          if (bsEmail) {
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "build-studio-order-confirmation",
+                recipientEmail: bsEmail,
+                idempotencyKey: `bs-confirm-${session.id}`,
+                templateData: {
+                  name: bsName,
+                  productName: bsProductName,
+                  orderType: bsIsSubscription ? "subscription" : "one-time",
+                },
+              },
+            }).catch(() => {});
+          }
+
+          supabaseClient.functions.invoke("ghl-webhook", {
+            body: {
+              event: "purchase",
+              payload: {
+                email: bsEmail || null,
+                tier: "build_studio",
+                product: bsProductName,
+                amount: session.amount_total ?? null,
+              },
+            },
+          }).catch(() => {});
+
+          log.info("build_studio_purchase_processed", {
+            ctx: { product_id: bsProductId, product_name: bsProductName, session_id: session.id, is_subscription: bsIsSubscription },
+          });
+          return ok(req, { received: true, build_studio: true });
+        }
+      } catch (e) {
+        await fail("build_studio", "build_studio_branch_exception", {
+          message: e instanceof Error ? e.message : String(e),
+          context: { session_id: session.id },
+        });
+        // fall through to tier logic
       }
 
       // Get user ID from metadata

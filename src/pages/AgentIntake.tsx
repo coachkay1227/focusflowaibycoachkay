@@ -104,6 +104,22 @@ const AgentIntake = () => {
         });
       }
 
+      // Notify GHL that intake was submitted (requires auth JWT; guests are
+      // already in CRM from the stripe-webhook purchase event).
+      if (user) {
+        supabase.functions.invoke('ghl-webhook', {
+          body: {
+            event: 'agent_intake_submitted',
+            payload: {
+              email,
+              order_id: orderData?.id ?? null,
+              business_name: businessName.trim(),
+              timeline: TIMELINE_OPTIONS.find((t) => t.value === timeline)?.label ?? timeline,
+            },
+          },
+        }).catch(() => {});
+      }
+
       setSubmitted(true);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

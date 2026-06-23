@@ -115,6 +115,24 @@ export const AGENT_BUILD_PRODUCTS = new Set<string>([
   "prod_Ul02esdwy10Ylm", // Claude Project Agent
 ]);
 
+/** Collective AI Build Studio products (quick-win one-time + recurring care plans).
+ *  Keyed by product ID → human-readable name for confirmation emails.
+ *  All of these are in NO_TIER_PRODUCTS (no access-tier change); they need
+ *  a post-purchase confirmation email + GHL event that the tier path never fires. */
+export const BUILD_STUDIO_PRODUCTS: Record<string, string> = {
+  // Tier 1 — one-time builds
+  "prod_UanJnSjXkY95Jg": "Link-in-Bio Hub",
+  "prod_UanN2q8kUDOoMm": "Personal Brand Site",
+  "prod_UanR2vRsQWOP4W": "Conversion Landing Page",
+  "prod_UanRAhfgTRM9Sm": "Lead Magnet Funnel",
+  "prod_UanZLlOaOMmDSm": "AI Chatbot Widget Setup",
+  // Tier 5 — recurring care plans
+  "prod_UanZVfj8EZtZBH": "Site Care",
+  "prod_UaneP9ZBMIguZW": "Collective Membership",
+  "prod_UanfvkxzOOZu5u": "Agent Care",
+  "prod_UanfvQDmGtO89p": "Monthly Build Credits",
+};
+
 /** Welcome-email template + program label for transformation-path purchases.
  *  Used by stripe-webhook to fire the right welcome email after checkout. */
 export const TRANSFORMATION_PROGRAM_MAP: Record<string, { template: "reset-welcome" | "transformation-welcome"; programName: string; durationDays: number }> = {
