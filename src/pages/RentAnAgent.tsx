@@ -193,10 +193,23 @@ const RentAnAgent = () => {
           Subscribe to a dedicated AI agent, or a full squad, tuned to your business by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer.
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <p className="mt-6 text-sm text-primary/80 max-w-lg mx-auto">
+          Not sure what you need? Take the 5-minute agent assessment and we'll recommend exactly what to build and how much it costs.
+        </p>
+
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
+            onClick={() => navigate("/agent-builder")}
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            Build My Agent →
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="border-border"
             onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
             disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
           >

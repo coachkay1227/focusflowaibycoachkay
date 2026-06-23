@@ -414,12 +414,16 @@ serve(async (req) => {
 
     // Fire audit-report-ready email (best-effort, non-blocking).
     if (userEmail) {
+      const reportUrl = `https://coachkayai.life/audit/report/${auditId}`;
+      const firstName = userName
+        ? userName.split(" ")[0]
+        : undefined;
       supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "audit-report-ready",
           recipientEmail: userEmail,
           idempotencyKey: `audit-ready-${auditId}`,
-          templateData: { name: userName, audit_id: auditId },
+          templateData: { name: firstName ?? userName, audit_id: auditId, reportUrl },
         },
       }).catch((e: unknown) => {
         console.warn("[generate-business-audit] audit-report-ready email failed:", e);

@@ -131,8 +131,39 @@ serve(async (req) => {
     if (insert.error) {
       console.error("mac-elaborate insert error:", insert.error);
       // Still return the insight so the user sees their result.
+      // Fire GHL webhook best-effort even on insert error.
+      supabase.functions.invoke("ghl-webhook", {
+        body: {
+          event: "assessment_completed",
+          payload: {
+            email: guestEmail,
+            user_id: userId,
+            assessment_type: "mac-type",
+            bottleneck: primaryBucket,
+            archetype: (result.data as { archetype_name?: string })?.archetype_name ?? null,
+          },
+        },
+      }).catch((e: unknown) => {
+        console.warn("[mac-elaborate] ghl-webhook failed:", e);
+      });
       return json(200, { id: null, code, insight: result.data });
     }
+
+    // Fire GHL webhook after successful assessment (best-effort, non-blocking).
+    supabase.functions.invoke("ghl-webhook", {
+      body: {
+        event: "assessment_completed",
+        payload: {
+          email: guestEmail,
+          user_id: userId,
+          assessment_type: "mac-type",
+          bottleneck: primaryBucket,
+          archetype: (result.data as { archetype_name?: string })?.archetype_name ?? null,
+        },
+      },
+    }).catch((e: unknown) => {
+      console.warn("[mac-elaborate] ghl-webhook failed:", e);
+    });
 
     return json(200, { id: insert.data?.id ?? null, code, insight: result.data });
   } catch (e) {

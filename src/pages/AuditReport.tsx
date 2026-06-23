@@ -30,14 +30,14 @@ type AuditReport = {
 
 function ctaRoute(slug: string): { href: string; external?: boolean; opening_soon?: boolean; label?: string } {
   switch (slug) {
-    // Door 1 — Transformation lane (no /transformations route yet → /store fallback; Phase 4B will add /transformations)
-    case "transform_30_personal": return { href: "/store#30-personal" };
-    case "transform_30_business": return { href: "/store#30-business" };
-    case "transform_30_ai": return { href: "/store#30-ai" };
-    case "transform_90_personal": return { href: "/store#90-personal" };
-    case "transform_90_business": return { href: "/store#90-business" };
-    case "transform_90_ai": return { href: "/store#90-ai" };
-    case "transform_6mo_partnership": return { href: "/store#6-month" };
+    // Door 1 — Transformation lane → /modules
+    case "transform_30_personal": return { href: "/modules" };
+    case "transform_30_business": return { href: "/modules" };
+    case "transform_30_ai": return { href: "/modules" };
+    case "transform_90_personal": return { href: "/modules" };
+    case "transform_90_business": return { href: "/modules" };
+    case "transform_90_ai": return { href: "/modules" };
+    case "transform_6mo_partnership": return { href: "/modules" };
     // Door 2 — Rent-an-Agent
     case "rent_agent_starter": return { href: "/rent-an-agent#starter" };
     case "rent_agent_pro": return { href: "/rent-an-agent#pro" };
