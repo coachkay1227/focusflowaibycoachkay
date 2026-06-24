@@ -74,7 +74,7 @@ const AuditIntakeSubmittedEmail = ({ name, business_name, audit_id }: AuditIntak
               You're receiving this because you submitted your AI Business Audit intake on {SITE_NAME}.
               {audit_id ? ` Audit ID: ${audit_id}.` : ''} Questions? Reply to Hello@coachkayelevates.org.
             </Text>
-            <Text style={signoff}>— Coach Kay</Text>
+            <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
             <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
           </Section>
         </Container>

@@ -41,7 +41,7 @@ const AuditPurchaseConfirmationEmail = ({ name, magic_link }: AuditConfirmProps)
             This magic link is valid for 90 days. Save it — you can come back anytime.
           </Text>
           <Hr style={divider} />
-          <Text style={signoff}>— Coach Kay</Text>
+          <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
         </Section>
       </Container>

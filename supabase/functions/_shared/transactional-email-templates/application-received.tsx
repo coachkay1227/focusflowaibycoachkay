@@ -54,7 +54,7 @@ const ApplicationReceivedEmail = ({ name, programName }: ApplicationReceivedProp
             You're receiving this because you submitted an application on {SITE_NAME}. Questions? Email Hello@coachkayelevates.org.
           </Text>
           <Text style={signoff}>
-            — Coach Kay
+            Where Focus Goes, Energy Flows. 💛 Coach Kay
           </Text>
         </Section>
       </Container>

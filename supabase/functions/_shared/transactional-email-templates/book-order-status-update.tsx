@@ -82,7 +82,7 @@ const BookOrderStatusUpdateEmail = ({ name, packageName, status, orderId, note }
             <Text style={footerText}>
               Questions? Reply to this email or write to Hello@coachkayelevates.org.
             </Text>
-            <Text style={signoff}>— Coach Kay</Text>
+            <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           </Section>
         </Container>
       </Body>

@@ -66,7 +66,7 @@ const NewsletterWelcomeEmail = ({ name }: NewsletterWelcomeProps) => (
           <Text style={footerText}>
             You're receiving this because you subscribed to the {SITE_NAME} newsletter. You can unsubscribe at any time. Questions? Reply to Hello@coachkayelevates.org.
           </Text>
-          <Text style={signoff}>— Coach Kay</Text>
+          <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
         </Section>
       </Container>

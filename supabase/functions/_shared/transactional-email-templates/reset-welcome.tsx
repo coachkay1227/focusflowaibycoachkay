@@ -46,7 +46,7 @@ const ResetWelcomeEmail = ({ name, programName, dashboardUrl, communityUrl }: Re
             Community: <a href={communityUrl ?? 'https://www.skool.com/focusflow-elevation-hub'} style={link}>FocusFlow Elevation Hub</a>
           </Text>
           <Hr style={divider} />
-          <Text style={signoff}>— Coach Kay</Text>
+          <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
         </Section>
       </Container>

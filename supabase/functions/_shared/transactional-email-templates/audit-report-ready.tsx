@@ -82,7 +82,7 @@ const AuditReportReadyEmail = ({ name, audit_id }: AuditReportReadyProps) => {
               You're receiving this because your AI Business Audit on {SITE_NAME} has finished generating.
               {audit_id ? ` Audit ID: ${audit_id}.` : ''} Questions? Reply to Hello@coachkayelevates.org.
             </Text>
-            <Text style={signoff}>— Coach Kay</Text>
+            <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
             <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
           </Section>
         </Container>

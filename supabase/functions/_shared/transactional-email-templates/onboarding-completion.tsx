@@ -75,7 +75,7 @@ const OnboardingCompletionEmail = ({ name, goal }: OnboardingCompletionProps) =>
               You're receiving this because you completed onboarding on {SITE_NAME}. Questions? Reply to Hello@coachkayelevates.org.
             </Text>
             <Text style={signoff}>
-              — Coach Kay
+              Where Focus Goes, Energy Flows. 💛 Coach Kay
             </Text>
           </Section>
         </Container>
