@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { AdminNav } from "@/components/admin/AdminNav";
-import { SEOHead } from "@/components/SEOHead";
+import SEOHead from "@/components/SEOHead";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
