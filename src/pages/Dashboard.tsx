@@ -17,6 +17,7 @@ import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import YourProgramPanel from "@/components/dashboard/YourProgramPanel";
+import CurriculumSection from "@/components/dashboard/CurriculumSection";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useRoles } from "@/hooks/use-roles";
@@ -197,6 +198,13 @@ const Dashboard = () => {
             {!tierLoading && (tier === "reset_30" || tier === "transformation_90") && (
               <AnimatedSection delay={25}>
                 <YourProgramPanel tier={tier} />
+              </AnimatedSection>
+            )}
+
+            {/* F.O.C.U.S. Curriculum — visible to paid tiers */}
+            {!tierLoading && (tier === "reset_30" || tier === "transformation_90" || tier === "premium" || tier === "corporate") && (
+              <AnimatedSection delay={50}>
+                <CurriculumSection />
               </AnimatedSection>
             )}
 

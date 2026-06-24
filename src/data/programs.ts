@@ -2155,6 +2155,13 @@ export function getPublicPrograms(): Program[] {
     .sort((a, b) => a.order - b.order);
 }
 
+/** Backend curriculum modules surfaced to paid (subscriber+) tier users in the dashboard. */
+export function getCurriculumModules(): Program[] {
+  return programs
+    .filter((p) => p.visibility === "backend")
+    .sort((a, b) => a.order - b.order);
+}
+
 /** Public items filtered to a single transformation path. Includes shared items. */
 export function getProgramsByPath(path: PublicPath | "all"): Program[] {
   const pub = getPublicPrograms();
