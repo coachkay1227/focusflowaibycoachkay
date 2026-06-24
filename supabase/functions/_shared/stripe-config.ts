@@ -108,6 +108,12 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
 
 export const PROTECTED_TIERS = ["reset_30", "transformation_90", "cohort", "premium", "rent_agent", "corporate"];
 
+/** Advisory / intensive products that fire a confirmation email + GHL event
+ *  but do NOT change the buyer's access tier. */
+export const ADVISORY_PRODUCTS = new Set<string>([
+  "prod_UaEUk39aCG5Jmh", // AI Strategy Intensive $497
+]);
+
 /** Agent Builder products that create an agent_orders row + fire intake email.
  *  Add-on products (KB, dashboard) ride along with the main agent order. */
 export const AGENT_BUILD_PRODUCTS = new Set<string>([

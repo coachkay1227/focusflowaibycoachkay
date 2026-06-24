@@ -81,7 +81,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { tier, loading: tierLoading } = useAccessLevel();
-  const { subscribed, subscriptionEnd, openPortal } = useSubscription();
+  const { subscribed, subscriptionEnd, openPortal, checkSubscription } = useSubscription();
   const { isAdmin } = useRoles();
   const { toast } = useToast();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
@@ -96,18 +96,21 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
-    // Handle Stripe checkout success redirect
+    // Handle Stripe checkout success redirect — poll rapidly for tier upgrade
     const params = new URLSearchParams(window.location.search);
-    if (params.get("checkout") === "success") {
-      toast({ title: "Welcome aboard!", description: "Your payment was successful. Your access has been upgraded." });
-      window.history.replaceState({}, "", "/dashboard");
-    }
-    if (params.get("welcome") === "program") {
+    if (params.get("checkout") === "success" || params.get("welcome") === "program") {
+      const isWelcome = params.get("welcome") === "program";
       toast({
-        title: "You're in 🎉",
-        description: "Your program is now active. Scroll down to see what's included and your next step.",
+        title: isWelcome ? "You're in!" : "Welcome aboard!",
+        description: isWelcome
+          ? "Your program is now active. Scroll down to see what's included and your next step."
+          : "Payment confirmed — syncing your access now.",
       });
       window.history.replaceState({}, "", "/dashboard");
+      // Poll every 5 s for up to 60 s so the tier badge updates promptly
+      checkSubscription();
+      const fastPoll = setInterval(checkSubscription, 5_000);
+      setTimeout(() => clearInterval(fastPoll), 60_000);
     }
     Promise.all([
       getModuleEnrollments().then(setModuleEnrollments),

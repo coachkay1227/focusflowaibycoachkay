@@ -311,7 +311,17 @@ serve(async (req) => {
       return json(404, { error: "Audit not found" });
     }
 
-    let hasAccess = !!authedUserId && auditRow.user_id === authedUserId;
+    // Admins can regenerate any user's audit
+    let isAdminUser = false;
+    if (authedUserId) {
+      const { data: adminCheck } = await supabase.rpc("has_role", {
+        _user_id: authedUserId,
+        _role: "admin",
+      });
+      isAdminUser = !!adminCheck;
+    }
+
+    let hasAccess = isAdminUser || (!!authedUserId && auditRow.user_id === authedUserId);
     if (!hasAccess && token) {
       const { data: tok } = await supabase
         .from("audit_tokens")

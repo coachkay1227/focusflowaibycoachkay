@@ -52,6 +52,9 @@ const Collective = lazy(() => import("./pages/Collective.tsx"));
 const PauseHub = lazy(() => import("./pages/PauseHub.tsx"));
 const AiToolsDirectory = lazy(() => import("./pages/AiToolsDirectory.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
+const AdminBuildOrders = lazy(() => import("./pages/admin/AdminBuildOrders.tsx"));
+const AdminAudits = lazy(() => import("./pages/admin/AdminAudits.tsx"));
+const AdminEnrollments = lazy(() => import("./pages/admin/AdminEnrollments.tsx"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter.tsx"));
 const AdminScamAlerts = lazy(() => import("./pages/admin/AdminScamAlerts.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
@@ -136,6 +139,9 @@ const App = () => (
             <Route path="/admin/orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/autism-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAutismOrders /></Suspense></ProtectedRoute>} />
             <Route path="/admin/build-inquiries" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBuildInquiries /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/build-orders" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBuildOrders /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/audits" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAudits /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/enrollments" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminEnrollments /></Suspense></ProtectedRoute>} />
             <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNewsletter /></Suspense></ProtectedRoute>} />
             <Route path="/admin/scam-alerts" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminScamAlerts /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />

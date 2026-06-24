@@ -32,16 +32,7 @@ export function useRoles() {
           setLoading(false);
           return;
         }
-        // 2. Check if tier is corporate
-        const { data, error } = await supabase.rpc("get_user_tier", {
-          _user_id: user.id,
-        });
-        if (!error && data === "corporate") {
-          setIsAdmin(true);
-          setLoading(false);
-          return;
-        }
-        // 3. Fallback: known admin email (bootstrap access before DB role is assigned)
+        // 2. Fallback: known admin email (bootstrap access before DB role is assigned)
         const ADMIN_EMAILS = ["hello@coachkayelevates.org", "kizzy.alaoui@gmail.com"];
         setIsAdmin(ADMIN_EMAILS.includes(user.email ?? ""));
       } catch {

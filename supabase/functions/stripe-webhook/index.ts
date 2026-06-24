@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS, BUILD_STUDIO_PRODUCTS } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS, BUILD_STUDIO_PRODUCTS, ADVISORY_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -336,7 +336,7 @@ serve(async (req) => {
                       : "print-ready PDF",
                     storyCount: 1,
                     includesHsaReceipt: true,
-                    downloadUrl: pending.download_url ?? undefined,
+                    downloadUrl: pending.download_url ?? null,
                   },
                 },
               });
@@ -625,6 +625,18 @@ serve(async (req) => {
             },
           }).catch(() => {});
 
+          // Persist order record for admin visibility and future intake
+          supabaseClient.from("build_studio_orders").upsert({
+            stripe_session_id: session.id,
+            user_id: readMetaString(session.metadata, "supabase_user_id") || null,
+            guest_email: bsEmail || null,
+            guest_name: bsName || null,
+            product_id: bsProductId,
+            product_name: bsProductName,
+            price_cents: session.amount_total ?? 0,
+            order_type: bsIsSubscription ? "subscription" : "one_time",
+          }, { onConflict: "stripe_session_id" }).then(() => {}).catch(() => {});
+
           log.info("build_studio_purchase_processed", {
             ctx: { product_id: bsProductId, product_name: bsProductName, session_id: session.id, is_subscription: bsIsSubscription },
           });
@@ -671,7 +683,44 @@ serve(async (req) => {
 
       const mappedTier = PRODUCT_TIER_MAP[productId];
       if (!mappedTier) {
-        // One-time non-tier products (AI Business Audit, Strategy Intensive)
+        // Advisory / intensive products — send confirmation email + GHL, no tier change
+        if (ADVISORY_PRODUCTS.has(productId)) {
+          const advEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const advName =
+            (typeof session.customer_details?.name === "string" && session.customer_details.name) || null;
+          if (advEmail) {
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "advisory-purchase-confirmation",
+                recipientEmail: advEmail,
+                idempotencyKey: `advisory-confirm-${session.id}`,
+                templateData: {
+                  name: advName,
+                  productName: "AI Strategy Intensive",
+                  bookingUrl: "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp",
+                },
+              },
+            }).catch(() => {});
+          }
+          supabaseClient.functions.invoke("ghl-webhook", {
+            body: {
+              event: "advisory_intake_purchased",
+              payload: {
+                email: advEmail || null,
+                product: "AI Strategy Intensive",
+                amount: session.amount_total ?? null,
+                user_id: userId || null,
+              },
+            },
+          }).catch(() => {});
+          log.info("advisory_purchase_processed", { ctx: { product_id: productId, session_id: session.id } });
+          return ok(req, { received: true, advisory: true });
+        }
+
+        // One-time non-tier products (AI Business Audit, Build Studio)
         // don't change the buyer's access level. Acknowledge silently.
         if (NO_TIER_PRODUCTS.has(productId)) {
           log.info("one_time_product_no_tier_change", { ctx: { product_id: productId, user_id: userId } });

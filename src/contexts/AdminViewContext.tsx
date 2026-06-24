@@ -12,20 +12,32 @@ const AdminViewContext = createContext<AdminViewContextType>({
 });
 
 export function AdminViewProvider({ children }: { children: ReactNode }) {
+  // sessionStorage so the toggle resets on tab/browser close
   const [userView, setUserView] = useState(() => {
-    try { return localStorage.getItem("admin-user-view") === "true"; } catch { return false; }
+    try { return sessionStorage.getItem("admin-user-view") === "true"; } catch { return false; }
   });
 
   const toggleView = () => {
     setUserView((prev) => {
       const next = !prev;
-      try { localStorage.setItem("admin-user-view", String(next)); } catch {}
+      try { sessionStorage.setItem("admin-user-view", String(next)); } catch {}
       return next;
     });
   };
 
   return (
     <AdminViewContext.Provider value={{ userView, toggleView }}>
+      {userView && (
+        <div className="fixed top-0 inset-x-0 z-[9999] flex items-center justify-between gap-4 bg-amber-500 text-amber-950 px-4 py-1.5 text-xs font-medium">
+          <span>USER VIEW ACTIVE — access gates are visible as a regular user would see them</span>
+          <button
+            onClick={toggleView}
+            className="underline underline-offset-2 hover:no-underline shrink-0"
+          >
+            Exit User View
+          </button>
+        </div>
+      )}
       {children}
     </AdminViewContext.Provider>
   );

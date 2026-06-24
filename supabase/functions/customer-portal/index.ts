@@ -35,12 +35,34 @@ serve(async (req) => {
     logStep("User authenticated", { email: user.email });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (customers.data.length === 0) {
+
+    // Primary: look up by auth email
+    let stripeCustomer: { id: string } | null = null;
+    const byEmail = await stripe.customers.list({ email: user.email, limit: 1 });
+    if (byEmail.data.length > 0) {
+      stripeCustomer = byEmail.data[0];
+      logStep("Found customer by email", { customerId: stripeCustomer.id });
+    } else {
+      // Fallback: search by supabase_user_id metadata (set on all new checkouts)
+      try {
+        const byMeta = await stripe.customers.search({
+          query: `metadata['supabase_user_id']:'${user.id}'`,
+          limit: 1,
+        });
+        if (byMeta.data.length > 0) {
+          stripeCustomer = byMeta.data[0];
+          logStep("Found customer by metadata fallback", { customerId: stripeCustomer.id });
+        }
+      } catch (_e) {
+        // search API not available — fall through to error
+      }
+    }
+
+    if (!stripeCustomer) {
       throw new Error("No Stripe customer found for this user");
     }
 
-    const customerId = customers.data[0].id;
+    const customerId = stripeCustomer.id;
     logStep("Found customer", { customerId });
 
     const origin = req.headers.get("origin") || "https://coachkayai.life";
