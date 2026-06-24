@@ -14,7 +14,7 @@ interface WelcomeProps {
 const WelcomeToFocusflowEmail = ({ name }: WelcomeProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Your Clarity Journey Starts Now — {SITE_NAME}</Preview>
+    <Preview>Your Clarity Journey Starts Now. {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         {/* Header */}

@@ -38,7 +38,7 @@ const AuditPurchaseConfirmationEmail = ({ name, magic_link }: AuditConfirmProps)
             </Button>
           </Section>
           <Text style={smallText}>
-            This magic link is valid for 90 days. Save it — you can come back anytime.
+            This magic link is valid for 90 days. Save it. you can come back anytime.
           </Text>
           <Hr style={divider} />
           <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>

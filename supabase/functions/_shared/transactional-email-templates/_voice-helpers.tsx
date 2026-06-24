@@ -51,7 +51,7 @@ const arrowCtaStyle = {
   display: 'inline-block' as const,
 }
 
-/** Arrow CTA — never "Click here" / "Learn more". */
+/** Arrow CTA. never "Click here" / "Learn more". */
 export const ArrowCTA = ({ href, label }: { href: string; label: string }) => (
   <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
     <Button style={arrowCtaStyle} href={href}>{`→ ${label}`}</Button>

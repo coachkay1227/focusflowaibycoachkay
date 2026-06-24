@@ -19,7 +19,7 @@ const AuditIntakeSubmittedEmail = ({ name, business_name, audit_id }: AuditIntak
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your AI Business Audit is being built — expect it within 24 hours</Preview>
+      <Preview>Your AI Business Audit is being built. expect it within 24 hours</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={headerSection}>
@@ -43,7 +43,7 @@ const AuditIntakeSubmittedEmail = ({ name, business_name, audit_id }: AuditIntak
             </Text>
 
             <Text style={text}>
-              Coach Kay's AI is analyzing your 17-field intake across 12 vectors — your offers, bottlenecks, tools, revenue stage, and your unique market position. Audits typically complete in under 2 minutes, though complex reports may take up to 24 hours.
+              Coach Kay's AI is analyzing your 17-field intake across 12 vectors. your offers, bottlenecks, tools, revenue stage, and your unique market position. Audits typically complete in under 2 minutes, though complex reports may take up to 24 hours.
             </Text>
 
             <Section style={expectationBox}>
@@ -85,7 +85,7 @@ const AuditIntakeSubmittedEmail = ({ name, business_name, audit_id }: AuditIntak
 
 export const template = {
   component: AuditIntakeSubmittedEmail,
-  subject: "Your AI Business Audit is being built — expect it within 24 hours",
+  subject: "Your AI Business Audit is being built. expect it within 24 hours",
   displayName: 'Audit Intake Submitted',
   previewData: {
     name: 'Jane',

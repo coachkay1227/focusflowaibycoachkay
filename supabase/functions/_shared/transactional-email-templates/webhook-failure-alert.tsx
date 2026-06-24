@@ -14,7 +14,7 @@ interface Props {
 const WebhookFailureAlertEmail = ({ source, windowMinutes, failureCount, threshold }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Webhook failure threshold exceeded — {source ?? 'unknown source'}</Preview>
+    <Preview>Webhook failure threshold exceeded. {source ?? 'unknown source'}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={card}>
@@ -22,7 +22,7 @@ const WebhookFailureAlertEmail = ({ source, windowMinutes, failureCount, thresho
           <Text style={text}>
             The <strong>{source ?? 'webhook'}</strong> endpoint has recorded{' '}
             <strong>{failureCount ?? '?'}</strong> failures in the last{' '}
-            <strong>{windowMinutes ?? '?'} minutes</strong> — at or above the{' '}
+            <strong>{windowMinutes ?? '?'} minutes</strong>. at or above the{' '}
             <strong>{threshold ?? '?'}</strong>-failure alert threshold.
           </Text>
           <Text style={text}>

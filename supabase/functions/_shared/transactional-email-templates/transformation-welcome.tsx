@@ -17,7 +17,7 @@ const BOOKING_URL = 'https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI
 const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUrl, communityUrl }: TransformationWelcomeProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>You're in — let's book your first 1:1</Preview>
+    <Preview>You're in. let's book your first 1:1</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={headerSection}>
@@ -63,7 +63,7 @@ const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUr
 
 export const template = {
   component: TransformationWelcomeEmail,
-  subject: (d: { programName?: string }) => `You're in — ${d.programName ?? 'your 90-Day Transformation'} starts now`,
+  subject: (d: { programName?: string }) => `You're in. ${d.programName ?? 'your 90-Day Transformation'} starts now`,
   displayName: '90-Day Transformation Welcome',
   previewData: {
     name: 'Jane',

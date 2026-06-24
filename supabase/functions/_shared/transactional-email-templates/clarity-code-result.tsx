@@ -86,7 +86,7 @@ export const template = {
   displayName: 'Clarity Code Result',
   previewData: {
     name: 'Jane',
-    truth: 'You already know the answer — what you\'re looking for is permission to act on it.',
+    truth: 'You already know the answer. what you\'re looking for is permission to act on it.',
     pattern: 'You keep waiting for certainty before you move. Certainty arrives after the move, not before.',
     action: 'Pick the one decision you\'ve been circling and make it before the end of today. Imperfect is fine.',
   },

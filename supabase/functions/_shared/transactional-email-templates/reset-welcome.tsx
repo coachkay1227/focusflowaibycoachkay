@@ -14,7 +14,7 @@ interface ResetWelcomeProps {
 const ResetWelcomeEmail = ({ name, programName, dashboardUrl, communityUrl }: ResetWelcomeProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>You're in — your 30-day reset starts now</Preview>
+    <Preview>You're in. your 30-day reset starts now</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={headerSection}>
@@ -34,7 +34,7 @@ const ResetWelcomeEmail = ({ name, programName, dashboardUrl, communityUrl }: Re
           <Text style={text}>Here's how to start:</Text>
           <Text style={text}>
             1. Open your dashboard and find the <strong>Your Program</strong> panel.<br />
-            2. Complete today's first session — it sets your baseline.<br />
+            2. Complete today's first session. it sets your baseline.<br />
             3. Join the community for accountability and live answers from Coach Kay.
           </Text>
           <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
@@ -56,7 +56,7 @@ const ResetWelcomeEmail = ({ name, programName, dashboardUrl, communityUrl }: Re
 
 export const template = {
   component: ResetWelcomeEmail,
-  subject: (d: { programName?: string }) => `You're in — ${d.programName ?? 'your 30-Day Reset'} starts now`,
+  subject: (d: { programName?: string }) => `You're in. ${d.programName ?? 'your 30-Day Reset'} starts now`,
   displayName: '30-Day Reset Welcome',
   previewData: {
     name: 'Jane',

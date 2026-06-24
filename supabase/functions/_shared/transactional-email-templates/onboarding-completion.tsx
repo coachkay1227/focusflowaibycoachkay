@@ -25,7 +25,7 @@ const OnboardingCompletionEmail = ({ name, goal }: OnboardingCompletionProps) =>
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your path is set — let's move — {SITE_NAME}</Preview>
+      <Preview>Your path is set. let's move. {SITE_NAME}</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={headerSection}>
@@ -48,7 +48,7 @@ const OnboardingCompletionEmail = ({ name, goal }: OnboardingCompletionProps) =>
             )}
 
             <Text style={text}>
-              You've completed your FocusFlow setup. Coach Kay's platform is now personalized to your journey — your modules, your coaching style, your starting point.
+              You've completed your FocusFlow setup. Coach Kay's platform is now personalized to your journey. your modules, your coaching style, your starting point.
             </Text>
             <Text style={text}>
               Here's your next move:
@@ -86,7 +86,7 @@ const OnboardingCompletionEmail = ({ name, goal }: OnboardingCompletionProps) =>
 
 export const template = {
   component: OnboardingCompletionEmail,
-  subject: "Your FocusFlow path is set — here's what's next",
+  subject: "Your FocusFlow path is set. here's what's next",
   displayName: 'Onboarding completion',
   previewData: { name: 'Jane', goal: 'clarity' },
 } satisfies TemplateEntry

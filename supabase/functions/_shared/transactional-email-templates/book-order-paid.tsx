@@ -16,7 +16,7 @@ interface Props {
 const BookOrderPaidEmail = ({ name, packageName, orderTotal, orderId }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Your book order is confirmed — {SITE_NAME}</Preview>
+    <Preview>Your book order is confirmed. {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={headerSection}>
@@ -37,12 +37,12 @@ const BookOrderPaidEmail = ({ name, packageName, orderTotal, orderId }: Props) =
           <Section style={card}>
             <Row>
               <Column style={cardLabel}>Package</Column>
-              <Column style={cardValue}>{packageName ?? '—'}</Column>
+              <Column style={cardValue}>{packageName ?? '. '}</Column>
             </Row>
             <Hr style={cardDivider} />
             <Row>
               <Column style={cardLabel}>Total Paid</Column>
-              <Column style={{ ...cardValue, color: '#c9a227', fontWeight: 600 }}>{orderTotal ?? '—'}</Column>
+              <Column style={{ ...cardValue, color: '#c9a227', fontWeight: 600 }}>{orderTotal ?? '. '}</Column>
             </Row>
             {orderId && (
               <>
@@ -76,10 +76,10 @@ const BookOrderPaidEmail = ({ name, packageName, orderTotal, orderId }: Props) =
 export const template = {
   component: BookOrderPaidEmail,
   subject: 'Your book order is confirmed',
-  displayName: 'Book order — paid',
+  displayName: 'Book order. paid',
   previewData: {
     name: 'Jane',
-    packageName: "Children's Book — Signature",
+    packageName: "Children's Book. Signature",
     orderTotal: '$1,200.00',
     orderId: 'abc12345-...',
   },

@@ -17,7 +17,7 @@ interface ApplicationReceivedProps {
 const ApplicationReceivedEmail = ({ name, programName }: ApplicationReceivedProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>We Got Your Application — {SITE_NAME}</Preview>
+    <Preview>We Got Your Application. {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         {/* Header */}
@@ -66,7 +66,7 @@ export const template = {
   component: ApplicationReceivedEmail,
   subject: (data: { programName?: string }) =>
     data?.programName
-      ? `We Got Your Application — ${data.programName}`
+      ? `We Got Your Application. ${data.programName}`
       : 'We Got Your Application',
   displayName: 'Application received',
   previewData: { name: 'Jane', programName: 'F.O.C.U.S. Reset' },
