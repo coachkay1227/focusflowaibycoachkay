@@ -2,6 +2,9 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
+
+const SYSTEM_PROMPT = composeSystemPrompt("weekly-insights");
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -53,9 +56,7 @@ serve(async (req) => {
       return `Challenge: ${c.challenge_type} | Day ${c.current_day} | Entries: ${entryCount}`;
     }).join("\n");
 
-    const prompt = `You are Coach Kay generating a personalized weekly clarity recap for a coaching client.
-
-User context:
+    const prompt = `User context:
 - Primary goal: ${prefs?.primary_goal || "Not specified"}
 - Coaching style preference: ${prefs?.coaching_style || "Not specified"}
 - Sessions this week: ${sessions.length}
@@ -64,18 +65,7 @@ Session details:
 ${sessionSummaries || "No sessions this week"}
 
 Challenge progress:
-${challengeSummaries || "No active challenges"}
-
-Generate a warm, insightful weekly recap with these sections:
-1. **This Week's Theme** — A one-line theme for what emerged this week (or encouragement if no sessions)
-2. **Patterns Noticed** — 2-3 bullet points identifying recurring themes or emotional patterns across sessions
-3. **Growth Signal** — One specific thing that shows progress or readiness for growth
-4. **Next Week's Focus** — One clear intention or focus area for the coming week
-5. **Coach Kay's Note** — A brief, personal closing message (2-3 sentences)
-
-Keep it emotionally intelligent, warm but direct. No generic advice. Be specific to their data.
-If they had no sessions, be encouraging without being pushy — acknowledge life happens and gently invite them back.
-Format with markdown.`;
+${challengeSummaries || "No active challenges"}`;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -89,7 +79,7 @@ Format with markdown.`;
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: "You are Coach Kay — emotionally intelligent, pattern-aware, purpose-driven. Generate personalized weekly coaching recaps." },
+          { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt },
         ],
       }),
