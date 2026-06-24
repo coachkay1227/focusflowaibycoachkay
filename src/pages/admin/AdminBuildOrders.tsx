@@ -7,12 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useRoles } from "@/hooks/use-roles";
 import { useNavigate } from "react-router-dom";
 
-interface BuildOrder {
+interface OneTimeOrder {
   id: string;
   created_at: string;
   guest_email: string | null;
   guest_name: string | null;
   product_name: string;
+  product_type: string;
   price_cents: number;
   order_type: string;
   status: string;
@@ -29,31 +30,39 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: "bg-red-500/15 text-red-400 border-red-500/30",
 };
 
+const TYPE_LABELS: Record<string, string> = {
+  build_studio: "Build Studio",
+  advisory: "Advisory",
+};
+
 export default function AdminBuildOrders() {
   const { isAdmin, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [orders, setOrders] = useState<BuildOrder[]>([]);
+  const [orders, setOrders] = useState<OneTimeOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "build_studio" | "advisory">("all");
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("build_studio_orders" as never)
-      .select("id, created_at, guest_email, guest_name, product_name, price_cents, order_type, status, user_id")
+    let query = supabase
+      .from("one_time_orders" as never)
+      .select("id, created_at, guest_email, guest_name, product_name, product_type, price_cents, order_type, status, user_id")
       .order("created_at", { ascending: false })
       .limit(500);
+    if (filter !== "all") query = (query as ReturnType<typeof supabase.from>).eq("product_type", filter);
+    const { data, error } = await query;
     if (error) toast({ title: "Failed to load", description: error.message, variant: "destructive" });
-    else setOrders((data ?? []) as BuildOrder[]);
+    else setOrders((data ?? []) as OneTimeOrder[]);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { load(); }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateStatus = async (id: string, status: string) => {
     setUpdatingId(id);
-    const { error } = await (supabase.from("build_studio_orders" as never) as ReturnType<typeof supabase.from>)
+    const { error } = await (supabase.from("one_time_orders" as never) as ReturnType<typeof supabase.from>)
       .update({ status })
       .eq("id", id);
     setUpdatingId(null);
@@ -68,14 +77,31 @@ export default function AdminBuildOrders() {
     <div className="min-h-dvh bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <AdminNav />
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="font-heading text-3xl text-foreground">Build Studio Orders</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="font-heading text-3xl text-foreground">One-Time Orders</h1>
           <Button onClick={load} variant="outline" className="border-primary/40 text-primary hover:bg-primary/10">Refresh</Button>
         </div>
+
+        <div className="flex gap-2 mb-6">
+          {(["all", "build_studio", "advisory"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                filter === f
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+              }`}
+            >
+              {f === "all" ? "All" : TYPE_LABELS[f]}
+            </button>
+          ))}
+        </div>
+
         {loading ? (
           <p className="text-muted-foreground">Loading…</p>
         ) : orders.length === 0 ? (
-          <p className="text-muted-foreground">No Build Studio orders yet.</p>
+          <p className="text-muted-foreground">No orders found.</p>
         ) : (
           <div className="rounded-lg border border-border/60 bg-card/30 overflow-hidden">
             <div className="overflow-x-auto">
@@ -85,10 +111,10 @@ export default function AdminBuildOrders() {
                     <th className="text-left px-4 py-3">When</th>
                     <th className="text-left px-4 py-3">Buyer</th>
                     <th className="text-left px-4 py-3">Product</th>
+                    <th className="text-left px-4 py-3">Category</th>
                     <th className="text-left px-4 py-3">Amount</th>
-                    <th className="text-left px-4 py-3">Type</th>
                     <th className="text-left px-4 py-3">Status</th>
-                    <th className="text-left px-4 py-3">Actions</th>
+                    <th className="text-left px-4 py-3">Update</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/30">
@@ -102,8 +128,15 @@ export default function AdminBuildOrders() {
                         <p className="text-muted-foreground text-xs">{o.guest_email || "signed-in user"}</p>
                       </td>
                       <td className="px-4 py-3">{o.product_name}</td>
+                      <td className="px-4 py-3">
+                        <Badge className={o.product_type === "advisory"
+                          ? "bg-purple-500/15 text-purple-400 border-purple-500/30"
+                          : "bg-sky-500/15 text-sky-400 border-sky-500/30"
+                        }>
+                          {TYPE_LABELS[o.product_type] ?? o.product_type}
+                        </Badge>
+                      </td>
                       <td className="px-4 py-3 whitespace-nowrap">{formatUSD(o.price_cents)}</td>
-                      <td className="px-4 py-3 capitalize">{o.order_type.replace("_", " ")}</td>
                       <td className="px-4 py-3">
                         <Badge className={STATUS_COLORS[o.status] ?? ""}>{o.status}</Badge>
                       </td>

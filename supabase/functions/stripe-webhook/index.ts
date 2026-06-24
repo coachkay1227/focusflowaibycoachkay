@@ -626,7 +626,7 @@ serve(async (req) => {
           }).catch(() => {});
 
           // Persist order record for admin visibility and future intake
-          supabaseClient.from("build_studio_orders").upsert({
+          supabaseClient.from("one_time_orders").upsert({
             stripe_session_id: session.id,
             user_id: readMetaString(session.metadata, "supabase_user_id") || null,
             guest_email: bsEmail || null,
@@ -634,6 +634,7 @@ serve(async (req) => {
             product_id: bsProductId,
             product_name: bsProductName,
             price_cents: session.amount_total ?? 0,
+            product_type: "build_studio",
             order_type: bsIsSubscription ? "subscription" : "one_time",
           }, { onConflict: "stripe_session_id" }).then(() => {}).catch(() => {});
 
@@ -716,6 +717,18 @@ serve(async (req) => {
               },
             },
           }).catch(() => {});
+          // Persist advisory order for admin visibility
+          supabaseClient.from("one_time_orders").upsert({
+            stripe_session_id: session.id,
+            user_id: userId || null,
+            guest_email: advEmail || null,
+            guest_name: advName || null,
+            product_id: productId,
+            product_name: "AI Strategy Intensive",
+            price_cents: session.amount_total ?? 0,
+            product_type: "advisory",
+            order_type: "one_time",
+          }, { onConflict: "stripe_session_id" }).then(() => {}).catch(() => {});
           log.info("advisory_purchase_processed", { ctx: { product_id: productId, session_id: session.id } });
           return ok(req, { received: true, advisory: true });
         }
