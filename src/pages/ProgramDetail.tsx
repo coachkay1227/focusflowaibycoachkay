@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useRoles } from "@/hooks/use-roles";
 import { getProgramBySlug, FOCUS_PILLARS, getRecommendedPrograms, getReplacementOffer } from "@/data/programs";
 import { enrollInModule } from "@/lib/enrollment-store";
 import { STRIPE_TIERS } from "@/lib/stripe-tiers";
@@ -23,6 +24,7 @@ const ProgramDetail = () => {
   const { user } = useAuth();
   const { tier } = useAccessLevel();
   const { startCheckout } = useSubscription();
+  const { isAdmin } = useRoles();
   const [enrolling, setEnrolling] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
 
@@ -89,7 +91,7 @@ const ProgramDetail = () => {
   }
 
   const pillar = FOCUS_PILLARS[program.pillar];
-  const hasAccess = program.accessTier === "free" || (user && TIER_RANK[tier] >= TIER_RANK[program.accessTier]);
+  const hasAccess = isAdmin || program.accessTier === "free" || (user && TIER_RANK[tier] >= TIER_RANK[program.accessTier]);
   const canStart = program.type === "assessment";
   const recommended = getRecommendedPrograms(program.id, 3);
   const isBackend = program.visibility === "backend";

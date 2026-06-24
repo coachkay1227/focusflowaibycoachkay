@@ -105,6 +105,15 @@ serve(async (req) => {
         user_email: emailToUse || "guest",
         supabase_user_id: userId || "",
       },
+      ...(mode === "subscription" && {
+        subscription_data: {
+          metadata: {
+            price_id: priceId,
+            user_email: emailToUse || "guest",
+            supabase_user_id: userId || "",
+          },
+        },
+      }),
       allow_promotion_codes: true,
     });
 
