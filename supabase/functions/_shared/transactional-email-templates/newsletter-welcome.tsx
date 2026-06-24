@@ -14,7 +14,7 @@ interface NewsletterWelcomeProps {
 const NewsletterWelcomeEmail = ({ name }: NewsletterWelcomeProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>You're in — welcome to the FocusFlow community</Preview>
+    <Preview>You're in. welcome to the FocusFlow community</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={headerSection}>
@@ -32,7 +32,7 @@ const NewsletterWelcomeEmail = ({ name }: NewsletterWelcomeProps) => (
           </Heading>
 
           <Text style={text}>
-            You're now part of the FocusFlow community — a space for founders, coaches, and mission-driven operators who are serious about using AI to build smarter, not harder.
+            You're now part of the FocusFlow community. a space for founders, coaches, and mission-driven operators who are serious about using AI to build smarter, not harder.
           </Text>
 
           <Section style={contentBox}>
@@ -41,18 +41,18 @@ const NewsletterWelcomeEmail = ({ name }: NewsletterWelcomeProps) => (
               <strong style={{ color: '#c9a227' }}>→</strong> AI insights and tool breakdowns you can apply immediately
             </Text>
             <Text style={listItem}>
-              <strong style={{ color: '#c9a227' }}>→</strong> Coaching tips from Coach Kay — direct, no-fluff, peer-to-peer
+              <strong style={{ color: '#c9a227' }}>→</strong> Coaching tips from Coach Kay. direct, no-fluff, peer-to-peer
             </Text>
             <Text style={listItem}>
               <strong style={{ color: '#c9a227' }}>→</strong> Exclusive offers and early access to new programs
             </Text>
             <Text style={listItem}>
-              <strong style={{ color: '#c9a227' }}>→</strong> Stories from the community — real results, real operators
+              <strong style={{ color: '#c9a227' }}>→</strong> Stories from the community. real results, real operators
             </Text>
           </Section>
 
           <Text style={text}>
-            Coach Kay's mantra: <em style={{ color: '#c9a227' }}>Where Focus Goes, Energy Flows.</em> Every email we send is built around that — actionable, intentional, and worth your time.
+            Coach Kay's mantra: <em style={{ color: '#c9a227' }}>Where Focus Goes, Energy Flows.</em> Every email we send is built around that. actionable, intentional, and worth your time.
           </Text>
 
           <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
@@ -66,7 +66,7 @@ const NewsletterWelcomeEmail = ({ name }: NewsletterWelcomeProps) => (
           <Text style={footerText}>
             You're receiving this because you subscribed to the {SITE_NAME} newsletter. You can unsubscribe at any time. Questions? Reply to Hello@coachkayelevates.org.
           </Text>
-          <Text style={signoff}>— Coach Kay</Text>
+          <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
         </Section>
       </Container>
@@ -76,7 +76,7 @@ const NewsletterWelcomeEmail = ({ name }: NewsletterWelcomeProps) => (
 
 export const template = {
   component: NewsletterWelcomeEmail,
-  subject: "You're in — welcome to the FocusFlow community",
+  subject: "You're in. welcome to the FocusFlow community",
   displayName: 'Newsletter Welcome',
   previewData: { name: 'Jane' },
 } satisfies TemplateEntry

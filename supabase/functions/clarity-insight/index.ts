@@ -3,18 +3,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay — an emotionally intelligent, pattern-aware, purpose-driven life coach. You are warm but direct. You see people deeply and speak truth with care.
-
-You are generating a Clarity Report for someone who just completed a reflection session. Based on their answers, provide three sections:
-
-1. THE TRUTH — What's beneath the surface. The honest insight they need to hear. Be specific to their answers. 2-3 sentences.
-2. THE PATTERN — The recurring behavior, belief, or avoidance pattern you detect. Connect it to their specific situation. 2-3 sentences.
-3. THE ACTION — One clear, specific, actionable step. Not a to-do list. One powerful move they can make today or this week. 2-3 sentences.
-
-Your tone: warm, direct, emotionally intelligent, never generic. Speak as if you're sitting across from them.
-
-Respond using the suggest_insight tool.`;
+const SYSTEM_PROMPT = composeSystemPrompt("clarity-report");
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });

@@ -20,7 +20,7 @@ const AuditReportReadyEmail = ({ name, audit_id }: AuditReportReadyProps) => {
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your AI Business Audit is ready — here's what we found</Preview>
+      <Preview>Your AI Business Audit is ready. here's what we found</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={headerSection}>
@@ -38,31 +38,31 @@ const AuditReportReadyEmail = ({ name, audit_id }: AuditReportReadyProps) => {
             </Heading>
 
             <Text style={text}>
-              Coach Kay's AI has finished analyzing your business across 12 vectors. Your personalized AI Business Audit is complete — and it's packed with specific, actionable insights built from everything you shared.
+              Coach Kay's AI has finished analyzing your business across 12 vectors. Your personalized AI Business Audit is complete. and it's packed with specific, actionable insights built from everything you shared.
             </Text>
 
             <Section style={highlightBox}>
               <Text style={highlightTitle}>Inside your report</Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> Executive Snapshot — where you are right now
+                <strong style={{ color: '#c9a227' }}>→</strong> Executive Snapshot. where you are right now
               </Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> Where You're Leaking — the hidden revenue and time drains
+                <strong style={{ color: '#c9a227' }}>→</strong> Where You're Leaking. the hidden revenue and time drains
               </Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> F.O.C.U.S. Diagnostic — scored across all 5 pillars
+                <strong style={{ color: '#c9a227' }}>→</strong> F.O.C.U.S. Diagnostic. scored across all 5 pillars
               </Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> Custom 7-Day Action Plan — specific to your stage
+                <strong style={{ color: '#c9a227' }}>→</strong> Custom 7-Day Action Plan. specific to your stage
               </Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> Tool Stack Recommendations — what to keep, swap, add
+                <strong style={{ color: '#c9a227' }}>→</strong> Tool Stack Recommendations. what to keep, swap, add
               </Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> Custom AI Prompts — written for your exact business
+                <strong style={{ color: '#c9a227' }}>→</strong> Custom AI Prompts. written for your exact business
               </Text>
               <Text style={listItem}>
-                <strong style={{ color: '#c9a227' }}>→</strong> Your One Best Next Move — from the full Coach Kay catalog
+                <strong style={{ color: '#c9a227' }}>→</strong> Your One Best Next Move. from the full Coach Kay catalog
               </Text>
             </Section>
 
@@ -73,7 +73,7 @@ const AuditReportReadyEmail = ({ name, audit_id }: AuditReportReadyProps) => {
             </Section>
 
             <Text style={nudgeText}>
-              Your report is private and permanently linked to your account. Bookmark it — you'll want to come back to the 7-day plan.
+              Your report is private and permanently linked to your account. Bookmark it. you'll want to come back to the 7-day plan.
             </Text>
 
             <Hr style={divider} />
@@ -82,7 +82,7 @@ const AuditReportReadyEmail = ({ name, audit_id }: AuditReportReadyProps) => {
               You're receiving this because your AI Business Audit on {SITE_NAME} has finished generating.
               {audit_id ? ` Audit ID: ${audit_id}.` : ''} Questions? Reply to Hello@coachkayelevates.org.
             </Text>
-            <Text style={signoff}>— Coach Kay</Text>
+            <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
             <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
           </Section>
         </Container>
@@ -93,7 +93,7 @@ const AuditReportReadyEmail = ({ name, audit_id }: AuditReportReadyProps) => {
 
 export const template = {
   component: AuditReportReadyEmail,
-  subject: "Your AI Business Audit is ready — here's what we found",
+  subject: "Your AI Business Audit is ready. here's what we found",
   displayName: 'Audit Report Ready',
   previewData: {
     name: 'Jane',

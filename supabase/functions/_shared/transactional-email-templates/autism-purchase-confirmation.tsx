@@ -44,7 +44,7 @@ const AutismPurchaseConfirmationEmail = ({
       <Preview>
         {isReady
           ? `Your ${packageName ?? 'social story'} is ready to download`
-          : `Order received — your ${packageName ?? 'social story package'} is in production`}
+          : `Order received. your ${packageName ?? 'social story package'} is in production`}
       </Preview>
       <Body style={main}>
         <Container style={container}>
@@ -73,7 +73,7 @@ const AutismPurchaseConfirmationEmail = ({
 
             <Section style={receiptBox}>
               <Text style={summaryLabel}>Order Summary</Text>
-              <Text style={receiptLine}><strong>Bundle:</strong> {packageName ?? '—'}</Text>
+              <Text style={receiptLine}><strong>Bundle:</strong> {packageName ?? '. '}</Text>
               {orderTotal ? <Text style={receiptLine}><strong>Amount paid:</strong> {orderTotal}</Text> : null}
               {orderId ? <Text style={receiptLineSmall}><strong>Order #:</strong> {orderId}</Text> : null}
               <Text style={receiptLine}>
@@ -89,7 +89,7 @@ const AutismPurchaseConfirmationEmail = ({
             <Text style={bullet}>
               ✦ {count === 1 ? '1 personalized social story' : `${count} personalized social stories`}, tailored to {child}
             </Text>
-            <Text style={bullet}>✦ Delivered as {method} — ready to print or share digitally</Text>
+            <Text style={bullet}>✦ Delivered as {method}. ready to print or share digitally</Text>
             {includesHsaReceipt !== false && (
               <>
                 <Text style={bullet}>✦ Itemized HSA/FSA receipt</Text>
@@ -117,7 +117,7 @@ const AutismPurchaseConfirmationEmail = ({
                 💡 HSA/FSA reimbursement tip: Your itemized receipt and Letter of
                 Medical Necessity template are included with your order. Keep these
                 on file for insurance or flex spending submissions. We don't
-                guarantee reimbursement — always confirm eligibility with your plan
+                guarantee reimbursement. always confirm eligibility with your plan
                 administrator.
               </Text>
             </Section>
@@ -137,7 +137,7 @@ const AutismPurchaseConfirmationEmail = ({
             </Text>
 
             <Hr style={divider} />
-            <Text style={signoff}>— Coach Kay</Text>
+            <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
             <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
           </Section>
         </Container>
@@ -152,7 +152,7 @@ export const template = {
     data?.downloadUrl
       ? `Your ${data?.packageName ?? 'social story'} is ready to download`
       : data?.packageName
-        ? `Order confirmed — ${data.packageName}`
+        ? `Order confirmed. ${data.packageName}`
         : 'Your Autism Studio order is confirmed',
   displayName: 'Autism Purchase Confirmation',
   previewData: {
