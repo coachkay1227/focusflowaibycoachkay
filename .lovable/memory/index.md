@@ -33,3 +33,5 @@
 - [Edge Function Dev](mem://tech/edge-function-development) — Deno ESM import requirements
 - [Email Strategy](mem://features/email-strategy) — Hybrid Lovable transactional + GHL marketing/drip setup
 - [Pause Hub](mem://features/pause-hub) — /pause-hub is the scam alert hub (Supabase Realtime), NOT a breathwork page
+
+- [Voice Bible](mem://style/voice-bible) — Canonical AI/email voice rules, banned list, sign-off, admin lint
