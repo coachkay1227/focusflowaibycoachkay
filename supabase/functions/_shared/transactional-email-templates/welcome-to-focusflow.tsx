@@ -3,6 +3,7 @@ import {
   Body, Container, Head, Heading, Html, Preview, Text, Button, Section, Hr,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { Signoff, WarmOpen, ArrowCTA } from './_voice-helpers.tsx'
 
 const SITE_NAME = "FocusFlow AI"
 
@@ -30,6 +31,7 @@ const WelcomeToFocusflowEmail = ({ name }: WelcomeProps) => (
           <Heading style={h1}>
             {name ? `Welcome, ${name}.` : 'Welcome to FocusFlow AI.'}
           </Heading>
+          <WarmOpen name={name} />
           <Text style={text}>
             Your clarity journey starts now. FocusFlow AI was built by Coach Kay to help you cut through the noise, see your patterns clearly, and take meaningful action.
           </Text>
@@ -46,20 +48,14 @@ const WelcomeToFocusflowEmail = ({ name }: WelcomeProps) => (
             <strong style={{ color: '#c9a227' }}>→</strong> Talk to Coach Kay's AI for personalized guidance
           </Text>
 
-          <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
-            <Button style={ctaButton} href="https://coachkayai.life/clarity">
-              Start Your First Clarity Session
-            </Button>
-          </Section>
+          <ArrowCTA href="https://coachkayai.life/clarity" label="Start Your First Clarity Session" />
 
           <Hr style={divider} />
 
           <Text style={footerText}>
             You're receiving this because you created an account on {SITE_NAME}. If you have questions, reply to Hello@coachkayelevates.org.
           </Text>
-          <Text style={signoff}>
-            — Coach Kay
-          </Text>
+          <Signoff />
         </Section>
       </Container>
     </Body>
