@@ -19,7 +19,7 @@ export default function AdminVoiceBible() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SEOHead title="Voice Bible — Admin" description="CKE Voice Bible reference + lint." />
+        <SEOHead title="Voice Bible — Admin" description="CKE Voice Bible reference + lint." path="/admin/voice-bible" />
       <div className="container mx-auto max-w-5xl px-4 py-8">
         <AdminNav />
         <h1 className="font-serif text-3xl mb-2">Voice Bible</h1>
