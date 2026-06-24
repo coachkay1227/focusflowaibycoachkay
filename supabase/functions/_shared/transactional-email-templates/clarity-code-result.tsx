@@ -3,6 +3,7 @@ import {
   Body, Container, Head, Heading, Html, Preview, Text, Button, Section, Hr,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { Signoff, ArrowCTA, scrubVoice } from './_voice-helpers.tsx'
 
 const SITE_NAME = 'FocusFlow AI'
 
@@ -13,7 +14,11 @@ interface ClarityCodeProps {
   action?: string
 }
 
-const ClarityCodeResultEmail = ({ name, truth, pattern, action }: ClarityCodeProps) => (
+const ClarityCodeResultEmail = ({ name, truth, pattern, action }: ClarityCodeProps) => {
+  const t = truth ? scrubVoice(truth) : truth
+  const p = pattern ? scrubVoice(pattern) : pattern
+  const a = action ? scrubVoice(action) : action
+  return (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Your personalized Clarity Code from Coach Kay</Preview>
@@ -36,47 +41,44 @@ const ClarityCodeResultEmail = ({ name, truth, pattern, action }: ClarityCodePro
             This isn't a diagnosis. It's a mirror. Read slowly. Let it land.
           </Text>
 
-          {truth && (
+          {t && (
             <Section style={card}>
               <Text style={cardLabel}>THE TRUTH</Text>
               <Text style={cardTitle}>Here's what's really going on</Text>
-              <Text style={cardBody}>{truth}</Text>
+              <Text style={cardBody}>{t}</Text>
             </Section>
           )}
 
-          {pattern && (
+          {p && (
             <Section style={card}>
               <Text style={cardLabel}>THE PATTERN</Text>
               <Text style={cardTitle}>Here's what keeps showing up</Text>
-              <Text style={cardBody}>{pattern}</Text>
+              <Text style={cardBody}>{p}</Text>
             </Section>
           )}
 
-          {action && (
+          {a && (
             <Section style={card}>
               <Text style={cardLabel}>THE ACTION</Text>
               <Text style={cardTitle}>Here's your next move</Text>
-              <Text style={cardBody}>{action}</Text>
+              <Text style={cardBody}>{a}</Text>
             </Section>
           )}
 
-          <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
-            <Button style={ctaButton} href="https://coachkayai.life/clarity">
-              Take Another Clarity Session
-            </Button>
-          </Section>
+          <ArrowCTA href="https://coachkayai.life/clarity" label="Take Another Clarity Session" />
 
           <Hr style={divider} />
 
           <Text style={footerText}>
             You're receiving this because you completed a Clarity Check on {SITE_NAME}. Reply to Hello@coachkayelevates.org if anything lands.
           </Text>
-          <Text style={signoff}>— Coach Kay</Text>
+          <Signoff />
         </Section>
       </Container>
     </Body>
   </Html>
 )
+}
 
 export const template = {
   component: ClarityCodeResultEmail,
