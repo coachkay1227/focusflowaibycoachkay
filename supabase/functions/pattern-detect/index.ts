@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
 interface SessionInsight {
   truth: string;
@@ -71,16 +72,7 @@ interface SessionFormatted {
   insight: string;
 }
 
-const SYSTEM_PROMPT = `You are Coach Kay analyzing multiple coaching sessions from the same person to detect patterns across time.
-
-Look for:
-1. Recurring emotional states — do they keep feeling the same way?
-2. Avoidance language — are they saying the right things but not acting?
-3. Inconsistencies — do their goals contradict their behaviors?
-4. Growth signals — where have they shifted or evolved?
-5. Blind spots — what do they keep missing?
-
-Be direct, insightful, and specific. Use the detect_patterns tool.`;
+const SYSTEM_PROMPT = composeSystemPrompt("pattern-detect");
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
