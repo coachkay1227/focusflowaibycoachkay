@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_orders: {
+        Row: {
+          agent_count: number
+          agent_tier: string
+          agent_type: string
+          created_at: string
+          guest_email: string | null
+          id: string
+          intake: Json | null
+          knowledge_base: string | null
+          notes: string | null
+          ownership_pref: string | null
+          quoted_price_cents: number | null
+          status: string
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          agent_count?: number
+          agent_tier: string
+          agent_type: string
+          created_at?: string
+          guest_email?: string | null
+          id?: string
+          intake?: Json | null
+          knowledge_base?: string | null
+          notes?: string | null
+          ownership_pref?: string | null
+          quoted_price_cents?: number | null
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          agent_count?: number
+          agent_tier?: string
+          agent_type?: string
+          created_at?: string
+          guest_email?: string | null
+          id?: string
+          intake?: Json | null
+          knowledge_base?: string | null
+          notes?: string | null
+          ownership_pref?: string | null
+          quoted_price_cents?: number | null
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -640,6 +694,57 @@ export type Database = {
           source?: string | null
           synced_to_beehiiv?: boolean
           updated_at?: string
+        }
+        Relationships: []
+      }
+      one_time_orders: {
+        Row: {
+          created_at: string
+          guest_email: string | null
+          guest_name: string | null
+          id: string
+          intake: Json | null
+          order_type: string
+          price_cents: number
+          product_id: string
+          product_name: string
+          product_type: string
+          status: string
+          stripe_session_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          intake?: Json | null
+          order_type?: string
+          price_cents?: number
+          product_id: string
+          product_name: string
+          product_type?: string
+          status?: string
+          stripe_session_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          intake?: Json | null
+          order_type?: string
+          price_cents?: number
+          product_id?: string
+          product_name?: string
+          product_type?: string
+          status?: string
+          stripe_session_id?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
