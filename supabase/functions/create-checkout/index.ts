@@ -68,7 +68,6 @@ serve(async (req: Request) => {
       p.length < 500
         ? p
         : fallback;
-      typeof p === "string" && /^\/[A-Za-z0-9/_.():~-]+$/.test(p) ? p : fallback;
     const rawSuccess = safePath(successPath, "/dashboard?checkout=success");
     // Ensure Stripe substitutes its session id into the redirect so the
     // success page can verify/inspect the order. Preserve any existing
