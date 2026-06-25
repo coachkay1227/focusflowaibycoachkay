@@ -217,6 +217,9 @@ export const globalGraph = () => {
           target: {
             "@type": "EntryPoint",
             urlTemplate: `${SITE_URL}/ai-tools?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
         image: `${SITE_URL}/og-image.png`,
         url: SITE_URL,
         telephone: "+1-614-XXX-XXXX",
