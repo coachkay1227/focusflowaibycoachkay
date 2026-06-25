@@ -41,3 +41,7 @@ project_id = "rarawrpajilqqlcxdzpj"
     verify_jwt = false
   [functions.update-autism-order]
     verify_jwt = true
+  [functions.draft-weekly-newsletter]
+    verify_jwt = false
+  [functions.send-weekly-newsletter]
+    verify_jwt = false

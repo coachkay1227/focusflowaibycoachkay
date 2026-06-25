@@ -32,6 +32,8 @@ import { template as paymentFailed } from './payment-failed.tsx'
 import { template as rentAgentWelcome } from './rent-agent-welcome.tsx'
 import { template as assessmentResult } from './assessment-result.tsx'
 import { template as starterKitReport } from './starter-kit-report.tsx'
+import { template as weeklyNewsletterDraft } from './weekly-newsletter-draft.tsx'
+import { template as weeklyNewsletterIssue } from './weekly-newsletter-issue.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -57,4 +59,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'rent-agent-welcome': rentAgentWelcome,
   'assessment-result': assessmentResult,
   'starter-kit-report': starterKitReport,
+  'weekly-newsletter-draft': weeklyNewsletterDraft,
+  'weekly-newsletter-issue': weeklyNewsletterIssue,
 }

@@ -661,6 +661,74 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_issues: {
+        Row: {
+          approval_token_hash: string | null
+          created_at: string
+          failed_count: number
+          id: string
+          issue_number: number
+          play_section: string
+          preview_text: string | null
+          scam_alert_id: string | null
+          scam_section: string
+          sent_at: string | null
+          sent_count: number
+          status: string
+          subject: string
+          suppressed_count: number
+          token_expires_at: string | null
+          truth_section: string
+          updated_at: string
+        }
+        Insert: {
+          approval_token_hash?: string | null
+          created_at?: string
+          failed_count?: number
+          id?: string
+          issue_number: number
+          play_section: string
+          preview_text?: string | null
+          scam_alert_id?: string | null
+          scam_section: string
+          sent_at?: string | null
+          sent_count?: number
+          status?: string
+          subject: string
+          suppressed_count?: number
+          token_expires_at?: string | null
+          truth_section: string
+          updated_at?: string
+        }
+        Update: {
+          approval_token_hash?: string | null
+          created_at?: string
+          failed_count?: number
+          id?: string
+          issue_number?: number
+          play_section?: string
+          preview_text?: string | null
+          scam_alert_id?: string | null
+          scam_section?: string
+          sent_at?: string | null
+          sent_count?: number
+          status?: string
+          subject?: string
+          suppressed_count?: number
+          token_expires_at?: string | null
+          truth_section?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_issues_scam_alert_id_fkey"
+            columns: ["scam_alert_id"]
+            isOneToOne: false
+            referencedRelation: "scam_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscribers: {
         Row: {
           beehiiv_subscription_id: string | null
@@ -803,6 +871,7 @@ export type Database = {
           threat_level: Database["public"]["Enums"]["scam_threat_level"]
           title: string
           updated_at: string
+          used_in_issue_id: string | null
         }
         Insert: {
           action_rules?: Json
@@ -819,6 +888,7 @@ export type Database = {
           threat_level?: Database["public"]["Enums"]["scam_threat_level"]
           title: string
           updated_at?: string
+          used_in_issue_id?: string | null
         }
         Update: {
           action_rules?: Json
@@ -835,8 +905,17 @@ export type Database = {
           threat_level?: Database["public"]["Enums"]["scam_threat_level"]
           title?: string
           updated_at?: string
+          used_in_issue_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "scam_alerts_used_in_issue_id_fkey"
+            columns: ["used_in_issue_id"]
+            isOneToOne: false
+            referencedRelation: "newsletter_issues"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       starter_kit_reports: {
         Row: {
