@@ -57,6 +57,7 @@ const AdminAudits = lazy(() => import("./pages/admin/AdminAudits.tsx"));
 const AdminEnrollments = lazy(() => import("./pages/admin/AdminEnrollments.tsx"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter.tsx"));
 const AdminScamAlerts = lazy(() => import("./pages/admin/AdminScamAlerts.tsx"));
+const AdminNewsletterDraft = lazy(() => import("./pages/admin/AdminNewsletterDraft.tsx"));
 const AdminVoiceBible = lazy(() => import("./pages/admin/AdminVoiceBible.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
