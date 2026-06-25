@@ -23,6 +23,14 @@ import { template as onboardingCompletion } from './onboarding-completion.tsx'
 import { template as auditIntakeSubmitted } from './audit-intake-submitted.tsx'
 import { template as auditReportReady } from './audit-report-ready.tsx'
 import { template as newsletterWelcome } from './newsletter-welcome.tsx'
+import { template as agentOrderConfirmation } from './agent-order-confirmation.tsx'
+import { template as agentIntakeReceived } from './agent-intake-received.tsx'
+import { template as buildStudioOrderConfirmation } from './build-studio-order-confirmation.tsx'
+import { template as subscriptionCancelled } from './subscription-cancelled.tsx'
+import { template as paymentFailed } from './payment-failed.tsx'
+import { template as rentAgentWelcome } from './rent-agent-welcome.tsx'
+import { template as assessmentResult } from './assessment-result.tsx'
+import { template as starterKitReport } from './starter-kit-report.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -39,4 +47,12 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'audit-intake-submitted': auditIntakeSubmitted,
   'audit-report-ready': auditReportReady,
   'newsletter-welcome': newsletterWelcome,
+  'agent-order-confirmation': agentOrderConfirmation,
+  'agent-intake-received': agentIntakeReceived,
+  'build-studio-order-confirmation': buildStudioOrderConfirmation,
+  'subscription-cancelled': subscriptionCancelled,
+  'payment-failed': paymentFailed,
+  'rent-agent-welcome': rentAgentWelcome,
+  'assessment-result': assessmentResult,
+  'starter-kit-report': starterKitReport,
 }

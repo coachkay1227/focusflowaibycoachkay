@@ -33,7 +33,7 @@ const SiteFooter = () => {
       title: "Company",
       links: [
         { label: "About", to: "/coach-kay" },
-        { label: "Elevation Hub (Community)", to: "/community" },
+        { label: "FocusFlow Elevation Hub", to: "/community" },
         { label: "FAQ", to: "/faq" },
         { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },
         { label: "Sitemap", to: "/sitemap" },
@@ -50,7 +50,7 @@ const SiteFooter = () => {
             <BrandLogo size="md" withTagline />
             <p className="text-muted-foreground text-sm mt-4 leading-relaxed">
               Master Certified Life Coach guiding clarity, focused transformation,
-              and AI-powered momentum.
+              and real momentum.
             </p>
             <div className="mt-4 flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/[0.04] px-4 py-3">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
@@ -128,7 +128,7 @@ const SiteFooter = () => {
           <NewsletterWaitlist
             source="footer"
             variant="card"
-            heading="FocusFlow Newsletter — coming soon"
+            heading="FocusFlow Newsletter, coming soon"
             subheading="Weekly clarity drops, AI plays, and Coach Kay's no-fluff field notes. Get on the waitlist."
           />
         </div>
@@ -136,9 +136,9 @@ const SiteFooter = () => {
         {/* Disclaimer */}
         <div className="border-t border-border/30 pt-6 space-y-4">
           <p className="text-[11px] text-muted-foreground/60 max-w-3xl mx-auto text-center leading-relaxed">
-            FocusFlow AI provides coaching, education, and AI-powered productivity tools — not a
+            FocusFlow AI provides AI-powered coaching, education, and productivity tools — not a
             substitute for licensed medical, mental-health, legal, financial, or tax advice.
-            Results vary.{" "}
+            AI-generated insights are for personal development only. Results vary.{" "}
             <Link to="/disclaimer" className="text-primary/70 hover:text-primary underline underline-offset-2">
               Full disclaimer
             </Link>.

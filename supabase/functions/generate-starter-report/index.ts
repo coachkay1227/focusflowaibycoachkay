@@ -113,6 +113,35 @@ serve(async (req) => {
       return json(200, { id: null, report: result.data });
     }
 
+    // Send report email to user + fire GHL (best-effort, fire-and-forget).
+    await Promise.allSettled([
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "starter-kit-report",
+          recipientEmail: email,
+          idempotencyKey: `starter-kit-${insert.data?.id ?? email}`,
+          templateData: {
+            name,
+            businessType,
+            whereYouAre: (result.data as { where_you_are?: string })?.where_you_are ?? null,
+            whatToFocusOn: (result.data as { what_to_focus_on?: string })?.what_to_focus_on ?? null,
+            actionThisWeek: (result.data as { action_this_week?: string })?.action_this_week ?? null,
+          },
+        },
+      }),
+      supabase.functions.invoke("ghl-webhook", {
+        body: {
+          event: "starter_kit_complete",
+          payload: {
+            email,
+            user_id: userId || null,
+            business_type: businessType,
+            name: name || null,
+          },
+        },
+      }),
+    ]);
+
     return json(200, { id: insert.data?.id ?? null, report: result.data });
   } catch (e) {
     console.error("generate-starter-report error:", e);

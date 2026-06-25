@@ -268,7 +268,7 @@ export const coachingModules: CoachingModule[] = [
       {
         id: "trueDesire",
         label: "STEP 03",
-        question: "If nobody knew what you chose — what would you actually go after?",
+        question: "If nobody knew what you chose, what would you actually go after?",
         subtitle: "Remove the audience. What's left?",
         type: "text",
         placeholder: "What I'd actually choose is...",

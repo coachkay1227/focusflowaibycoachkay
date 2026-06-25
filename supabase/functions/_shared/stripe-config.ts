@@ -48,6 +48,12 @@ export const NO_TIER_PRODUCTS = new Set<string>([
   "prod_UaneP9ZBMIguZW", // Collective Membership $97/mo
   "prod_UanfvkxzOOZu5u", // Agent Care $197/mo
   "prod_UanfvQDmGtO89p", // Monthly Build Credits $497/mo
+  // Agent Builder — one-time builds & add-ons (no tier change)
+  "prod_Ul02HEGziK6vqv", // Custom GPT Agent
+  "prod_Ul02esdwy10Ylm", // Claude Project Agent
+  "prod_Ul02wVAYJg4pZ8", // Knowledge Base Add-on — Basic
+  "prod_Ul02V28vWpeG2G", // Knowledge Base Add-on — Full
+  "prod_Ul02SGrHmZUEvk", // Branded Agent Dashboard
 ]);
 
 export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
@@ -85,9 +91,53 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   "price_1Tbc2mBReje0oFcLKStT1NEj": "subscription", // Collective Membership $97/mo
   "price_1Tbc3yBReje0oFcLpQCYOLeJ": "subscription", // Agent Care $197/mo
   "price_1Tbc4SBReje0oFcLeEXu6hlp": "subscription", // Monthly Build Credits $497/mo
+  // Agent Builder — Custom GPT Agent (prod_Ul02HEGziK6vqv)
+  "price_1TlU2nBReje0oFcLXyZlrDc7": "payment",      // GPT Agent Single — Own $297
+  "price_1TlU2qBReje0oFcL1ykOmyZG": "payment",      // GPT Agent Agency per-agent — Own $97
+  "price_1TlU2tBReje0oFcLjITVAlvn": "subscription", // GPT Agent Single — Hosted $97/mo
+  "price_1TlU2vBReje0oFcL7K1325Tt": "subscription", // GPT Agent Agency per-agent — Hosted $47/mo
+  // Agent Builder — Claude Project Agent (prod_Ul02esdwy10Ylm)
+  "price_1TlU2xBReje0oFcLrj3TE9U9": "payment",      // Claude Agent Single — Own $397
+  "price_1TlU30BReje0oFcLctO6udK4": "payment",      // Claude Agent Additional — Own $247
+  "price_1TlU33BReje0oFcLPQlyjg1w": "subscription", // Claude Agent — Hosted $147/mo
+  // Agent Builder — Add-ons
+  "price_1TlU35BReje0oFcLnf0wzqB9": "payment",      // Knowledge Base Basic $197
+  "price_1TlU38BReje0oFcLftFZG8TE": "payment",      // Knowledge Base Full $397
+  "price_1TlU3CBReje0oFcLXyUtcRfR": "payment",      // Branded Agent Dashboard $297
 };
 
 export const PROTECTED_TIERS = ["reset_30", "transformation_90", "cohort", "premium", "rent_agent", "corporate"];
+
+/** Advisory / intensive products that fire a confirmation email + GHL event
+ *  but do NOT change the buyer's access tier. */
+export const ADVISORY_PRODUCTS = new Set<string>([
+  "prod_UaEUk39aCG5Jmh", // AI Strategy Intensive $497
+]);
+
+/** Agent Builder products that create an agent_orders row + fire intake email.
+ *  Add-on products (KB, dashboard) ride along with the main agent order. */
+export const AGENT_BUILD_PRODUCTS = new Set<string>([
+  "prod_Ul02HEGziK6vqv", // Custom GPT Agent
+  "prod_Ul02esdwy10Ylm", // Claude Project Agent
+]);
+
+/** Collective AI Build Studio products (quick-win one-time + recurring care plans).
+ *  Keyed by product ID → human-readable name for confirmation emails.
+ *  All of these are in NO_TIER_PRODUCTS (no access-tier change); they need
+ *  a post-purchase confirmation email + GHL event that the tier path never fires. */
+export const BUILD_STUDIO_PRODUCTS: Record<string, string> = {
+  // Tier 1 — one-time builds
+  "prod_UanJnSjXkY95Jg": "Link-in-Bio Hub",
+  "prod_UanN2q8kUDOoMm": "Personal Brand Site",
+  "prod_UanR2vRsQWOP4W": "Conversion Landing Page",
+  "prod_UanRAhfgTRM9Sm": "Lead Magnet Funnel",
+  "prod_UanZLlOaOMmDSm": "AI Chatbot Widget Setup",
+  // Tier 5 — recurring care plans
+  "prod_UanZVfj8EZtZBH": "Site Care",
+  "prod_UaneP9ZBMIguZW": "Collective Membership",
+  "prod_UanfvkxzOOZu5u": "Agent Care",
+  "prod_UanfvQDmGtO89p": "Monthly Build Credits",
+};
 
 /** Welcome-email template + program label for transformation-path purchases.
  *  Used by stripe-webhook to fire the right welcome email after checkout. */

@@ -314,7 +314,17 @@ serve(async (req) => {
       return json(404, { error: "Audit not found" });
     }
 
-    let hasAccess = !!authedUserId && auditRow.user_id === authedUserId;
+    // Admins can regenerate any user's audit
+    let isAdminUser = false;
+    if (authedUserId) {
+      const { data: adminCheck } = await supabase.rpc("has_role", {
+        _user_id: authedUserId,
+        _role: "admin",
+      });
+      isAdminUser = !!adminCheck;
+    }
+
+    let hasAccess = isAdminUser || (!!authedUserId && auditRow.user_id === authedUserId);
     if (!hasAccess && token) {
       const { data: tok } = await supabase
         .from("audit_tokens")
@@ -417,12 +427,16 @@ serve(async (req) => {
 
     // Fire audit-report-ready email (best-effort, non-blocking).
     if (userEmail) {
+      const reportUrl = `https://coachkayai.life/audit/report/${auditId}`;
+      const firstName = userName
+        ? userName.split(" ")[0]
+        : undefined;
       supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "audit-report-ready",
           recipientEmail: userEmail,
           idempotencyKey: `audit-ready-${auditId}`,
-          templateData: { name: userName, audit_id: auditId },
+          templateData: { name: firstName ?? userName, audit_id: auditId, reportUrl },
         },
       }).catch((e: unknown) => {
         console.warn("[generate-business-audit] audit-report-ready email failed:", e);

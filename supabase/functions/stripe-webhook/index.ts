@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP } from "../_shared/stripe-config.ts";
+import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS, BUILD_STUDIO_PRODUCTS, ADVISORY_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 
@@ -13,6 +13,44 @@ const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
     headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     status: 200,
   });
+
+/** Fires cancellation email + GHL event after a successful subscription downgrade.
+ *  Resolves the user's email from Stripe customer data (most reliable source). */
+async function _fireCancellationNotifications(
+  supabase: ReturnType<typeof createClient>,
+  stripe: Stripe,
+  subscription: Stripe.Subscription,
+  userId: string,
+  fromTier: string | null,
+  log: ReturnType<typeof createLogger>,
+) {
+  try {
+    const customerId = typeof subscription.customer === "string" ? subscription.customer : null;
+    if (!customerId) return;
+    const customer = await stripe.customers.retrieve(customerId);
+    const cancelEmail = !customer.deleted && customer.email ? customer.email : null;
+    if (!cancelEmail) return;
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "subscription-cancelled",
+        recipientEmail: cancelEmail,
+        idempotencyKey: `sub-cancelled-${subscription.id}`,
+        templateData: { name: !customer.deleted ? customer.name : null },
+      },
+    }).catch(() => {});
+    supabase.functions.invoke("ghl-webhook", {
+      body: {
+        event: "subscription_cancelled",
+        payload: { email: cancelEmail, user_id: userId, from_tier: fromTier },
+      },
+    }).catch(() => {});
+    log.info("cancellation_notifications_sent", { ctx: { user_id: userId, from_tier: fromTier } });
+  } catch (e) {
+    log.warn("cancellation_notification_error", {
+      message: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -204,6 +242,17 @@ serve(async (req) => {
                 context: { book_order_id: order.id },
               });
             }
+            supabaseClient.functions.invoke("ghl-webhook", {
+              body: {
+                event: "purchase",
+                payload: {
+                  email: order.client_email,
+                  tier: "book_product",
+                  product: order.package_name,
+                  amount: order.order_total ?? null,
+                },
+              },
+            }).catch(() => {});
           }
         }
         return ok(req);
@@ -287,7 +336,7 @@ serve(async (req) => {
                       : "print-ready PDF",
                     storyCount: 1,
                     includesHsaReceipt: true,
-                    downloadUrl: pending.download_url ?? undefined,
+                    downloadUrl: pending.download_url ?? null,
                   },
                 },
               });
@@ -297,6 +346,17 @@ serve(async (req) => {
                 context: { autism_order_id: pending.id },
               });
             }
+            supabaseClient.functions.invoke("ghl-webhook", {
+              body: {
+                event: "purchase",
+                payload: {
+                  email: pending.client_email,
+                  tier: "autism_product",
+                  product: pending.package_name,
+                  amount: pending.order_total ?? null,
+                },
+              },
+            }).catch(() => {});
           }
         }
         return ok(req);
@@ -426,6 +486,171 @@ serve(async (req) => {
         // fall through to default behavior
       }
 
+      // Agent Build branch — GPT Agent & Claude Project Agent purchases.
+      // Creates agent_orders row + fires intake confirmation email + GHL event.
+      // Runs before user_id check so guest checkouts also work.
+      try {
+        const liForAgent = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const agentProductRef = liForAgent.data?.[0]?.price?.product;
+        const agentProductId = typeof agentProductRef === "string"
+          ? agentProductRef
+          : (agentProductRef && typeof agentProductRef === "object" && typeof (agentProductRef as { id?: unknown }).id === "string")
+            ? (agentProductRef as { id: string }).id
+            : null;
+
+        if (agentProductId && AGENT_BUILD_PRODUCTS.has(agentProductId)) {
+          const agentUserId = readMetaString(session.metadata, "supabase_user_id");
+          const agentEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const agentName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+          const agentType = agentProductId === "prod_Ul02esdwy10Ylm" ? "claude" : "gpt";
+          const priceId = readMetaString(session.metadata, "price_id") ?? "";
+          const isHosted = priceId.startsWith("price_1TlU2t") || priceId.startsWith("price_1TlU2v") || priceId.startsWith("price_1TlU33");
+          const agentTier = "single";
+
+          const { data: existingAgent } = await supabaseClient
+            .from("agent_orders")
+            .select("id")
+            .eq("stripe_session_id", session.id)
+            .maybeSingle();
+
+          if (!existingAgent?.id) {
+            const { data: insertedAgent, error: agentInsertErr } = await supabaseClient
+              .from("agent_orders")
+              .insert({
+                user_id: agentUserId && UUID_RE.test(agentUserId) ? agentUserId : null,
+                guest_email: agentEmail || null,
+                agent_type: agentType,
+                agent_tier: agentTier,
+                agent_count: 1,
+                ownership_pref: isHosted ? "hosted" : "own",
+                stripe_session_id: session.id,
+                status: "pending",
+                quoted_price_cents: session.amount_total ?? null,
+              })
+              .select("id")
+              .single();
+
+            if (agentInsertErr) {
+              await fail("agent_order", "insert_failed", { message: agentInsertErr.message, context: { session_id: session.id } });
+            } else if (insertedAgent?.id && agentEmail) {
+              const origin = req.headers.get("origin") || "https://coachkayai.life";
+              await supabaseClient.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: "agent-order-confirmation",
+                  recipientEmail: agentEmail,
+                  idempotencyKey: `agent-confirm-${insertedAgent.id}`,
+                  templateData: {
+                    name: agentName,
+                    agentType: agentType === "claude" ? "Claude Project Agent" : "Custom GPT Agent",
+                    intakeUrl: `${origin}/agent-intake`,
+                    orderId: insertedAgent.id,
+                  },
+                },
+              }).catch(() => {});
+
+              supabaseClient.functions.invoke("ghl-webhook", {
+                body: {
+                  event: "purchase",
+                  payload: {
+                    email: agentEmail,
+                    user_id: agentUserId || null,
+                    tier: "agent_build",
+                    product: agentType === "claude" ? "Claude Project Agent" : "Custom GPT Agent",
+                    amount: session.amount_total ?? null,
+                  },
+                },
+              }).catch(() => {});
+
+              log.info("agent_order_created", { ctx: { agent_id: insertedAgent.id, agent_type: agentType } });
+            }
+          }
+          return ok(req, { received: true, agent_order: true });
+        }
+      } catch (e) {
+        await fail("agent_order", "agent_branch_exception", {
+          message: e instanceof Error ? e.message : String(e),
+          context: { session_id: session.id },
+        });
+      }
+
+      // Build Studio branch — one-time quick-win builds + recurring care plans.
+      // Runs before the user_id check so guest checkouts also get an email + GHL event.
+      try {
+        const liForBs = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const bsProductRef = liForBs.data?.[0]?.price?.product;
+        const bsProductId = typeof bsProductRef === "string"
+          ? bsProductRef
+          : (bsProductRef && typeof bsProductRef === "object" && typeof (bsProductRef as { id?: unknown }).id === "string")
+            ? (bsProductRef as { id: string }).id
+            : null;
+
+        if (bsProductId && BUILD_STUDIO_PRODUCTS[bsProductId]) {
+          const bsProductName = BUILD_STUDIO_PRODUCTS[bsProductId];
+          const bsEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const bsName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+          const bsIsSubscription = session.mode === "subscription";
+
+          if (bsEmail) {
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "build-studio-order-confirmation",
+                recipientEmail: bsEmail,
+                idempotencyKey: `bs-confirm-${session.id}`,
+                templateData: {
+                  name: bsName,
+                  productName: bsProductName,
+                  orderType: bsIsSubscription ? "subscription" : "one-time",
+                },
+              },
+            }).catch(() => {});
+          }
+
+          supabaseClient.functions.invoke("ghl-webhook", {
+            body: {
+              event: "purchase",
+              payload: {
+                email: bsEmail || null,
+                tier: "build_studio",
+                product: bsProductName,
+                amount: session.amount_total ?? null,
+              },
+            },
+          }).catch(() => {});
+
+          // Persist order record for admin visibility and future intake
+          supabaseClient.from("one_time_orders").upsert({
+            stripe_session_id: session.id,
+            user_id: readMetaString(session.metadata, "supabase_user_id") || null,
+            guest_email: bsEmail || null,
+            guest_name: bsName || null,
+            product_id: bsProductId,
+            product_name: bsProductName,
+            price_cents: session.amount_total ?? 0,
+            product_type: "build_studio",
+            order_type: bsIsSubscription ? "subscription" : "one_time",
+          }, { onConflict: "stripe_session_id" }).then(() => {}).catch(() => {});
+
+          log.info("build_studio_purchase_processed", {
+            ctx: { product_id: bsProductId, product_name: bsProductName, session_id: session.id, is_subscription: bsIsSubscription },
+          });
+          return ok(req, { received: true, build_studio: true });
+        }
+      } catch (e) {
+        await fail("build_studio", "build_studio_branch_exception", {
+          message: e instanceof Error ? e.message : String(e),
+          context: { session_id: session.id },
+        });
+        // fall through to tier logic
+      }
+
       // Get user ID from metadata
       const userId = readMetaString(session.metadata, "supabase_user_id");
       if (!userId || !UUID_RE.test(userId)) {
@@ -459,7 +684,56 @@ serve(async (req) => {
 
       const mappedTier = PRODUCT_TIER_MAP[productId];
       if (!mappedTier) {
-        // One-time non-tier products (AI Business Audit, Strategy Intensive)
+        // Advisory / intensive products — send confirmation email + GHL, no tier change
+        if (ADVISORY_PRODUCTS.has(productId)) {
+          const advEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            "";
+          const advName =
+            (typeof session.customer_details?.name === "string" && session.customer_details.name) || null;
+          if (advEmail) {
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "advisory-purchase-confirmation",
+                recipientEmail: advEmail,
+                idempotencyKey: `advisory-confirm-${session.id}`,
+                templateData: {
+                  name: advName,
+                  productName: "AI Strategy Intensive",
+                  bookingUrl: "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp",
+                },
+              },
+            }).catch(() => {});
+          }
+          supabaseClient.functions.invoke("ghl-webhook", {
+            body: {
+              event: "advisory_intake_purchased",
+              payload: {
+                email: advEmail || null,
+                product: "AI Strategy Intensive",
+                amount: session.amount_total ?? null,
+                user_id: userId || null,
+              },
+            },
+          }).catch(() => {});
+          // Persist advisory order for admin visibility
+          supabaseClient.from("one_time_orders").upsert({
+            stripe_session_id: session.id,
+            user_id: userId || null,
+            guest_email: advEmail || null,
+            guest_name: advName || null,
+            product_id: productId,
+            product_name: "AI Strategy Intensive",
+            price_cents: session.amount_total ?? 0,
+            product_type: "advisory",
+            order_type: "one_time",
+          }, { onConflict: "stripe_session_id" }).then(() => {}).catch(() => {});
+          log.info("advisory_purchase_processed", { ctx: { product_id: productId, session_id: session.id } });
+          return ok(req, { received: true, advisory: true });
+        }
+
+        // One-time non-tier products (AI Business Audit, Build Studio)
         // don't change the buyer's access level. Acknowledge silently.
         if (NO_TIER_PRODUCTS.has(productId)) {
           log.info("one_time_product_no_tier_change", { ctx: { product_id: productId, user_id: userId } });
@@ -512,6 +786,34 @@ serve(async (req) => {
               message: e instanceof Error ? e.message : String(e),
               context: { user_id: userId, product_id: productId },
             });
+          }
+        }
+
+        // Rent-an-Agent welcome email — fires when mappedTier is rent_agent.
+        // Transformation paths (reset_30, transformation_90) are handled by
+        // TRANSFORMATION_PROGRAM_MAP above; rent_agent needs its own onboarding.
+        if (mappedTier === "rent_agent") {
+          const rentEmail =
+            (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+            (typeof session.customer_email === "string" && session.customer_email) ||
+            null;
+          const rentName =
+            (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null;
+          if (rentEmail) {
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "rent-agent-welcome",
+                recipientEmail: rentEmail,
+                idempotencyKey: `rent-agent-welcome-${session.id}`,
+                templateData: {
+                  name: rentName,
+                  planName: null,
+                  dashboardUrl: `${origin}/dashboard?welcome=rent-agent`,
+                  intakeUrl: `${origin}/agent-intake`,
+                },
+              },
+            }).catch(() => {});
+            log.info("rent_agent_welcome_sent", { ctx: { user_id: userId } });
           }
         }
 
@@ -571,6 +873,7 @@ serve(async (req) => {
               });
             } else {
               log.info("rent_agent_downgraded_to_free", { ctx: { user_id: userId } });
+              await _fireCancellationNotifications(supabaseClient, stripe, subscription, userId, current.tier, log);
             }
           } else {
             log.info("protected_tier_downgrade_skipped", {
@@ -589,16 +892,56 @@ serve(async (req) => {
             });
           } else {
             log.info("user_downgraded_to_free", { ctx: { user_id: userId, from_tier: current?.tier ?? null } });
+            await _fireCancellationNotifications(supabaseClient, stripe, subscription, userId, current?.tier ?? null, log);
           }
         }
       }
     } else if (event.type === "invoice.payment_failed") {
-      // Payment failed — log for monitoring (user still has access until period ends)
       const invoice = event.data.object as Stripe.Invoice;
       const customerId = typeof invoice?.customer === "string" ? invoice.customer : null;
       log.warn("invoice_payment_failed", {
         ctx: { invoice_id: invoice?.id, customer_id: customerId, attempt_count: invoice?.attempt_count },
       });
+      // Notify user so they can update their card before Stripe auto-cancels.
+      if (customerId) {
+        try {
+          const customer = await stripe.customers.retrieve(customerId);
+          const failEmail = !customer.deleted && customer.email ? customer.email : null;
+          if (failEmail) {
+            const nextRetryDate = typeof (invoice as any).next_payment_attempt === "number"
+              ? new Date((invoice as any).next_payment_attempt * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric" })
+              : null;
+            supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "payment-failed",
+                recipientEmail: failEmail,
+                idempotencyKey: `payment-failed-${invoice.id}`,
+                templateData: {
+                  attemptCount: invoice.attempt_count ?? 1,
+                  nextRetryDate,
+                },
+              },
+            }).catch(() => {});
+            supabaseClient.functions.invoke("ghl-webhook", {
+              body: {
+                event: "payment_failed",
+                payload: {
+                  email: failEmail,
+                  customer_id: customerId,
+                  attempt: invoice.attempt_count ?? 1,
+                },
+              },
+            }).catch(() => {});
+            log.info("payment_failed_notifications_sent", {
+              ctx: { customer_id: customerId, attempt: invoice.attempt_count },
+            });
+          }
+        } catch (e) {
+          log.warn("payment_failed_notification_error", {
+            message: e instanceof Error ? e.message : String(e),
+          });
+        }
+      }
     }
 
     return ok(req);

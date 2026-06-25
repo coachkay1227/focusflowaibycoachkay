@@ -50,8 +50,11 @@ serve(async (req: Request) => {
     const currentTier = accessRow?.tier ?? "free";
     logStep("Current tier", { currentTier });
 
-    // Protected tiers are never overwritten by Stripe polling
-    if (PROTECTED_TIERS.includes(currentTier)) {
+    // Protected tiers are never overwritten by Stripe polling —
+    // EXCEPT rent_agent, which is subscription-gated and must be verified
+    // against Stripe so cancellations are reflected within the poll window.
+    const SUBSCRIPTION_EXEMPT_TIERS = PROTECTED_TIERS.filter((t) => t !== "rent_agent");
+    if (SUBSCRIPTION_EXEMPT_TIERS.includes(currentTier)) {
       logStep("Protected tier — skipping Stripe check", { currentTier });
       return new Response(
         JSON.stringify({ subscribed: false, product_id: null, subscription_end: null, tier: currentTier }),

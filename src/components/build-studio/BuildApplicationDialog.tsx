@@ -92,7 +92,7 @@ const BuildApplicationDialog = ({
         description:
           e instanceof Error
             ? e.message
-            : "Please try again or email Hello@coachkayelevates.org directly.",
+            : "Please try again or email hello@coachkayelevates.org directly.",
         variant: "destructive",
       });
     } finally {

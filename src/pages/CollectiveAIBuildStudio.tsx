@@ -31,7 +31,7 @@ const PILLARS = [
   {
     icon: Cog,
     title: "Systems",
-    body: "Every build is a system you own — code, content, automations. Not a static brochure you'll outgrow.",
+    body: "Every build is a system you own: code, content, automations. Not a static brochure you'll outgrow.",
   },
   {
     icon: Crown,
@@ -45,16 +45,16 @@ const PROCESS = [
   {
     step: "02",
     title: "Build",
-    body: "We build with AI-leveraged speed — first preview within 48 hours for Tier 1, 1 week for larger.",
+    body: "We build fast: first preview within 48 hours for Tier 1, 1 week for larger.",
   },
   { step: "03", title: "Launch", body: "We deploy, wire your domain, and walk you through the handoff." },
-  { step: "04", title: "Care", body: "Optional monthly care plan keeps it humming — updates, edits, monitoring." },
+  { step: "04", title: "Care", body: "Optional monthly care plan keeps it running: updates, edits, monitoring." },
 ];
 
 const FAQS = [
   {
     q: "Is this really built with AI?",
-    a: "Yes — and that's the point. We use Lovable + AI agents to compress what agencies bill 4 months for into days. You get the same outcome at a fraction of the cost.",
+    a: "Yes. And that's the point. We use Lovable + AI agents to compress what agencies bill 4 months for into days. You get the same outcome at a fraction of the cost.",
   },
   {
     q: "Do I own the code?",
@@ -66,7 +66,7 @@ const FAQS = [
   },
   {
     q: "Can I see examples before I buy?",
-    a: "Yes — book a 15-minute scoping call (free for Tier 2+) and we'll walk through past builds and your specific use case.",
+    a: "Yes. Book a 15-minute scoping call (free for Tier 2+) and we'll walk through past builds and your specific use case.",
   },
   {
     q: "What's not included?",
@@ -74,7 +74,7 @@ const FAQS = [
   },
   {
     q: "Refunds?",
-    a: "Tier 1 (Quick Wins): full refund before we start, 50% after first preview. Tier 2+ scoped via contract — half down, half on launch.",
+    a: "Tier 1 (Quick Wins): full refund before we start, 50% after first preview. Tier 2+ scoped via contract: half down, half on launch.",
   },
 ];
 
@@ -146,7 +146,7 @@ const CollectiveAIBuildStudio = () => {
       "@id": `${SITE_URL}/collective-ai-build-studio#service`,
       name: "Collective AI Build Studio",
       description:
-        "AI-leveraged build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days — not months. From $297 one-time to $14,997 custom builds, plus recurring care plans.",
+        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. From $297 one-time to $14,997 custom builds, plus recurring care plans.",
       provider: { "@id": ORG_ID },
       areaServed: "Global",
       offers: [...QUICK_WINS, ...CARE_PLANS, ...BUSINESS_BUILDS, ...CUSTOM_AI_APPS].map((o) => ({
@@ -218,7 +218,7 @@ const CollectiveAIBuildStudio = () => {
           <span className="text-primary italic">From launch to scale on autopilot.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          What agencies build in 4 months, the Collective ships in 14 days — because we build <em>with</em> AI, not
+          What agencies build in 4 months, the Collective ships in 14 days, because we build <em>with</em> AI, not
           around it. Landing pages, dashboards, lead-gen tools, AI apps, and the care plans that keep them growing.
         </p>
         <p className="mt-4 text-xs text-muted-foreground/80">
@@ -241,7 +241,7 @@ const CollectiveAIBuildStudio = () => {
             variant="outline"
             className="border-primary/40 text-primary hover:bg-primary/10 px-8"
             onClick={() =>
-              setAppDialog({ open: true, projectType: "Not sure yet — let's scope it", tier: "Discovery" })
+              setAppDialog({ open: true, projectType: "Not sure yet, let's scope it", tier: "Discovery" })
             }
           >
             Book a scoping call
@@ -385,7 +385,7 @@ const CollectiveAIBuildStudio = () => {
               variant="outline"
               className="border-primary/40 text-primary hover:bg-primary/10 px-8"
               onClick={() =>
-                setAppDialog({ open: true, projectType: "Not sure yet — let's scope it", tier: "Discovery" })
+                setAppDialog({ open: true, projectType: "Not sure yet, let's scope it", tier: "Discovery" })
               }
             >
               Apply for a full build
@@ -394,8 +394,8 @@ const CollectiveAIBuildStudio = () => {
           <p className="mt-8 text-xs text-muted-foreground/80 max-w-xl mx-auto leading-relaxed">
             <strong className="text-foreground/80">By invitation:</strong> Fractional AI Product Lead retainers,
             enterprise build pods, and equity builds. Email{" "}
-            <a href="mailto:Hello@coachkayelevates.org" className="text-primary underline">
-              Hello@coachkayelevates.org
+            <a href="mailto:hello@coachkayelevates.org" className="text-primary underline">
+              hello@coachkayelevates.org
             </a>{" "}
             for institutional scopes.
           </p>

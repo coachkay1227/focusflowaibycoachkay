@@ -139,7 +139,7 @@ export const LEAD_ENGINE_TIERS = [
   },
   {
     name: "Scale",
-    headline: "Run a full outbound floor — voice, social, inbox — without headcount.",
+    headline: "Run a full outbound floor: voice, social, inbox, without headcount.",
     price: "$3,497/mo",
     setup: "+ $5,000 one-time setup",
     timeline: "Live in 21 days",
@@ -191,7 +191,7 @@ export const ENTRY_OFFERS = {
     price: 497,
     priceId: "price_1Tb41vBReje0oFcLjxGozG2X",
     description:
-      "90-minute 1-on-1 strategic mapping session with Coach Kay — AI implementation plan, decision tree, and 30-day execution roadmap.",
+      "90-minute 1-on-1 strategic mapping session with Coach Kay: AI implementation plan, decision tree, and 30-day execution roadmap.",
     bullets: [
       "Live 90-minute working session",
       "Custom AI implementation plan",
@@ -233,7 +233,7 @@ export const ADVISORY_LANES = [
     name: "Corporate, EAP & Workforce Learning",
     price: "Custom scope",
     description:
-      "Wellness-aligned AI learning experiences, institutional capability building, and organizational workforce readiness — delivered through structured corporate scopes.",
+      "Wellness-aligned AI learning experiences, institutional capability building, and organizational workforce readiness, delivered through structured corporate scopes.",
     bullets: [
       "Cohort design for 20 – 500+ learners",
       "EAP integration & wellbeing alignment",
@@ -245,7 +245,7 @@ export const ADVISORY_LANES = [
     name: "Transformation Cohorts & The Collective AI Summit",
     price: "Consumer to institutional",
     description:
-      "Intensive multi-week accelerators and the flagship Collective AI Summit — for groups, organizations, and ecosystem partners.",
+      "Intensive multi-week accelerators and the flagship Collective AI Summit, for groups, organizations, and ecosystem partners.",
     bullets: [
       "8 – 12 week guided cohorts",
       "Quarterly Collective AI Summit",
@@ -257,7 +257,7 @@ export const ADVISORY_LANES = [
     name: "AI University Roadmap Tracks",
     price: "Custom / Roadmap pricing",
     description:
-      "Premium educational pathways for specialists building lasting AI fluency — sequenced tracks across foundation, application, and authority.",
+      "Premium educational pathways for specialists building lasting AI fluency: sequenced tracks across foundation, application, and authority.",
     bullets: [
       "Sequenced multi-track curriculum",
       "Capstone authority projects",

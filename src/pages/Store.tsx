@@ -36,7 +36,7 @@ const WHY_WINS = [
   {
     icon: Zap,
     title: "AI-Enhanced Speed",
-    body: "Rapid AI ideation without sacrificing the bespoke, high-touch quality of a premium studio.",
+    body: "Fast AI ideation without sacrificing the high-touch quality of a premium studio.",
   },
   {
     icon: Sparkles,
@@ -111,7 +111,7 @@ export default function Store() {
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
         title="Story, Legacy & Publishing Studio | FocusFlow AI"
-        description="Turn stories, expertise, and lived experience into powerful assets. Storybooks, legacy memoirs, expert books, creator bundles, and autism social stories — done-for-you with AI-enhanced speed."
+        description="Turn stories, expertise, and lived experience into powerful assets. Storybooks, legacy memoirs, expert books, creator bundles, and autism social stories, all done for you."
         path="/store"
         keywords={[
           "done for you book creation",
@@ -189,9 +189,9 @@ export default function Store() {
           Into Powerful Assets.
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-10">
-          Five premium publishing lanes — storybooks, legacy memoirs, expert
-          authority books, creator bundles, and autism &amp; social stories.
-          AI-enhanced ideation, high-touch execution, platform-ready delivery.
+          Five publishing lanes: storybooks, legacy memoirs, expert authority
+          books, creator bundles, and autism &amp; social stories. AI-assisted
+          ideation, high-touch execution, platform-ready delivery.
         </p>
         <Button
           onClick={scrollToPackages}
@@ -209,10 +209,10 @@ export default function Store() {
           </span>
           <p className="text-base sm:text-lg text-foreground/85 leading-relaxed">
             This is not a generic bookstore. It is a premium story, legacy,
-            authority, and publishing studio that combines rapid AI ideation
-            with high-touch execution. Clients don&apos;t just buy books — they
+            authority, and publishing studio that combines AI ideation with
+            high-touch execution. Clients don&apos;t just buy books. They
             invest in deeply resonant gifts, strategic brand assets, and
-            educational tools engineered for real-world impact.
+            educational tools built for real-world impact.
           </p>
         </div>
       </section>
@@ -322,8 +322,8 @@ export default function Store() {
           </span>
           <p className="text-base sm:text-lg text-foreground/85 leading-relaxed">
             Whether the goal is a private physical keepsake, a commercial Amazon
-            KDP listing, an Etsy bundle, or a strategic lead magnet — every
-            studio asset is delivered in platform-ready formats optimized for
+            KDP listing, an Etsy bundle, or a strategic lead magnet, every
+            studio asset is delivered in platform-ready formats built for
             its final destination.
           </p>
         </div>

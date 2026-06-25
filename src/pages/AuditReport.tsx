@@ -30,14 +30,14 @@ type AuditReport = {
 
 function ctaRoute(slug: string): { href: string; external?: boolean; opening_soon?: boolean; label?: string } {
   switch (slug) {
-    // Door 1 — Transformation lane (no /transformations route yet → /store fallback; Phase 4B will add /transformations)
-    case "transform_30_personal": return { href: "/store#30-personal" };
-    case "transform_30_business": return { href: "/store#30-business" };
-    case "transform_30_ai": return { href: "/store#30-ai" };
-    case "transform_90_personal": return { href: "/store#90-personal" };
-    case "transform_90_business": return { href: "/store#90-business" };
-    case "transform_90_ai": return { href: "/store#90-ai" };
-    case "transform_6mo_partnership": return { href: "/store#6-month" };
+    // Door 1 — Transformation lane → /modules
+    case "transform_30_personal": return { href: "/modules" };
+    case "transform_30_business": return { href: "/modules" };
+    case "transform_30_ai": return { href: "/modules" };
+    case "transform_90_personal": return { href: "/modules" };
+    case "transform_90_business": return { href: "/modules" };
+    case "transform_90_ai": return { href: "/modules" };
+    case "transform_6mo_partnership": return { href: "/modules" };
     // Door 2 — Rent-an-Agent
     case "rent_agent_starter": return { href: "/rent-an-agent#starter" };
     case "rent_agent_pro": return { href: "/rent-an-agent#pro" };
@@ -64,7 +64,7 @@ function ctaRoute(slug: string): { href: string; external?: boolean; opening_soo
     case "build_studio_landing":
     case "build_studio_site":
     case "build_studio_dashboard":
-      return { href: "#", opening_soon: true, label: "Opening soon — get notified" };
+      return { href: "#", opening_soon: true, label: "Opening soon, get notified" };
     // Community / free
     case "focus_flow_elevation_hub":
       return { href: SKOOL_URL, external: true, label: "Forward Focus Elevation Community · Free Access" };
@@ -173,7 +173,7 @@ const AuditReport = () => {
   const handleClaim = async () => {
     const claimed = await claimToAccount();
     if (claimed) toast.success("Audit linked to your account");
-    else toast.error("Couldn't link audit — make sure you're signed in");
+    else toast.error("Couldn't link audit. Make sure you're signed in.");
   };
 
   const pillars = ["foundation", "opportunity", "create", "uplift", "support"] as const;
@@ -349,7 +349,7 @@ const AuditReport = () => {
           <div className="mt-4 grid gap-2 text-sm no-print">
             <a className="text-primary hover:underline" href="/rent-an-agent">→ Rent-an-Agent / FocusFlow programs</a>
             <a className="text-primary hover:underline" href="/advisory">→ Advisory Consultation</a>
-            <a className="text-primary hover:underline" href={SKOOL_URL} target="_blank" rel="noreferrer noopener">→ Focus Flow Elevation Hub (free community)</a>
+            <a className="text-primary hover:underline" href={SKOOL_URL} target="_blank" rel="noreferrer noopener">→ FocusFlow Elevation Hub (free community)</a>
             <a className="text-primary hover:underline" href="/store">→ Studio + Books</a>
           </div>
         </section>
@@ -394,7 +394,7 @@ function BuildStudioWaitlist({ slug, defaultEmail }: { slug: string; defaultEmai
   if (done) {
     return (
       <div className="rounded-md border border-primary/40 bg-primary/10 p-4 text-sm text-primary">
-        ✓ You're on the list — we'll email you the moment F.O.C.U.S. Build Studio opens.
+        ✓ You're on the list. We'll email you the moment F.O.C.U.S. Build Studio opens.
       </div>
     );
   }
@@ -402,7 +402,7 @@ function BuildStudioWaitlist({ slug, defaultEmail }: { slug: string; defaultEmai
   return (
     <div className="rounded-md border border-primary/30 bg-primary/5 p-4">
       <div className="font-heading text-sm text-primary mb-2">
-        Build Studio opens soon — be the first to know
+        Build Studio opens soon. Be the first to know.
       </div>
       <div className="flex flex-col sm:flex-row gap-2">
         <Input

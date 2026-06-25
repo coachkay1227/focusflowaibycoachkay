@@ -45,7 +45,7 @@ const challengeDayPreviews: Record<string, string[]> = {
   ],
   "30-day": [
     "Day 1: What brought you here today? What are you seeking?",
-    "Day 2: Describe your current emotional weather — stormy, clear, foggy?",
+    "Day 2: Describe your current emotional weather: stormy, clear, foggy?",
     "Day 3: What's one thing you've outgrown but haven't let go of?",
     "…27 more days of daily coaching, reflection, and transformation.",
   ],
@@ -259,7 +259,7 @@ const Challenges = () => {
         </div>
 
         <div className="mt-16">
-          <PillarStrip caption="Challenges live in the Foundation pillar — inner work before outer action." />
+          <PillarStrip caption="Challenges live in the Foundation pillar: inner work before outer action." />
         </div>
       </div>
     </div>

@@ -30,6 +30,7 @@ serve(async (req: Request) => {
 
     // Auth is now optional — attempt to get user if token provided
     let userEmail: string | null = null;
+    let userId: string | null = null;
     const authHeader = req.headers.get("Authorization");
     if (authHeader) {
       try {
@@ -38,6 +39,9 @@ serve(async (req: Request) => {
         if (data?.user?.email) {
           userEmail = data.user.email;
           logStep("User authenticated", { email: userEmail });
+        }
+        if (data?.user?.id) {
+          userId = data.user.id;
         }
       } catch (_e) {
         // Auth failed — proceed as guest, Stripe will collect email
@@ -57,6 +61,13 @@ serve(async (req: Request) => {
     // percent-encoded query strings and common URL-safe punctuation so
     // callers can pass human-readable context (e.g. ?tier=...).
     const safePath = (p: unknown, fallback: string): string =>
+      typeof p === "string" &&
+      p.startsWith("/") &&
+      !/[/][/]|javascript:/i.test(p) &&
+      !p.includes("..") &&
+      p.length < 500
+        ? p
+        : fallback;
       typeof p === "string" && /^\/[A-Za-z0-9/_.():~-]+$/.test(p) ? p : fallback;
     const rawSuccess = safePath(successPath, "/dashboard?checkout=success");
     // Ensure Stripe substitutes its session id into the redirect so the
@@ -101,7 +112,17 @@ serve(async (req: Request) => {
       metadata: {
         price_id: priceId,
         user_email: emailToUse || "guest",
+        supabase_user_id: userId || "",
       },
+      ...(mode === "subscription" && {
+        subscription_data: {
+          metadata: {
+            price_id: priceId,
+            user_email: emailToUse || "guest",
+            supabase_user_id: userId || "",
+          },
+        },
+      }),
       allow_promotion_codes: true,
     });
 

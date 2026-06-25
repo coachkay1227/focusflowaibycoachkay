@@ -115,7 +115,7 @@ const SKILLS = [
   { name: "Clear communication", why: "AI amplifies direction. Vague in, vague out." },
   { name: "Emotional intelligence", why: "The one thing AI cannot replicate at scale." },
   { name: "Systems thinking", why: "Building workflows that compound over time." },
-  { name: "Taste and judgment", why: "Knowing what good looks like — AI can't do this for you." },
+  { name: "Taste and judgment", why: "Knowing what good looks like. AI can't do this for you." },
   { name: "Trust and relationships", why: "The currency of the AI era. Harder to fake than ever." },
 ];
 
@@ -123,17 +123,17 @@ const TRUST_PILLARS = [
   {
     icon: Unlock,
     title: "No gatekeeping",
-    body: "What I coach in a $5K container, I'll teach in a $0 module. The tier unlocks depth and access — never the truth itself.",
+    body: "What I coach in a $5K container, I'll teach in a $0 module. The tier unlocks depth and access, never the truth itself.",
   },
   {
     icon: Tag,
-    title: "Yes, affiliate links — flagged every time",
+    title: "Yes, affiliate links, flagged every time",
     body: "I use the tools I recommend. When a link pays me, you'll see a clear tag. The pick is the pick whether it pays or not.",
   },
   {
     icon: HeartHandshake,
     title: "Mindset + strategy, not motivation theater",
-    body: "Life coaching belongs inside the system, not on a stage. Uplift and Support are pillars of F.O.C.U.S. — not upsells.",
+    body: "Life coaching belongs inside the system, not on a stage. Uplift and Support are pillars of F.O.C.U.S., not upsells.",
   },
   {
     icon: Clock,
@@ -153,7 +153,7 @@ const TRUST_PILLARS = [
   {
     icon: Compass,
     title: "Plain language, always",
-    body: "If I can't explain it to your grandma, I won't put it in front of you. AI is the tool — clarity is the product.",
+    body: "If I can't explain it to your grandma, I won't put it in front of you. AI is the tool. Clarity is the product.",
   },
   {
     icon: AlertTriangle,
@@ -366,7 +366,7 @@ export default function TruthAboutAI() {
           <AnimatedSection>
             <Section
               label="The environmental question"
-              title="Yes, AI uses energy and water. Here's what's actually true — and what's not."
+              title="Yes, AI uses energy and water. Here's what's actually true, and what's not."
             >
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 You've seen the headlines. "Every ChatGPT query drinks a bottle of water." "AI is
@@ -414,7 +414,7 @@ export default function TruthAboutAI() {
 
           {/* STRENGTHS / WEAKNESSES */}
           <AnimatedSection>
-            <Section label="The real picture" title="What AI is actually good at — and where it still fails">
+            <Section label="The real picture" title="What AI is actually good at, and where it still fails">
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 The balanced truth most AI content skips. Knowing both sides makes you dangerous in
                 the best way.
@@ -475,7 +475,7 @@ export default function TruthAboutAI() {
 
           {/* RED FLAGS */}
           <AnimatedSection>
-            <Section label="The AI scam economy" title="What to watch out for — nobody else says this clearly">
+            <Section label="The AI scam economy" title="What to watch out for: nobody else says this clearly">
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 This might be the most valuable thing on this page. The AI gold rush built a massive
                 scam layer. Here's how to spot it.
@@ -521,7 +521,7 @@ export default function TruthAboutAI() {
           <AnimatedSection>
             <Section
               label="Why people trust this room"
-              title="What I'll never do — and what I promise instead"
+              title="What I'll never do, and what I promise instead"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {TRUST_PILLARS.map((p) => (
@@ -543,7 +543,7 @@ export default function TruthAboutAI() {
                   <span className="text-primary font-medium">Uplift</span> (rebuild your inner
                   operating system) and{" "}
                   <span className="text-primary font-medium">Support</span> (have a coach in your
-                  corner when the work gets hard). Both are pillars of the F.O.C.U.S. framework —
+                  corner when the work gets hard). Both are pillars of the F.O.C.U.S. framework,
                   not paywalled add-ons.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

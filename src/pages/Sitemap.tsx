@@ -4,24 +4,39 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import { ArrowLeft } from "lucide-react";
 import { getPublicPrograms, getBackendPrograms, PUBLIC_PATHS, type PublicPath } from "@/data/programs";
 
-const coreLinks = [
-  { path: "/", label: "Home" },
-  { path: "/modules", label: "Programs & Modules" },
-  { path: "/challenges", label: "Challenges" },
-  { path: "/mirror-challenge", label: "Mirror Challenge" },
-  { path: "/coach", label: "Coach Kay AI Chat" },
-  { path: "/clarity", label: "Clarity Session" },
-  { path: "/pause-hub", label: "Pause Hub" },
-  { path: "/ai-tools", label: "AI Tools Directory" },
-  { path: "/community", label: "Community" },
-  { path: "/dashboard", label: "Dashboard" },
+const freeToolLinks = [
+  { path: "/clarity", label: "Clarity Session — 1-question AI insight in 90 seconds" },
+  { path: "/starter-kit", label: "AI Starter Kit — your free first step" },
+  { path: "/assessment", label: "Free Assessment — find your AI readiness score" },
+  { path: "/challenges", label: "30-Day Challenges — daily prompts to build the habit" },
+  { path: "/ai-tools", label: "AI Tools Directory — 63 vetted tools, scored & reviewed" },
+  { path: "/pause-hub", label: "Pause Hub: Scam Watch — live AI scam & threat alerts" },
+  { path: "/community", label: "FocusFlow Elevation Hub — free Skool community" },
+];
+
+const serviceLinks = [
+  { path: "/audit/landing", label: "AI Business Audit ($47) — 8-section diagnosis in 24 hours" },
+  { path: "/modules", label: "Transformation Paths — personal, business & AI programs" },
+  { path: "/store", label: "Books & AI Kits — self-paced tools, templates & guides" },
+  { path: "/rent-an-agent", label: "Rent-an-Agent — done-with-you AI agents on your stack" },
+  { path: "/build-studio", label: "AI Build Studio — custom AI built end-to-end" },
+  { path: "/advisory", label: "Advisory & Partnership — fractional AI strategy for leaders" },
+  { path: "/autism-social-stories", label: "Autism Social Stories — AI-personalized stories for families" },
+];
+
+const companyLinks = [
+  { path: "/coach-kay", label: "Meet Coach Kay" },
+  { path: "/collective", label: "Collective AI — the team behind every build" },
+  { path: "/truth", label: "The Truth About AI — no hype, no fear" },
+  { path: "/faq", label: "FAQ — every question answered" },
   { path: "/auth", label: "Sign In / Sign Up" },
+  { path: "/dashboard", label: "Dashboard (authenticated)" },
 ];
 
 const legalLinks = [
   { path: "/privacy", label: "Privacy Policy" },
   { path: "/terms", label: "Terms of Service" },
-  { path: "/disclaimer", label: "Coaching & Earnings Disclaimer" },
+  { path: "/disclaimer", label: "Coaching, Wellness & Earnings Disclaimer" },
   { path: "/refund-policy", label: "Refund & Cancellation Policy" },
 ];
 
@@ -42,12 +57,26 @@ const Sitemap = () => (
       </Link>
     </div>
     <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
-      <h1 className="font-heading text-3xl font-light mb-8">Sitemap</h1>
+      <h1 className="font-heading text-3xl font-light mb-2">Sitemap</h1>
+      <p className="text-sm text-muted-foreground mb-10">FocusFlow AI by Coach Kay · coachkayai.life · Columbus, OH</p>
 
       <section className="mb-10">
-        <h2 className="font-heading text-xl font-light mb-4 text-primary">Core Pages</h2>
+        <h2 className="font-heading text-xl font-light mb-4 text-primary">Free Tools & Entry Points</h2>
         <ul className="space-y-2">
-          {coreLinks.map((l) => (
+          {freeToolLinks.map((l) => (
+            <li key={l.path}>
+              <Link to={l.path} className="text-foreground/80 hover:text-primary hover:underline transition-colors">
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="font-heading text-xl font-light mb-4 text-primary">Offers & Services</h2>
+        <ul className="space-y-2">
+          {serviceLinks.map((l) => (
             <li key={l.path}>
               <Link to={l.path} className="text-foreground/80 hover:text-primary hover:underline transition-colors">
                 {l.label}
@@ -94,6 +123,19 @@ const Sitemap = () => (
       </section>
 
       <section className="mb-10">
+        <h2 className="font-heading text-xl font-light mb-4 text-primary">Company & About</h2>
+        <ul className="space-y-2">
+          {companyLinks.map((l) => (
+            <li key={l.path}>
+              <Link to={l.path} className="text-foreground/80 hover:text-primary hover:underline transition-colors">
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mb-10">
         <h2 className="font-heading text-xl font-light mb-4 text-primary">Legal</h2>
         <ul className="space-y-2">
           {legalLinks.map((l) => (
@@ -105,6 +147,10 @@ const Sitemap = () => (
           ))}
         </ul>
       </section>
+
+      <p className="text-[11px] text-muted-foreground/50 border-t border-border/30 pt-6">
+        Focus Flow AI LLC · DBA Coach Kay Elevates · Columbus, OH · hello@coachkayelevates.org
+      </p>
     </div>
   </div>
 );

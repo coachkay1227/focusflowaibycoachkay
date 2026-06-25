@@ -18,7 +18,7 @@ interface AdminUser {
   created_at: string | null;
 }
 
-const tierOptions: AccessTier[] = ["free", "subscriber", "cohort", "premium", "rent_agent", "corporate"];
+const tierOptions: AccessTier[] = ["free", "subscriber", "reset_30", "transformation_90", "cohort", "premium", "rent_agent", "corporate"];
 
 const AdminUsers = () => {
   const { isAdmin, loading: rolesLoading } = useRoles();

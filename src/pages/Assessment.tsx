@@ -70,7 +70,7 @@ const BUCKET_LABEL: Record<Bucket, string> = {
 };
 const BUCKET_PLAIN: Record<Bucket, string> = {
   CLARITY: "You don't know what to build, sell, or say next.",
-  FOCUS: "You know what to do — you can't get it done.",
+  FOCUS: "You know what to do. You just can't get it done.",
   UPLEVEL: "The work is good. No one is seeing it.",
   OWNERSHIP: "Money, systems, and time are leaking.",
 };
@@ -93,8 +93,8 @@ const PATHS: Record<PathKey, { name: string; tagline: string; route: string; cta
   uplevel60: {
     name: "Uplevel 60 · 1:1 with Coach Kay",
     tagline: "60 days, direct line, custom build. For operators ready to be seen.",
-    route: "/coach-kay",
-    ctaLabel: "See if Uplevel 60 fits",
+    route: "/advisory",
+    ctaLabel: "See Advisory options",
   },
   rentAgent: {
     name: "Rent-an-Agent",
@@ -129,7 +129,7 @@ const QUESTIONS: Question[] = [
     dimension: "M",
     label: "OPERATOR · 01 / 03",
     question: "You have 90 minutes before a client call you haven't prepped. What actually happens?",
-    subtitle: "Honest reflex — not the disciplined version.",
+    subtitle: "Honest reflex, not the disciplined version.",
     options: [
       { archetype: "A", label: "Pull the file, re-read every note", desc: "You won't speak until the logic holds." },
       { archetype: "V", label: "Sit with the bigger picture for 20 minutes", desc: "You want to walk in with a frame, not facts." },
@@ -161,7 +161,7 @@ const QUESTIONS: Question[] = [
     question: "Your most loyal client just left for a cheaper competitor. First thing that rises in you?",
     subtitle: "The first feeling, not the second response.",
     options: [
-      { archetype: "N", label: "Quiet acceptance — already running the math", desc: "Steady. You don't flinch in public." },
+      { archetype: "N", label: "Quiet acceptance, already running the math", desc: "Steady. You don't flinch in public." },
       { archetype: "T", label: "A burst of energy to chase the next ten", desc: "Pain becomes fuel inside an hour." },
       { archetype: "G", label: "A protective instinct for the rest of your roster", desc: "You guard who's still here first." },
       { archetype: "P", label: "An impulse to build something they can't copy", desc: "You'd rather invent than defend." },
@@ -176,7 +176,7 @@ const QUESTIONS: Question[] = [
     subtitle: "What actually slows the first hour.",
     options: [
       { bucket: "CLARITY", label: "I'm not sure what to work on first", desc: "Too many open loops, no clear north." },
-      { bucket: "FOCUS", label: "I know the task — I drift off it", desc: "Tabs, errands, anything but the page." },
+      { bucket: "FOCUS", label: "I know the task, I just drift off it", desc: "Tabs, errands, anything but the page." },
       { bucket: "UPLEVEL", label: "I post and it lands in a quiet room", desc: "The work is shipping. The audience isn't growing." },
       { bucket: "OWNERSHIP", label: "I'm doing admin I should've handed off months ago", desc: "Time bleeds before the real work starts." },
     ],
@@ -192,7 +192,7 @@ const QUESTIONS: Question[] = [
       { bucket: "CLARITY", label: "I don't know what to sell them next", desc: "There's no Offer 2. There's barely an Offer 1." },
       { bucket: "FOCUS", label: "I can't deliver and sell at the same time", desc: "Execution capacity hits a wall fast." },
       { bucket: "UPLEVEL", label: "I have no pipeline behind this month", desc: "It's a spike, not a curve." },
-      { bucket: "OWNERSHIP", label: "Operations — invoicing, contracts, onboarding", desc: "Money in, paperwork everywhere." },
+      { bucket: "OWNERSHIP", label: "Operations: invoicing, contracts, onboarding", desc: "Money in, paperwork everywhere." },
     ],
   },
   // ── BOTTLENECK · 3 ─────────────────────────────────────────────────────────
@@ -554,6 +554,7 @@ const Assessment = () => {
                   <button
                     key={value}
                     onClick={() => select(value)}
+                    onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); select(value); } }}
                     className={`text-left rounded-lg border p-4 transition-all backdrop-blur-sm ${
                       isSel
                         ? "border-primary/70 bg-primary/10 shadow-[0_0_30px_hsl(43_75%_52%/0.15)]"
@@ -790,6 +791,10 @@ const Assessment = () => {
               <Zap className="h-3 w-3" />
               NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
             </div>
+            <p className="text-center text-[11px] text-muted-foreground/40 mt-2">
+              By continuing you agree to our{" "}
+              <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
+            </p>
           </form>
         </div>
       )}

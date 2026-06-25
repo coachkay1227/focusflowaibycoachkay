@@ -17,6 +17,7 @@ import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import YourProgramPanel from "@/components/dashboard/YourProgramPanel";
+import CurriculumSection from "@/components/dashboard/CurriculumSection";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useRoles } from "@/hooks/use-roles";
@@ -54,11 +55,11 @@ const AUDIT_OFFER_NAMES: Record<string, string> = {
   studio_storybook_pro: "The Storybook Pro",
   studio_other: "Publishing Studio",
   // Build Studio (Phase 3.5 — opening soon)
-  build_studio_landing: "Build Studio — Landing Page (Opening Soon)",
-  build_studio_site: "Build Studio — Business Site (Opening Soon)",
-  build_studio_dashboard: "Build Studio — Dashboard (Opening Soon)",
+  build_studio_landing: "Build Studio: Landing Page (Opening Soon)",
+  build_studio_site: "Build Studio: Business Site (Opening Soon)",
+  build_studio_dashboard: "Build Studio: Dashboard (Opening Soon)",
   // Community / free
-  focus_flow_elevation_hub: "Focus Flow Elevation Hub (Free)",
+  focus_flow_elevation_hub: "FocusFlow Elevation Hub (Free)",
 };
 
 type AuditRow = {
@@ -80,7 +81,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { tier, loading: tierLoading } = useAccessLevel();
-  const { subscribed, subscriptionEnd, openPortal } = useSubscription();
+  const { subscribed, subscriptionEnd, openPortal, checkSubscription } = useSubscription();
   const { isAdmin } = useRoles();
   const { toast } = useToast();
   const [moduleEnrollments, setModuleEnrollments] = useState<ModuleEnrollment[]>([]);
@@ -95,18 +96,21 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
-    // Handle Stripe checkout success redirect
+    // Handle Stripe checkout success redirect — poll rapidly for tier upgrade
     const params = new URLSearchParams(window.location.search);
-    if (params.get("checkout") === "success") {
-      toast({ title: "Welcome aboard!", description: "Your payment was successful. Your access has been upgraded." });
-      window.history.replaceState({}, "", "/dashboard");
-    }
-    if (params.get("welcome") === "program") {
+    if (params.get("checkout") === "success" || params.get("welcome") === "program") {
+      const isWelcome = params.get("welcome") === "program";
       toast({
-        title: "You're in 🎉",
-        description: "Your program is now active. Scroll down to see what's included and your next step.",
+        title: isWelcome ? "You're in!" : "Welcome aboard!",
+        description: isWelcome
+          ? "Your program is now active. Scroll down to see what's included and your next step."
+          : "Payment confirmed — syncing your access now.",
       });
       window.history.replaceState({}, "", "/dashboard");
+      // Poll every 5 s for up to 60 s so the tier badge updates promptly
+      checkSubscription();
+      const fastPoll = setInterval(checkSubscription, 5_000);
+      setTimeout(() => clearInterval(fastPoll), 60_000);
     }
     Promise.all([
       getModuleEnrollments().then(setModuleEnrollments),
@@ -197,6 +201,13 @@ const Dashboard = () => {
             {!tierLoading && (tier === "reset_30" || tier === "transformation_90") && (
               <AnimatedSection delay={25}>
                 <YourProgramPanel tier={tier} />
+              </AnimatedSection>
+            )}
+
+            {/* F.O.C.U.S. Curriculum — visible to paid tiers */}
+            {!tierLoading && (tier === "reset_30" || tier === "transformation_90" || tier === "premium" || tier === "corporate") && (
+              <AnimatedSection delay={50}>
+                <CurriculumSection />
               </AnimatedSection>
             )}
 
@@ -341,7 +352,7 @@ const Dashboard = () => {
                 <div className="clarity-card rounded-lg border border-primary/30 bg-primary/5 backdrop-blur-sm p-8 text-center">
                   <h3 className="font-heading text-xl font-light mb-2">Get Your AI Business Audit</h3>
                   <p className="text-muted-foreground mb-5 max-w-xl mx-auto text-sm">
-                    A personalized $47 diagnostic of your business with a 7-day action plan and your next best move — generated in under 2 minutes.
+                    A personalized $47 diagnostic of your business with a 7-day action plan and your next best move, generated in under 2 minutes.
                   </p>
                   <Button onClick={() => navigate("/rent-an-agent")} className="bg-primary text-primary-foreground hover:bg-primary/90">
                     Take the Audit <ArrowRight className="ml-2 h-4 w-4" />
@@ -363,7 +374,7 @@ const Dashboard = () => {
                       if (hasReport) {
                         label = `Audit from ${new Date(a.generated_at ?? a.created_at).toLocaleDateString()}`;
                       } else if (intakeEmpty) {
-                        label = `Audit purchased ${new Date(a.created_at).toLocaleDateString()} — intake pending`;
+                        label = `Audit purchased ${new Date(a.created_at).toLocaleDateString()}, intake pending`;
                       } else {
                         label = "Audit in progress";
                       }
@@ -371,7 +382,7 @@ const Dashboard = () => {
                         ? ["View Report", `/audit/report/${a.id}`]
                         : intakeEmpty
                           ? ["Complete Intake", `/audit/intake?audit_id=${a.id}`]
-                          : ["Generation Failed — Retry", `/audit/intake?audit_id=${a.id}&retry=1`];
+                          : ["Generation Failed. Retry", `/audit/intake?audit_id=${a.id}&retry=1`];
                       return (
                         <div
                           key={a.id}

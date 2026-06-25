@@ -5,16 +5,16 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 
 const TESTIMONIALS = [
   {
-    quote: "Coach Kay showed me I didn't need another system — I needed focus. Week two, the noise was gone.",
-    name: "Sheila — Cohort Member, Reset 30",
+    quote: "Coach Kay showed me I didn't need another system. I needed focus. Week two, the noise was gone.",
+    name: "Sheila, Cohort Member, Reset 30",
   },
   {
-    quote: "The Clarity Check named the pattern I'd been dancing around for years — in one paragraph.",
-    name: "Starr — Transformation 90",
+    quote: "The Clarity Check named the pattern I'd been dancing around for years, in one paragraph.",
+    name: "Starr, Transformation 90",
   },
   {
     quote: "She walked me through AI like a friend, not a manual. Three weeks in, I owned the workflow.",
-    name: "Buzz — AI Simplified Track",
+    name: "Buzz, AI Simplified Track",
   },
 ];
 

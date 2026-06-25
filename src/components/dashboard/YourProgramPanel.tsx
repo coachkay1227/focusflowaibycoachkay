@@ -16,7 +16,7 @@ type ProgramCopy = {
 
 const PROGRAMS: Partial<Record<AccessTier, ProgramCopy>> = {
   reset_30: {
-    tag: "30-Day Reset — Active",
+    tag: "30-Day Reset, Active",
     title: "Your 30-Day Reset",
     blurb:
       "You're in a focused 30-day track designed to give you clarity, momentum, and one win per day. Complete one session daily and join the community for accountability.",
@@ -29,10 +29,10 @@ const PROGRAMS: Partial<Record<AccessTier, ProgramCopy>> = {
     primary: { label: "Join the community", href: COMMUNITY_URL, external: true },
   },
   transformation_90: {
-    tag: "90-Day Transformation — Active",
+    tag: "90-Day Transformation, Active",
     title: "Your 90-Day Transformation",
     blurb:
-      "You're enrolled in a private 90-day coaching container with Coach Kay. Book your first 1:1 session below — it's how we set your plan.",
+      "You're enrolled in a private 90-day coaching container with Coach Kay. Book your first 1:1 session below. That's how we set your plan.",
     includes: [
       "Three 60-minute 1:1 sessions with Coach Kay",
       "Full access to F.O.C.U.S. modules + daily clarity sessions",

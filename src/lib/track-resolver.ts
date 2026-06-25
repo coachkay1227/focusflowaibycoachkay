@@ -112,15 +112,15 @@ function challengeForPhase(phase: LifePhase): string {
   }
 }
 
-function programsForPhase(phase: LifePhase): string[] {
+export function programsForPhase(phase: LifePhase): string[] {
   switch (phase) {
-    case "burnout": return ["discover-energy-patterns", "emotional-reset-sprint"];
-    case "identity-shift": return ["mirror-challenge", "unshakable-self-assurance"];
-    case "reinvention": return ["alignment-accelerator", "mastering-peace-purpose"];
-    case "overwhelm": return ["clarity-check", "private-reflection-challenge"];
-    case "transition": return ["letting-go", "mastering-peace-purpose"];
-    case "seeking": return ["mastering-peace-purpose", "alignment-accelerator"];
-    default: return ["clarity-check"];
+    case "burnout":        return ["30-day-personal-reset"];
+    case "identity-shift": return ["90-day-personal-transformation"];
+    case "reinvention":    return ["90-day-personal-transformation", "6-month-private-partnership"];
+    case "overwhelm":      return ["30-day-personal-reset"];
+    case "transition":     return ["30-day-personal-reset", "90-day-personal-transformation"];
+    case "seeking":        return ["90-day-personal-transformation"];
+    default:               return ["30-day-personal-reset"];
   }
 }
 
@@ -135,22 +135,22 @@ const PHASE_LABELS: Record<LifePhase, string> = {
 
 const PHASE_DESCRIPTIONS: Record<LifePhase, string> = {
   burnout:
-    "Your answers suggest you've been running on empty for a while. This isn't weakness — it's a signal that something needs to shift. The right support can help you rebuild energy and clarity from the inside out.",
+    "Your answers suggest you've been running on empty for a while. This isn't weakness. It's a signal that something needs to shift. The right support can help you rebuild energy and clarity from the inside out.",
   "identity-shift":
-    "It sounds like the version of you that got you here may not be the version that takes you forward. That's not a crisis — it's growth. Let's explore who you're becoming.",
+    "It sounds like the version of you that got you here may not be the version that takes you forward. That's not a crisis. It's growth. Let's explore who you're becoming.",
   reinvention:
-    "You're ready for something new. The old playbook doesn't fit anymore, and that's a powerful place to be. This is about building what comes next — intentionally.",
+    "You're ready for something new. The old playbook doesn't fit anymore, and that's a powerful place to be. This is about building what comes next, intentionally.",
   overwhelm:
-    "Right now everything feels like it's happening at once. That's not a character flaw — it's a sign you need a clearer system for what gets your energy and what doesn't.",
+    "Right now everything feels like it's happening at once. That's not a character flaw. It's a sign you need a clearer system for what gets your energy and what doesn't.",
   transition:
-    "Life is shifting in a big way. Whether chosen or unexpected, transitions demand a different kind of support — one that meets you where you are and helps you move forward with clarity.",
+    "Life is shifting in a big way. Whether chosen or unexpected, transitions demand a different kind of support: one that meets you where you are and helps you move forward with clarity.",
   seeking:
-    "You're searching for something deeper — meaning, direction, a sense of purpose. That search is itself a sign of readiness. Let's channel it into something concrete.",
+    "You're searching for something deeper: meaning, direction, a sense of purpose. That search is itself a sign of readiness. Let's channel it into something concrete.",
 };
 
 const SUPPORT_MESSAGES: Record<LifePhase, string> = {
   burnout: "Coach Kay has helped hundreds of people rebuild after burnout. You don't have to figure this out alone.",
-  "identity-shift": "Identity work is Coach Kay's specialty. Let's explore this together — on your terms.",
+  "identity-shift": "Identity work is Coach Kay's specialty. Let's explore this together, on your terms.",
   reinvention: "Ready to build what's next? Coach Kay can help you design a reinvention path that actually fits your life.",
   overwhelm: "Let's simplify. Coach Kay can help you cut through the noise and find your one next step.",
   transition: "Transitions are Coach Kay's arena. Let's navigate this shift with clarity and support.",

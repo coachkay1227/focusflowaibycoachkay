@@ -210,6 +210,13 @@ export const globalGraph = () => {
         "@type": ["ProfessionalService", "LocalBusiness"],
         "@id": LOCAL_BUSINESS_ID,
         name: "FocusFlow AI — Coach Kay",
+        description: "Master AI coach platform: clarity sessions, transformation programs, AI business audits, and done-for-you AI agent systems.",
+        publisher: { "@id": ORG_ID },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${SITE_URL}/ai-tools?q={search_term_string}`,
         image: `${SITE_URL}/og-image.png`,
         url: SITE_URL,
         telephone: "+1-614-XXX-XXXX",

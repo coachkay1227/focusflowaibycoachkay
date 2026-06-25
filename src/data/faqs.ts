@@ -42,11 +42,11 @@ export const FAQ_LANES: FAQLane[] = [
       },
       {
         q: "Who is Coach Kay?",
-        a: "Kenza Alaoui Ismaili (Coach Kay) is a 5x certified Master Life Coach, AI strategist, and prompt engineer. She blends honest clarity coaching with AI-powered momentum for women, high-performers, and leaders navigating transformation.",
+        a: "Kenza Alaoui Ismaili (Coach Kay) is a 5x certified Master Life Coach, AI strategist, and prompt engineer. She blends honest clarity coaching with real momentum for women, high-performers, and leaders navigating transformation.",
       },
       {
         q: "What's the difference between the free tools and a paid program?",
-        a: "Free tools (Clarity Check, Mirror Challenge, Starter Kit) help you diagnose and start. Paid programs — 30-Day Personal Reset, 90-Day Transformation, Full AI 90-Day — give you structured curriculum, coaching access, and AI-supported execution to finish what you start.",
+        a: "Free tools (Clarity Check, Mirror Challenge, Starter Kit) help you diagnose and start. Paid programs (30-Day Personal Reset, 90-Day Transformation, Full AI 90-Day) give you structured curriculum, coaching access, and AI-supported execution to finish what you start.",
       },
     ],
   },
@@ -66,7 +66,7 @@ export const FAQ_LANES: FAQLane[] = [
       },
       {
         q: "Will this work for an IEP or school setting?",
-        a: "Yes. Our School & IEP package is built specifically for educators and clinicians — IEP-aligned language, classroom-ready visuals, and a usage license scoped for school teams.",
+        a: "Yes. Our School & IEP package is built specifically for educators and clinicians: IEP-aligned language, classroom-ready visuals, and a usage license scoped for school teams.",
       },
       {
         q: "How fast do I receive my story?",
@@ -86,7 +86,7 @@ export const FAQ_LANES: FAQLane[] = [
     items: [
       {
         q: "What exactly is a 'rented' AI agent?",
-        a: "A dedicated AI workflow tuned to your business — inbox triage, lead follow-up, content drafting, scheduling, or ops — running on your behalf and reporting into your existing stack. You don't manage prompts or infrastructure; we build, tune, and maintain it.",
+        a: "A dedicated AI workflow tuned to your business: inbox triage, lead follow-up, content drafting, scheduling, or ops, running on your behalf and reporting into your existing stack. You don't manage prompts or infrastructure; we build, tune, and maintain it.",
       },
       {
         q: "What's the difference between Founding and Standard pricing?",
@@ -102,7 +102,7 @@ export const FAQ_LANES: FAQLane[] = [
       },
       {
         q: "How is this different from hiring a VA or agency?",
-        a: "Agents work 24/7, scale instantly, and don't churn. They're best paired with a human for judgment calls — which is why every tier includes some human-led strategy time from our side.",
+        a: "Agents work 24/7, scale instantly, and don't churn. They're best paired with a human for judgment calls, which is why every tier includes some human-led strategy time from our side.",
       },
     ],
   },
@@ -142,7 +142,7 @@ export const FAQ_LANES: FAQLane[] = [
     items: [
       {
         q: "What do I get for $47?",
-        a: "A 5-minute diagnostic across 12 AI-readiness vectors, a personalized F.O.C.U.S. action plan, AI routing and tool recommendations, and a quick-win action list — delivered to your inbox within minutes.",
+        a: "A 5-minute diagnostic across 12 AI-readiness vectors, a personalized F.O.C.U.S. action plan, AI routing and tool recommendations, and a quick-win action list, delivered to your inbox within minutes.",
       },
       {
         q: "Is the $47 credited toward larger engagements?",
@@ -161,12 +161,12 @@ export const FAQ_LANES: FAQLane[] = [
   {
     key: "studio",
     label: "Story, Legacy & Publishing Studio",
-    blurb: "Storybooks, legacy memoirs, expert books, creator bundles — done-for-you with AI-enhanced speed.",
+    blurb: "Storybooks, legacy memoirs, expert books, creator bundles: all done for you.",
     path: "/store",
     items: [
       {
         q: "What can the Studio produce?",
-        a: "Children's storybooks, legacy memoirs, expert/authority books, creator bundles, and autism social stories — delivered in formats ready for Amazon KDP, Etsy, lead magnets, or private keepsakes.",
+        a: "Children's storybooks, legacy memoirs, expert/authority books, creator bundles, and autism social stories, delivered in formats ready for Amazon KDP, Etsy, lead magnets, or private keepsakes.",
       },
       {
         q: "Do I retain the rights to my book?",
@@ -182,7 +182,7 @@ export const FAQ_LANES: FAQLane[] = [
       },
       {
         q: "Can I see examples before I buy?",
-        a: "Yes — sample spreads, covers, and case studies are linked from each package. For custom or institutional work, request a scoped portfolio walk-through from the intake form.",
+        a: "Yes. Sample spreads, covers, and case studies are linked from each package. For custom or institutional work, request a scoped portfolio walk-through from the intake form.",
       },
     ],
   },

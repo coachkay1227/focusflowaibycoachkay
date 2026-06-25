@@ -7,6 +7,15 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 const COLORS = ["#E8B931", "#A78BFA", "#34D399", "#F472B6", "#60A5FA"];
 
+const CHALLENGE_DURATIONS: Record<string, number> = {
+  "3-day": 3,
+  "4-day": 4,
+  "7-day": 7,
+  "8-day": 8,
+  "14-day": 14,
+  "30-day": 30,
+};
+
 interface ModuleStat {
   module_id: string;
   count: number;
@@ -98,7 +107,9 @@ const AdminAnalytics = () => {
           .select("challenge_type, current_day");
 
         const totalChallenges = challenges?.length ?? 0;
-        const completedChallenges = challenges?.filter((c) => (c.current_day ?? 0) >= 7).length ?? 0;
+        const completedChallenges = challenges?.filter(
+          (c) => (c.current_day ?? 0) >= (CHALLENGE_DURATIONS[c.challenge_type] ?? 7)
+        ).length ?? 0;
         setChallengeCompletion({ total: totalChallenges, completed: completedChallenges });
 
         const { data: studioEvents } = await supabase

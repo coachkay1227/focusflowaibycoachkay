@@ -86,7 +86,7 @@ const Unsubscribe = () => {
             <h1 className="font-heading text-2xl font-light mb-3">Something went wrong</h1>
             <p className="text-muted-foreground text-sm">
               This link may be invalid or expired. You can email{" "}
-              <a href="mailto:Hello@coachkayelevates.org" className="text-primary hover:underline">Hello@coachkayelevates.org</a>{" "}
+              <a href="mailto:hello@coachkayelevates.org" className="text-primary hover:underline">hello@coachkayelevates.org</a>{" "}
               to manage your preferences.
             </p>
           </>

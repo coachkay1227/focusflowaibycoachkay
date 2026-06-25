@@ -25,7 +25,7 @@ interface NewsletterWaitlistProps {
 const NewsletterWaitlist = ({
   source,
   variant = "inline",
-  heading = "FocusFlow Newsletter — coming soon",
+  heading = "FocusFlow Newsletter, coming soon",
   subheading = "Weekly clarity drops, AI plays, and Coach Kay's no-fluff field notes.",
   className,
   onSuccess,
@@ -107,7 +107,8 @@ const NewsletterWaitlist = ({
       )}
       {variant !== "compact" && !done && (
         <p className="text-[11px] text-muted-foreground/60 mt-3">
-          No spam. Unsubscribe anytime. We'll never share your email.
+          No spam. Unsubscribe anytime. We'll never share your email.{" "}
+          <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
         </p>
       )}
     </div>

@@ -30,6 +30,7 @@ const INDEXABLE: string[] = [
   "/coach-kay",
   "/store",
   "/rent-an-agent",
+  "/agent-builder",
   "/advisory",
   "/build-studio",
   "/truth",
@@ -66,6 +67,8 @@ const NOINDEX: string[] = [
   "/audit/intake",
   "/audit/intake/:id",
   "/audit/report/:id",
+  "/agent-result",
+  "/agent-intake",
   "*", // NotFound
 ];
 

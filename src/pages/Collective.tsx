@@ -7,7 +7,7 @@ import { webPage, breadcrumb, SITE_URL, ORG_ID, PERSON_ID } from "@/lib/seo-sche
 
 const ROLES = [
   { icon: Cog, title: "Operations Architect", body: "Coach Kay. Scopes every build, owns the roadmap, signs the SOW." },
-  { icon: Layers, title: "Lead Engineer", body: "Ships the system end-to-end — frontend, edge functions, integrations." },
+  { icon: Layers, title: "Lead Engineer", body: "Ships the system end-to-end: frontend, edge functions, integrations." },
   { icon: Sparkles, title: "AI Researcher", body: "Designs the prompt + model strategy. Keeps quality and cost in line." },
   { icon: Users, title: "Designer & QA", body: "Visual polish, accessibility, mobile parity, pre-launch hardening." },
 ];
@@ -18,7 +18,7 @@ const CAPABILITIES = [
   "Enterprise integrations (Stripe, GHL, Supabase, REST/GraphQL APIs)",
   "Compliance-aware builds for public-sector and nonprofit partners",
   "Fractional AI product leadership and advisory",
-  "Ongoing Care plans — uptime, edits, monitoring, growth",
+  "Ongoing Care plans: uptime, edits, monitoring, growth",
 ];
 
 const FAQS = [
@@ -52,7 +52,7 @@ export default function Collective() {
       "@id": `${SITE_URL}/collective#org`,
       name: "Collective AI",
       description:
-        "A multidisciplinary AI delivery team led by Coach Kay (Kenza Alaoui). Operations, engineering, AI research, and design — assembled for builds that require more than solo capacity.",
+        "A multidisciplinary AI delivery team led by Coach Kay (Kenza Alaoui). Operations, engineering, AI research, and design, assembled for builds that require more than solo capacity.",
       url: `${SITE_URL}/collective`,
       parentOrganization: { "@id": ORG_ID },
       founder: { "@id": PERSON_ID },
@@ -111,7 +111,7 @@ export default function Collective() {
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           For 1:1 coaching, you get Kay. For heavy builds, automations, and enterprise scopes,
-          you get Kay <em>and</em> the Collective AI delivery team — engineering, AI research,
+          you get Kay <em>and</em> the Collective AI delivery team: engineering, AI research,
           design, and QA, assembled around your project.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
@@ -144,12 +144,12 @@ export default function Collective() {
             </h2>
             <p className="text-[15px] text-muted-foreground leading-[1.8] mb-3">
               As <strong className="text-foreground/85">Coach Kay</strong>, she runs the
-              1:1 coaching, the programs, and the personal transformations — solo,
+              1:1 coaching, the programs, and the personal transformations, solo,
               high-touch, deeply human.
             </p>
             <p className="text-[15px] text-muted-foreground leading-[1.8]">
               As <strong className="text-foreground/85">Operations Architect & Lead Developer at Collective AI</strong>,
-              she scopes and leads the team that ships the heavy builds — the dashboards,
+              she scopes and leads the team that ships the heavy builds: the dashboards,
               the automations, the enterprise systems. Same standards. More capacity.
               You're never trusting one person with a six-figure roadmap.
             </p>
@@ -202,8 +202,8 @@ export default function Collective() {
               All work contracted under Focus Flow AI LLC (DBA Coach Kay Elevates).
               Delivered with the Collective AI team. For institutional procurement,
               email{" "}
-              <a href="mailto:Hello@coachkayelevates.org" className="text-primary underline">
-                Hello@coachkayelevates.org
+              <a href="mailto:hello@coachkayelevates.org" className="text-primary underline">
+                hello@coachkayelevates.org
               </a>
               .
             </p>

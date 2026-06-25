@@ -175,7 +175,7 @@ const Auth = () => {
                 onClick={() => setMode("signin")}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6"
               >
-                I confirmed — Sign me in
+                I confirmed. Sign me in.
               </Button>
               <button
                 onClick={() => { setMode("signup"); setEmail(""); setPassword(""); }}

@@ -71,7 +71,7 @@ export const QUICK_WINS: BuildTierOffer[] = [
   {
     key: "lead_magnet",
     name: "Lead Magnet Funnel",
-    tagline: "PDF magnet, opt-in page, confirmation email — done.",
+    tagline: "PDF magnet, opt-in page, confirmation email. Done.",
     price: 697,
     priceDisplay: "$697",
     turnaround: "5 days",
@@ -155,7 +155,7 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
   {
     key: "ops_dashboard",
     name: "Internal Ops Dashboard",
-    tagline: "CRM-lite for your team — pipelines, tasks, reporting.",
+    tagline: "CRM-lite for your team: pipelines, tasks, reporting.",
     price: 3997,
     priceDisplay: "$3,997",
     turnaround: "3 weeks",
@@ -199,7 +199,7 @@ export const CUSTOM_AI_APPS: BuildTierOffer[] = [
   {
     key: "white_label",
     name: "White-Label Coaching Platform",
-    tagline: "Your own branded coaching app — modules, AI, billing.",
+    tagline: "Your own branded coaching app: modules, AI, billing.",
     price: 12997,
     priceDisplay: "$12,997",
     turnaround: "4 weeks",

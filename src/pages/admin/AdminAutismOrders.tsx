@@ -60,41 +60,12 @@ export default function AdminAutismOrders() {
       return;
     }
     setBusyId(order.id);
-    const { error: updErr } = await supabase
-      .from("autism_orders")
-      .update({ download_url: url, delivered_at: new Date().toISOString(), status: "delivered" })
-      .eq("id", order.id);
-    if (updErr) {
-      setBusyId(null);
-      toast({ title: "Update failed", description: updErr.message, variant: "destructive" });
-      return;
-    }
-
-    const totalStr = formatUSD(order.order_total);
-    const { error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
-      body: {
-        templateName: "autism-purchase-confirmation",
-        recipientEmail: order.client_email,
-        idempotencyKey: `autism-delivery-${order.id}`,
-        templateData: {
-          name: order.client_name,
-          packageName: order.package_name,
-          orderTotal: totalStr,
-          orderId: order.id,
-          childFirstName: order.child_first_name,
-          scenarioFocus: order.scenario_focus,
-          deliveryMethod: order.package_slug?.includes("illustrated")
-            ? "custom-illustrated PDF"
-            : "print-ready PDF",
-          storyCount: 1,
-          includesHsaReceipt: true,
-          downloadUrl: url,
-        },
-      },
+    const { error } = await supabase.functions.invoke("update-autism-order", {
+      body: { id: order.id, status: "delivered", download_url: url },
     });
     setBusyId(null);
-    if (emailErr) {
-      toast({ title: "Delivery email failed", description: emailErr.message, variant: "destructive" });
+    if (error) {
+      toast({ title: "Delivery failed", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Story delivered", description: `Email sent to ${order.client_email}` });
     }

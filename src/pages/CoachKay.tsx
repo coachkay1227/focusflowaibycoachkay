@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart, Layers } from "lucide-react";
+import { ArrowRight, ArrowLeft, Star, Award, Users, BookOpen, ExternalLink, Briefcase, Heart, Layers, Phone, Mail, MapPin, Building2 } from "lucide-react";
 import coachKayImg from "@/assets/coach-kay.jpeg";
 import { webPage, breadcrumb } from "@/lib/seo-schema";
 import MobileNav from "@/components/MobileNav";
@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 const testimonials = [
   {
     name: "Sheila",
-    text: "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone — I knew exactly which one thing to protect every morning.",
+    text: "I joined the cohort thinking I needed another productivity system. Coach Kay showed me I needed focus. By week two the noise was gone. I knew exactly which one thing to protect every morning.",
     role: "Cohort Member · Reset 30",
     pillar: "F · FOCUS",
   },
@@ -23,7 +23,7 @@ const testimonials = [
   },
   {
     name: "Buzz",
-    text: "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own — not one I rented from a YouTube video.",
+    text: "I'm not techy. Coach Kay walked me through AI like a friend, not a manual. Three weeks in I had a workflow I actually own, not one I rented from a YouTube video.",
     role: "Founder · AI Simplified Track",
     pillar: "O · OWNERSHIP  ·  S · SUSTAIN",
   },
@@ -104,7 +104,7 @@ const CoachKay = () => {
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/20 blur-lg" />
                 <img
                   src={coachKayImg}
-                  alt="Coach Kay — Kenza Alaoui, AI & Life Transformation Coach"
+                  alt="Coach Kay — Kenza Alaoui Ismaili, AI & Life Transformation Coach"
                   className="relative rounded-2xl object-cover shadow-2xl w-full"
                   loading="eager"
                   fetchPriority="high"
@@ -122,14 +122,13 @@ const CoachKay = () => {
                 Coach Kay
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
-                Kenza Alaoui — AI &amp; Life Transformation Coach
+                Kenza Alaoui Ismaili · AI &amp; Life Transformation Coach
               </p>
               <p className="mb-6 text-foreground/80 leading-relaxed">
                 Warm but direct. Emotionally intelligent. Pattern-aware. Coach Kay
                 doesn't sugarcoat, but she never shames. She sees people deeply and
-                speaks truth with care — blending cutting-edge AI technology with
-                genuine human insight to help you find clarity, alignment, and
-                intentional action.
+                speaks truth with care, blending practical AI with genuine human
+                insight to help you find clarity, alignment, and intentional action.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button
@@ -170,7 +169,7 @@ const CoachKay = () => {
                 Coach Kay is both the coach and the builder.
               </h2>
               <p className="text-[15px] text-muted-foreground leading-[1.8]">
-                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs — solo and high-touch.
+                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs, solo and high-touch.
                 As <strong className="text-foreground/85">Operations Architect &amp; Lead Developer at Collective AI</strong>, she leads
                 the multidisciplinary team that ships enterprise builds, automations, and AI systems.
               </p>
@@ -196,12 +195,12 @@ const CoachKay = () => {
               <p>
                 Coach Kay is a Columbus-based founder, 5x certified life coach,
                 full-time banking professional, and single mom to a daughter with
-                autism. Her frameworks weren't built in a classroom — they were
+                autism. Her frameworks weren't built in a classroom. They were
                 built in the margins of a real life, for people doing the same.
               </p>
               <p>
                 She leads two parallel missions. <strong>Coach Kay Elevates</strong>{" "}
-                is her for-profit workforce-readiness and AI-literacy program — a
+                is her for-profit workforce-readiness and AI-literacy program, a
                 COED partner serving working families across Central Ohio with
                 cohort-based learning, live sessions, and pilot programs for
                 organizations. <strong>Forward Focus Elevation</strong> is her
@@ -261,7 +260,7 @@ const CoachKay = () => {
             </h2>
             <p className="mx-auto mb-12 max-w-xl text-center text-muted-foreground">
               Real stories from people who've worked with Coach Kay to find
-              clarity and take action.
+              clarity and take action. Individual results vary.
             </p>
           </AnimatedSection>
           <div className="grid gap-6 md:grid-cols-2">
@@ -382,6 +381,56 @@ const CoachKay = () => {
         </div>
       </section>
 
+      {/* Business Info & AI Compliance */}
+      <section className="py-12 md:py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <AnimatedSection>
+            <div className="rounded-2xl border border-border bg-card/40 p-7 md:p-9">
+              <p className="font-mono text-[10px] text-primary/70 tracking-[0.18em] uppercase mb-4">Business Information</p>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <div className="flex items-start gap-3">
+                  <Building2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Legal Entity</p>
+                    <p className="text-muted-foreground">Focus Flow AI LLC</p>
+                    <p className="text-muted-foreground">DBA Coach Kay Elevates</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Location</p>
+                    <p className="text-muted-foreground">Columbus, OH</p>
+                    <p className="text-muted-foreground">Serving clients nationwide</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Mail className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Email</p>
+                    <a href="mailto:hello@coachkayelevates.org" className="text-primary hover:underline">
+                      hello@coachkayelevates.org
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-foreground font-medium">Phone</p>
+                    <a href="tel:+13802877936" className="text-primary hover:underline">
+                      +1 (380) 287-7936
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-6 text-[11px] text-muted-foreground/60 leading-relaxed border-t border-border/40 pt-4">
+                <strong className="text-muted-foreground/80">AI Disclosure:</strong> FocusFlow AI uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
+              </p>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="bg-gradient-to-b from-secondary/30 to-background py-16 md:py-24">
         <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
@@ -390,7 +439,7 @@ const CoachKay = () => {
               Ready to Get Unstuck?
             </h2>
             <p className="mb-8 text-muted-foreground">
-              Start with a free Clarity Check — no sign-up required — and see
+              Start with a free Clarity Check, no sign-up required, and see
               what Coach Kay's approach can reveal about where you are and where
               you're headed.
             </p>

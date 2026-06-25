@@ -31,7 +31,7 @@ const AuditLanding = () => {
       <BrandLogo size="md" />
       <span className="font-mono-label text-primary tracking-[0.2em] text-xs mt-6">PAYMENT CONFIRMED</span>
       <h1 className="font-heading text-3xl md:text-4xl text-primary mt-3 mb-2">Your AI Business Audit is ready to begin</h1>
-      <p className="text-base text-muted-foreground max-w-xl mb-2">Your clarity is on the way — check your email for next steps.</p>
+      <p className="text-base text-muted-foreground max-w-xl mb-2">Your clarity is on the way. Check your email for next steps.</p>
       <p className="text-muted-foreground max-w-xl mb-8">
         Check your email for the magic link to start your 5–7 minute intake. Already signed in? Continue below.
       </p>
@@ -77,7 +77,7 @@ const AuditLanding = () => {
             <p className="text-xs text-primary font-mono tracking-wider uppercase mb-2">Recommended Path</p>
             <p className="text-sm text-muted-foreground">Based on your stage and stack, Rent-an-Agent Starter tier would recoup its cost within 2 weeks of implementation.</p>
           </div>
-          <p className="text-xs text-muted-foreground/60 italic text-center pt-2">* Sample only — your audit is personalized to your business</p>
+          <p className="text-xs text-muted-foreground/60 italic text-center pt-2">* Sample only. Your audit is personalized to your business.</p>
         </div>
       </div>
     </div>

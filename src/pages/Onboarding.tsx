@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Sparkles, Check } from "lucide-react";
 
 const lifeStages = [
-  { value: "transition", label: "Navigating a Major Transition", desc: "Life is shifting in a big way — chosen or unexpected" },
+  { value: "transition", label: "Navigating a Major Transition", desc: "Life is shifting in a big way, chosen or unexpected" },
   { value: "burnout", label: "Recovering from Burnout", desc: "Running on empty and ready for a reset" },
   { value: "rebuilding", label: "Rebuilding After a Setback", desc: "Starting over or picking up the pieces" },
   { value: "seeking", label: "Searching for Purpose or Direction", desc: "Something is missing and I want to find it" },

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { programs } from "@/data/programs";
+import { gtagEvent } from "@/lib/gtag";
 
 const featured = programs.filter((p) => p.isFeatured).slice(0, 3);
 
@@ -10,7 +11,7 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Log 404 for analytics
+    gtagEvent('page_not_found', { page_path: location.pathname });
   }, [location.pathname]);
 
   return (

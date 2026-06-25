@@ -73,7 +73,7 @@ const Faq = () => {
           Frequently asked questions
         </h1>
         <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-          Answers grouped by lane — coaching, AI agents, advisory, audit,
+          Answers grouped by lane: coaching, AI agents, advisory, audit,
           autism &amp; social stories, and the publishing studio. Click any
           lane below to jump.
         </p>
