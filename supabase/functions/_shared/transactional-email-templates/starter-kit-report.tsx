@@ -108,7 +108,7 @@ export const template = {
   previewData: {
     name: 'Jane',
     businessType: 'Coaching / Consulting',
-    whereYouAre: 'You're at the stage where everything feels urgent — your pipeline, your content, your backend — but nothing is moving fast enough. The real issue isn't capacity, it's the absence of a decision framework for where your attention goes first.',
+    whereYouAre: "You're at the stage where everything feels urgent. your pipeline, your content, your backend. but nothing is moving fast enough. The real issue isn't capacity, it's the absence of a decision framework for where your attention goes first.",
     whatToFocusOn: 'Your Foundation pillar needs attention. Before any tool, tactic, or AI shortcut matters, you need a clear offer that closes without friction. One strong offer beats five vague ones every time.',
     actionThisWeek: 'Write one paragraph answering this: who is your ideal client, what do they want done for them (not taught), and what does it cost? That paragraph becomes your offer clarity anchor.',
   },
