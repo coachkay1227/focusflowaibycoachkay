@@ -23,31 +23,37 @@ export function AdminNav() {
   const location = useLocation();
 
   return (
-    <nav className="flex items-center gap-1 mb-8 p-1 bg-card/30 backdrop-blur-sm rounded-lg border border-border">
-      <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft className="h-4 w-4" />
-        Back to App
-      </Link>
-      <div className="w-px h-6 bg-border mx-1" />
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = location.pathname === item.to;
-        return (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={cn(
-              "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors",
-              isActive
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-card/50"
-            )}
-          >
-            <Icon className="h-4 w-4" />
-            {item.label}
-          </Link>
-        );
-      })}
+    <nav className="mb-8 p-1 bg-card/30 backdrop-blur-sm rounded-lg border border-border overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex items-center gap-1 flex-nowrap whitespace-nowrap">
+        <Link
+          to="/dashboard"
+          aria-label="Back to App"
+          className="shrink-0 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline">Back to App</span>
+        </Link>
+        <div className="w-px h-6 bg-border mx-1 shrink-0" />
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.to;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={cn(
+                "shrink-0 flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors",
+                isActive
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+              )}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }
