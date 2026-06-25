@@ -23,7 +23,7 @@ const STATUS_COPY: Record<string, { headline: string; message: string; label: st
   delivered: {
     label: 'Delivered',
     headline: 'Your book has been delivered.',
-    message: 'Your finished book has been delivered. Thank you for trusting us with this work — it has been our honor.',
+    message: 'Your finished book has been delivered. Thank you for trusting us with this work. it has been our honor.',
   },
   cancelled: {
     label: 'Cancelled',
@@ -33,7 +33,7 @@ const STATUS_COPY: Record<string, { headline: string; message: string; label: st
   paid: {
     label: 'Paid',
     headline: 'Payment received.',
-    message: 'Thank you — your payment has been received and your order is queued for review.',
+    message: 'Thank you. your payment has been received and your order is queued for review.',
   },
 }
 
@@ -46,7 +46,7 @@ const BookOrderStatusUpdateEmail = ({ name, packageName, status, orderId, note }
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>{copy.headline} — {SITE_NAME}</Preview>
+      <Preview>{copy.headline}. {SITE_NAME}</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={headerSection}>
@@ -82,7 +82,7 @@ const BookOrderStatusUpdateEmail = ({ name, packageName, status, orderId, note }
             <Text style={footerText}>
               Questions? Reply to this email or write to Hello@coachkayelevates.org.
             </Text>
-            <Text style={signoff}>— Coach Kay</Text>
+            <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           </Section>
         </Container>
       </Body>
@@ -92,15 +92,15 @@ const BookOrderStatusUpdateEmail = ({ name, packageName, status, orderId, note }
 
 export const template = {
   component: BookOrderStatusUpdateEmail,
-  subject: (data: Record<string, any>) => {
+  subject: (data: { status?: string }) => {
     const s = data?.status as string | undefined
     const c = (s && STATUS_COPY[s]) || null
     return c ? `Order update: ${c.label}` : 'Update on your book order'
   },
-  displayName: 'Book order — status update',
+  displayName: 'Book order. status update',
   previewData: {
     name: 'Jane',
-    packageName: "Children's Book — Signature",
+    packageName: "Children's Book. Signature",
     status: 'in_progress',
     orderId: 'abc12345-...',
     note: 'Your first proof is scheduled for next Tuesday.',

@@ -180,9 +180,8 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    console.error("[apply-now] Error:", msg);
-    return new Response(JSON.stringify({ error: msg }), {
+    console.error("[apply-now] Error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

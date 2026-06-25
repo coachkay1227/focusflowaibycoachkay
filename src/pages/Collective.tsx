@@ -75,6 +75,14 @@ export default function Collective() {
         title="Collective AI — The Team Behind Coach Kay's Builds"
         description="Collective AI is the multidisciplinary delivery team Coach Kay leads for enterprise builds, automation, and AI systems. Solo coaching by Kay. Heavy lifts delivered with the collective."
         path="/collective"
+        keywords={[
+          "Collective AI team",
+          "AI development team Columbus",
+          "enterprise AI delivery",
+          "automation engineering team",
+          "Coach Kay collective",
+          "AI systems implementation team",
+        ]}
         jsonLd={jsonLd}
       />
 

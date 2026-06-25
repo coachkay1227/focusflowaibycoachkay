@@ -5,6 +5,9 @@
 User-agent: Googlebot
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
@@ -19,6 +22,7 @@ Disallow: /mirror-challenge
 Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
+Disallow: /challenges/
 
 User-agent: Googlebot-Image
 Allow: /
@@ -26,6 +30,9 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
@@ -40,44 +47,60 @@ Disallow: /mirror-challenge
 Disallow: /sitemap$
 Disallow: /kiosk
 Disallow: /auth
+Disallow: /challenges/
 
 User-agent: Slurp
 Allow: /
 Disallow: /admin
 Disallow: /email-preview
+Disallow: /challenges/
 
 User-agent: DuckDuckBot
 Allow: /
 Disallow: /admin
 Disallow: /email-preview
+Disallow: /challenges/
 
 User-agent: Applebot
 Allow: /
 Disallow: /admin
 Disallow: /email-preview
+Disallow: /challenges/
 
 User-agent: Yandex
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /result
+Disallow: /challenges/
 
 User-agent: Baiduspider
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Sogou
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 # Social media crawlers
 User-agent: Twitterbot
@@ -96,76 +119,109 @@ Allow: /
 User-agent: GPTBot
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /admin
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Google-Extended
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /challenges/
 
 User-agent: Claude-Web
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /challenges/
 
 User-agent: anthropic-ai
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Amazonbot
 Allow: /
 Disallow: /admin
+Disallow: /challenges/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /challenges/
 
 User-agent: CCBot
 Allow: /
 Disallow: /admin
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Bytespider
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: meta-externalagent
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: Cohere-ai
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 User-agent: ia_archiver
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /profile
 Disallow: /dashboard
+Disallow: /challenges/
 
 # Default
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /audit/landing
+Disallow: /audit/intake
+Disallow: /audit/report
 Disallow: /email-preview
 Disallow: /profile
 Disallow: /onboarding
@@ -185,5 +241,6 @@ Disallow: /clarity/emotional-reset
 Disallow: /clarity/focus-flow
 Disallow: /clarity/purpose-happiness
 Disallow: /clarity/goal-shift
+Disallow: /challenges/
 
 Sitemap: https://coachkayai.life/sitemap.xml

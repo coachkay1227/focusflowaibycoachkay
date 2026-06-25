@@ -17,7 +17,7 @@ const BOOKING_URL = 'https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI
 const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUrl, communityUrl }: TransformationWelcomeProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>You're in — let's book your first 1:1</Preview>
+    <Preview>You're in. let's book your first 1:1</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={headerSection}>
@@ -53,7 +53,7 @@ const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUr
             Community: <a href={communityUrl ?? 'https://www.skool.com/focusflow-elevation-hub'} style={link}>FocusFlow Elevation Hub</a>
           </Text>
           <Hr style={divider} />
-          <Text style={signoff}>— Coach Kay</Text>
+          <Text style={signoff}>Where Focus Goes, Energy Flows. 💛 Coach Kay</Text>
           <Text style={mantra}>Where Focus Goes, Energy Flows.</Text>
         </Section>
       </Container>
@@ -63,7 +63,7 @@ const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUr
 
 export const template = {
   component: TransformationWelcomeEmail,
-  subject: (d: Record<string, any>) => `You're in — ${d.programName ?? 'your 90-Day Transformation'} starts now`,
+  subject: (d: { programName?: string }) => `You're in. ${d.programName ?? 'your 90-Day Transformation'} starts now`,
   displayName: '90-Day Transformation Welcome',
   previewData: {
     name: 'Jane',

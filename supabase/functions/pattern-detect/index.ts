@@ -2,17 +2,77 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay analyzing multiple coaching sessions from the same person to detect patterns across time.
+interface SessionInsight {
+  truth: string;
+  pattern: string;
+  action: string;
+}
 
-Look for:
-1. Recurring emotional states — do they keep feeling the same way?
-2. Avoidance language — are they saying the right things but not acting?
-3. Inconsistencies — do their goals contradict their behaviors?
-4. Growth signals — where have they shifted or evolved?
-5. Blind spots — what do they keep missing?
+interface SessionSummary {
+  timestamp: number;
+  answers: Record<string, string>;
+  insight?: SessionInsight;
+}
 
-Be direct, insightful, and specific. Use the detect_patterns tool.`;
+interface PatternDetectionRequest {
+  sessions: SessionSummary[];
+}
+
+interface PatternDetectionResult {
+  summary: string;
+  recurring: string;
+  growth: string;
+  callout: string;
+}
+
+interface ToolFunction {
+  arguments: string;
+}
+
+interface ToolCall {
+  function: ToolFunction;
+}
+
+interface Message {
+  tool_calls?: ToolCall[];
+}
+
+interface Choice {
+  message?: Message;
+}
+
+interface ChatCompletionResponse {
+  choices?: Choice[];
+}
+
+interface PatternDetectionResponse {
+  summary: string;
+  recurring: string;
+  growth: string;
+  callout: string;
+}
+
+interface AuthError {
+  error: string;
+}
+
+interface ValidationError {
+  error: string;
+}
+
+interface ApiError {
+  error: string;
+}
+
+interface SessionFormatted {
+  date: string;
+  answers: string;
+  insight: string;
+}
+
+const SYSTEM_PROMPT = composeSystemPrompt("pattern-detect");
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -122,7 +182,7 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("pattern-detect error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }

@@ -19,6 +19,7 @@ import PillarStrip from "@/components/PillarStrip";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSymmetricGridClass } from "@/lib/grid";
+import { startProgramCheckout, PENDING_CHECKOUT_KEY } from "@/lib/start-program-checkout";
 
 const PATHS: PublicPath[] = ["personal", "business", "ai"];
 const PILLAR_ORDER: FocusPillar[] = ["F", "O", "C", "U", "S"];
@@ -44,6 +45,22 @@ const Modules = () => {
       window.history.replaceState({}, "", "/modules");
     }
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Resume a pending Stripe checkout after the user signs in.
+  useEffect(() => {
+    if (!user) return;
+    let pending: string | null = null;
+    try { pending = sessionStorage.getItem(PENDING_CHECKOUT_KEY); } catch { /* noop */ }
+    if (!pending) return;
+    try { sessionStorage.removeItem(PENDING_CHECKOUT_KEY); } catch { /* noop */ }
+    const match = getPublicPrograms().find((p) => p.stripePriceId === pending);
+    void startProgramCheckout(pending, {
+      title: match?.title ?? "Program",
+      price: match?.price ?? 0,
+    }).catch(() => {
+      toast({ title: "Couldn't resume checkout", description: "Please click the Buy button again.", variant: "destructive" });
+    });
+  }, [user, toast]);
 
   useMouseGlow(containerRef);
 
@@ -103,6 +120,14 @@ const Modules = () => {
         title="AI Transformation Programs — FocusFlow by Coach Kay"
         description="AI-powered transformation programs by Coach Kay. Personal clarity, business growth, and full AI integration paths. Free and paid programs starting at $27/month."
         path="/modules"
+        keywords={[
+          "AI transformation programs",
+          "clarity coaching programs",
+          "business growth coaching with AI",
+          "AI integration training",
+          "personal development programs online",
+          "FocusFlow programs",
+        ]}
         jsonLd={jsonLd}
       />
       <div className="mouse-glow" />

@@ -29,23 +29,20 @@ function generateToken(): string {
 
 // Auth: this function MUST only be invoked by server-side code holding the
 // service_role key. Direct calls from browsers (using the public anon key)
-// would allow anyone on the internet to send emails to arbitrary recipients
-// using any registered template. We enforce service-role only by inspecting
-// the JWT role claim — Supabase's gateway accepts any valid JWT (anon
-// included) when verify_jwt is true, so we must check the role ourselves.
-function decodeJwtRole(authHeader: string | null): string | null {
-  if (!authHeader?.startsWith('Bearer ')) return null
-  const token = authHeader.slice('Bearer '.length)
-  const parts = token.split('.')
-  if (parts.length !== 3) return null
-  try {
-    const payload = JSON.parse(
-      atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))
-    )
-    return typeof payload?.role === 'string' ? payload.role : null
-  } catch {
-    return null
-  }
+// would allow anyone on the internet to send emails to arbitrary recipients.
+// We enforce service-role only by comparing the bearer token directly to the
+// SUPABASE_SERVICE_ROLE_KEY — never trust unverified JWT payload claims, since
+// an attacker can forge a token with `alg:none` and `role:service_role`.
+function isServiceRoleCaller(authHeader: string | null): boolean {
+  if (!authHeader?.startsWith('Bearer ')) return false
+  const token = authHeader.slice('Bearer '.length).trim()
+  const expected = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  if (!token || !expected) return false
+  // Constant-time-ish comparison
+  if (token.length !== expected.length) return false
+  let diff = 0
+  for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ expected.charCodeAt(i)
+  return diff === 0
 }
 
 function appendUnsubscribeFooter(html: string, unsubUrl: string): string {
@@ -62,15 +59,14 @@ function appendUnsubscribeFooter(html: string, unsubUrl: string): string {
   return html + footer
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   // Enforce service-role only
-  const callerRole = decodeJwtRole(req.headers.get('Authorization'))
-  if (callerRole !== 'service_role') {
+  if (!isServiceRoleCaller(req.headers.get('Authorization'))) {
     return new Response(
       JSON.stringify({ error: 'Forbidden' }),
       {
@@ -100,7 +96,7 @@ Deno.serve(async (req) => {
   let recipientEmail: string
   let idempotencyKey: string
   let messageId: string
-  let templateData: Record<string, any> = {}
+  let templateData: Record<string, unknown> = {}
   try {
     const body = await req.json()
     templateName = body.templateName || body.template_name

@@ -3,8 +3,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay (Kenza Alaoui), an AI & Life Transformation Coach. You operate Coach Kay Elevates with two distinct lanes:
+const AUDIT_CATALOG = `You operate Coach Kay Elevates with two distinct lanes:
 - Shield Her Elevation LLC (for-profit corporate AI training and coaching)
 - Forward Focus Elevation (the nonprofit lane — fiscally sponsored by COED Columbus, which IS a 501c3. Forward Focus Elevation itself is NOT a 501c3. NEVER describe Forward Focus Elevation as a 501c3 — this is a compliance flag.)
 
@@ -100,6 +101,8 @@ HERO RULE: transform_30_ai ($997) is the flagship. Prefer it when the operator s
 Pick exactly ONE next_best_move. Be decisive. Name it. Tell them WHY it's the right move given the specific things they typed. In all_pathways_note, briefly acknowledge 1–2 adjacent doors so they see the full ecosystem without losing the primary recommendation.
 
 Generate output via the generate_audit tool.`;
+
+const SYSTEM_PROMPT = composeSystemPrompt("business-audit", AUDIT_CATALOG);
 
 const OFFER_SLUGS = [
   // Door 1 — Transformation

@@ -255,6 +255,14 @@ export default function TruthAboutAI() {
         title="The Truth About AI — Personal, Business & Full Transformation"
         description="The honest truth about AI in 2026 — no hype, no fear. Coach Kay breaks down what AI actually is, what it can do for you, and how to use it with clarity."
         path="/truth"
+        keywords={[
+          "truth about AI",
+          "AI myths and facts",
+          "how to use AI for business",
+          "AI literacy for entrepreneurs",
+          "AI scams to avoid",
+          "Coach Kay AI guide",
+        ]}
         jsonLd={[ARTICLE_LD, FAQ_LD]}
       />
       <div className="md:hidden fixed top-4 right-4 z-50">

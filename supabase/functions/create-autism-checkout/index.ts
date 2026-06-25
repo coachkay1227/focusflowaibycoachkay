@@ -29,7 +29,7 @@ const BodySchema = z.object({
   gift_note: z.string().trim().max(500).optional().or(z.literal("")),
 });
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   const cors = getCorsHeaders(req);
 
@@ -194,7 +194,7 @@ serve(async (req) => {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("ERROR", { msg });
-    return new Response(JSON.stringify({ error: msg }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500, headers: { ...cors, "Content-Type": "application/json" },
     });
   }

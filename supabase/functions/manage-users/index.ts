@@ -7,7 +7,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[MANAGE-USERS] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
@@ -31,20 +31,15 @@ serve(async (req) => {
     if (!user) throw new Error("User not authenticated");
     logStep("User authenticated", { userId: user.id });
 
-    const adminEmailsEnv = Deno.env.get("ADMIN_EMAILS") ?? "hello@coachkayelevates.org";
-    const ADMIN_EMAILS = adminEmailsEnv.split(",").map((e: string) => e.trim());
-    let adminVerified = ADMIN_EMAILS.includes(user.email ?? "");
-
-    if (!adminVerified) {
-      const { data: isAdmin, error: roleError } = await supabaseClient.rpc("has_role", {
-        _user_id: user.id,
-        _role: "admin",
-      });
-      if (roleError) throw new Error(`Role check error: ${roleError.message}`);
-      adminVerified = !!isAdmin;
-    }
-
-    if (!adminVerified) throw new Error("Admin access required");
+    // Server-side admin check: only the user_roles table (via has_role) is
+    // authoritative. No email-based fallback — see security finding
+    // CLIENT_SIDE_AUTH / admin_email_fallback.
+    const { data: isAdmin, error: roleError } = await supabaseClient.rpc("has_role", {
+      _user_id: user.id,
+      _role: "admin",
+    });
+    if (roleError) throw new Error(`Role check error: ${roleError.message}`);
+    if (!isAdmin) throw new Error("Admin access required");
     logStep("Admin access confirmed");
 
     const body = await req.json();
@@ -233,7 +228,7 @@ serve(async (req) => {
         });
 
         (enrollmentsRes.data ?? []).forEach((e: { user_id: string; module_id: string; status: string; enrolled_at: string | null }) => {
-          if (e.enrolled_at) events.push({ type: "enrollment", name: nameMap.get(e.user_id) ?? "User", detail: `enrolled in ${e.module_id}`, timestamp: e.enrolled_at });
+          if (e.enrolled_at) events.push({ type: "enrollment", name: nameMap.get(e.user_id) ?? "User", detail: `enrolled in ${String(e.module_id)}`, timestamp: e.enrolled_at });
         });
 
         events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -319,12 +314,16 @@ serve(async (req) => {
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: msg });
-    const status = msg.includes("Admin access required") || msg.includes("No authorization") || msg.includes("not authenticated")
-      ? 403
-      : 500;
-    return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      status,
-    });
+    const isAuthError =
+      msg.includes("Admin access required") ||
+      msg.includes("No authorization") ||
+      msg.includes("not authenticated");
+    return new Response(
+      JSON.stringify({ error: isAuthError ? msg : "Internal server error" }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        status: isAuthError ? 403 : 500,
+      }
+    );
   }
 });

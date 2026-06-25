@@ -110,21 +110,6 @@ const ClaritySession = () => {
 
   useMouseGlow(containerRef);
 
-  // Render the unified retired screen for legacy / unknown slugs.
-  if (legacyRedirect) {
-    return <RetiredScreen {...legacyRedirect} />;
-  }
-  if (isUnknownModule) {
-    return (
-      <RetiredScreen
-        legacyName="That assessment"
-        redirectTo="/clarity"
-        redirectLabel="the Personal Clarity Check"
-        reason="The link you followed is no longer part of the public catalog. Here's the current entry point."
-      />
-    );
-  }
-
   // GA4: fire clarity_session_start once per real session mount
   useEffect(() => {
     if (!legacyRedirect && !isUnknownModule) {
@@ -154,6 +139,21 @@ const ClaritySession = () => {
       replace: true,
     });
   }, [isAdmin, searchParams, questions, navigate, resolvedModuleId]);
+
+  // Render the unified retired screen for legacy / unknown slugs.
+  if (legacyRedirect) {
+    return <RetiredScreen {...legacyRedirect} />;
+  }
+  if (isUnknownModule) {
+    return (
+      <RetiredScreen
+        legacyName="That assessment"
+        redirectTo="/clarity"
+        redirectLabel="the Personal Clarity Check"
+        reason="The link you followed is no longer part of the public catalog. Here's the current entry point."
+      />
+    );
+  }
 
   const finishSession = (finalAnswers: Record<string, string>) => {
     // Funnel: clarity (Personal Clarity Check) completed

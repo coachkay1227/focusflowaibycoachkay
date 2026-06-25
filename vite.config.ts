@@ -22,19 +22,44 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-select',
-          ],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
-          'vendor-date': ['date-fns'],
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+
+          if (
+            id.includes("/react/") ||
+            id.includes("\\react\\") ||
+            id.includes("react-dom") ||
+            id.includes("react-router-dom")
+          ) {
+            return "vendor-react";
+          }
+
+          if (
+            id.includes("@radix-ui/") ||
+            id.includes("\\@radix-ui\\")
+          ) {
+            return "vendor-ui";
+          }
+
+          if (
+            id.includes("@tanstack/react-query") ||
+            id.includes("@tanstack/query-core")
+          ) {
+            return "vendor-query";
+          }
+
+          if (
+            id.includes("react-hook-form") ||
+            id.includes("@hookform/resolvers") ||
+            id.includes("/zod/") ||
+            id.includes("\\zod\\")
+          ) {
+            return "vendor-forms";
+          }
+
+          if (id.includes("date-fns")) {
+            return "vendor-date";
+          }
         },
       },
     },

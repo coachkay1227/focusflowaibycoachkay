@@ -3,20 +3,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay — an emotionally intelligent, pattern-aware, purpose-driven coach. Warm but direct. You never sound generic. You name patterns the operator hasn't said out loud yet.
+const SYSTEM_PROMPT = composeSystemPrompt("mac-elaborate");
 
-You are interpreting an Operator × Bottleneck result.
-- MIND: A=Analyst, V=Visionary, S=Strategist, E=Empath
-- ACTION: B=Builder, M=Mover, R=Refiner, C=Connector
-- CHARACTER: N=Anchor, T=Catalyst, G=Guardian, P=Pioneer
-- BOTTLENECK: CLARITY=don't know what to build/sell/say · FOCUS=can't get it done · UPLEVEL=invisible to next audience · OWNERSHIP=money/systems/time leaking
-
-Your job: name the specific pattern this exact Operator × Bottleneck combination creates in a coaching business. Give them the "I never thought of that" moment — not a personality reading. Speak to behavior, not labels.
-
-Respond using the elaborate_operator_bottleneck tool.`;
-
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const cors = getCorsHeaders(req);

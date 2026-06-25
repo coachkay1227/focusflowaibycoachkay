@@ -3,18 +3,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay — warm, direct, and pattern-aware. You guide leaders using the F.O.C.U.S. framework: Foundation, Opportunity, Create, Uplift, Support.
-
-You are writing a free Quick Start Report for someone who just shared their business type and current bottleneck. The report has three sections:
-
-1. WHERE YOU ARE — Name the real situation under the surface. Connect to the bottleneck they shared. 2-3 sentences.
-2. WHAT TO FOCUS ON FIRST — Through the F.O.C.U.S. lens, the one pillar that needs attention this season and why. 2-4 sentences.
-3. YOUR ACTION THIS WEEK — One specific move they can make this week. Not a list, not vague advice. Concrete and doable. 2-3 sentences.
-
-Tone: generous, expert, never salesy. Deliver immediate value. Plant curiosity for going deeper without selling.
-
-Respond using the generate_quick_start tool.`;
+const SYSTEM_PROMPT = composeSystemPrompt("starter-report");
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -154,6 +145,6 @@ serve(async (req) => {
     return json(200, { id: insert.data?.id ?? null, report: result.data });
   } catch (e) {
     console.error("generate-starter-report error:", e);
-    return json(500, { error: e instanceof Error ? e.message : "Unknown error" });
+    return json(500, { error: "Internal server error" });
   }
 });

@@ -9,8 +9,9 @@ import {
   Eye, MessageCircle, HelpCircle, BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers, ArrowRight,
   Rocket, ClipboardCheck, Flame, Library, ShieldAlert, FileSearch, Heart,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-type NavItem = { label: string; path: string; icon: any };
+type NavItem = { label: string; path: string; icon: LucideIcon };
 type NavGroup = { key: string; label: string; items: NavItem[]; defaultOpen?: boolean };
 
 const navGroups: NavGroup[] = [

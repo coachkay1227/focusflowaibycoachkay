@@ -7,7 +7,6 @@ import FloatingOrbs from "@/components/FloatingOrbs";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, Zap } from "lucide-react";
-import DesktopNav from "@/components/DesktopNav";
 import MobileNav from "@/components/MobileNav";
 import PricingSection from "@/components/PricingSection";
 import { getPublicPrograms } from "@/data/programs";
@@ -37,6 +36,15 @@ const Index = () => {
         title="FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay"
         description="Master Certified Life Coach meets AI. Get clarity in 90 seconds, transform in 30 days. Free clarity session, AI business audit, and 1:1 coaching programs by Coach Kay."
         path="/"
+        keywords={[
+          "AI clarity coaching",
+          "AI business coaching Columbus",
+          "small business automation Ohio",
+          "Coach Kay AI",
+          "clarity coaching for entrepreneurs",
+          "AI transformation starter kit",
+          "Claude AI business training",
+        ]}
         jsonLd={[
           webPage("/", "Home"),
           breadcrumb([{ name: "Home", path: "/" }], "/"),
@@ -73,7 +81,6 @@ const Index = () => {
       </div>
 
       {/* Global navigation — single source of truth across all pages */}
-      <DesktopNav />
       <div className="md:hidden relative z-10 flex items-center justify-end px-6 py-4">
         <MobileNav />
       </div>
@@ -322,6 +329,7 @@ const Index = () => {
             {
               label: "01 · CLARITY",
               title: "F.O.C.U.S. Clarity Check",
+              focus: "Best for mindset clarity and direction",
               desc: "6 questions · ~3 min. Personalized AI clarity report from Coach Kay.",
               cta: "Take the Check",
               to: "/clarity",
@@ -330,6 +338,7 @@ const Index = () => {
             {
               label: "02 · ASSESSMENT",
               title: "Business Clarity Assessment",
+              focus: "Best for growth-stage owners",
               desc: "18 questions · ~5 min. Discover your Mind · Action · Character archetype.",
               cta: "Take the Assessment",
               to: "/assessment",
@@ -338,6 +347,7 @@ const Index = () => {
             {
               label: "03 · DOWNLOAD",
               title: "AI Transformation Starter Kit",
+              focus: "Best for practical AI automation plans",
               desc: "4 questions · ~2 min. Instant AI Quick Start Report for your business.",
               cta: "Download Free",
               to: "/starter-kit",
@@ -346,8 +356,9 @@ const Index = () => {
           ].map((item, i) => (
             <AnimatedSection key={item.title} delay={i * 100}>
               <div className="clarity-card h-full rounded-lg border border-border bg-card/40 backdrop-blur-sm p-5 flex flex-col">
-                <span className="font-mono-label text-[10px] tracking-wider text-primary/70">{item.label}</span>
+                <h4 className="font-mono-label text-[10px] tracking-wider text-primary/70">{item.label}</h4>
                 <h3 className="font-heading text-lg font-medium text-foreground mt-2">{item.title}</h3>
+                <h5 className="text-[11px] uppercase tracking-[0.14em] text-primary/80 mt-2">{item.focus}</h5>
                 <p className="text-muted-foreground text-sm leading-relaxed mt-2 flex-1">{item.desc}</p>
                 <Button
                   onClick={() => {

@@ -12,7 +12,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 
 type Action = "welcome" | "clarity_complete" | "onboarding_complete";
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }

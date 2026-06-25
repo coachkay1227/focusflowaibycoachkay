@@ -1,0 +1,256 @@
+/* =============================================================================
+ * FocusFlow AI by Coach Kay — Brand Tokens & Motion (standalone embed kit)
+ * -----------------------------------------------------------------------------
+ * Drop into any standalone HTML / external app / iframe to inherit the exact
+ * look-and-feel of coachkayai.life. Pair with the Google Fonts link below.
+ *
+ * In <head>:
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+ *   <link rel="stylesheet" href="https://coachkayai.life/brand/coachkay-tokens.css">
+ *
+ * See docs/BRAND_SPEC.md for full guidance.
+ * ===========================================================================*/
+
+:root {
+  /* Surfaces */
+  --background: 210 52% 11%;
+  --foreground: 45 65% 90%;
+  --card: 210 45% 16%;
+  --card-foreground: 45 65% 90%;
+  --popover: 210 45% 16%;
+  --popover-foreground: 45 65% 90%;
+  --muted: 210 35% 22%;
+  --muted-foreground: 45 25% 70%;
+  --border: 210 30% 24%;
+  --input: 210 30% 24%;
+
+  /* Accent (gold — sacred) */
+  --primary: 43 53% 54%;
+  --primary-foreground: 210 52% 11%;
+  --secondary: 210 40% 20%;
+  --secondary-foreground: 45 65% 90%;
+  --accent: 43 48% 60%;
+  --accent-foreground: 210 52% 11%;
+  --ring: 43 53% 54%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Brand aliases */
+  --gold: 43 53% 54%;
+  --gold-light: 43 50% 70%;
+  --cream: 45 65% 90%;
+  --navy-deep: 210 55% 8%;
+  --navy: 210 52% 11%;
+  --navy-light: 210 45% 16%;
+
+  /* F.O.C.U.S. pillars */
+  --pillar-f: 43 53% 54%;
+  --pillar-o: 213 49% 53%;
+  --pillar-c: 269 30% 51%;
+  --pillar-u: 156 56% 40%;
+  --pillar-s: 339 58% 58%;
+
+  --radius: 0.5rem;
+}
+
+/* Base */
+html, body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  color: hsl(var(--foreground));
+}
+
+a { color: hsl(var(--primary)); }
+
+/* Sitewide focus-visible safety net (WCAG 2.4.7) */
+:where(a, button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], summary, select):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px hsl(var(--background)),
+    0 0 0 4px hsl(var(--ring));
+  border-radius: 4px;
+}
+:where(input, textarea):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+  border-color: hsl(var(--primary));
+}
+
+/* Mono eyebrow / kicker */
+.font-mono-label {
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: hsl(var(--primary));
+}
+
+/* Coach prose (chat / long-form) */
+.coach-prose { font-family: 'DM Sans', sans-serif; }
+.coach-prose h1, .coach-prose h2, .coach-prose h3, .coach-prose h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+}
+.coach-prose p, .coach-prose li, .coach-prose blockquote {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* =========================================================================
+ * Motion — cinematic, CSS-only. No external animation libraries.
+ * ======================================================================= */
+@keyframes ck-float-1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,-20px) scale(1.05); } }
+@keyframes ck-float-2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-20px,30px) scale(0.95); } }
+@keyframes ck-float-3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(15px,15px); } }
+@keyframes ck-brand-pulse { 0%,100% { transform: scale(3); } 50% { transform: scale(3.15); } }
+@keyframes ck-gold-line-draw { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes ck-blur-in { 0% { opacity: 0; filter: blur(12px); transform: translateY(20px); } 100% { opacity: 1; filter: blur(0); transform: translateY(0); } }
+@keyframes ck-fade-up { 0% { opacity: 0; transform: translateY(15px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes ck-section-reveal { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes ck-underline-draw { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes ck-pulse-glow { 0%,100% { box-shadow: 0 0 20px hsl(43 75% 52% / 0.15); } 50% { box-shadow: 0 0 30px hsl(43 75% 52% / 0.3); } }
+@keyframes ck-spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes ck-grain {
+  0%,100% { transform: translate(0,0); }
+  10% { transform: translate(-5%,-10%); }
+  30% { transform: translate(3%,-15%); }
+  50% { transform: translate(12%,9%); }
+  70% { transform: translate(9%,4%); }
+  90% { transform: translate(-1%,7%); }
+}
+@keyframes ck-card-line-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes ck-question-enter { 0% { opacity: 0; transform: translateX(30px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes ck-question-exit { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(-30px); } }
+@keyframes ck-celebration { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+
+.animate-float-1 { animation: ck-float-1 10s ease-in-out infinite; }
+.animate-float-2 { animation: ck-float-2 12s ease-in-out infinite; }
+.animate-float-3 { animation: ck-float-3 8s ease-in-out infinite; }
+.animate-brand-pulse { animation: ck-brand-pulse 12s ease-in-out infinite; }
+.animate-gold-line { animation: ck-gold-line-draw 0.6s ease-out forwards; transform-origin: left; }
+.animate-blur-in { animation: ck-blur-in 0.8s ease-out forwards; }
+.animate-fade-up { animation: ck-fade-up 0.6s ease-out forwards; }
+.animate-section-reveal { animation: ck-section-reveal 0.7s ease-out forwards; }
+.animate-underline-draw { animation: ck-underline-draw 0.6s ease-out forwards; transform-origin: left; }
+.animate-pulse-glow { animation: ck-pulse-glow 2s ease-in-out infinite; }
+.animate-spin-slow { animation: ck-spin-slow 20s linear infinite; }
+.animate-question-enter { animation: ck-question-enter 0.5s ease-out forwards; }
+.animate-question-exit { animation: ck-question-exit 0.3s ease-out forwards; }
+.animate-celebration { animation: ck-celebration 0.6s ease-out forwards; }
+
+/* Ambient layers */
+.grain-overlay::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%; right: -50%; bottom: -50%;
+  width: 200%; height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  animation: ck-grain 8s steps(10) infinite;
+  opacity: 0.3;
+}
+.grid-overlay {
+  background-image:
+    linear-gradient(hsl(42 60% 90% / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(42 60% 90% / 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.mouse-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), hsl(43 75% 52% / 0.06), transparent 40%);
+}
+
+/* Card hover */
+.clarity-card {
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+.clarity-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(43 75% 52% / 0.6), transparent);
+}
+.clarity-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 30px hsl(43 75% 52% / 0.12);
+}
+.clarity-card:hover::before { animation: ck-card-line-sweep 0.6s ease-out; }
+
+/* Primary CTA helper (use when not on shadcn Button) */
+.ck-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: calc(var(--radius) - 2px);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  will-change: transform, filter;
+}
+.ck-btn-primary:hover { transform: scale(1.02); filter: brightness(1.08); }
+
+.ck-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.ck-btn-ghost:hover { transform: scale(1.01); border-color: hsl(var(--primary) / 0.5); }
+
+/* Gold hairline divider */
+.ck-hairline {
+  display: block;
+  width: 4rem;
+  height: 1px;
+  background: hsl(var(--primary) / 0.6);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-1, .animate-float-2, .animate-float-3,
+  .animate-brand-pulse, .animate-pulse-glow, .animate-spin-slow,
+  .grain-overlay::before {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .grain-overlay::before { animation: none; }
+}

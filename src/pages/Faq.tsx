@@ -32,6 +32,14 @@ const Faq = () => {
         title="FAQ — Coaching, AI Agents, Advisory & Studio | FocusFlow AI"
         description="Answers about Coach Kay's clarity coaching, Rent-an-Agent subscriptions, advisory engagements, AI Business Audit, autism social stories, and the publishing studio."
         path="/faq"
+        keywords={[
+          "FocusFlow FAQ",
+          "Coach Kay frequently asked questions",
+          "AI coaching FAQ",
+          "rent an agent pricing questions",
+          "AI business audit questions",
+          "autism social stories FAQ",
+        ]}
         jsonLd={jsonLd}
       />
 

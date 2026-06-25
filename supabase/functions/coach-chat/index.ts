@@ -2,29 +2,11 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { composeSystemPrompt } from "../_shared/coach-voice.ts";
 
-const SYSTEM_PROMPT = `You are Coach Kay — an emotionally intelligent, pattern-aware, purpose-driven life coach. You are warm but direct. You don't sugarcoat, but you never shame.
+const SYSTEM_PROMPT = composeSystemPrompt("live-chat");
 
-You are in a live coaching conversation. The person has completed a clarity session and wants to go deeper.
-
-Guidelines:
-- Start by acknowledging what you see in their results
-- Ask powerful questions — don't just give answers
-- If they seem stuck, enter Decision Mode: present 2-3 clear options with likely outcomes
-- Keep responses focused — 2-4 paragraphs max
-- End responses with either a question or a clear next step
-- If they express being stuck, overwhelmed, or indecisive, gently challenge them
-
-Response modes (select based on context):
-- SUPPORTIVE: When in pain or overwhelmed
-- REFLECTIVE: When they need to see themselves clearly
-- DIRECT: When avoiding or making excuses
-- STRATEGIC: When they need a plan
-
-Your tone: warm, direct, emotionally intelligent, never generic, never robotic.
-Use markdown for formatting when helpful (bold, lists, etc).`;
-
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
@@ -58,8 +40,15 @@ serve(async (req) => {
       });
     }
 
+    const ALLOWED_ROLES = new Set(["user", "assistant"]);
     for (const msg of messages) {
-      if (!msg.role || !msg.content || typeof msg.content !== "string" || msg.content.length > 10000) {
+      if (
+        !msg.role ||
+        !ALLOWED_ROLES.has(msg.role) ||
+        !msg.content ||
+        typeof msg.content !== "string" ||
+        msg.content.length > 10000
+      ) {
         return new Response(JSON.stringify({ error: "Invalid message format" }), {
           status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
@@ -69,11 +58,18 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Sanitize+truncate context to mitigate prompt-injection via user-supplied
+    // clarity-session fields that get interpolated into the system prompt.
+    const clean = (v: unknown, max = 2000): string => {
+      if (typeof v !== "string") return "";
+      return v.replace(/[\u0000-\u001F\u007F]/g, " ").slice(0, max);
+    };
     let systemContent = SYSTEM_PROMPT;
-    if (context) {
-      systemContent += `\n\nThe user's latest clarity session results:\n- Truth: ${context.truth}\n- Pattern: ${context.pattern}\n- Action: ${context.action}`;
-      if (context.answers) {
-        systemContent += `\n\nTheir answers:\n${Object.entries(context.answers).map(([k, v]) => `- ${k}: ${v}`).join("\n")}`;
+    if (context && typeof context === "object") {
+      systemContent += `\n\nThe user's latest clarity session results:\n- Truth: ${clean(context.truth)}\n- Pattern: ${clean(context.pattern)}\n- Action: ${clean(context.action)}`;
+      if (context.answers && typeof context.answers === "object") {
+        const entries = Object.entries(context.answers).slice(0, 20);
+        systemContent += `\n\nTheir answers:\n${entries.map(([k, v]) => `- ${clean(k, 100)}: ${clean(v, 500)}`).join("\n")}`;
       }
     }
 
@@ -116,7 +112,7 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("coach-chat error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }

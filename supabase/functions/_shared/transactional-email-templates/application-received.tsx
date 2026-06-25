@@ -1,6 +1,9 @@
+// @ts-nocheck
+// @ts-ignore -- npm: specifiers are resolved by Deno runtime/tooling, not by default TS server.
 import * as React from 'npm:react@18.3.1'
 import {
   Body, Container, Head, Heading, Html, Preview, Text, Section, Hr,
+// @ts-ignore -- npm: specifiers are resolved by Deno runtime/tooling, not by default TS server.
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -14,7 +17,7 @@ interface ApplicationReceivedProps {
 const ApplicationReceivedEmail = ({ name, programName }: ApplicationReceivedProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>We Got Your Application — {SITE_NAME}</Preview>
+    <Preview>We Got Your Application. {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         {/* Header */}
@@ -51,7 +54,7 @@ const ApplicationReceivedEmail = ({ name, programName }: ApplicationReceivedProp
             You're receiving this because you submitted an application on {SITE_NAME}. Questions? Email Hello@coachkayelevates.org.
           </Text>
           <Text style={signoff}>
-            — Coach Kay
+            Where Focus Goes, Energy Flows. 💛 Coach Kay
           </Text>
         </Section>
       </Container>
@@ -61,9 +64,9 @@ const ApplicationReceivedEmail = ({ name, programName }: ApplicationReceivedProp
 
 export const template = {
   component: ApplicationReceivedEmail,
-  subject: (data: Record<string, any>) =>
+  subject: (data: { programName?: string }) =>
     data?.programName
-      ? `We Got Your Application — ${data.programName}`
+      ? `We Got Your Application. ${data.programName}`
       : 'We Got Your Application',
   displayName: 'Application received',
   previewData: { name: 'Jane', programName: 'F.O.C.U.S. Reset' },

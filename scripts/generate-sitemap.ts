@@ -1,8 +1,10 @@
+/// <reference types="node" />
+
 // Auto-generates public/sitemap.xml from route + data sources.
 // Runs via predev/prebuild npm hooks. Do not hand-edit public/sitemap.xml.
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readFileSync, writeFileSync } from "fs";
+import { resolve } from "path";
 
 const BASE_URL = "https://coachkayai.life";
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -20,6 +22,7 @@ interface SitemapEntry {
 // intentionally excluded — they're noindex utility/private pages.
 const staticEntries: SitemapEntry[] = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
+  { path: "/events/claude-ai-business-accelerator-june-2026", priority: "0.9", changefreq: "weekly" },
   { path: "/modules", priority: "0.9", changefreq: "weekly" },
   { path: "/coach-kay", priority: "0.8", changefreq: "monthly" },
   { path: "/community", priority: "0.7", changefreq: "monthly" },
@@ -42,6 +45,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/terms", priority: "0.4", changefreq: "yearly" },
   { path: "/disclaimer", priority: "0.4", changefreq: "yearly" },
   { path: "/refund-policy", priority: "0.4", changefreq: "yearly" },
+  { path: "/blog", priority: "0.8", changefreq: "weekly" },
 ];
 
 // --- Dynamic: clarity modules from src/lib/modules.ts ---
@@ -62,7 +66,7 @@ function extractClarityModuleIds(): string[] {
   const body = src.slice(arrayStart);
   const ids: string[] = [];
   // Match `  {\n    id: "..."` — two-space indent identifies module-level entries (vs nested question ids).
-  const re = /\n  \{\n\s{4}id:\s*"([^"]+)"/g;
+  const re = /\n {2}\{\n {4}id:\s*"([^"]+)"/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(body)) !== null) ids.push(m[1]);
   return ids;
@@ -73,7 +77,7 @@ function extractPublicProgramSlugs(): string[] {
   const src = readFileSync(resolve("src/data/programs.ts"), "utf8");
   const slugs: string[] = [];
   // Split source into per-program blocks using top-level `    id: "..."` as sentinel.
-  const blocks = src.split(/(?=\n    id:\s*")/);
+  const blocks = src.split(/(?=\n {4}id:\s*")/);
   for (const block of blocks) {
     const slugMatch = block.match(/\bslug:\s*"([^"]+)"/);
     const visMatch = block.match(/\bvisibility:\s*"([^"]+)"/);
@@ -83,6 +87,16 @@ function extractPublicProgramSlugs(): string[] {
     }
   }
   return Array.from(new Set(slugs));
+}
+
+// --- Dynamic: blog posts from src/data/blogPosts.ts ---
+function extractBlogSlugs(): string[] {
+  const src = readFileSync(resolve("src/data/blogPosts.ts"), "utf8");
+  const slugs: string[] = [];
+  const re = /\bslug:\s*"([^"]+)"/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(src)) !== null) slugs.push(m[1]);
+  return slugs;
 }
 
 function buildEntries(): SitemapEntry[] {
@@ -104,6 +118,15 @@ function buildEntries(): SitemapEntry[] {
       lastmod: TODAY,
       changefreq: "monthly",
       priority: "0.8",
+    });
+  }
+
+  for (const slug of extractBlogSlugs()) {
+    entries.push({
+      path: `/blog/${slug}`,
+      lastmod: TODAY,
+      changefreq: "monthly",
+      priority: "0.7",
     });
   }
 

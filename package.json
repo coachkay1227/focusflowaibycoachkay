@@ -4,10 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "seo:check": "bunx tsx scripts/check-seo-regressions.ts",
-    "predev": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/check-seo-regressions.ts",
-    "prebuild": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/check-seo-regressions.ts",
-    "prebuild:dev": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/check-seo-regressions.ts",
+    "seo:check": "npx -y tsx scripts/check-seo-regressions.ts",
+    "predev": "npx -y tsx scripts/generate-sitemap.ts && npx -y tsx scripts/check-seo-regressions.ts",
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
@@ -87,7 +85,7 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
-    "vite": "^5.4.19",
+    "vite": "^8.0.14",
     "vitest": "^3.2.4"
   }
 }

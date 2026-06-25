@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 // SEO regression check — runs in predev/prebuild to fail fast on:
 //   1. Routes whose page component does not render <SEOHead/>
 //   2. Indexable routes that incorrectly set noIndex (or vice versa)
@@ -6,8 +8,8 @@
 //
 // Update INDEXABLE / NOINDEX / SKIP below when adding a new <Route> in src/App.tsx.
 
-import { readFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { readFileSync, existsSync } from "fs";
+import { resolve } from "path";
 
 const APP_FILE = "src/App.tsx";
 const SITEMAP_FILE = "public/sitemap.xml";
@@ -16,6 +18,7 @@ const SITEMAP_FILE = "public/sitemap.xml";
 // Dynamic params (`:slug`) are accepted — sitemap presence is checked against the static prefix.
 const INDEXABLE: string[] = [
   "/",
+  "/events/claude-ai-business-accelerator-june-2026",
   "/clarity",
   "/clarity/:moduleId",
   "/assessment",
@@ -36,6 +39,8 @@ const INDEXABLE: string[] = [
   "/collective",
   "/pause-hub",
   "/ai-tools",
+  "/blog",
+  "/blog/:slug",
   "/privacy",
   "/terms",
   "/disclaimer",
@@ -67,8 +72,13 @@ const NOINDEX: string[] = [
   "*", // NotFound
 ];
 
-// Routes intentionally skipped (Navigate redirects — no rendered page).
-const SKIP = new Set<string>(["/about", "/ai-starter-kit"]);
+// Routes intentionally skipped for exceptional cases (non-redirect pages only).
+// Redirects rendered with <Navigate /> are auto-skipped by the parser logic.
+const SKIP = new Set<string>([
+  "/about",
+  "/ai-starter-kit",
+  "/events/claude-accelerator",
+]);
 
 // Routes behind `<ProtectedRoute requireAdmin>` — unreachable by crawlers, so SEOHead
 // is not required. Still must NOT appear in sitemap.xml. Update if you add admin pages.
@@ -88,6 +98,10 @@ const ADMIN_EXEMPT = new Set<string>([
 interface RouteEntry {
   path: string;
   component: string;
+}
+
+function isSkippedRoute(r: RouteEntry): boolean {
+  return SKIP.has(r.path) || r.component === "__navigate__";
 }
 
 function parseRoutes(src: string): RouteEntry[] {
@@ -196,10 +210,17 @@ function main() {
   const indexable = new Set(INDEXABLE);
   const noindex = new Set(NOINDEX);
 
+  // Config hygiene: SKIP should only contain existing, non-redirect routes.
+  for (const p of SKIP) {
+    const route = routes.find((r) => r.path === p);
+    if (!route) {
+      warnings.push(`SKIP route "${p}" does not exist in ${APP_FILE}.`);
+    }
+  }
+
   // Detect newly-added routes not classified.
   for (const r of routes) {
-    if (SKIP.has(r.path)) continue;
-    if (r.component === "__navigate__") continue;
+    if (isSkippedRoute(r)) continue;
     if (!indexable.has(r.path) && !noindex.has(r.path) && !ADMIN_EXEMPT.has(r.path)) {
       errors.push(
         `Route "${r.path}" (${r.component}) is not classified in scripts/check-seo-regressions.ts. ` +
@@ -210,7 +231,7 @@ function main() {
 
   // Per-route component checks.
   for (const r of routes) {
-    if (SKIP.has(r.path) || r.component === "__navigate__") continue;
+    if (isSkippedRoute(r)) continue;
     if (ADMIN_EXEMPT.has(r.path)) {
       // Still guard: admin pages must never leak into the sitemap.
       if (sitemap.has(r.path)) {
