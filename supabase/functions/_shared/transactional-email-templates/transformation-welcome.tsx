@@ -12,7 +12,7 @@ interface TransformationWelcomeProps {
   communityUrl?: string
 }
 
-const BOOKING_URL = 'https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp'
+const BOOKING_URL = 'https://call.coachkayelevates.org/widget/bookings/60min-discover-call'
 
 const TransformationWelcomeEmail = ({ name, programName, dashboardUrl, bookingUrl, communityUrl }: TransformationWelcomeProps) => (
   <Html lang="en" dir="ltr">

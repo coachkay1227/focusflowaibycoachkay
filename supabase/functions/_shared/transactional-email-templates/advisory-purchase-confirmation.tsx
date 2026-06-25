@@ -7,7 +7,7 @@ import type { TemplateEntry } from './registry.ts'
 
 const APP_ORIGIN = "https://coachkayai.life"
 const DEFAULT_BOOKING_URL =
-  "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp"
+  "https://call.coachkayelevates.org/widget/bookings/60min-discover-call"
 
 interface AdvisoryPurchaseConfirmationProps {
   name?: string | null

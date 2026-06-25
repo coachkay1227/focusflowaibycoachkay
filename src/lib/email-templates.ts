@@ -375,7 +375,7 @@ export const TEMPLATE_PREVIEWS = {
       itemType: "module",
       itemName: "Emotional Reset",
       itemDescription: "Process what you're carrying and come back to center.",
-      dashboardUrl: "https://app.focusflow.ai/dashboard",
+      dashboardUrl: "https://coachkayai.life/dashboard",
     }),
 
   challengeReminder: () =>
@@ -385,7 +385,7 @@ export const TEMPLATE_PREVIEWS = {
       currentDay: 3,
       totalDays: 7,
       prompt: "What pattern keeps showing up that you keep ignoring?",
-      challengeUrl: "https://app.focusflow.ai/challenges/mirror-7",
+      challengeUrl: "https://coachkayai.life/challenges/mirror-7",
     }),
 
   sessionSummary: () =>
@@ -398,7 +398,7 @@ export const TEMPLATE_PREVIEWS = {
       insightAction: "Write down the decision you've been avoiding. Set a 24-hour deadline to act on it.",
       clarityScore: 42,
       clarityLevel: "Reflecting",
-      dashboardUrl: "https://app.focusflow.ai/dashboard",
+      dashboardUrl: "https://coachkayai.life/dashboard",
     }),
 
   weeklyDigest: () =>
@@ -422,6 +422,6 @@ export const TEMPLATE_PREVIEWS = {
         { label: "Sat", score: 42 },
         { label: "Sun", score: 42 },
       ],
-      dashboardUrl: "https://app.focusflow.ai/dashboard",
+      dashboardUrl: "https://coachkayai.life/dashboard",
     }),
 };

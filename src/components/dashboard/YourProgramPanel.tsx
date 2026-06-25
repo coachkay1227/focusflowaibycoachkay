@@ -3,7 +3,7 @@ import { Sparkles, Calendar, BookOpen, Users } from "lucide-react";
 import type { AccessTier } from "@/hooks/use-access-level";
 
 const BOOKING_URL =
-  "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp";
+  "https://call.coachkayelevates.org/widget/bookings/60min-discover-call";
 const COMMUNITY_URL = "https://www.skool.com/focusflow-elevation-hub";
 
 type ProgramCopy = {
