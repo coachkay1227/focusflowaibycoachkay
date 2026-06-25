@@ -149,6 +149,7 @@ const App = () => (
             <Route path="/admin/enrollments" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminEnrollments /></Suspense></ProtectedRoute>} />
             <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNewsletter /></Suspense></ProtectedRoute>} />
             <Route path="/admin/scam-alerts" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminScamAlerts /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/newsletter-draft/:id" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNewsletterDraft /></Suspense></ProtectedRoute>} />
             <Route path="/admin/voice-bible" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminVoiceBible /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
