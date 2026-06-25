@@ -1,0 +1,2 @@
+CREATE POLICY "newsletter_issues_admin_insert" ON public.newsletter_issues FOR INSERT TO authenticated WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "newsletter_issues_admin_delete" ON public.newsletter_issues FOR DELETE TO authenticated USING (public.has_role(auth.uid(), 'admin'));
