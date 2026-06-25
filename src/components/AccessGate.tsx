@@ -72,18 +72,19 @@ export function AdminViewToggle() {
   return (
     <button
       onClick={toggleView}
-      className="fixed bottom-20 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-card/90 backdrop-blur-md shadow-lg text-xs font-medium text-foreground hover:bg-primary/10 transition-colors"
+      className="fixed bottom-20 right-4 sm:right-6 z-50 flex items-center gap-2 h-10 w-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2 justify-center rounded-full border border-primary/30 bg-card/90 backdrop-blur-md shadow-lg text-xs font-medium text-foreground hover:bg-primary/10 transition-colors"
       title={userView ? "Switch to Admin View" : "Switch to User View"}
+      aria-label={userView ? "Switch to Admin View" : "Switch to User View"}
     >
       {userView ? (
         <>
           <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
-          <span>User View</span>
+          <span className="hidden sm:inline">User View</span>
         </>
       ) : (
         <>
           <Eye className="h-3.5 w-3.5 text-primary" />
-          <span>Admin View</span>
+          <span className="hidden sm:inline">Admin View</span>
         </>
       )}
     </button>
