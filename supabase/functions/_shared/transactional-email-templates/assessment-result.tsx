@@ -50,7 +50,7 @@ const AssessmentResultEmail = ({
 
           <Section style={bodySection}>
             <Heading style={h1}>
-              {name ? `${name}, here's your result.` : 'Here's your result.'}
+              {name ? `${name}, here's your result.` : "Here's your result."}
             </Heading>
 
             <Text style={archetypeLabel}>{archetypeName}</Text>
