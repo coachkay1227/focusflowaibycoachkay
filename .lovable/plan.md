@@ -1,81 +1,76 @@
-# Simplification Review + Verification Pass
+# Weekly newsletter from Scams + Truths (AI-drafted, you edit, you send)
 
-No code edits. Two parts: (1) honest "where we're overbuilt" review, (2) live tests against the running app + database.
+## What you're getting
 
----
+A weekly issue auto-drafted by AI from two content seeds you already have, dropped into your inbox every Monday morning. You review, edit, paste back, and trigger a send to all `newsletter_subscribers` through Lovable Emails.
 
-## Part 1 — Where we can simplify
+**Issue format (locked, ~400 words):**
 
-Reading what we've built across email engine, voice bible, access control, and the audit fixes, here's where the system is heavier than it needs to be:
+```text
+1. SCAM ALERT  — pulled from the freshest unused row in scam_alerts
+2. TRUTH DROP  — a myth/take aligned to the "Truth About AI" voice
+3. AI PLAY     — one concrete tool or workflow you can run this week
+```
 
-### 1. Voice Bible has two source files
-`supabase/functions/_shared/coach-voice.ts` and `src/lib/coach-voice.ts` are near-duplicates. Today they drift the moment one is edited. **Simpler:** keep the canonical copy in `supabase/functions/_shared/coach-voice.ts` and have the frontend import a small JSON-only subset (banned words, signoff string) via a generated file or a thin re-export. Voice rules for the AI live server-side only — the client never needs the full system prompt.
+All three sections drafted in Coach Kay voice (Voice Bible applied via the existing `_shared/coach-voice.ts`).
 
-### 2. Admin detection runs three checks
-`use-roles.ts` checks `has_role` RPC, then a hardcoded `ADMIN_EMAILS` array, then `get_user_tier === "corporate"`, then sets `false`. The corporate branch is exactly the bug we're testing (corporate should NOT be admin). **Simpler:** `has_role` only. The bootstrap email list can stay as a one-time seed via SQL, not a client fallback. Removing the corporate branch is a one-line fix.
+## How it works (no admin UI, just edge functions)
 
-### 3. AdminViewContext writes to both sessionStorage AND localStorage
-The context has dead code: it reads sessionStorage first, then unreachable localStorage fallback, and writes to both on toggle. **Simpler:** pick one (sessionStorage, per the requirement that it resets on tab close) and delete the rest.
+```text
+Mon 07:00 ET — pg_cron
+    │
+    ▼
+draft-weekly-newsletter (edge fn)
+    ├─ pulls 1 unused scam_alert + 1 truth seed + 1 play
+    ├─ Gemini 3 Flash drafts subject + 3 sections in Voice Bible style
+    ├─ stores draft in newsletter_issues table
+    └─ emails the draft + an "Approve & Send" link to hello@coachkayelevates.org
+                                │
+                                ▼
+                  You click the link (signed token, 7-day TTL)
+                                │
+                                ▼
+                send-weekly-newsletter (edge fn)
+                    ├─ verifies token
+                    ├─ pulls draft from newsletter_issues
+                    ├─ enqueues one transactional send per subscriber
+                    │   (existing process-email-queue handles throughput + retries)
+                    └─ marks issue 'sent', stamps sent_at
+```
 
-### 4. Five separate "order" tables
-`autism_orders`, `book_orders`, `build_inquiries`, plus the new `one_time_orders` — same shape, different names. **Simpler over time:** one `orders` table with a `product_type` enum. Not urgent, but every new product currently means a new table + new admin page + new webhook branch.
+If you want to edit before sending: hit the "Edit in browser" link instead — opens a minimal one-page editor at `/admin/newsletter-draft/:id` (smallest possible UI, not a full campaign manager).
 
-### 5. Per-flow admin pages
-`/admin/build-orders`, `/admin/audits`, `/admin/enrollments`, `/admin/autism-orders`, `/admin/orders`, `/admin/build-inquiries`. Six pages, near-identical table layouts. **Simpler:** one `/admin/orders` page with a product-type filter.
+## What gets built
 
-### 6. Checkout success path encoding
-`create-checkout` does double path-validation (two `safePath` definitions in the file — one is dead code from a merge). **Simpler:** keep one validator, delete the other.
+1. **`newsletter_issues` table** — id, issue_number, subject, scam_alert_id, truth_body, play_body, status (`draft`/`approved`/`sent`/`skipped`), approval_token, token_expires_at, sent_at, sent_count. Admin-only RLS.
+2. **`scam_alerts.used_in_issue_id`** — nullable FK so we never repeat a scam.
+3. **Edge function `draft-weekly-newsletter`** — content selection + Gemini draft + email to you.
+4. **Edge function `send-weekly-newsletter`** — token verify + enqueue sends.
+5. **Email template `weekly-newsletter-draft.tsx`** — the draft preview you get with two CTA buttons (Approve & Send, Edit).
+6. **Email template `weekly-newsletter-issue.tsx`** — the actual subscriber-facing newsletter (footer auto-adds unsubscribe link, per email infra rules).
+7. **One-page editor** at `/admin/newsletter-draft/:id` — textarea per section + "Send now" button (admin-only, gated by `has_role`). Smallest viable surface, no campaign list, no analytics page.
+8. **pg_cron job** — Monday 07:00 ET hits `draft-weekly-newsletter`.
 
-### 7. Email templates: 18 files, mostly the same shell
-Every template re-declares header/footer/container styles. **Simpler:** a `<BaseEmail>` wrapper that owns the chrome; templates only supply body slots. Cuts each template by ~40 lines and guarantees voice consistency.
+## Guardrails (because this is bulk-ish)
 
-### 8. `useRoles` and `useAccessLevel` fire on every protected route
-No caching, no React Query. Each mount = 1–2 RPC calls. **Simpler:** wrap both in React Query with `staleTime: 5min`. Single source of truth, no flicker on navigation.
+- Lovable Emails forbids bulk/marketing; this is allowed because **each subscriber explicitly opted in via the waitlist with "Get on the waitlist" wording**, and every issue includes the auto-appended unsubscribe footer. We will document this in the function header to keep future-you honest.
+- Hard cap: max one issue per 7 days per subscriber, enforced server-side in the send function.
+- Bounces/complaints already flow into `suppressed_emails`; the queue worker honors it. Nothing extra to wire.
+- Skip subscribers in `suppressed_emails` and any with `confirmed = false` if you're using double opt-in.
 
-I'd recommend doing #2, #3, #6 immediately (low-risk one-liners that also fix real bugs), defer #1, #7, #8 to a focused refactor pass, and treat #4, #5 as a roadmap item — not worth disrupting now.
+## What this plan does NOT include
 
----
+- No Beehiiv mirror (you chose Lovable Emails only).
+- No analytics dashboard, open/click tracking, A/B subjects, segmentation, or campaign list UI.
+- No automated send — you stay in the loop on every issue (you said "you edit").
+- No public archive page (can add later if you want the SEO benefit).
 
-## Part 2 — Verification tests to run
+## Technical notes
 
-All tests run via Playwright against `localhost:8080` + direct DB queries via `psql`. Screenshots saved to `/tmp/browser/audit/screenshots/`. No code changes.
+- AI model: `google/gemini-3-flash-preview` via existing `_shared/ai-gateway.ts`, with Voice Bible system prompt.
+- Content selection: scam = newest `scam_alerts` row where `used_in_issue_id IS NULL` and `published_at IS NOT NULL`; truth seed = rotates from a small curated list in code (we can move to a `truth_seeds` table later if you want).
+- Approval token: 32-byte random, SHA-256 hashed in DB, raw in the email link. Same pattern as `email_unsubscribe_tokens`.
+- Cron: uses `pg_cron` + `pg_net` per the standard scheduled-edge-function pattern.
+- The send function enqueues one message per subscriber so the existing 120/min queue throttles correctly — no custom rate limit.
 
-### Test A — Customer billing portal with mismatched emails
-1. Read `customer-portal/index.ts` to confirm the metadata fallback is wired.
-2. Query Stripe (`stripe--search_stripe_resources`) for a customer whose `email` differs from any auth user, but whose `metadata.supabase_user_id` matches a real auth user.
-3. Sign that user in via injected session, click "Manage Billing" on `/dashboard`, follow the portal redirect, confirm the returned portal session belongs to the correct customer (compare `customerId` in edge function logs vs. expected).
-4. Confirm session ownership: hit `customer-portal` with a different auth token and verify it returns a different customer or 404 — never the first user's portal.
-
-### Test B — Strategy Intensive ($497) confirmation email
-1. Find the Strategy Intensive price ID in `stripe-config.ts` / `offer-catalog.ts`.
-2. Trigger the checkout flow end-to-end with a Stripe test card.
-3. After webhook fires, query `email_send_log` for the recipient + template, confirm `status='sent'` and the body contains the booking link (Calendly / scheduling URL from the template).
-4. Render the template via `/admin/emails/preview/strategy-intensive-confirmation` to visually confirm the booking CTA.
-
-### Test C — Build Studio + Advisory orders land in `one_time_orders`
-1. Inspect `one_time_orders` schema via `supabase--read_query`.
-2. Place a test Build Studio checkout and a test Advisory checkout.
-3. After webhook, query `SELECT product_type, stripe_session_id, amount, user_email FROM one_time_orders ORDER BY created_at DESC LIMIT 5` and confirm both rows exist with correct `product_type`.
-4. Visit `/admin/build-orders` as admin and screenshot the new rows.
-
-### Test D — Access control matrix
-Four sub-cases, each with a screenshot:
-1. **Admin sees everything without payment:** sign in as `hello@coachkayelevates.org`, visit a `requiredTier="premium"` gated page (e.g. `/coach-chat`), confirm content renders, no `AccessGate` overlay.
-2. **Corporate is NOT admin:** create/find a user with `user_access_levels.tier='corporate'` and no `user_roles` row. Sign in, visit `/admin/dashboard`, confirm redirect to `/dashboard` and no admin nav links visible.
-3. **Admin-view toggle:** as admin, toggle "User View", confirm:
-   - Amber banner appears at top with "USER VIEW ACTIVE" + Exit button.
-   - Gated content now shows the lock overlay.
-   - Close tab, reopen, banner is gone (sessionStorage cleared).
-4. **Toggle storage:** verify `sessionStorage['admin-user-view']` is set on toggle and that `localStorage['admin-user-view']` is NOT (the dead localStorage write from #3 above will show up here).
-
-### Output
-A single markdown report at `/tmp/browser/audit/report.md` with: ✅/❌ per test, evidence (screenshot paths, SQL row dumps, log excerpts), and any bugs found tied back to specific files/lines.
-
----
-
-## What I will NOT do this round
-- No code edits, migrations, or template changes.
-- No Stripe live-mode charges — test mode only.
-- No new admin pages or schema changes.
-
-After you approve, I'll switch to build mode and run the tests in order, pausing only if a test reveals a blocker that needs a code fix decision.
+Ready to build this when you approve.
