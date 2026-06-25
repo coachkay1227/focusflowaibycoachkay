@@ -40,6 +40,15 @@ function isServiceRoleCaller(authHeader: string | null): boolean {
   return diff === 0
 }
 
+function isCronCaller(cronHeader: string | null): boolean {
+  if (!cronHeader) return false
+  const expected = Deno.env.get('NEWSLETTER_CRON_SECRET') ?? ''
+  if (!expected || cronHeader.length !== expected.length) return false
+  let diff = 0
+  for (let i = 0; i < cronHeader.length; i++) diff |= cronHeader.charCodeAt(i) ^ expected.charCodeAt(i)
+  return diff === 0
+}
+
 function randomToken(): string {
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
@@ -108,7 +117,7 @@ async function generateDraft(args: {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
-  if (!isServiceRoleCaller(req.headers.get('Authorization'))) {
+  if (!isServiceRoleCaller(req.headers.get('Authorization')) && !isCronCaller(req.headers.get('x-cron-secret'))) {
     return new Response(JSON.stringify({ error: 'Forbidden' }), {
       status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
