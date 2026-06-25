@@ -66,8 +66,8 @@ const AgentIntake = () => {
         timeline,
       };
 
-      // Insert into agent_orders table
-      const { data: orderData, error: orderError } = await supabase
+      // Insert into agent_orders table (table not in generated types yet)
+      const { data: orderData, error: orderError } = await (supabase as any)
         .from('agent_orders')
         .insert({
           user_id: user?.id ?? null,
