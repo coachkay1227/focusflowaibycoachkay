@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Sparkles, Calendar, BookOpen, Users } from "lucide-react";
 import type { AccessTier } from "@/hooks/use-access-level";
+import { useBookingLinks } from "@/hooks/use-booking-links";
 
-const BOOKING_URL =
-  "https://call.coachkayelevates.org/widget/bookings/60min-discover-call";
 const COMMUNITY_URL = "https://www.skool.com/focusflow-elevation-hub";
 
 type ProgramCopy = {
@@ -14,7 +13,8 @@ type ProgramCopy = {
   primary?: { label: string; href: string; external?: boolean };
 };
 
-const PROGRAMS: Partial<Record<AccessTier, ProgramCopy>> = {
+function buildPrograms(bookingUrl: string): Partial<Record<AccessTier, ProgramCopy>> {
+  return {
   reset_30: {
     tag: "30-Day Reset, Active",
     title: "Your 30-Day Reset",
@@ -39,12 +39,14 @@ const PROGRAMS: Partial<Record<AccessTier, ProgramCopy>> = {
       "Weekly accountability check-ins",
       "FocusFlow Elevation Hub community access",
     ],
-    primary: { label: "Book your 1:1 session", href: BOOKING_URL, external: true },
+    primary: { label: "Book your 1:1 session", href: bookingUrl, external: true },
   },
-};
+  };
+}
 
 export default function YourProgramPanel({ tier }: { tier: AccessTier }) {
-  const program = PROGRAMS[tier];
+  const { paidStrategyUrl } = useBookingLinks();
+  const program = buildPrograms(paidStrategyUrl)[tier];
   if (!program) return null;
 
   return (

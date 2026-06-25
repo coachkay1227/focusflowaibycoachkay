@@ -7,12 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 import OfferCard from "@/components/offers/OfferCard";
 import { getSymmetricGridClass } from "@/lib/grid";
 import { trackCheckoutStart } from "@/lib/gtag";
+import { useBookingLinks } from "@/hooks/use-booking-links";
 
 // Partnership offer copy explicitly says "Begins with a 60-min discovery call",
-// so this card uses the 60-min strategy call. The free 15-min Clarity Call is
-// used on lower-intent surfaces (assessment result, etc.).
-const PARTNERSHIP_BOOKING_URL =
-  "https://call.coachkayelevates.org/widget/bookings/60min-discover-call";
+// so this card uses the paid 60-min strategy call URL (admin-editable).
 const PENDING_CHECKOUT_KEY = "pending_checkout_price";
 
 interface Offer {
@@ -141,7 +139,7 @@ const GROUPS: Group[] = [
         ],
         description: "",
         cta: "Book Discovery Call",
-        bookingUrl: PARTNERSHIP_BOOKING_URL,
+        bookingUrl: "PARTNERSHIP", // sentinel — resolved at runtime from useBookingLinks
       },
     ],
   },
@@ -151,6 +149,7 @@ export default function PricingSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { paidStrategyUrl } = useBookingLinks();
   const [loadingPriceId, setLoadingPriceId] = useState<string | null>(null);
 
   const startCheckout = useCallback(
@@ -192,7 +191,8 @@ export default function PricingSection() {
 
   const handleOfferClick = (offer: Offer) => {
     if (offer.bookingUrl) {
-      window.open(offer.bookingUrl, "_blank", "noopener,noreferrer");
+      const url = offer.bookingUrl === "PARTNERSHIP" ? paidStrategyUrl : offer.bookingUrl;
+      window.open(url, "_blank", "noopener,noreferrer");
       return;
     }
     if (!offer.priceId) return;
