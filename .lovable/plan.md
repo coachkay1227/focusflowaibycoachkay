@@ -1,68 +1,75 @@
-# Booking URLs, View Plans, admin, and link cleanup
+# Admin Booking-Links Settings Page
 
-Simplified shape: direct find-and-replace for URLs (no constants file), one shared anchor fix that handles both orphan anchors, one admin row insert. Audit results below.
+Edit the free and paid Calendly-style booking URLs from a UI without touching code or redeploying.
 
-## 1. Two Calendly URLs, wired by intent
+## 1. New `app_settings` key/value table
 
-| Audience | URL | Files |
-|---|---|---|
-| Free / cold leads → **15-min Clarity Call** | `https://call.coachkayelevates.org/widget/bookings/15-minutes-free-call` | `src/components/PricingSection.tsx:12`, `src/pages/ResultScreen.tsx:578` |
-| Paid clients (post-purchase) → **60-min Strategy Call** | `https://call.coachkayelevates.org/widget/bookings/60min-discover-call` | `src/components/dashboard/YourProgramPanel.tsx:6`, `supabase/functions/stripe-webhook/index.ts:704`, `supabase/functions/_shared/transactional-email-templates/transformation-welcome.tsx:15`, `supabase/functions/_shared/transactional-email-templates/advisory-purchase-confirmation.tsx:10` |
-
-Direct string replace in each file. No constants file, no client/Deno split — these URLs change rarely and inlining keeps it obvious which audience each surface targets.
-
-Skip: `src/data/ai-tools-directory.ts:375` (bare `https://calendly.com` is just a generic directory entry for Calendly the product, not a CTA for your business).
-
-## 2. Fix both orphan `#` anchors with one Modules-page change
-
-Audit found **two** orphan anchors, not one:
-- `AccessGate.tsx:55` → `/modules#plans` (no `id="plans"` exists)
-- `PricingSection.tsx:161,201` → `/#pricing` (no `id="pricing"` exists on `Index.tsx`)
-
-Single fix that handles both: add `<section id="plans" className="scroll-mt-24">` to the bottom of `src/pages/Modules.tsx` rendering the existing `<PricingSection />`, plus a `useEffect` watching `location.hash` to smooth-scroll on mount or when the hash changes. Then update `PricingSection.tsx` to point its two CTAs at `/modules#plans` instead of `/#pricing` — one canonical pricing destination, both broken anchors fixed.
-
-`AccessGate`'s button stays a plain `navigate("/modules#plans")` — no pathname branching needed; the `useEffect` handles same-page hash changes too.
-
-## 3. Grant admin to second email
-
-One idempotent insert via the data tool:
+`content_settings` is shaped for per-program toggles (not a generic kv store), so add a small dedicated table.
 
 ```sql
-INSERT INTO public.user_roles (user_id, role)
-SELECT id, 'admin'::app_role
-FROM auth.users
-WHERE lower(email) = 'kizzy.alaoui@gmail.com'
-ON CONFLICT (user_id, role) DO NOTHING;
+CREATE TABLE public.app_settings (
+  key text PRIMARY KEY,
+  value text NOT NULL,
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  updated_by uuid REFERENCES auth.users(id)
+);
+GRANT SELECT ON public.app_settings TO anon, authenticated;
+GRANT ALL ON public.app_settings TO service_role;
+ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
+
+-- Public read so any page (signed-in or not) can resolve the booking URLs
+CREATE POLICY "Anyone can read app_settings"
+  ON public.app_settings FOR SELECT USING (true);
+
+-- Only admins can write (via has_role)
+CREATE POLICY "Admins can upsert app_settings"
+  ON public.app_settings FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(),'admin'))
+  WITH CHECK (public.has_role(auth.uid(),'admin'));
 ```
 
-`hello@coachkayelevates.org` stays the primary admin (already has the row). `AccessGate` already gives admins full bypass to every tier — no other wiring needed.
+Seed two rows:
+- `booking.free_clarity_url` → `https://call.coachkayelevates.org/widget/bookings/15-minutes-free-call`
+- `booking.paid_strategy_url` → `https://call.coachkayelevates.org/widget/bookings/60min-discover-call`
 
-If `kizzy.alaoui@gmail.com` hasn't signed up yet, the insert no-ops safely; sign in once, re-run.
+## 2. Admin page `/admin/booking-links`
 
-## 4. Other audit fixes
+New file `src/pages/admin/AdminBookingLinks.tsx` behind `<ProtectedRoute requireAdmin>`:
+- Two labeled URL inputs ("Free 15-min Clarity Call", "Paid 60-min Strategy Call"), Save button, last-updated stamp
+- Loads from `app_settings` on mount, upserts on save, toast on success/error
+- URL validation (must start with `https://`)
+- Add to `AdminNav.tsx` as a new tab ("Booking Links")
 
-- **`src/lib/email-templates.ts:378,388,401,425`** — replace the four `https://app.focusflow.ai/...` placeholder URLs with the real production base `https://coachkayai.life/...` (matching paths preserved).
-- **`src/data/tool-picks.ts:76`** and **`src/data/ai-tools-directory.ts:367`** — bare `https://www.skool.com` → `https://www.skool.com/focusflow-elevation-hub` so the Skool entries actually land on your community.
+## 3. Client-side hook with safe fallback
 
-## 5. Confirmed clean — no action
+New `src/hooks/use-booking-links.ts`:
+- Single fetch from `app_settings` cached in React state (module-level cache so it loads once per session)
+- Returns `{ freeClarityUrl, paidStrategyUrl, loading }`
+- **Fallback constants** = the current hardcoded URLs, used if the query fails or returns nothing — links never break
 
-- All 20 top-nav dropdown items resolve to real routes (Start Here / Work With Me / Tools & Resources / Truth & About — all green).
-- Zero dead internal `Link to=` or `navigate()` targets across the app.
-- All other `#` anchors (`#how-it-works`, `#packages`, `#reimbursement`) have matching `id`s.
-- Profile/AgentIntake `https://example.com` and `https://yoursite.com` strings are input placeholder text only, not links — leave alone.
+Wire it into:
+- `src/components/PricingSection.tsx` (replaces `PARTNERSHIP_BOOKING_URL` const)
+- `src/pages/ResultScreen.tsx` (replaces inline free-call URL)
+- `src/components/dashboard/YourProgramPanel.tsx` (replaces inline paid-call URL)
 
-## Technical details
+## 4. Server-side resolver for edge functions / emails
 
-- 6 files get URL string replacements (2 client + 4 server/email).
-- `src/pages/Modules.tsx`: import `PricingSection`, append `<section id="plans" className="scroll-mt-24 mt-16"><PricingSection /></section>`, add `useEffect(() => { if (location.hash === "#plans") document.getElementById("plans")?.scrollIntoView({behavior:"smooth"}); }, [location.hash])`.
-- `src/components/PricingSection.tsx`: both `/#pricing` strings → `/modules#plans`.
-- `src/lib/email-templates.ts`: 4 URL replacements.
-- `src/data/tool-picks.ts` + `src/data/ai-tools-directory.ts`: 2 Skool URL replacements.
-- Data-only admin insert via the insert tool. No schema migration.
+New `supabase/functions/_shared/booking-links.ts`:
+- `getBookingLinks(supabaseAdmin)` → reads both rows with service role, returns `{ freeClarityUrl, paidStrategyUrl }` with the same hardcoded fallbacks on any error
+- Called from:
+  - `supabase/functions/stripe-webhook/index.ts` (paid URL in post-purchase email)
+  - `supabase/functions/_shared/transactional-email-templates/transformation-welcome.tsx` — switch from hardcoded constant to a prop; passed in by send-transactional-email
+  - `supabase/functions/_shared/transactional-email-templates/advisory-purchase-confirmation.tsx` — same prop pattern
+- `send-transactional-email/index.ts` resolves links once and merges them into `templateData` for these two templates so triggers don't have to know about it
 
-## Not included
+## 5. Out of scope
 
-- No new `booking-links` constants file.
-- No changes to `user_roles` schema, `has_role` RPC, or `AccessGate` admin bypass logic.
-- No edits to email-template copy beyond the URL swap.
-- No changes to the Calendly appointments themselves (managed in your Calendly account).
+- No changes to the underlying booking provider (still your external GHL/Calendly-style page — no API, no embed, no sync)
+- No URL history/audit log (just `updated_at` + `updated_by`)
+- No per-environment overrides; one value per key, applies everywhere
+
+## Files changed
+- New migration: `app_settings` table + seed
+- New: `src/pages/admin/AdminBookingLinks.tsx`, `src/hooks/use-booking-links.ts`, `supabase/functions/_shared/booking-links.ts`
+- Edit: `src/App.tsx` (route), `src/components/admin/AdminNav.tsx`, `PricingSection.tsx`, `ResultScreen.tsx`, `YourProgramPanel.tsx`, `stripe-webhook/index.ts`, `send-transactional-email/index.ts`, `transformation-welcome.tsx`, `advisory-purchase-confirmation.tsx`
+- Redeploy: `stripe-webhook`, `send-transactional-email`
