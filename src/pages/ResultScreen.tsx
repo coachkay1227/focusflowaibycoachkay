@@ -577,7 +577,7 @@ const ResultScreen = () => {
               <Button
                 variant="outline"
                 className="border-border hover:border-primary/40 text-foreground hover:text-primary transition-all px-6 py-4"
-                onClick={() => window.open("https://call.coachkayelevates.org/widget/bookings/15-minutes-free-call", "_blank")}
+                onClick={() => window.open(freeClarityUrl, "_blank")}
               >
                 <Calendar className="mr-2 h-4 w-4" />
                 Book a Live Session
