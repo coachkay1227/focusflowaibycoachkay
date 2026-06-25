@@ -97,6 +97,7 @@ const ADMIN_EXEMPT = new Set<string>([
   "/admin/newsletter",
   "/admin/scam-alerts",
   "/admin/newsletter-draft/:id",
+  "/admin/booking-links",
   "/email-preview",
 ]);
 
