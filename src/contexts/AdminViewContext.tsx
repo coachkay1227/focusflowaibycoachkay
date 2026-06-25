@@ -12,12 +12,12 @@ const AdminViewContext = createContext<AdminViewContextType>({
 });
 
 export function AdminViewProvider({ children }: { children: ReactNode }) {
-  // sessionStorage so the toggle resets on tab/browser close
+  // sessionStorage only — toggle resets on tab/browser close so admins
+  // never accidentally browse as a regular user on a shared device.
   const [userView, setUserView] = useState(() => {
-    try { return sessionStorage.getItem("admin-user-view") === "true"; } catch { return false; }
     try {
-      return localStorage.getItem("admin-user-view") === "true";
-    } catch (_err) {
+      return sessionStorage.getItem("admin-user-view") === "true";
+    } catch {
       return false;
     }
   });
@@ -25,10 +25,9 @@ export function AdminViewProvider({ children }: { children: ReactNode }) {
   const toggleView = () => {
     setUserView((prev) => {
       const next = !prev;
-      try { sessionStorage.setItem("admin-user-view", String(next)); } catch {}
       try {
-        localStorage.setItem("admin-user-view", String(next));
-      } catch (_err) {
+        sessionStorage.setItem("admin-user-view", String(next));
+      } catch {
         // Ignore storage write failures (private mode / blocked storage).
       }
       return next;
