@@ -2,6 +2,7 @@ import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
+import { getBookingLinks } from '../_shared/booking-links.ts'
 
 // Sender configuration — all transactional email is delivered via Resend.
 // `coachkayai.life` is the verified sending domain in Resend.
@@ -161,6 +162,17 @@ Deno.serve(async (req: Request) => {
 
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+  // Inject admin-editable booking URLs into templates that need them.
+  if (
+    templateName === 'transformation-welcome' ||
+    templateName === 'advisory-purchase-confirmation'
+  ) {
+    const links = await getBookingLinks(supabase)
+    if (templateData.bookingUrl === undefined || templateData.bookingUrl === null) {
+      templateData = { ...templateData, bookingUrl: links.paidStrategyUrl }
+    }
+  }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
