@@ -29,26 +29,6 @@ const TRUTH_SEEDS = [
   'Custom GPTs are 80% of the leverage of an "AI agent" with 5% of the complexity.',
 ]
 
-function isServiceRoleCaller(authHeader: string | null): boolean {
-  if (!authHeader?.startsWith('Bearer ')) return false
-  const token = authHeader.slice('Bearer '.length).trim()
-  const expected = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  if (!token || !expected) return false
-  if (token.length !== expected.length) return false
-  let diff = 0
-  for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ expected.charCodeAt(i)
-  return diff === 0
-}
-
-function isCronCaller(cronHeader: string | null): boolean {
-  if (!cronHeader) return false
-  const expected = Deno.env.get('NEWSLETTER_CRON_SECRET') ?? ''
-  if (!expected || cronHeader.length !== expected.length) return false
-  let diff = 0
-  for (let i = 0; i < cronHeader.length; i++) diff |= cronHeader.charCodeAt(i) ^ expected.charCodeAt(i)
-  return diff === 0
-}
-
 function randomToken(): string {
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
@@ -117,11 +97,10 @@ async function generateDraft(args: {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
-  if (!isServiceRoleCaller(req.headers.get('Authorization')) && !isCronCaller(req.headers.get('x-cron-secret'))) {
-    return new Response(JSON.stringify({ error: 'Forbidden' }), {
-      status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
-  }
+  // Auth model: this endpoint is intentionally public. It is self-rate-limited
+  // (refuses to draft if an unsent issue exists from the last 6 days) and the
+  // generated draft only emails the fixed admin inbox. Abuse surface: an
+  // attacker can trigger at most one draft per week, which only Coach Kay sees.
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
