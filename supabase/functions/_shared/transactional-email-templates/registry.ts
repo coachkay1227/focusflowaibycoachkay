@@ -26,6 +26,7 @@ import { template as newsletterWelcome } from './newsletter-welcome.tsx'
 import { template as agentOrderConfirmation } from './agent-order-confirmation.tsx'
 import { template as agentIntakeReceived } from './agent-intake-received.tsx'
 import { template as buildStudioOrderConfirmation } from './build-studio-order-confirmation.tsx'
+import { template as advisoryPurchaseConfirmation } from './advisory-purchase-confirmation.tsx'
 import { template as subscriptionCancelled } from './subscription-cancelled.tsx'
 import { template as paymentFailed } from './payment-failed.tsx'
 import { template as rentAgentWelcome } from './rent-agent-welcome.tsx'
@@ -50,6 +51,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'agent-order-confirmation': agentOrderConfirmation,
   'agent-intake-received': agentIntakeReceived,
   'build-studio-order-confirmation': buildStudioOrderConfirmation,
+  'advisory-purchase-confirmation': advisoryPurchaseConfirmation,
   'subscription-cancelled': subscriptionCancelled,
   'payment-failed': paymentFailed,
   'rent-agent-welcome': rentAgentWelcome,
