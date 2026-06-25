@@ -19,6 +19,7 @@ import ApplyNowDialog from "@/components/ApplyNowDialog";
 import { trackCta } from "@/lib/analytics";
 import PillarBadge from "@/components/PillarBadge";
 import PillarStrip from "@/components/PillarStrip";
+import { useBookingLinks } from "@/hooks/use-booking-links";
 
 interface InsightResult {
   truth: string;
@@ -37,6 +38,7 @@ const ResultScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { freeClarityUrl } = useBookingLinks();
   const state = location.state as { answers: ClarityAnswers; moduleId?: string; guestEmail?: string; guestName?: string | null } | undefined;
   const answers = state?.answers;
   const moduleId = state?.moduleId || "clarity-check";
