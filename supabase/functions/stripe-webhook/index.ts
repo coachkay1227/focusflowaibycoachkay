@@ -701,7 +701,7 @@ serve(async (req) => {
                 templateData: {
                   name: advName,
                   productName: "AI Strategy Intensive",
-                  bookingUrl: "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp",
+                  bookingUrl: "https://call.coachkayelevates.org/widget/bookings/60min-discover-call",
                 },
               },
             }).catch(() => {});

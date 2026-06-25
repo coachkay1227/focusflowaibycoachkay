@@ -364,7 +364,7 @@ export const DIRECTORY_TOOLS: DirectoryTool[] = [
     name: "Skool",
     blurb: "Home of the FocusFlow Elevation Hub: where support happens between sessions.",
     category: "Community & Booking",
-    signup_url: "https://www.skool.com",
+    signup_url: "https://www.skool.com/focusflow-elevation-hub",
     affiliate_url: "https://www.skool.com/signup?ref=e641155cc53a431c8387d590ba785dea",
     pricing: "Paid",
   },

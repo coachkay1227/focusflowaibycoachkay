@@ -1,76 +1,68 @@
-# Weekly newsletter from Scams + Truths (AI-drafted, you edit, you send)
+# Booking URLs, View Plans, admin, and link cleanup
 
-## What you're getting
+Simplified shape: direct find-and-replace for URLs (no constants file), one shared anchor fix that handles both orphan anchors, one admin row insert. Audit results below.
 
-A weekly issue auto-drafted by AI from two content seeds you already have, dropped into your inbox every Monday morning. You review, edit, paste back, and trigger a send to all `newsletter_subscribers` through Lovable Emails.
+## 1. Two Calendly URLs, wired by intent
 
-**Issue format (locked, ~400 words):**
+| Audience | URL | Files |
+|---|---|---|
+| Free / cold leads → **15-min Clarity Call** | `https://call.coachkayelevates.org/widget/bookings/15-minutes-free-call` | `src/components/PricingSection.tsx:12`, `src/pages/ResultScreen.tsx:578` |
+| Paid clients (post-purchase) → **60-min Strategy Call** | `https://call.coachkayelevates.org/widget/bookings/60min-discover-call` | `src/components/dashboard/YourProgramPanel.tsx:6`, `supabase/functions/stripe-webhook/index.ts:704`, `supabase/functions/_shared/transactional-email-templates/transformation-welcome.tsx:15`, `supabase/functions/_shared/transactional-email-templates/advisory-purchase-confirmation.tsx:10` |
 
-```text
-1. SCAM ALERT  — pulled from the freshest unused row in scam_alerts
-2. TRUTH DROP  — a myth/take aligned to the "Truth About AI" voice
-3. AI PLAY     — one concrete tool or workflow you can run this week
+Direct string replace in each file. No constants file, no client/Deno split — these URLs change rarely and inlining keeps it obvious which audience each surface targets.
+
+Skip: `src/data/ai-tools-directory.ts:375` (bare `https://calendly.com` is just a generic directory entry for Calendly the product, not a CTA for your business).
+
+## 2. Fix both orphan `#` anchors with one Modules-page change
+
+Audit found **two** orphan anchors, not one:
+- `AccessGate.tsx:55` → `/modules#plans` (no `id="plans"` exists)
+- `PricingSection.tsx:161,201` → `/#pricing` (no `id="pricing"` exists on `Index.tsx`)
+
+Single fix that handles both: add `<section id="plans" className="scroll-mt-24">` to the bottom of `src/pages/Modules.tsx` rendering the existing `<PricingSection />`, plus a `useEffect` watching `location.hash` to smooth-scroll on mount or when the hash changes. Then update `PricingSection.tsx` to point its two CTAs at `/modules#plans` instead of `/#pricing` — one canonical pricing destination, both broken anchors fixed.
+
+`AccessGate`'s button stays a plain `navigate("/modules#plans")` — no pathname branching needed; the `useEffect` handles same-page hash changes too.
+
+## 3. Grant admin to second email
+
+One idempotent insert via the data tool:
+
+```sql
+INSERT INTO public.user_roles (user_id, role)
+SELECT id, 'admin'::app_role
+FROM auth.users
+WHERE lower(email) = 'kizzy.alaoui@gmail.com'
+ON CONFLICT (user_id, role) DO NOTHING;
 ```
 
-All three sections drafted in Coach Kay voice (Voice Bible applied via the existing `_shared/coach-voice.ts`).
+`hello@coachkayelevates.org` stays the primary admin (already has the row). `AccessGate` already gives admins full bypass to every tier — no other wiring needed.
 
-## How it works (no admin UI, just edge functions)
+If `kizzy.alaoui@gmail.com` hasn't signed up yet, the insert no-ops safely; sign in once, re-run.
 
-```text
-Mon 07:00 ET — pg_cron
-    │
-    ▼
-draft-weekly-newsletter (edge fn)
-    ├─ pulls 1 unused scam_alert + 1 truth seed + 1 play
-    ├─ Gemini 3 Flash drafts subject + 3 sections in Voice Bible style
-    ├─ stores draft in newsletter_issues table
-    └─ emails the draft + an "Approve & Send" link to hello@coachkayelevates.org
-                                │
-                                ▼
-                  You click the link (signed token, 7-day TTL)
-                                │
-                                ▼
-                send-weekly-newsletter (edge fn)
-                    ├─ verifies token
-                    ├─ pulls draft from newsletter_issues
-                    ├─ enqueues one transactional send per subscriber
-                    │   (existing process-email-queue handles throughput + retries)
-                    └─ marks issue 'sent', stamps sent_at
-```
+## 4. Other audit fixes
 
-If you want to edit before sending: hit the "Edit in browser" link instead — opens a minimal one-page editor at `/admin/newsletter-draft/:id` (smallest possible UI, not a full campaign manager).
+- **`src/lib/email-templates.ts:378,388,401,425`** — replace the four `https://app.focusflow.ai/...` placeholder URLs with the real production base `https://coachkayai.life/...` (matching paths preserved).
+- **`src/data/tool-picks.ts:76`** and **`src/data/ai-tools-directory.ts:367`** — bare `https://www.skool.com` → `https://www.skool.com/focusflow-elevation-hub` so the Skool entries actually land on your community.
 
-## What gets built
+## 5. Confirmed clean — no action
 
-1. **`newsletter_issues` table** — id, issue_number, subject, scam_alert_id, truth_body, play_body, status (`draft`/`approved`/`sent`/`skipped`), approval_token, token_expires_at, sent_at, sent_count. Admin-only RLS.
-2. **`scam_alerts.used_in_issue_id`** — nullable FK so we never repeat a scam.
-3. **Edge function `draft-weekly-newsletter`** — content selection + Gemini draft + email to you.
-4. **Edge function `send-weekly-newsletter`** — token verify + enqueue sends.
-5. **Email template `weekly-newsletter-draft.tsx`** — the draft preview you get with two CTA buttons (Approve & Send, Edit).
-6. **Email template `weekly-newsletter-issue.tsx`** — the actual subscriber-facing newsletter (footer auto-adds unsubscribe link, per email infra rules).
-7. **One-page editor** at `/admin/newsletter-draft/:id` — textarea per section + "Send now" button (admin-only, gated by `has_role`). Smallest viable surface, no campaign list, no analytics page.
-8. **pg_cron job** — Monday 07:00 ET hits `draft-weekly-newsletter`.
+- All 20 top-nav dropdown items resolve to real routes (Start Here / Work With Me / Tools & Resources / Truth & About — all green).
+- Zero dead internal `Link to=` or `navigate()` targets across the app.
+- All other `#` anchors (`#how-it-works`, `#packages`, `#reimbursement`) have matching `id`s.
+- Profile/AgentIntake `https://example.com` and `https://yoursite.com` strings are input placeholder text only, not links — leave alone.
 
-## Guardrails (because this is bulk-ish)
+## Technical details
 
-- Lovable Emails forbids bulk/marketing; this is allowed because **each subscriber explicitly opted in via the waitlist with "Get on the waitlist" wording**, and every issue includes the auto-appended unsubscribe footer. We will document this in the function header to keep future-you honest.
-- Hard cap: max one issue per 7 days per subscriber, enforced server-side in the send function.
-- Bounces/complaints already flow into `suppressed_emails`; the queue worker honors it. Nothing extra to wire.
-- Skip subscribers in `suppressed_emails` and any with `confirmed = false` if you're using double opt-in.
+- 6 files get URL string replacements (2 client + 4 server/email).
+- `src/pages/Modules.tsx`: import `PricingSection`, append `<section id="plans" className="scroll-mt-24 mt-16"><PricingSection /></section>`, add `useEffect(() => { if (location.hash === "#plans") document.getElementById("plans")?.scrollIntoView({behavior:"smooth"}); }, [location.hash])`.
+- `src/components/PricingSection.tsx`: both `/#pricing` strings → `/modules#plans`.
+- `src/lib/email-templates.ts`: 4 URL replacements.
+- `src/data/tool-picks.ts` + `src/data/ai-tools-directory.ts`: 2 Skool URL replacements.
+- Data-only admin insert via the insert tool. No schema migration.
 
-## What this plan does NOT include
+## Not included
 
-- No Beehiiv mirror (you chose Lovable Emails only).
-- No analytics dashboard, open/click tracking, A/B subjects, segmentation, or campaign list UI.
-- No automated send — you stay in the loop on every issue (you said "you edit").
-- No public archive page (can add later if you want the SEO benefit).
-
-## Technical notes
-
-- AI model: `google/gemini-3-flash-preview` via existing `_shared/ai-gateway.ts`, with Voice Bible system prompt.
-- Content selection: scam = newest `scam_alerts` row where `used_in_issue_id IS NULL` and `published_at IS NOT NULL`; truth seed = rotates from a small curated list in code (we can move to a `truth_seeds` table later if you want).
-- Approval token: 32-byte random, SHA-256 hashed in DB, raw in the email link. Same pattern as `email_unsubscribe_tokens`.
-- Cron: uses `pg_cron` + `pg_net` per the standard scheduled-edge-function pattern.
-- The send function enqueues one message per subscriber so the existing 120/min queue throttles correctly — no custom rate limit.
-
-Ready to build this when you approve.
+- No new `booking-links` constants file.
+- No changes to `user_roles` schema, `has_role` RPC, or `AccessGate` admin bypass logic.
+- No edits to email-template copy beyond the URL swap.
+- No changes to the Calendly appointments themselves (managed in your Calendly account).

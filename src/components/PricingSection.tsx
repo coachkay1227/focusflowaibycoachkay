@@ -8,8 +8,11 @@ import OfferCard from "@/components/offers/OfferCard";
 import { getSymmetricGridClass } from "@/lib/grid";
 import { trackCheckoutStart } from "@/lib/gtag";
 
+// Partnership offer copy explicitly says "Begins with a 60-min discovery call",
+// so this card uses the 60-min strategy call. The free 15-min Clarity Call is
+// used on lower-intent surfaces (assessment result, etc.).
 const PARTNERSHIP_BOOKING_URL =
-  "https://call.coachkayelevates.org/widget/booking/T9DLwsDPEI4rfRHDdhjp";
+  "https://call.coachkayelevates.org/widget/bookings/60min-discover-call";
 const PENDING_CHECKOUT_KEY = "pending_checkout_price";
 
 interface Offer {
@@ -158,7 +161,7 @@ export default function PricingSection() {
           body: {
             priceId,
             successPath: "/dashboard?welcome=program",
-            cancelPath: "/#pricing",
+            cancelPath: "/modules#plans",
           },
         });
         if (error) throw error;
@@ -198,7 +201,7 @@ export default function PricingSection() {
     trackCheckoutStart(offer.title, numericPrice);
     if (!user) {
       try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, offer.priceId); } catch { /* noop */ }
-      navigate(`/auth?next=${encodeURIComponent("/#pricing")}`);
+      navigate(`/auth?next=${encodeURIComponent("/modules#plans")}`);
       return;
     }
     void startCheckout(offer.priceId);

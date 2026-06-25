@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useMouseGlow } from "@/hooks/use-mouse-glow";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { getPublicPrograms, getProgramsByPath, FOCUS_PILLARS, type PublicPath, PUBLIC_PATHS, type FocusPillar } from "@/data/programs";
@@ -16,6 +16,7 @@ import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
 import PillarStrip from "@/components/PillarStrip";
+import PricingSection from "@/components/PricingSection";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSymmetricGridClass } from "@/lib/grid";
@@ -26,6 +27,7 @@ const PILLAR_ORDER: FocusPillar[] = ["F", "O", "C", "U", "S"];
 
 const Modules = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { tier } = useAccessLevel();
   const { isAdmin } = useRoles();
@@ -63,6 +65,20 @@ const Modules = () => {
   }, [user, toast]);
 
   useMouseGlow(containerRef);
+
+  // Smooth-scroll to #plans (and other anchors) on mount and when hash changes,
+  // so the AccessGate "View Plans" CTA works whether navigating in or already here.
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      // Defer one tick so layout settles (programs render async).
+      requestAnimationFrame(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, [location.hash, enrollments.length]);
 
   const getEnrollment = (programId: string) => {
     const e = enrollments.find((en) => en.moduleId === programId);
@@ -258,6 +274,11 @@ const Modules = () => {
         <div className="mt-16">
           <PillarStrip />
         </div>
+
+        {/* Plans — anchor target for AccessGate "View Plans" CTA */}
+        <section id="plans" className="scroll-mt-24 mt-16">
+          <PricingSection />
+        </section>
       </div>
     </div>
   );
