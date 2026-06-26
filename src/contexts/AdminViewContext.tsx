@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminViewContextType {
   /** When true, admin sees content as a regular user would */
@@ -30,6 +31,18 @@ export function AdminViewProvider({ children }: { children: ReactNode }) {
       } catch {
         // Ignore storage write failures (private mode / blocked storage).
       }
+      // Fire-and-forget audit log entry. RLS ensures only admins can write.
+      void (async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          await supabase.from("admin_audit_log").insert({
+            admin_id: user.id,
+            action: "admin_view_toggle",
+            metadata: { enabled: next },
+          });
+        } catch { /* noop */ }
+      })();
       return next;
     });
   };
