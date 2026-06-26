@@ -318,6 +318,8 @@ const AgentResult = () => {
           </div>
         </AnimatedSection>
 
+        <AIDisclaimer />
+
       </div>
 
       <ApplyNowDialog

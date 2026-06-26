@@ -353,6 +353,8 @@ const AuditReport = () => {
             <a className="text-primary hover:underline" href="/store">→ Studio + Books</a>
           </div>
         </section>
+
+        <AIDisclaimer />
       </div>
     </div>
   );

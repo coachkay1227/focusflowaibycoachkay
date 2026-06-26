@@ -647,6 +647,10 @@ const ResultScreen = () => {
           <AnimatedSection delay={1400} className="mt-16">
             <PillarStrip />
           </AnimatedSection>
+
+          <AnimatedSection delay={1500}>
+            <AIDisclaimer />
+          </AnimatedSection>
         </div>
       )}
 
