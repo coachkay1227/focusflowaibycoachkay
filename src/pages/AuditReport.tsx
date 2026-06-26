@@ -1,3 +1,4 @@
+import { AIDisclaimer } from "@/components/AIDisclaimer";
 import { useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -353,6 +354,8 @@ const AuditReport = () => {
             <a className="text-primary hover:underline" href="/store">→ Studio + Books</a>
           </div>
         </section>
+
+        <AIDisclaimer />
       </div>
     </div>
   );

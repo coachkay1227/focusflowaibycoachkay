@@ -1,3 +1,4 @@
+import { AIDisclaimer } from "@/components/AIDisclaimer";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -646,6 +647,10 @@ const ResultScreen = () => {
 
           <AnimatedSection delay={1400} className="mt-16">
             <PillarStrip />
+          </AnimatedSection>
+
+          <AnimatedSection delay={1500}>
+            <AIDisclaimer />
           </AnimatedSection>
         </div>
       )}

@@ -1,3 +1,4 @@
+import { AIDisclaimer } from "@/components/AIDisclaimer";
 import { useRef, useState } from "react";
 import { useMouseGlow } from "@/hooks/use-mouse-glow";
 import { useLocation, useNavigate, Link } from "react-router-dom";
@@ -317,6 +318,8 @@ const AgentResult = () => {
             </button>
           </div>
         </AnimatedSection>
+
+        <AIDisclaimer />
 
       </div>
 
