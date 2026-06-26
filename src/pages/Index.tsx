@@ -34,7 +34,7 @@ const Index = () => {
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay grid-overlay">
       <SEOHead
         title="FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay"
-        description="Master Certified Life Coach meets AI. Get clarity in 90 seconds, transform in 30 days. Free clarity session, AI business audit, and 1:1 coaching programs by Coach Kay."
+        description="AI clarity coaching by Coach Kay. Free 90-second clarity session, AI business audit, and 1:1 transformation programs for founders."
         path="/"
         keywords={[
           "AI clarity coaching",
@@ -273,9 +273,9 @@ const Index = () => {
               className="group relative text-left p-8 border border-primary/20 bg-background/60 backdrop-blur-sm hover:border-primary/60 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <span className="font-mono-label text-primary text-xs tracking-[0.2em] mb-3 block">PATH A · CLARITY</span>
-              <h3 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
+              <h2 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
                 My thinking is foggy —<br />I need clarity &amp; direction.
-              </h3>
+              </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 Decisions, focus, and mental clarity. Start with the F.O.C.U.S. framework and find your next move in 90
                 seconds.
@@ -294,9 +294,9 @@ const Index = () => {
               <span className="font-mono-label text-foreground/40 text-xs tracking-[0.2em] mb-3 block">
                 PATH B · AI SYSTEMS
               </span>
-              <h3 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
+              <h2 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
                 My business systems need AI —<br />I need to automate &amp; scale.
-              </h3>
+              </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 AI-powered systems, workflows, and builds. Explore the tools and services that run Coach Kay's client
                 engine.
