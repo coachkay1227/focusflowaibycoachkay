@@ -46,6 +46,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/disclaimer", priority: "0.4", changefreq: "yearly" },
   { path: "/refund-policy", priority: "0.4", changefreq: "yearly" },
   { path: "/blog", priority: "0.8", changefreq: "weekly" },
+  { path: "/methodology", priority: "0.5", changefreq: "monthly" },
 ];
 
 // --- Dynamic: clarity modules from src/lib/modules.ts ---
