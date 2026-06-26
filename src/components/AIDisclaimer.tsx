@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 /**
  * Reusable AI / informational disclaimer for assessment & result pages.
@@ -32,6 +33,11 @@ export function AIDisclaimer({
         {clinical
           ? " If you are in crisis or considering harm to yourself or others, contact a licensed professional or call your local emergency line immediately."
           : " Results may vary if you re-take the assessment with different answers."}
+      </p>
+      <p className="mt-2">
+        <Link to="/methodology" className="text-primary hover:underline">
+          How this assessment is generated →
+        </Link>
       </p>
     </div>
   );

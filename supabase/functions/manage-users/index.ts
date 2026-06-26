@@ -126,6 +126,14 @@ serve(async (req: Request) => {
 
         logStep("Tier updated successfully", { user_id, tier });
 
+        supabaseClient.from("admin_audit_log").insert({
+          admin_id: user.id,
+          action: "user_tier_update",
+          target_table: "user_access_levels",
+          target_id: user_id,
+          metadata: { tier },
+        }).then(() => {}, () => {});
+
         return new Response(JSON.stringify({ success: true, user_id, tier }), {
           headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
           status: 200,
@@ -269,6 +277,14 @@ serve(async (req: Request) => {
           }, { onConflict: "id" });
 
         if (upsertError) throw new Error(`Failed to update content setting: ${upsertError.message}`);
+
+        supabaseClient.from("admin_audit_log").insert({
+          admin_id: user.id,
+          action: "content_setting_update",
+          target_table: "content_settings",
+          target_id: String(content_id),
+          metadata: { enabled, featured, custom_tagline },
+        }).then(() => {}, () => {});
 
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

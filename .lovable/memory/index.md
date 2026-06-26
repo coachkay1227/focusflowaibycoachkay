@@ -35,3 +35,4 @@
 - [Pause Hub](mem://features/pause-hub) — /pause-hub is the scam alert hub (Supabase Realtime), NOT a breathwork page
 
 - [Voice Bible](mem://style/voice-bible) — Canonical AI/email voice rules, banned list, sign-off, admin lint
+- [Admin Audit Log](mem://admin/audit-log) — admin_audit_log table tracks view-toggle + admin writes

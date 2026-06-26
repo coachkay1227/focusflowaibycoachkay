@@ -76,6 +76,15 @@ serve(async (req) => {
       });
     }
 
+    // Admin audit log — record the write action.
+    admin.from("admin_audit_log").insert({
+      admin_id: claims.claims.sub,
+      action: "autism_order_update",
+      target_table: "autism_orders",
+      target_id: id,
+      metadata: patchWithTimestamp,
+    }).then(() => {}, () => {});
+
     // Send delivery confirmation email when status transitions to "delivered"
     if (data.status === "delivered" && data.client_email) {
       const totalStr = new Intl.NumberFormat("en-US", {
