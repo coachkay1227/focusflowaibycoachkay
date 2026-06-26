@@ -23,6 +23,7 @@ export type Database = {
           guest_email: string | null
           id: string
           intake: Json | null
+          is_test: boolean
           knowledge_base: string | null
           notes: string | null
           ownership_pref: string | null
@@ -40,6 +41,7 @@ export type Database = {
           guest_email?: string | null
           id?: string
           intake?: Json | null
+          is_test?: boolean
           knowledge_base?: string | null
           notes?: string | null
           ownership_pref?: string | null
@@ -57,6 +59,7 @@ export type Database = {
           guest_email?: string | null
           id?: string
           intake?: Json | null
+          is_test?: boolean
           knowledge_base?: string | null
           notes?: string | null
           ownership_pref?: string | null
@@ -172,6 +175,7 @@ export type Database = {
           gift_recipient: string | null
           gift_wrap: boolean
           id: string
+          is_test: boolean
           order_total: number
           package_name: string
           package_price: number
@@ -204,6 +208,7 @@ export type Database = {
           gift_recipient?: string | null
           gift_wrap?: boolean
           id?: string
+          is_test?: boolean
           order_total: number
           package_name: string
           package_price: number
@@ -236,6 +241,7 @@ export type Database = {
           gift_recipient?: string | null
           gift_wrap?: boolean
           id?: string
+          is_test?: boolean
           order_total?: number
           package_name?: string
           package_price?: number
@@ -267,6 +273,7 @@ export type Database = {
           created_at: string
           id: string
           illustration_style: string
+          is_test: boolean
           order_total: number
           package_name: string
           package_price: number
@@ -292,6 +299,7 @@ export type Database = {
           created_at?: string
           id?: string
           illustration_style: string
+          is_test?: boolean
           order_total: number
           package_name: string
           package_price: number
@@ -317,6 +325,7 @@ export type Database = {
           created_at?: string
           id?: string
           illustration_style?: string
+          is_test?: boolean
           order_total?: number
           package_name?: string
           package_price?: number
@@ -393,6 +402,7 @@ export type Database = {
           guest_name: string | null
           id: string
           intake: Json
+          is_test: boolean
           recommended_offer: string | null
           report: Json | null
           stripe_session_id: string | null
@@ -405,6 +415,7 @@ export type Database = {
           guest_name?: string | null
           id?: string
           intake?: Json
+          is_test?: boolean
           recommended_offer?: string | null
           report?: Json | null
           stripe_session_id?: string | null
@@ -417,6 +428,7 @@ export type Database = {
           guest_name?: string | null
           id?: string
           intake?: Json
+          is_test?: boolean
           recommended_offer?: string | null
           report?: Json | null
           stripe_session_id?: string | null
@@ -793,6 +805,7 @@ export type Database = {
           guest_name: string | null
           id: string
           intake: Json | null
+          is_test: boolean
           order_type: string
           price_cents: number
           product_id: string
@@ -809,6 +822,7 @@ export type Database = {
           guest_name?: string | null
           id?: string
           intake?: Json | null
+          is_test?: boolean
           order_type?: string
           price_cents?: number
           product_id: string
@@ -825,6 +839,7 @@ export type Database = {
           guest_name?: string | null
           id?: string
           intake?: Json | null
+          is_test?: boolean
           order_type?: string
           price_cents?: number
           product_id?: string
@@ -1130,6 +1145,7 @@ export type Database = {
           guest_name: string | null
           id: string
           intake: Json
+          is_test: boolean
           recommended_offer: string | null
           report: Json | null
           stripe_session_id: string | null
