@@ -119,7 +119,7 @@ const Profile = () => {
           <div className="relative">
             <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-primary/30">
               {sanitizeAvatarUrl(avatarUrl) ? (
-                <img src={sanitizeAvatarUrl(avatarUrl)} alt="Avatar" loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                <img src={sanitizeAvatarUrl(avatarUrl)} alt="Your account profile picture" loading="lazy" decoding="async" className="w-full h-full object-cover" />
               ) : (
                 <User className="h-10 w-10 text-muted-foreground" />
               )}
