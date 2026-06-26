@@ -25,6 +25,12 @@ jobs:
           bun run seo:check 2>&1 | tee seo-results.txt
           exit ${PIPESTATUS[0]}
 
+      - name: Check email template references
+        run: bun run scripts/check-email-templates.ts
+
+      - name: Check role invariants
+        run: bun run scripts/check-role-invariants.ts
+
       - name: Generate HTML summary
         if: always()
         run: bun run scripts/seo-results-to-html.ts seo-results.txt seo-results.html
