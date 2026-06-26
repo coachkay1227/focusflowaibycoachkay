@@ -34,7 +34,7 @@ const Index = () => {
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay grid-overlay">
       <SEOHead
         title="FocusFlow AI — AI-Powered Clarity Coaching by Coach Kay"
-        description="Master Certified Life Coach meets AI. Get clarity in 90 seconds, transform in 30 days. Free clarity session, AI business audit, and 1:1 coaching programs by Coach Kay."
+        description="AI clarity coaching by Coach Kay. Free 90-second clarity session, AI business audit, and 1:1 transformation programs for founders."
         path="/"
         keywords={[
           "AI clarity coaching",
