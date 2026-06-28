@@ -249,10 +249,9 @@ const Advisory = () => {
             <Button
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-              onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
-              disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
+              onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
             >
-              {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Take the $47 audit"}
+              Take the $47 audit
             </Button>
             <a
               href="https://coachkayelevates.org/"
