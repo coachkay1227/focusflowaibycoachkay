@@ -1,57 +1,62 @@
-## Bundled Remediation — Phases A through D in one pass
+# Plan: Public Audit Funnel (Intake → Checkout → Auth → Report)
 
-To clarify: the previous turn was the **audit report only** — read-only findings. No code was changed in that turn. This plan is the actual fix bundle for the 6 real risks identified (R1–R6).
+## Simplification review (before changes)
 
----
+Your instructions are already the simplification — they flip the flow from "pay → auth → intake" to "intake (lead capture) → pay → auth → report." That removes:
 
-### What gets changed
+- The `useAuditAccess` gate on the intake page (no audit row exists yet pre-payment, so the hook is dead weight here).
+- The `ProtectedRoute` wrapper on `/audit/*` public-funnel routes.
+- The "sign in to continue" branching on `AuditLanding`.
+- The duplicate "magic link / check your email / sign in" copy on the landing page.
 
-**1. Webhook idempotency (R1 — High)**
-- Edit `supabase/functions/stripe-webhook/index.ts`.
-- Add a shared `markEventProcessed(eventId)` helper that inserts into the existing `processed_stripe_events` table with `on conflict do nothing` and returns `false` if the row already existed.
-- Wrap every `checkout.session.completed` branch (subscription, agent, autism, book, one-time, audit) in an early-return guard using that helper.
-- No schema change — `processed_stripe_events` already exists.
+One thing I want to flag so we don't over-simplify: the intake data needs to survive the Stripe redirect. Cheapest reliable path = stash intake JSON in `sessionStorage` keyed by a generated `lead_id`, pass `lead_id` + email as Stripe `metadata`, and let the existing `stripe-webhook` create the `business_audits` row with that intake on `checkout.session.completed`. No new tables, no new edge functions, no schema changes.
 
-**2. Admin audit log (R2 — Medium)**
-- Migration: new table `public.admin_audit_log` with columns `admin_id uuid`, `action text`, `target_table text`, `target_id text`, `metadata jsonb`, `created_at timestamptz default now()`.
-- GRANTs: `authenticated` SELECT/INSERT, `service_role` ALL. No `anon`.
-- RLS: SELECT and INSERT restricted to `has_role(auth.uid(),'admin')`.
-- Wire `AdminViewContext` to insert one row when the "View as user" toggle flips (`action: 'admin_view_toggle'`, `metadata: { enabled }`).
-- Wire `manage-users` and `update-autism-order` edge functions to insert a row on every admin write.
+If you'd rather POST the intake to a tiny `create-audit-lead` edge function before redirecting to Stripe (so the lead is captured even if they abandon checkout), say the word — it's ~1 extra small function. Default below is the zero-new-backend path.
 
-**3. CI build-time guard for email templates (R3 — Medium)**
-- New script `scripts/check-email-templates.ts`.
-- Greps `supabase/functions/**/*.ts` for `sendTransactionalEmail({ template: '<slug>' })` calls and asserts a matching file exists under `supabase/functions/_shared/transactional-email-templates/`.
-- Wire into `.github/workflows/seo-regressions.yml` as an additional step (rename workflow conceptually, no file rename needed).
+## Changes
 
-**4. Playwright admin-view E2E (R4 — Medium)**
-- New test `tests/admin-view-toggle.spec.ts`.
-- Uses existing `playwright-fixture.ts` admin session.
-- Flow: login → `/dashboard` → click toggle → assert a paid-tier card shows lock state → click toggle → assert unlocked.
+### 1. `src/App.tsx`
+- Remove `ProtectedRoute` (and any `requireAdmin`/auth wrapper) from `/audit`, `/audit/landing`, `/audit/intake`. Keep `/audit/report/:id` as-is (token or auth still gates the actual report).
 
-**5. Payments runbook (R5 — Low)**
-- New file `docs/PAYMENTS_RUNBOOK.md` documenting that autism/book checkouts fulfill via webhook (authoritative) and the success page is best-effort UX only.
+### 2. `src/pages/AuditIntake.tsx`
+- Remove `useAuth`, `useAuditAccess`, `audit`, `canAccess`, `token`, `auditIdFromUrl`, the "Audit access required" block, and the resume-from-existing-audit `useEffect`.
+- Add two required fields to step 1: **Full name** and **Email** (zod: trimmed, email, max 255). These become the lead capture.
+- On submit (final step):
+  1. Validate full form with zod.
+  2. Generate `lead_id = crypto.randomUUID()`.
+  3. `sessionStorage.setItem("audit:lead:" + lead_id, JSON.stringify(intake))`.
+  4. Call existing `create-checkout` edge function with `{ product: "business_audit", email, lead_id, name }` so Stripe Checkout uses `customer_email` and stores `lead_id` + `name` in session `metadata`.
+  5. Redirect to the returned Stripe URL.
+- Remove the "Generate My Audit" direct-invoke of `generate-business-audit`; generation now happens post-payment.
 
-**6. Methodology link on assessment results (R6 — Low)**
-- New public route `/methodology` that renders `docs/ASSESSMENT_LOGIC.md` (simple markdown render).
-- Add a small "How this assessment is generated →" link in the footer of `AIDisclaimer.tsx` so it appears on `/result`, `/audit/report/:token`, `/agent-result` automatically.
+### 3. `supabase/functions/create-checkout/index.ts`
+- Accept the `business_audit` product path without requiring a Supabase JWT (make this branch public; keep auth required for tier/subscription branches).
+- Pass `customer_email`, `metadata.lead_id`, `metadata.product = "business_audit"`, and `metadata.full_name` into the Stripe session. `success_url = ${origin}/audit/landing?session_id={CHECKOUT_SESSION_ID}&lead_id=<lead_id>`.
 
----
+### 4. `supabase/functions/stripe-webhook/index.ts`
+- In the `checkout.session.completed` handler, when `metadata.product === "business_audit"`:
+  - Insert a `business_audits` row with `stripe_session_id`, `customer_email`, `full_name`, and a `pending_intake = true` flag (or leave `intake` null — the landing page will hydrate it).
+  - Idempotency continues to use existing `processed_stripe_events`.
+- No DB migration needed if `business_audits` already accepts these columns; otherwise add a small migration to allow `customer_email` + `full_name` nullable text. (I'll check before writing the migration; only add if missing.)
 
-### What is NOT touched
-- No changes to `user_roles`, `profiles`, `user_access_levels`, RLS on existing tables.
-- No changes to Stripe products, prices, or live keys.
-- No changes to Voice Bible or email copy.
-- No changes to public pricing or marketing routes.
-- No changes to `src/integrations/supabase/client.ts` or `types.ts`.
+### 5. `src/pages/AuditLanding.tsx`
+- Strip all auth-conditional UI. Single primary CTA: **"Create your account to view your report"** → navigates to `/auth?next=/audit/intake-complete&email=<email>&session_id=<sid>` (prefilled email, banner message).
+- On mount, read `lead_id` + `session_id` from URL, pull intake JSON from `sessionStorage`, and POST it to a thin `attach-audit-intake` call (or directly `supabase.from('business_audits').update({ intake })` if RLS allows by `stripe_session_id` — I'll verify; if not, use a small edge function with service role).
+- Show the sample-audit preview as it is today.
 
-### Execution order (single pass)
-1. Migration for `admin_audit_log` (requires approval).
-2. After approval: edit `stripe-webhook`, `AdminViewContext`, `manage-users`, `update-autism-order`.
-3. Add `scripts/check-email-templates.ts` + workflow step.
-4. Add `tests/admin-view-toggle.spec.ts`.
-5. Add `/methodology` route + `AIDisclaimer` footer link.
-6. Add `docs/PAYMENTS_RUNBOOK.md`.
-7. Run build + role-invariant script + new template check to verify zero errors.
+### 6. `src/pages/Auth.tsx`
+- If `?email=` query param is present, prefill the email input and show the message: *"Your audit is being prepared — create your account to view your report."*
+- After successful signup/sign-in, if `?next=` is present, navigate there; the existing report-claim logic (by `customer_email` match or token) links the audit to the new user.
 
-Approve and I'll execute the bundle.
+### 7. `supabase/functions/generate-business-audit/index.ts`
+- No interface change. Continue to accept `audit_id` + `intake`. It's now invoked from the **report page** (or auto on first authenticated visit to `/audit/report/:id` if intake is present and report is null), not from the intake form.
+
+## Out of scope (intentionally not touching)
+- Admin audit log viewer, methodology page, newsletter, booking links, role checks — no changes.
+- `/audit/report/:id` continues to require either a magic-link token or the authenticated owner.
+
+## Risk notes
+- `sessionStorage` is lost if the user opens the Stripe success in a different browser/device. Acceptable trade-off vs. adding an edge function; if you want zero data loss, opt into the `create-audit-lead` pre-write variant.
+- Removing auth on `create-checkout` for this one product branch must be scoped carefully — I'll keep JWT required for all other product types.
+
+Approve and I'll implement exactly this.
