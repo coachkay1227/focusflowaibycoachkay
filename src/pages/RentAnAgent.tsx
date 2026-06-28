@@ -218,7 +218,7 @@ const RentAnAgent = () => {
             size="lg"
             variant="outline"
             className="border-border"
-            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
+                        onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
             disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
           >
             {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Start with $47 AI Audit"}
