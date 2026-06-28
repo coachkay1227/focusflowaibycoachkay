@@ -70,9 +70,7 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   "price_1Tb3wwBReje0oFcLLlE6CDGO": "subscription", // Dream Team Founding $997/mo
   "price_1Tb40yBReje0oFcLIciRVQSD": "subscription", // Dream Team Standard $1497/mo
   // One-time entry offers
-  "price_1Tb41PBReje0oFcLMlvzjQQa": "payment",      // AI Business Audit $47
   "price_1Tb41vBReje0oFcLjxGozG2X": "payment",      // AI Strategy Intensive $497
-  // Transformation Paths — 30-Day Resets
   "price_1TbAaPBReje0oFcLts5JuE5a": "payment", // 30-Day Personal Reset $297
   "price_1TbAguBReje0oFcL3Qh5pIiH": "payment", // 30-Day Business Reset $497
   "price_1TbAhOBReje0oFcL87MVrKFy": "payment", // 30-Day AI Reset $997
