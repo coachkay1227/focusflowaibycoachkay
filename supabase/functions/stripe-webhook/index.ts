@@ -433,8 +433,9 @@ serve(async (req) => {
           }
 
           // Magic link uses the request origin if available, falling back to live host.
+          // Intake is now collected pre-payment, so the link goes straight to the report.
           const origin = req.headers.get("origin") || "https://coachkayai.life";
-          const magicLink = `${origin}/audit/intake?token=${encodeURIComponent(token)}`;
+          const magicLink = `${origin}/audit/report/${inserted.id}?token=${encodeURIComponent(token)}`;
 
           if (customerEmail) {
             try {
