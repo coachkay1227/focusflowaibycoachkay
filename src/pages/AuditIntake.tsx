@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useAuditAccess } from "@/hooks/use-audit-access";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +26,8 @@ const BUDGET = ["Under $500", "$500-$2K", "$2K-$5K", "$5K-$10K", "$10K+", "Not s
 const PATH = ["DIY with guidance", "Done-with-me coaching", "Done-for-me service", "Not sure yet"];
 
 const intakeSchema = z.object({
+  full_name: z.string().trim().min(1, "Full name is required").max(200),
+  email: z.string().trim().email("Valid email required").max(255),
   business_name: z.string().trim().min(1).max(200),
   website: z.string().trim().max(500).optional().or(z.literal("")),
   industry: z.enum(INDUSTRIES as [string, ...string[]]),
@@ -52,6 +52,7 @@ const intakeSchema = z.object({
 type IntakeState = z.input<typeof intakeSchema>;
 
 const defaultState: IntakeState = {
+  full_name: "", email: "",
   business_name: "", website: "", industry: "Coaching/Consulting",
   stage: "Idea", monthly_revenue: "$0", team_size: "Solo",
   current_tools: [], current_tools_other: "",
@@ -86,62 +87,13 @@ const RadioRow = ({ label, value, options, onChange }: {
 );
 
 const AuditIntake = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const token = searchParams.get("token") ?? undefined;
-  const auditIdFromUrl = searchParams.get("audit_id") ?? undefined;
-
-  const { audit, loading, canAccess } = useAuditAccess(auditIdFromUrl, token);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [data, setData] = useState<IntakeState>(defaultState);
   const [submitting, setSubmitting] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
-  const isRetry = searchParams.get("retry") === "1";
-
-  // Resume support: when the audit row already has intake data
-  // (Dashboard "Complete Intake" or "Retry" CTAs), pre-populate the form
-  // so the user doesn't lose work and can regenerate without retyping.
-  useEffect(() => {
-    if (!audit || hydrated) return;
-    const existing = (audit.intake ?? {}) as Partial<IntakeState> & {
-      current_tools?: unknown;
-    };
-    const hasAny = Object.keys(existing).length > 0;
-    if (hasAny) {
-      setData((d) => ({
-        ...d,
-        ...existing,
-        current_tools: Array.isArray(existing.current_tools)
-          ? (existing.current_tools as string[])
-          : d.current_tools,
-      }));
-    }
-    setHydrated(true);
-  }, [audit, hydrated]);
 
   const progress = useMemo(() => (step === 1 ? 33 : step === 2 ? 66 : 100), [step]);
-
-  if (loading) {
-    return <div className="min-h-dvh flex items-center justify-center text-muted-foreground">Loading…</div>;
-  }
-
-  if (!canAccess || !audit) {
-    return (
-      <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
-        <SEOHead title="AI Business Audit — Access Needed" description="Purchase or sign in to access your audit intake." path="/audit/intake" noIndex />
-        <h1 className="font-heading text-3xl text-primary mb-3">Audit access required</h1>
-        <p className="text-muted-foreground max-w-md mb-6">
-          You need to purchase the $47 AI Business Audit or sign in with the account used at purchase.
-        </p>
-        <div className="flex gap-3">
-          <Button onClick={() => navigate("/rent-an-agent")}>Purchase Audit</Button>
-          <Button variant="outline" onClick={() => navigate("/auth?next=/audit/intake")}>Sign in</Button>
-        </div>
-      </div>
-    );
-  }
 
   const toggleTool = (t: string) => {
     setData((d) => ({
@@ -168,16 +120,32 @@ const AuditIntake = () => {
           ...(parsed.data.current_tools_other ? [parsed.data.current_tools_other] : []),
         ],
       };
-      const { data: res, error } = await supabase.functions.invoke("generate-business-audit", {
-        body: { audit_id: audit.id, intake: payloadIntake, token },
+      // Stash intake locally so AuditLanding can attach it after Stripe redirect.
+      const leadId = crypto.randomUUID();
+      try {
+        sessionStorage.setItem(
+          `audit:lead:${leadId}`,
+          JSON.stringify(payloadIntake),
+        );
+        sessionStorage.setItem("audit:lead:last", leadId);
+      } catch { /* sessionStorage may be unavailable */ }
+
+      const { data: res, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          priceId: "price_1Tb41PBReje0oFcLMlvzjQQa", // AI Business Audit $47
+          customerEmail: parsed.data.email,
+          fullName: parsed.data.full_name,
+          leadId,
+          successPath: `/audit/landing?lead_id=${encodeURIComponent(leadId)}`,
+          cancelPath: "/audit/intake?cancelled=1",
+        },
       });
       if (error) throw error;
-      if (!(res as { ok?: boolean })?.ok) throw new Error("Generation failed");
-      const qs = token ? `?token=${encodeURIComponent(token)}` : "";
-      navigate(`/audit/report/${audit.id}${qs}`);
+      const url = (res as { url?: string } | null)?.url;
+      if (!url) throw new Error("Checkout failed");
+      window.location.href = url;
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Generation failed. Please retry.");
-    } finally {
+      toast.error(e instanceof Error ? e.message : "Checkout failed. Please retry.");
       setSubmitting(false);
     }
   };
@@ -189,12 +157,9 @@ const AuditIntake = () => {
         <header className="mb-8">
           <span className="font-mono-label text-primary tracking-[0.2em] text-xs">$47 AI BUSINESS AUDIT</span>
           <h1 className="font-heading text-3xl md:text-4xl font-light text-primary mt-2">
-            {isRetry ? "Retry your audit" : audit.report ? "Update your audit" : audit.intake && Object.keys(audit.intake).length > 0 ? "Resume your intake" : "Tell us about your business"}
+            Tell us about your business
           </h1>
-          <p className="text-muted-foreground mt-2">Step {step} of 3 · ~5–7 minutes</p>
-          {(isRetry || (audit.intake && Object.keys(audit.intake).length > 0)) && (
-            <p className="mt-2 text-xs text-primary/80">Your previous answers have been pre-filled. Edit anything, then regenerate.</p>
-          )}
+          <p className="text-muted-foreground mt-2">Step {step} of 3 · ~5–7 minutes · Pay $47 after intake</p>
           <div className="mt-4 h-2 w-full rounded-full bg-card/40 overflow-hidden">
             <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
           </div>
@@ -203,6 +168,15 @@ const AuditIntake = () => {
         {step === 1 && (
           <div className="space-y-6">
             <h2 className="font-heading text-xl">Business Snapshot</h2>
+            <div>
+              <Label>Full name *</Label>
+              <Input value={data.full_name} onChange={(e) => setData({ ...data, full_name: e.target.value })} placeholder="Jane Doe" />
+            </div>
+            <div>
+              <Label>Email *</Label>
+              <Input type="email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} placeholder="you@business.com" />
+              <p className="text-xs text-muted-foreground mt-1">We'll send your audit + receipt here.</p>
+            </div>
             <div>
               <Label>Business name *</Label>
               <Input value={data.business_name} onChange={(e) => setData({ ...data, business_name: e.target.value })} />
@@ -282,13 +256,13 @@ const AuditIntake = () => {
 
             {submitting ? (
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-8 text-center">
-                <div className="font-heading text-xl text-primary mb-2">Analyzing your business across 12 vectors…</div>
-                <p className="text-muted-foreground text-sm">Generating your custom audit… Routing your best next move…</p>
+                <div className="font-heading text-xl text-primary mb-2">Redirecting to secure checkout…</div>
+                <p className="text-muted-foreground text-sm">Saving your intake and opening Stripe…</p>
               </div>
             ) : (
               <div className="flex justify-between">
                 <Button variant="outline" onClick={() => setStep(2)}>← Back</Button>
-                <Button onClick={handleSubmit} className="bg-primary text-primary-foreground">Generate My Audit</Button>
+                <Button onClick={handleSubmit} className="bg-primary text-primary-foreground">Continue to Payment · $47</Button>
               </div>
             )}
           </div>
