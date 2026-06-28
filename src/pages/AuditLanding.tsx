@@ -2,57 +2,91 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import SEOHead from "@/components/SEOHead";
 import BrandLogo from "@/components/BrandLogo";
 
 const AuditLanding = () => {
   const [params] = useSearchParams();
-  const { user } = useAuth();
   const navigate = useNavigate();
   const sessionId = params.get("session_id");
-  const [auditId, setAuditId] = useState<string | null>(null);
+  const leadId = params.get("lead_id");
+  const [status, setStatus] = useState<"working" | "ready" | "error">("working");
+  const [next, setNext] = useState<{ auditId: string; token: string | null; email: string | null } | null>(null);
 
   useEffect(() => {
-    if (!user || !sessionId) return;
-    (async () => {
-      const { data } = await supabase
-        .from("business_audits" as never)
-        .select("id")
-        .eq("stripe_session_id", sessionId)
-        .maybeSingle();
-      if (data && (data as { id?: string }).id) setAuditId((data as { id: string }).id);
-    })();
-  }, [user, sessionId]);
+    if (!sessionId) {
+      setStatus("error");
+      return;
+    }
+    let cancelled = false;
+    let attempts = 0;
+    let intake: unknown = null;
+    try {
+      const stored = leadId ? sessionStorage.getItem(`audit:lead:${leadId}`) : null;
+      if (stored) intake = JSON.parse(stored);
+    } catch { /* ignore */ }
+
+    const tick = async () => {
+      attempts += 1;
+      const { data, error } = await supabase.functions.invoke("complete-audit-intake", {
+        body: { session_id: sessionId, intake },
+      });
+      if (cancelled) return;
+      const payload = data as { ok?: boolean; audit_id?: string; token?: string | null; email?: string | null } | null;
+      if (!error && payload?.ok && payload.audit_id) {
+        setNext({ auditId: payload.audit_id, token: payload.token ?? null, email: payload.email ?? null });
+        setStatus("ready");
+        if (leadId) {
+          try { sessionStorage.removeItem(`audit:lead:${leadId}`); } catch { /* noop */ }
+        }
+        return;
+      }
+      // Webhook may not have inserted the row yet — retry a few times.
+      if (attempts < 6) {
+        setTimeout(tick, 1500);
+      } else {
+        setStatus("error");
+      }
+    };
+    tick();
+    return () => { cancelled = true; };
+  }, [sessionId, leadId]);
+
+  const continueToAuth = () => {
+    if (!next) return;
+    const reportPath = `/audit/report/${next.auditId}${next.token ? `?token=${encodeURIComponent(next.token)}` : ""}`;
+    const qs = new URLSearchParams();
+    qs.set("next", reportPath);
+    if (next.email) qs.set("email", next.email);
+    qs.set("message", "audit-ready");
+    navigate(`/auth?${qs.toString()}`);
+  };
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
       <SEOHead title="AI Business Audit — Ready to Begin" description="Your AI Business Audit is ready. Check your email or sign in to continue." path="/audit/landing" noIndex />
       <BrandLogo size="md" />
       <span className="font-mono-label text-primary tracking-[0.2em] text-xs mt-6">PAYMENT CONFIRMED</span>
-      <h1 className="font-heading text-3xl md:text-4xl text-primary mt-3 mb-2">Your AI Business Audit is ready to begin</h1>
-      <p className="text-base text-muted-foreground max-w-xl mb-2">Your clarity is on the way. Check your email for next steps.</p>
-      <p className="text-muted-foreground max-w-xl mb-8">
-        Check your email for the magic link to start your 5–7 minute intake. Already signed in? Continue below.
+      <h1 className="font-heading text-3xl md:text-4xl text-primary mt-3 mb-2">Your audit is being prepared</h1>
+      <p className="text-base text-muted-foreground max-w-xl mb-6">
+        Create your account to view your report. We've also emailed you a backup link.
       </p>
       <div className="flex gap-3 flex-wrap justify-center">
-        {auditId && (
-          <Button onClick={() => navigate(`/audit/intake?audit_id=${auditId}`)} className="bg-primary text-primary-foreground">
-            Continue to Intake
-          </Button>
-        )}
-        {!user && (
-          <Button variant="outline" onClick={() => navigate("/auth?next=/audit/intake")}>Sign in to your account</Button>
-        )}
-        <Button variant="outline" onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
+        <Button
+          onClick={continueToAuth}
+          disabled={status !== "ready"}
+          className="bg-primary text-primary-foreground"
+        >
+          {status === "working" ? "Saving your intake…" : status === "error" ? "Continue anyway" : "Create your account to view your report"}
+        </Button>
       </div>
+      {status === "error" && (
+        <p className="mt-4 text-xs text-destructive max-w-md">
+          We couldn't auto-attach your intake. Check your email for the magic link, or{" "}
+          <button onClick={() => navigate("/auth")} className="text-primary hover:underline">sign in</button> to continue.
+        </p>
+      )}
       <p className="mt-8 text-xs text-muted-foreground">Your magic link is valid for 30 days.</p>
-      <p className="mt-3 text-xs text-muted-foreground">
-        Didn't get the email?{" "}
-        <button onClick={() => navigate("/auth")} className="text-primary hover:underline">
-          Sign in to access your audit
-        </button>
-      </p>
 
       {/* Sample Audit Preview */}
       <div className="mt-12 max-w-xl mx-auto">
