@@ -44,8 +44,18 @@ const Auth = () => {
     getStoredReturnTo();
   const { signIn, signUp, resetPassword, user } = useAuth();
   const { toast } = useToast();
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "signup-success">("signin");
-  const [email, setEmail] = useState("");
+  const initialEmail = (() => {
+    try { return new URLSearchParams(location.search).get("email") ?? ""; } catch { return ""; }
+  })();
+  const banner = (() => {
+    try {
+      const m = new URLSearchParams(location.search).get("message");
+      if (m === "audit-ready") return "Your audit is being prepared — create your account to view your report.";
+      return null;
+    } catch { return null; }
+  })();
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot" | "signup-success">(initialEmail ? "signup" : "signin");
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -150,6 +160,11 @@ const Auth = () => {
       </div>
 
       <div className="relative z-10 w-full max-w-md">
+        {banner && mode !== "signup-success" && (
+          <div className="mb-6 rounded-md border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-primary text-center">
+            {banner}
+          </div>
+        )}
         {mode === "signup-success" ? (
           <div className="text-center">
             <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
