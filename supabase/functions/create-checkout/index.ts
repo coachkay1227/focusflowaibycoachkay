@@ -51,7 +51,7 @@ serve(async (req: Request) => {
       logStep("No auth header — proceeding as guest");
     }
 
-    const { priceId, successPath, cancelPath, customerEmail } = await req.json();
+    const { priceId, successPath, cancelPath, customerEmail, fullName, leadId } = await req.json();
     if (!priceId) throw new Error("priceId is required");
 
     // Use authenticated email, or email passed from body, or let Stripe collect it
@@ -112,6 +112,8 @@ serve(async (req: Request) => {
         price_id: priceId,
         user_email: emailToUse || "guest",
         supabase_user_id: userId || "",
+        ...(typeof fullName === "string" && fullName ? { full_name: fullName.slice(0, 200) } : {}),
+        ...(typeof leadId === "string" && leadId ? { lead_id: leadId.slice(0, 100) } : {}),
       },
       ...(mode === "subscription" && {
         subscription_data: {
