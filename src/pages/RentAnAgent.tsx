@@ -219,9 +219,7 @@ const RentAnAgent = () => {
             variant="outline"
             className="border-border"
                         onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
-            disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
-          >
-            {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Start with $47 AI Audit"}
+                          Start with $47 AI Audit
           </Button>
           <Button
             size="lg"
@@ -485,10 +483,8 @@ const RentAnAgent = () => {
           <Button
             size="lg"
             className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-            onClick={() => startCheckout(ENTRY_OFFERS.audit.priceId, "AI Business Audit", "/audit/landing")}
-            disabled={busyPriceId === ENTRY_OFFERS.audit.priceId}
-          >
-            {busyPriceId === ENTRY_OFFERS.audit.priceId ? "Starting…" : "Get my $47 audit"}
+            onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
+                        Get my $47 audit
           </Button>
         </div>
       </section>
