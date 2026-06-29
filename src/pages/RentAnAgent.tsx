@@ -485,7 +485,8 @@ const RentAnAgent = () => {
             size="lg"
             className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
             onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
-                        Get my $47 audit
+          >
+            Get my $47 audit
           </Button>
         </div>
       </section>
