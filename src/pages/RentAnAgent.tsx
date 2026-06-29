@@ -218,8 +218,9 @@ const RentAnAgent = () => {
             size="lg"
             variant="outline"
             className="border-border"
-                        onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
-                          Start with $47 AI Audit
+            onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
+          >
+            Start with $47 AI Audit
           </Button>
           <Button
             size="lg"
