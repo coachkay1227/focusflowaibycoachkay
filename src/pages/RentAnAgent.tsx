@@ -218,7 +218,7 @@ const RentAnAgent = () => {
             size="lg"
             variant="outline"
             className="border-border"
-            onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
+            onClick={() => navigate("/audit/intake")}
           >
             Start with $47 AI Audit
           </Button>
@@ -484,7 +484,7 @@ const RentAnAgent = () => {
           <Button
             size="lg"
             className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-            onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
+            onClick={() => navigate("/audit/intake")}
           >
             Get my $47 audit
           </Button>

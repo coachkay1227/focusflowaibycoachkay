@@ -249,7 +249,7 @@ const Advisory = () => {
             <Button
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8"
-              onClick={() => window.open(ENTRY_OFFERS.audit.paymentUrl, "_blank")}
+              onClick={() => navigate("/audit/intake")}
             >
               Take the $47 audit
             </Button>
