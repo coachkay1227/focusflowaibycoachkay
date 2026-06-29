@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import BrandLogo from "@/components/BrandLogo";
+import { ENTRY_OFFERS } from "@/lib/offer-catalog";
 import {
   Menu, X, LayoutDashboard, User, LogOut, Sparkles, ChevronDown, Shield,
   Eye, MessageCircle, HelpCircle, BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers, ArrowRight,
@@ -37,7 +38,7 @@ const navGroups: NavGroup[] = [
       { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
       { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
       { label: "Collective AI", path: "/collective", icon: Layers },
-      { label: "Business Audit", path: "/audit/landing", icon: FileSearch },
+      { label: "Business Audit", path: ENTRY_OFFERS.audit.paymentUrl, icon: FileSearch },
       { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart },
     ],
   },
@@ -74,7 +75,11 @@ const MobileNav = () => {
 
   const go = (path: string) => {
     setOpen(false);
-    navigate(path);
+    if (path.startsWith("http")) {
+      window.open(path, "_blank", "noopener,noreferrer");
+    } else {
+      navigate(path);
+    }
   };
 
   const toggle = (key: string) =>
