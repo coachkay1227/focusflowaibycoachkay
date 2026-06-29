@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoles } from "@/hooks/use-roles";
 import BrandLogo from "@/components/BrandLogo";
-import { ENTRY_OFFERS } from "@/lib/offer-catalog";
 import {
   LayoutDashboard, User, Shield, LogOut, ChevronDown, ArrowRight,
   BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers,
@@ -38,7 +37,7 @@ const workGroup: NavGroup = {
     { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
     { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
-    { label: "Business Audit", path: ENTRY_OFFERS.audit.paymentUrl, icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
+    { label: "Business Audit", path: "/advisory", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
     { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart, desc: "AI-personalized stories for families" },
   ],
 };
