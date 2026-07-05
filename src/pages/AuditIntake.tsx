@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -88,6 +88,13 @@ const RadioRow = ({ label, value, options, onChange }: {
 
 const AuditIntake = () => {
   const navigate = useNavigate();
+  // Attach mode: buyer already paid (arrived via magic link) but their intake
+  // was never captured — /audit/intake/:id?token=aud_... skips payment and
+  // attaches the intake to the existing paid audit.
+  const { id: attachAuditId } = useParams();
+  const [searchParams] = useSearchParams();
+  const attachToken = searchParams.get("token") ?? "";
+  const attachMode = !!(attachAuditId && attachToken.startsWith("aud_"));
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [data, setData] = useState<IntakeState>(defaultState);
@@ -120,6 +127,20 @@ const AuditIntake = () => {
           ...(parsed.data.current_tools_other ? [parsed.data.current_tools_other] : []),
         ],
       };
+
+      if (attachMode) {
+        // Already paid — attach intake to the existing audit and kick off generation.
+        const { data: res, error } = await supabase.functions.invoke("complete-audit-intake", {
+          body: { audit_id: attachAuditId, token: attachToken, intake: payloadIntake },
+        });
+        if (error) throw error;
+        const payload = res as { ok?: boolean } | null;
+        if (!payload?.ok) throw new Error("Could not attach your intake. Check your magic link and retry.");
+        toast.success("Intake saved — generating your audit now.");
+        navigate(`/audit/report/${attachAuditId}?token=${encodeURIComponent(attachToken)}`);
+        return;
+      }
+
       // Stash intake locally so AuditLanding can attach it after Stripe redirect.
       const leadId = crypto.randomUUID();
       try {
@@ -159,7 +180,11 @@ const AuditIntake = () => {
           <h1 className="font-heading text-3xl md:text-4xl font-light text-primary mt-2">
             Tell us about your business
           </h1>
-          <p className="text-muted-foreground mt-2">Step {step} of 3 · ~5–7 minutes · Pay $47 after intake</p>
+          <p className="text-muted-foreground mt-2">
+            {attachMode
+              ? `Step ${step} of 3 · ~5–7 minutes · Your audit is paid — complete this to generate your report`
+              : `Step ${step} of 3 · ~5–7 minutes · Pay $47 after intake`}
+          </p>
           <div className="mt-4 h-2 w-full rounded-full bg-card/40 overflow-hidden">
             <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
           </div>
@@ -256,13 +281,19 @@ const AuditIntake = () => {
 
             {submitting ? (
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-8 text-center">
-                <div className="font-heading text-xl text-primary mb-2">Redirecting to secure checkout…</div>
-                <p className="text-muted-foreground text-sm">Saving your intake and opening Stripe…</p>
+                <div className="font-heading text-xl text-primary mb-2">
+                  {attachMode ? "Saving your intake…" : "Redirecting to secure checkout…"}
+                </div>
+                <p className="text-muted-foreground text-sm">
+                  {attachMode ? "Attaching your answers and starting your audit…" : "Saving your intake and opening Stripe…"}
+                </p>
               </div>
             ) : (
               <div className="flex justify-between">
                 <Button variant="outline" onClick={() => setStep(2)}>← Back</Button>
-                <Button onClick={handleSubmit} className="bg-primary text-primary-foreground">Continue to Payment · $47</Button>
+                <Button onClick={handleSubmit} className="bg-primary text-primary-foreground">
+                  {attachMode ? "Generate My Audit" : "Continue to Payment · $47"}
+                </Button>
               </div>
             )}
           </div>

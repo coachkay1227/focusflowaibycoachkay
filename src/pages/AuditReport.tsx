@@ -1,5 +1,5 @@
 import { AIDisclaimer } from "@/components/AIDisclaimer";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -85,6 +85,20 @@ const AuditReport = () => {
 
   const report = audit?.report as AuditReport | null | undefined;
 
+  // If the audit is paid + intake saved but the report never generated
+  // (e.g. buyer skipped the landing page), re-kick generation once via
+  // the magic-link token path. Idempotent server-side: no-op when report exists.
+  const rekicked = useRef(false);
+  useEffect(() => {
+    if (rekicked.current || loading || !audit || report || !token || !id) return;
+    const hasIntake = audit.intake && Object.keys(audit.intake).length > 0;
+    if (!hasIntake) return;
+    rekicked.current = true;
+    supabase.functions.invoke("complete-audit-intake", {
+      body: { audit_id: id, token },
+    }).catch(() => {});
+  }, [loading, audit, report, token, id]);
+
   const allSectionsForCopy = useMemo(() => {
     if (!report) return [];
     return [
@@ -136,14 +150,25 @@ const AuditReport = () => {
   }
 
   if (!report) {
+    const hasIntake = audit.intake && Object.keys(audit.intake).length > 0;
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
         <SEOHead title="Audit In Progress" description="Your audit is still generating." path="/audit/report" noIndex />
-        <h1 className="font-heading text-3xl text-primary mb-3">Audit not yet generated</h1>
-        <p className="text-muted-foreground mb-6">Your intake was saved. Return to the intake to finish.</p>
-        <Button onClick={() => navigate(`/audit/intake${token ? `?token=${encodeURIComponent(token)}` : `?audit_id=${audit.id}`}`)}>
-          Continue Intake
-        </Button>
+        <h1 className="font-heading text-3xl text-primary mb-3">
+          {hasIntake ? "Your audit is being generated" : "One step left: complete your intake"}
+        </h1>
+        <p className="text-muted-foreground mb-6 max-w-md">
+          {hasIntake
+            ? "Your intake is saved and your report is generating. This usually takes under 2 minutes — refresh to check."
+            : "Your payment is confirmed. Complete the intake questions so we can generate your personalized audit."}
+        </p>
+        {hasIntake ? (
+          <Button onClick={() => window.location.reload()}>Refresh</Button>
+        ) : (
+          <Button onClick={() => navigate(`/audit/intake/${audit.id}${token ? `?token=${encodeURIComponent(token)}` : ""}`)}>
+            Complete My Intake
+          </Button>
+        )}
       </div>
     );
   }

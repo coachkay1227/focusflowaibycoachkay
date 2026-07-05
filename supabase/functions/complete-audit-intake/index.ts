@@ -20,23 +20,51 @@ serve(async (req: Request) => {
   try {
     const body = await req.json().catch(() => ({}));
     const sessionId = typeof body.session_id === "string" ? body.session_id : "";
+    const auditId = typeof body.audit_id === "string" ? body.audit_id : "";
+    const magicToken = typeof body.token === "string" ? body.token : "";
     const intake = body.intake && typeof body.intake === "object" ? body.intake : null;
-    if (!sessionId.startsWith("cs_") || sessionId.length > 200) {
+
+    const bySession = sessionId.startsWith("cs_") && sessionId.length <= 200;
+    const byToken = auditId.length > 0 && auditId.length <= 100 && magicToken.startsWith("aud_") && magicToken.length <= 200;
+    if (!bySession && !byToken) {
       return new Response(JSON.stringify({ error: "invalid session_id" }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    // Find the audit row created by the stripe-webhook for this session.
-    const { data: audit, error: lookupErr } = await supabase
-      .from("business_audits")
-      .select("id, guest_email, intake, report")
-      .eq("stripe_session_id", sessionId)
-      .maybeSingle();
-    if (lookupErr) throw lookupErr;
+    // Find the paid audit row: by Stripe session id (post-checkout return),
+    // or by audit_id + magic-link token (buyer arrived via email on another device).
+    let audit: { id: string; guest_email: string | null; intake: unknown; report: unknown } | null = null;
+    if (bySession) {
+      const { data, error: lookupErr } = await supabase
+        .from("business_audits")
+        .select("id, guest_email, intake, report")
+        .eq("stripe_session_id", sessionId)
+        .maybeSingle();
+      if (lookupErr) throw lookupErr;
+      audit = data;
+    } else {
+      const { data: tokenMatch, error: tokenErr } = await supabase
+        .from("audit_tokens")
+        .select("audit_id, expires_at")
+        .eq("audit_id", auditId)
+        .eq("token", magicToken)
+        .maybeSingle();
+      if (tokenErr) throw tokenErr;
+      const expired = tokenMatch?.expires_at && new Date(tokenMatch.expires_at) < new Date();
+      if (tokenMatch && !expired) {
+        const { data, error: lookupErr } = await supabase
+          .from("business_audits")
+          .select("id, guest_email, intake, report")
+          .eq("id", auditId)
+          .maybeSingle();
+        if (lookupErr) throw lookupErr;
+        audit = data;
+      }
+    }
     if (!audit) {
-      return new Response(JSON.stringify({ error: "audit not found yet", retry: true }), {
+      return new Response(JSON.stringify({ error: "audit not found yet", retry: bySession }), {
         status: 404,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
