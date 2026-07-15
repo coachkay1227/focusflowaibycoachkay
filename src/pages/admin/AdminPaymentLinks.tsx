@@ -4,7 +4,6 @@ import { AdminNav } from "@/components/admin/AdminNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRoles } from "@/hooks/use-roles";
@@ -298,7 +297,7 @@ export default function AdminPaymentLinks() {
           />
         </div>
 
-        <Card className="overflow-x-auto">
+        <div className="rounded-lg border border-border bg-card/30 overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-card/50 text-left">
               <tr>
@@ -387,10 +386,10 @@ export default function AdminPaymentLinks() {
               ) : null}
             </tbody>
           </table>
-        </Card>
+        </div>
 
         {catalog && catalog.failures.length > 0 ? (
-          <Card className="p-4 border-destructive/50">
+          <div className="rounded-lg border border-destructive/50 bg-card/30 p-4">
             <h2 className="font-semibold mb-2">Catalog failures</h2>
             <ul className="text-sm space-y-1 text-muted-foreground">
               {catalog.failures.map((f, i) => (
@@ -399,7 +398,7 @@ export default function AdminPaymentLinks() {
                 </li>
               ))}
             </ul>
-          </Card>
+          </div>
         ) : null}
 
         <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -420,9 +419,9 @@ function SummaryCard({ label, value, tone }: { label: string; value: number; ton
           ? "text-destructive"
           : "text-foreground";
   return (
-    <Card className="p-4">
+    <div className="rounded-lg border border-border bg-card/30 p-4">
       <div className="text-xs text-muted-foreground uppercase tracking-wide">{label}</div>
       <div className={`text-2xl font-heading mt-1 ${color}`}>{value}</div>
-    </Card>
+    </div>
   );
 }
