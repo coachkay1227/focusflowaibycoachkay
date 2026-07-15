@@ -71,19 +71,28 @@ const Auth = () => {
 
   // Redirect if already signed in
   useEffect(() => {
-    if (user) {
-      getUserPreferences().then((prefs) => {
+    if (!user) return;
+    let done = false;
+    const go = (path: string) => {
+      if (done) return;
+      done = true;
+      clearStoredReturnTo();
+      navigate(path);
+    };
+    getUserPreferences()
+      .then((prefs) => {
         if (!prefs || !prefs.onboardingCompleted) {
-          navigate("/onboarding");
+          go("/onboarding");
         } else if (intendedFrom && intendedFrom !== "/auth") {
-          clearStoredReturnTo();
-          navigate(intendedFrom);
+          go(intendedFrom);
         } else {
-          clearStoredReturnTo();
-          navigate("/dashboard");
+          go("/dashboard");
         }
-      });
-    }
+      })
+      .catch(() => go(intendedFrom && intendedFrom !== "/auth" ? intendedFrom : "/dashboard"));
+    // Hard fallback: never leave a signed-in user stranded on /auth.
+    const t = window.setTimeout(() => go(intendedFrom && intendedFrom !== "/auth" ? intendedFrom : "/dashboard"), 1500);
+    return () => window.clearTimeout(t);
   }, [user, navigate, intendedFrom]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -126,7 +135,7 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/auth`,
       extraParams: {
         prompt: "select_account",
       },
