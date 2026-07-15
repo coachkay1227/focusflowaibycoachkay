@@ -34,6 +34,13 @@ jobs:
       - name: Check payment & audit link integrity
         run: bun run scripts/check-payment-links.ts
 
+      - name: Upload payment link report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: payment-links-report
+          path: reports/payment-links.*
+
       - name: Generate HTML summary
         if: always()
         run: bun run scripts/seo-results-to-html.ts seo-results.txt seo-results.html

@@ -1,0 +1,465 @@
+{
+  "generatedAt": "2026-07-15T18:05:18.133Z",
+  "summary": {
+    "priceIdsReferenced": 33,
+    "priceIdsRegistered": 43,
+    "failures": 0
+  },
+  "failures": [],
+  "records": [
+    {
+      "type": "priceId",
+      "value": "price_1TbAaPBReje0oFcLts5JuE5a",
+      "file": "src/components/PricingSection.tsx",
+      "line": 48,
+      "resolvedTarget": "payment — 30-Day Personal Reset $297",
+      "label": "30-Day Personal Reset $297",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAguBReje0oFcL3Qh5pIiH",
+      "file": "src/components/PricingSection.tsx",
+      "line": 62,
+      "resolvedTarget": "payment — 30-Day Business Reset $497",
+      "label": "30-Day Business Reset $497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAhOBReje0oFcL87MVrKFy",
+      "file": "src/components/PricingSection.tsx",
+      "line": 76,
+      "resolvedTarget": "payment — 30-Day AI Reset $997",
+      "label": "30-Day AI Reset $997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAhtBReje0oFcLscEqWHEK",
+      "file": "src/components/PricingSection.tsx",
+      "line": 95,
+      "resolvedTarget": "payment — 90-Day Personal Transformation $997",
+      "label": "90-Day Personal Transformation $997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAiNBReje0oFcLrit7Ko5x",
+      "file": "src/components/PricingSection.tsx",
+      "line": 109,
+      "resolvedTarget": "payment — 90-Day Business Transformation $1,497",
+      "label": "90-Day Business Transformation $1,497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAimBReje0oFcL4Uti8udD",
+      "file": "src/components/PricingSection.tsx",
+      "line": 123,
+      "resolvedTarget": "payment — 90-Day Full AI Transformation $2,497",
+      "label": "90-Day Full AI Transformation $2,497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAaPBReje0oFcLts5JuE5a",
+      "file": "src/data/programs.ts",
+      "line": 2042,
+      "resolvedTarget": "payment — 30-Day Personal Reset $297",
+      "label": "30-Day Personal Reset $297",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAguBReje0oFcL3Qh5pIiH",
+      "file": "src/data/programs.ts",
+      "line": 2060,
+      "resolvedTarget": "payment — 30-Day Business Reset $497",
+      "label": "30-Day Business Reset $497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAhOBReje0oFcL87MVrKFy",
+      "file": "src/data/programs.ts",
+      "line": 2078,
+      "resolvedTarget": "payment — 30-Day AI Reset $997",
+      "label": "30-Day AI Reset $997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAhtBReje0oFcLscEqWHEK",
+      "file": "src/data/programs.ts",
+      "line": 2096,
+      "resolvedTarget": "payment — 90-Day Personal Transformation $997",
+      "label": "90-Day Personal Transformation $997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAiNBReje0oFcLrit7Ko5x",
+      "file": "src/data/programs.ts",
+      "line": 2114,
+      "resolvedTarget": "payment — 90-Day Business Transformation $1,497",
+      "label": "90-Day Business Transformation $1,497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbAimBReje0oFcL4Uti8udD",
+      "file": "src/data/programs.ts",
+      "line": 2132,
+      "resolvedTarget": "payment — 90-Day Full AI Transformation $2,497",
+      "label": "90-Day Full AI Transformation $2,497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tbbj0BReje0oFcL4qqcndi2",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 32,
+      "resolvedTarget": "payment — Link-in-Bio Hub $297",
+      "label": "Link-in-Bio Hub $297",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tbbn5BReje0oFcLV5aYSxdp",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 47,
+      "resolvedTarget": "payment — Personal Brand Site $397",
+      "label": "Personal Brand Site $397",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbbqcBReje0oFcLPvFHVSAJ",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 62,
+      "resolvedTarget": "payment — Conversion Landing Page $497",
+      "label": "Conversion Landing Page $497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbbqyBReje0oFcL2lbGJDQl",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 78,
+      "resolvedTarget": "payment — Lead Magnet Funnel $697",
+      "label": "Lead Magnet Funnel $697",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbbxuBReje0oFcL07dnyiRf",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 93,
+      "resolvedTarget": "payment — AI Chatbot Widget Setup $797",
+      "label": "AI Chatbot Widget Setup $797",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbbyIBReje0oFcL02mjIa6U",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 219,
+      "resolvedTarget": "subscription — Site Care $97/mo",
+      "label": "Site Care $97/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tbc2mBReje0oFcLKStT1NEj",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 229,
+      "resolvedTarget": "subscription — Collective Membership $97/mo",
+      "label": "Collective Membership $97/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tbc3yBReje0oFcLpQCYOLeJ",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 239,
+      "resolvedTarget": "subscription — Agent Care $197/mo",
+      "label": "Agent Care $197/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tbc4SBReje0oFcLeEXu6hlp",
+      "file": "src/lib/build-studio-catalog.ts",
+      "line": 249,
+      "resolvedTarget": "subscription — Monthly Build Credits $497/mo",
+      "label": "Monthly Build Credits $497/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3ZzBReje0oFcLQFSaEnr4",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 27,
+      "resolvedTarget": "subscription — Starter Founding $297/mo",
+      "label": "Starter Founding $297/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3bHBReje0oFcLkVgjsUl0",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 32,
+      "resolvedTarget": "subscription — Starter Standard $497/mo",
+      "label": "Starter Standard $497/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3blBReje0oFcLw6tk3kcg",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 50,
+      "resolvedTarget": "subscription — Pro/Growth Founding $697/mo",
+      "label": "Pro/Growth Founding $697/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3c4BReje0oFcLInI8JGZv",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 55,
+      "resolvedTarget": "subscription — Pro/Growth Standard $997/mo",
+      "label": "Pro/Growth Standard $997/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3wwBReje0oFcLLlE6CDGO",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 74,
+      "resolvedTarget": "subscription — Dream Team Founding $997/mo",
+      "label": "Dream Team Founding $997/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb40yBReje0oFcLIciRVQSD",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 79,
+      "resolvedTarget": "subscription — Dream Team Standard $1497/mo",
+      "label": "Dream Team Standard $1497/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb41vBReje0oFcLjxGozG2X",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 191,
+      "resolvedTarget": "payment — AI Strategy Intensive $497",
+      "label": "AI Strategy Intensive $497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1THJVvBReje0oFcLhkxCXesA",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 14,
+      "resolvedTarget": "subscription — Subscriber $27/mo",
+      "label": "Subscriber $27/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3ZzBReje0oFcLQFSaEnr4",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 22,
+      "resolvedTarget": "subscription — Starter Founding $297/mo",
+      "label": "Starter Founding $297/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3bHBReje0oFcLkVgjsUl0",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 23,
+      "resolvedTarget": "subscription — Starter Standard $497/mo",
+      "label": "Starter Standard $497/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3blBReje0oFcLw6tk3kcg",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 24,
+      "resolvedTarget": "subscription — Pro/Growth Founding $697/mo",
+      "label": "Pro/Growth Founding $697/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3c4BReje0oFcLInI8JGZv",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 25,
+      "resolvedTarget": "subscription — Pro/Growth Standard $997/mo",
+      "label": "Pro/Growth Standard $997/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb3wwBReje0oFcLLlE6CDGO",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 26,
+      "resolvedTarget": "subscription — Dream Team Founding $997/mo",
+      "label": "Dream Team Founding $997/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb40yBReje0oFcLIciRVQSD",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 27,
+      "resolvedTarget": "subscription — Dream Team Standard $1497/mo",
+      "label": "Dream Team Standard $1497/mo",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1THkwQBReje0oFcL8i3WGwS0",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 35,
+      "resolvedTarget": "payment — 8-Week Cohort $997",
+      "label": "8-Week Cohort $997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1THkx7BReje0oFcLRrF38PA8",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 44,
+      "resolvedTarget": "payment — 30-Day F.O.C.U.S. $297",
+      "label": "30-Day F.O.C.U.S. $297",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1THlFpBReje0oFcLuNY16veh",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 51,
+      "resolvedTarget": "payment — 30-Day Intensive $497",
+      "label": "30-Day Intensive $497",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1THlGgBReje0oFcLu5PGmZih",
+      "file": "src/lib/stripe-tiers.ts",
+      "line": 58,
+      "resolvedTarget": "payment — 12-Week Mastery $1997",
+      "label": "12-Week Mastery $1997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb41PBReje0oFcLMlvzjQQa",
+      "file": "src/pages/AuditIntake.tsx",
+      "line": 156,
+      "resolvedTarget": "payment — AI Business Audit $47",
+      "label": "AI Business Audit $47",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbCl2BReje0oFcL5Fg4hh6H",
+      "file": "supabase/functions/_shared/autism-catalog.ts",
+      "line": 25,
+      "resolvedTarget": "payment — Autism Single Digital Social Story $47",
+      "label": "Autism Single Digital Social Story $47",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbClUBReje0oFcLW7LtYO75",
+      "file": "supabase/functions/_shared/autism-catalog.ts",
+      "line": 31,
+      "resolvedTarget": "payment — Autism Therapy Toolkit (3 Stories) $127",
+      "label": "Autism Therapy Toolkit (3 Stories) $127",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbCmCBReje0oFcLcedSOHi6",
+      "file": "supabase/functions/_shared/autism-catalog.ts",
+      "line": 37,
+      "resolvedTarget": "payment — Autism Premium Illustrated Social Story $297",
+      "label": "Autism Premium Illustrated Social Story $297",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbCmqBReje0oFcLt06k0wdp",
+      "file": "supabase/functions/_shared/autism-catalog.ts",
+      "line": 44,
+      "resolvedTarget": "payment — Autism Therapy Practice Bundle (5 Stories) $997",
+      "label": "Autism Therapy Practice Bundle (5 Stories) $997",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1TbCnGBReje0oFcLRN9Mx1ND",
+      "file": "supabase/functions/_shared/autism-catalog.ts",
+      "line": 66,
+      "resolvedTarget": "payment — Autism Gift Wrap + Personalized Note $25 (add-on)",
+      "label": "Autism Gift Wrap + Personalized Note $25 (add-on)",
+      "status": "ok"
+    },
+    {
+      "type": "audit_entry",
+      "value": "src/pages/AuditLanding.tsx",
+      "file": "src/pages/AuditLanding.tsx",
+      "resolvedTarget": "no audit CTA",
+      "status": "ok"
+    },
+    {
+      "type": "audit_entry",
+      "value": "src/pages/RentAnAgent.tsx",
+      "file": "src/pages/RentAnAgent.tsx",
+      "resolvedTarget": "/audit/intake",
+      "status": "ok"
+    },
+    {
+      "type": "audit_entry",
+      "value": "src/pages/Advisory.tsx",
+      "file": "src/pages/Advisory.tsx",
+      "resolvedTarget": "/audit/intake",
+      "status": "ok"
+    },
+    {
+      "type": "route_definition",
+      "value": "/audit/intake",
+      "file": "src/App.tsx",
+      "resolvedTarget": "Suspense",
+      "status": "ok"
+    },
+    {
+      "type": "route_definition",
+      "value": "/audit/landing",
+      "file": "src/App.tsx",
+      "resolvedTarget": "Suspense",
+      "status": "ok"
+    },
+    {
+      "type": "route_definition",
+      "value": "/audit/report",
+      "file": "src/App.tsx",
+      "resolvedTarget": "Suspense",
+      "status": "ok"
+    },
+    {
+      "type": "route_definition",
+      "value": "/auth",
+      "file": "src/App.tsx",
+      "resolvedTarget": "Suspense",
+      "status": "ok"
+    }
+  ]
+}
