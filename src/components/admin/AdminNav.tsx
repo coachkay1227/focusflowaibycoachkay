@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, BarChart3, BookOpen, ArrowLeft, ShoppingBag, Sparkles, Wrench, Mail, ShieldAlert, FileText, GraduationCap, Package, MessageCircle, Calendar, ScrollText } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3, BookOpen, ArrowLeft, ShoppingBag, Sparkles, Wrench, Mail, ShieldAlert, FileText, GraduationCap, Package, MessageCircle, Calendar, ScrollText, CreditCard } from "lucide-react";
 
 const navItems = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -18,6 +18,7 @@ const navItems = [
   { to: "/admin/voice-bible", label: "Voice", icon: MessageCircle },
   { to: "/admin/booking-links", label: "Booking Links", icon: Calendar },
   { to: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
+  { to: "/admin/payment-links", label: "Payment Links", icon: CreditCard },
 ];
 
 export function AdminNav() {
