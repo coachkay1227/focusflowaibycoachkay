@@ -212,6 +212,16 @@ try {
   };
   writeFileSync(join(REPORTS_DIR, "payment-links.json"), JSON.stringify(json, null, 2));
 
+  // Also copy JSON into public/ so the admin dashboard can fetch it at runtime.
+  // Contents: priceIds + filenames + resolved mode/label. No secrets.
+  try {
+    const publicDir = join(ROOT, "public", "reports");
+    mkdirSync(publicDir, { recursive: true });
+    writeFileSync(join(publicDir, "payment-links.json"), JSON.stringify(json, null, 2));
+  } catch (e) {
+    console.error(`  warning: could not copy report to public/: ${(e as Error).message}`);
+  }
+
   const md: string[] = [];
   md.push(`# Payment & Audit Link Report`);
   md.push(`Generated: ${generatedAt}`);
