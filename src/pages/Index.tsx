@@ -356,9 +356,9 @@ const Index = () => {
           ].map((item, i) => (
             <AnimatedSection key={item.title} delay={i * 100}>
               <div className="clarity-card h-full rounded-lg border border-border bg-card/40 backdrop-blur-sm p-5 flex flex-col">
-                <h4 className="font-mono-label text-[10px] tracking-wider text-primary/70">{item.label}</h4>
+                <p className="font-mono-label text-[10px] tracking-wider text-primary/70">{item.label}</p>
                 <h3 className="font-heading text-lg font-medium text-foreground mt-2">{item.title}</h3>
-                <h5 className="text-[11px] uppercase tracking-[0.14em] text-primary/80 mt-2">{item.focus}</h5>
+                <p className="text-[11px] uppercase tracking-[0.14em] text-primary/80 mt-2">{item.focus}</p>
                 <p className="text-muted-foreground text-sm leading-relaxed mt-2 flex-1">{item.desc}</p>
                 <Button
                   onClick={() => {

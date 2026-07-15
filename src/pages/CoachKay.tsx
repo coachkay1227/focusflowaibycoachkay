@@ -119,7 +119,7 @@ const CoachKay = () => {
                 Meet Your Coach
               </p>
               <h1 className="mb-4 font-heading text-4xl font-bold leading-tight md:text-5xl">
-                Coach Kay
+                Meet Coach Kay — AI &amp; Life Transformation Coach
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
                 Kenza Alaoui Ismaili · AI &amp; Life Transformation Coach
