@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "seo:check": "npx -y tsx scripts/check-seo-regressions.ts",
+    "check:payment-links": "bun run scripts/check-payment-links.ts",
     "predev": "npx -y tsx scripts/generate-sitemap.ts && npx -y tsx scripts/check-seo-regressions.ts",
     "dev": "vite",
-    "build": "vite build",
+    "build": "bun run scripts/check-payment-links.ts && vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
