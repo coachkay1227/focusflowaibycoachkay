@@ -103,6 +103,12 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   "price_1TlU35BReje0oFcLnf0wzqB9": "payment",      // Knowledge Base Basic $197
   "price_1TlU38BReje0oFcLftFZG8TE": "payment",      // Knowledge Base Full $397
   "price_1TlU3CBReje0oFcLXyUtcRfR": "payment",      // Branded Agent Dashboard $297
+  // Autism Social Stories — one-time
+  "price_1TbCl2BReje0oFcL5Fg4hh6H": "payment",      // Autism Single Digital Social Story $47
+  "price_1TbClUBReje0oFcLW7LtYO75": "payment",      // Autism Therapy Toolkit (3 Stories) $127
+  "price_1TbCmCBReje0oFcLcedSOHi6": "payment",      // Autism Premium Illustrated Social Story $297
+  "price_1TbCmqBReje0oFcLt06k0wdp": "payment",      // Autism Therapy Practice Bundle (5 Stories) $997
+  "price_1TbCnGBReje0oFcLRN9Mx1ND": "payment",      // Autism Gift Wrap + Personalized Note $25 (add-on)
 };
 
 export const PROTECTED_TIERS = ["reset_30", "transformation_90", "cohort", "premium", "rent_agent", "corporate"];
