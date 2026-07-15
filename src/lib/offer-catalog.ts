@@ -175,7 +175,6 @@ export const ENTRY_OFFERS = {
     name: "AI Business Audit",
     priceDisplay: "$47 one-time",
     price: 47,
-    paymentUrl: "https://buy.stripe.com/fZu9ASbsQ71ugoy2eogIo04",
     description:
       "Personalized AI readiness audit with a F.O.C.U.S. action plan, delivered in 5 minutes.",
     bullets: [
