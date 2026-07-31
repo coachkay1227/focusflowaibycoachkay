@@ -248,7 +248,7 @@ const Index = () => {
             </div>
             <a
               href="#how-it-works"
-              className="group flex items-center gap-3 md:gap-4 text-muted-foreground/60 hover:text-primary transition-colors"
+              className="group flex items-center gap-3 md:gap-4 text-muted-foreground hover:text-primary transition-colors"
             >
               <span className="font-mono-label text-[9px] tracking-[0.2em] uppercase font-bold">Scroll to Begin</span>
               <span
@@ -291,7 +291,7 @@ const Index = () => {
               onClick={() => navigate("/rent-an-agent")}
               className="group relative text-left p-8 border border-foreground/10 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
-              <span className="font-mono-label text-foreground/40 text-xs tracking-[0.2em] mb-3 block">
+              <span className="font-mono-label text-foreground/80 text-xs tracking-[0.2em] mb-3 block">
                 PATH B · AI SYSTEMS
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
@@ -301,7 +301,7 @@ const Index = () => {
                 AI-powered systems, workflows, and builds. Explore the tools and services that run Coach Kay's client
                 engine.
               </p>
-              <span className="inline-flex items-center gap-2 text-foreground/60 text-sm font-medium group-hover:text-primary group-hover:gap-3 transition-all">
+              <span className="inline-flex items-center gap-2 text-foreground/80 text-sm font-medium group-hover:text-primary group-hover:gap-3 transition-all">
                 Explore AI Systems
                 <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
               </span>
@@ -453,7 +453,7 @@ const Index = () => {
                   item.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/50"
                 }`}
               >
-                <span className="font-mono-label text-primary/60 text-xs">{item.step}</span>
+                <span className="font-mono-label text-primary text-xs">{item.step}</span>
                 <div
                   className={`mt-3 font-heading text-4xl font-light ${item.highlight ? "text-primary" : "text-foreground"}`}
                 >
@@ -524,7 +524,7 @@ const Index = () => {
                 <p className="text-foreground/90 text-sm leading-relaxed italic flex-1">"{item.quote}"</p>
                 <div className="mt-6 pt-4 border-t border-border/50">
                   <p className="font-medium text-sm text-foreground">{item.name}</p>
-                  <p className="font-mono-label text-muted-foreground/60 mt-1">{item.role}</p>
+                  <p className="font-mono-label text-muted-foreground mt-1">{item.role}</p>
                   <p className="font-mono-label text-primary/80 tracking-[0.2em] text-[10px] mt-2">{item.pillar}</p>
                 </div>
               </div>

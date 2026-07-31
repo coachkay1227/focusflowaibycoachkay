@@ -241,7 +241,7 @@ const AgentIntake = () => {
               maxLength={5000}
               required
             />
-            <p className={`text-xs mt-1 ${agentPurpose.length >= 100 ? 'text-primary/70' : 'text-muted-foreground/60'}`}>
+            <p className={`text-xs mt-1 ${agentPurpose.length >= 100 ? 'text-primary/70' : 'text-muted-foreground'}`}>
               {agentPurpose.length} / 100 minimum
             </p>
           </div>
@@ -351,7 +351,7 @@ const AgentIntake = () => {
             {submitting ? 'Submitting…' : 'Submit My Agent Intake →'}
           </Button>
 
-          <p className="text-center text-xs text-muted-foreground/50">
+          <p className="text-center text-xs text-muted-foreground">
             Coach Kay reviews every intake personally. Expect delivery within your selected timeline.
           </p>
         </form>

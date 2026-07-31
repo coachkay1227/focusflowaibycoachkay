@@ -596,7 +596,7 @@ const Assessment = () => {
             <p className="text-muted-foreground mt-4 text-base">
               {MIND_LABELS[result.mind]} · {ACTION_LABELS[result.action]} ·{" "}
               {CHARACTER_LABELS[result.character]}
-              <span className="mx-2 text-primary/40">·</span>
+              <span className="mx-2 text-primary">·</span>
               Primary: {BUCKET_LABEL[result.primaryBucket]} · Secondary:{" "}
               {BUCKET_LABEL[result.secondaryBucket]}
             </p>
@@ -787,11 +787,11 @@ const Assessment = () => {
               Unlock My Map
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <div className="mt-4 flex items-center justify-center gap-2 font-mono-label text-muted-foreground/60 text-[10px] tracking-[0.15em]">
+            <div className="mt-4 flex items-center justify-center gap-2 font-mono-label text-muted-foreground text-[10px] tracking-[0.15em]">
               <Zap className="h-3 w-3" />
               NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
             </div>
-            <p className="text-center text-[11px] text-muted-foreground/40 mt-2">
+            <p className="text-center text-[11px] text-muted-foreground mt-2">
               By continuing you agree to our{" "}
               <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
             </p>

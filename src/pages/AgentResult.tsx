@@ -129,7 +129,7 @@ const AgentResult = () => {
         {/* Price card */}
         <AnimatedSection delay={200} className="mb-8">
           <div className="rounded-xl border border-border bg-card/30 backdrop-blur-sm p-8">
-            <span className="font-mono-label text-primary/60 tracking-[0.15em] text-xs">
+            <span className="font-mono-label text-primary tracking-[0.15em] text-xs">
               INVESTMENT
             </span>
 
@@ -190,7 +190,7 @@ const AgentResult = () => {
         {/* What's included */}
         <AnimatedSection delay={350} className="mb-8">
           <div className="rounded-xl border border-border bg-card/30 backdrop-blur-sm p-8">
-            <span className="font-mono-label text-primary/60 tracking-[0.15em] text-xs">
+            <span className="font-mono-label text-primary tracking-[0.15em] text-xs">
               WHAT'S INCLUDED
             </span>
             <ul className="mt-5 space-y-3">

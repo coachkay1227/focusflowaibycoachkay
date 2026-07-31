@@ -66,7 +66,7 @@ const RetiredScreen = ({
           Continue to {redirectLabel} <ArrowRight className="h-4 w-4" />
         </Button>
         {delayMs > 0 && (
-          <p className="mt-4 font-mono-label text-[10px] tracking-[0.15em] text-muted-foreground/60">
+          <p className="mt-4 font-mono-label text-[10px] tracking-[0.15em] text-muted-foreground">
             REDIRECTING AUTOMATICALLY…
           </p>
         )}

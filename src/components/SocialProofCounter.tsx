@@ -70,7 +70,7 @@ const SocialProofCounter = () => {
   // Loading skeleton
   if (text === null) {
     return (
-      <p className="text-xs text-muted-foreground/60 mt-1 animate-pulse">
+      <p className="text-xs text-muted-foreground mt-1 animate-pulse">
         ● Loading…
       </p>
     );

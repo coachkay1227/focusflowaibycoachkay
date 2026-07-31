@@ -195,7 +195,7 @@ const AgentBuilder = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Agent</span> Builder
         </div>
-        <span className="font-mono-label text-muted-foreground/60">
+        <span className="font-mono-label text-muted-foreground">
           {currentStep + 1} / {TOTAL_STEPS}
         </span>
       </div>
@@ -215,7 +215,7 @@ const AgentBuilder = () => {
           style={{ willChange: 'transform, opacity' }}
         >
           <h1 className="sr-only">Agent Builder — FocusFlow AI</h1>
-          <span className="font-mono-label text-primary/60 tracking-[0.2em]">
+          <span className="font-mono-label text-primary tracking-[0.2em]">
             {question.label}
           </span>
 

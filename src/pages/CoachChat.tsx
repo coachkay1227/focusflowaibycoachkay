@@ -243,7 +243,7 @@ const CoachChat = () => {
             <div className="flex justify-start">
               <div className="bg-card/40 border border-border backdrop-blur-sm rounded-lg px-5 py-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground/60 font-mono-label">Coach Kay is thinking</span>
+                  <span className="text-xs text-muted-foreground font-mono-label">Coach Kay is thinking</span>
                   <div className="flex gap-1">
                     <div
                       className="w-1.5 h-1.5 rounded-full bg-primary/50 animate-bounce"

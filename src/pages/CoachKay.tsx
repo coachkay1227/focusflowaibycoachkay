@@ -423,7 +423,7 @@ const CoachKay = () => {
                   </div>
                 </div>
               </div>
-              <p className="mt-6 text-[11px] text-muted-foreground/60 leading-relaxed border-t border-border/40 pt-4">
+              <p className="mt-6 text-[11px] text-muted-foreground leading-relaxed border-t border-border/40 pt-4">
                 <strong className="text-muted-foreground/80">AI Disclosure:</strong> FocusFlow AI uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
               </p>
             </div>

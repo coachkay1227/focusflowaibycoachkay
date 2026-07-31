@@ -184,7 +184,7 @@ const StarterKit = () => {
               Generate My Quick Start Report
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <p className="mt-3 text-center font-mono-label text-muted-foreground/60 text-[10px] tracking-[0.15em]">
+            <p className="mt-3 text-center font-mono-label text-muted-foreground text-[10px] tracking-[0.15em]">
               NO SPAM · UNSUBSCRIBE ANY TIME
             </p>
           </form>

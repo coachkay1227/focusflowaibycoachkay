@@ -190,7 +190,7 @@ const MirrorChallenge = () => {
                   ? "border-primary/40 bg-primary/5 text-primary/80"
                   : unlocked
                   ? "border-border text-muted-foreground hover:border-primary/30"
-                  : "border-border/30 text-muted-foreground/30 cursor-not-allowed"
+                  : "border-border/30 text-muted-foreground cursor-not-allowed"
               }`}
               disabled={!unlocked}
             >
@@ -199,7 +199,7 @@ const MirrorChallenge = () => {
           );
         })}
         {totalDays > maxVisible && (
-          <span className="text-muted-foreground/40 text-xs self-center ml-1">
+          <span className="text-muted-foreground text-xs self-center ml-1">
             {start > 0 && "..."} Day {start + 1}–{Math.min(start + maxVisible, totalDays)} of {totalDays}
           </span>
         )}
@@ -277,8 +277,8 @@ const MirrorChallenge = () => {
           <AnimatedSection delay={300}>
             <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="font-mono-label text-primary/60">Day {selectedDay}</span>
-                {isDayCompleted && <span className="font-mono-label text-primary/40">· Completed</span>}
+                <span className="font-mono-label text-primary">Day {selectedDay}</span>
+                {isDayCompleted && <span className="font-mono-label text-primary">· Completed</span>}
               </div>
 
               <h3
@@ -310,7 +310,7 @@ const MirrorChallenge = () => {
                   )}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground/50">
+                <div className="text-center py-8 text-muted-foreground">
                   <Lock className="h-8 w-8 mx-auto mb-4 opacity-30" />
                   <p>Complete the previous day to unlock this prompt.</p>
                 </div>

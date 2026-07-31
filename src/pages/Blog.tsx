@@ -69,7 +69,7 @@ const Blog = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-transparent to-transparent" />
               </div>
               <div className="flex-1 flex flex-col p-6">
-                <div className="flex items-center gap-4 text-xs text-cream/50 uppercase tracking-wider mb-4">
+                <div className="flex items-center gap-4 text-xs text-cream uppercase tracking-wider mb-4">
                   <span className="inline-flex items-center gap-1.5">
                     <Tag className="w-3 h-3 text-primary" />
                     {post.category}
@@ -82,7 +82,7 @@ const Blog = () => {
                 <h2 className="font-serif text-2xl text-cream leading-tight mb-3 group-hover:text-primary transition-colors">
                   {post.title}
                 </h2>
-                <p className="text-cream/60 text-sm leading-relaxed mb-6 flex-1">
+                <p className="text-cream text-sm leading-relaxed mb-6 flex-1">
                   {post.excerpt}
                 </p>
                 <span className="inline-flex items-center gap-2 text-primary text-sm font-medium">

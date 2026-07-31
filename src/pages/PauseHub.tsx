@@ -327,7 +327,7 @@ export default function PauseHub() {
                       <span className="text-[10px] tracking-[0.16em] uppercase text-muted-foreground/80 pt-1">
                         {a.category}
                       </span>
-                      <span className="ml-auto text-[10px] text-muted-foreground/60 pt-1">
+                      <span className="ml-auto text-[10px] text-muted-foreground pt-1">
                         {timeAgo(a.published_at)}
                       </span>
                     </header>

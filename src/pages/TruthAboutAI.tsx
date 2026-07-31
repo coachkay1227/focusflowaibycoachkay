@@ -642,7 +642,7 @@ export default function TruthAboutAI() {
               >
                 Start the Clarity Check <ArrowRight className="h-4 w-4" />
               </Link>
-              <p className="text-[11px] text-primary/60 tracking-wider mt-6 uppercase">
+              <p className="text-[11px] text-primary tracking-wider mt-6 uppercase">
                 Truth over hype. Always.
               </p>
             </section>

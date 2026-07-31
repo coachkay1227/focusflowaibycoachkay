@@ -194,7 +194,7 @@ const Challenges = () => {
                           {statusLabels[enrollment.status]}
                         </Badge>
                       )}
-                      <span className="font-mono-label text-primary/60">{challenge.days} days</span>
+                      <span className="font-mono-label text-primary">{challenge.days} days</span>
                     </div>
                   </div>
                   <h3 className="font-heading text-lg md:text-xl font-light mb-1">{challenge.title}</h3>
@@ -204,7 +204,7 @@ const Challenges = () => {
                   {/* Day preview toggle */}
                   <button
                     onClick={(e) => togglePreview(challenge.type, e)}
-                    className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-primary/80 transition-colors mb-4"
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary/80 transition-colors mb-4"
                     aria-label={isExpanded ? "Hide daily prompts preview" : "Show daily prompts preview"}
                   >
                     {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -214,7 +214,7 @@ const Challenges = () => {
                   {isExpanded && (
                     <div className="mb-4 space-y-2 border-l-2 border-primary/15 pl-3">
                       {previews.map((line, j) => (
-                        <p key={j} className={`text-xs leading-relaxed ${line.startsWith("…") ? "text-muted-foreground/40 italic" : "text-muted-foreground/70"}`}>
+                        <p key={j} className={`text-xs leading-relaxed ${line.startsWith("…") ? "text-muted-foreground italic" : "text-muted-foreground/70"}`}>
                           {line}
                         </p>
                       ))}
@@ -224,7 +224,7 @@ const Challenges = () => {
                   <div className="flex items-center gap-3 mt-auto">
                     <button
                       onClick={() => navigate(`/challenges/${challenge.type}`)}
-                      className="flex items-center gap-2 text-sm text-primary/60 hover:text-primary transition-colors"
+                      className="flex items-center gap-2 text-sm text-primary hover:text-primary transition-colors"
                       aria-label={enrollment ? `Continue ${challenge.title}` : `Begin ${challenge.title}`}
                     >
                       {enrollment ? "Continue" : "Begin challenge"} <ArrowRight className="h-3 w-3" />
@@ -246,7 +246,7 @@ const Challenges = () => {
                     {!user && (
                       <button
                         onClick={(e) => handleEnroll(challenge.type, e)}
-                        className="text-xs text-muted-foreground/50 hover:text-primary transition-colors ml-auto"
+                        className="text-xs text-muted-foreground hover:text-primary transition-colors ml-auto"
                       >
                         Sign in to enroll
                       </button>

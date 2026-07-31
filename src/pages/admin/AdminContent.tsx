@@ -157,7 +157,7 @@ const AdminContent = () => {
                     </div>
                     <button
                       onClick={() => toggleSetting(mod.id, "featured")}
-                      className={`transition-colors ${isFeatured(mod.id) ? "text-primary" : "text-muted-foreground/30 hover:text-muted-foreground"}`}
+                      className={`transition-colors ${isFeatured(mod.id) ? "text-primary" : "text-muted-foreground hover:text-muted-foreground"}`}
                       title={isFeatured(mod.id) ? "Unfeature" : "Feature"}
                     >
                       <Star className="h-4 w-4" fill={isFeatured(mod.id) ? "currentColor" : "none"} />
@@ -176,11 +176,11 @@ const AdminContent = () => {
                 </div>
                 <p className="text-muted-foreground text-sm mb-3">{mod.subtitle}</p>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono-label text-xs text-muted-foreground/60">
+                  <span className="font-mono-label text-xs text-muted-foreground">
                     {mod.questions.length} questions
                   </span>
-                  <span className="text-muted-foreground/40">·</span>
-                  <span className="font-mono-label text-xs text-muted-foreground/60">
+                  <span className="text-muted-foreground">·</span>
+                  <span className="font-mono-label text-xs text-muted-foreground">
                     {mod.duration}
                   </span>
                 </div>

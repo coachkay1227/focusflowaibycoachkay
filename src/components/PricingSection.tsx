@@ -228,7 +228,7 @@ export default function PricingSection() {
           <div key={group.label} className={gi > 0 ? "mt-16 pt-16 border-t border-border/40" : ""}>
             <AnimatedSection>
               <div className="text-center mb-8">
-                <span className="text-xs tracking-widest uppercase text-primary/60 font-mono-label">
+                <span className="text-xs tracking-widest uppercase text-primary font-mono-label">
                   {group.label}
                 </span>
               </div>
