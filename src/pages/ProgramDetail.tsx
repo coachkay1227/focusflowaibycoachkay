@@ -202,7 +202,7 @@ const ProgramDetail = () => {
 
         {/* Coach Note */}
         <div className="border-l-2 border-primary/30 pl-5 mb-8">
-          <p className="text-xs uppercase tracking-wider text-primary/60 mb-2">Coach Kay says</p>
+          <p className="text-xs uppercase tracking-wider text-primary mb-2">Coach Kay says</p>
           <p className="text-foreground/80 italic leading-relaxed">"{program.coachNote}"</p>
         </div>
 
@@ -367,7 +367,7 @@ const ProgramDetail = () => {
                 >
                   <div className="text-xs text-muted-foreground mb-1">{rec.durationLabel} · {rec.type}</div>
                   <div className="text-sm font-medium text-foreground mb-1">{rec.title}</div>
-                  <div className="flex items-center gap-1 text-xs text-primary/60">
+                  <div className="flex items-center gap-1 text-xs text-primary">
                     View <ArrowRight className="h-3 w-3" />
                   </div>
                 </button>

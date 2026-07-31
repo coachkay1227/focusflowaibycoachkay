@@ -97,7 +97,7 @@ const Kiosk = () => {
 
       {/* Credential line */}
       <div className="z-10 absolute bottom-8 left-0 right-0 text-center">
-        <p className="text-xs text-muted-foreground/30 font-mono-label tracking-wider">
+        <p className="text-xs text-muted-foreground font-mono-label tracking-wider">
           Master Certified Life Coach · 600+ Hours
         </p>
       </div>

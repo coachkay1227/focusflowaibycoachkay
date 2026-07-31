@@ -171,12 +171,12 @@ const BlogPost = () => {
         <header className="container mx-auto px-6 max-w-4xl">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-cream/60 hover:text-primary text-sm mb-10 transition-colors"
+            className="inline-flex items-center gap-2 text-cream hover:text-primary text-sm mb-10 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> Back to all articles
           </Link>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.2em] text-cream/50 mb-6">
+          <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.2em] text-cream mb-6">
             <span className="inline-flex items-center gap-1.5 text-primary">
               <Tag className="w-3 h-3" /> {post.category}
             </span>

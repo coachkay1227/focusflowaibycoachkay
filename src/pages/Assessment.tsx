@@ -596,7 +596,7 @@ const Assessment = () => {
             <p className="text-muted-foreground mt-4 text-base">
               {MIND_LABELS[result.mind]} · {ACTION_LABELS[result.action]} ·{" "}
               {CHARACTER_LABELS[result.character]}
-              <span className="mx-2 text-primary/40">·</span>
+              <span className="mx-2 text-primary">·</span>
               Primary: {BUCKET_LABEL[result.primaryBucket]} · Secondary:{" "}
               {BUCKET_LABEL[result.secondaryBucket]}
             </p>

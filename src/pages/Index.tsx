@@ -291,7 +291,7 @@ const Index = () => {
               onClick={() => navigate("/rent-an-agent")}
               className="group relative text-left p-8 border border-foreground/10 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
-              <span className="font-mono-label text-foreground/40 text-xs tracking-[0.2em] mb-3 block">
+              <span className="font-mono-label text-foreground/80 text-xs tracking-[0.2em] mb-3 block">
                 PATH B · AI SYSTEMS
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
@@ -453,7 +453,7 @@ const Index = () => {
                   item.highlight ? "border-primary/60 bg-card/60" : "border-border bg-card/50"
                 }`}
               >
-                <span className="font-mono-label text-primary/60 text-xs">{item.step}</span>
+                <span className="font-mono-label text-primary text-xs">{item.step}</span>
                 <div
                   className={`mt-3 font-heading text-4xl font-light ${item.highlight ? "text-primary" : "text-foreground"}`}
                 >

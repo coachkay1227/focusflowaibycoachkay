@@ -100,7 +100,7 @@ const WeeklyInsights = () => {
 
       {!recap && !loading && !error && (
         <div className="text-center py-8">
-          <Sparkles className="h-8 w-8 text-primary/30 mx-auto mb-3" />
+          <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
           <p className="text-muted-foreground text-sm mb-4">
             Get a personalized recap of your clarity journey this week.
           </p>

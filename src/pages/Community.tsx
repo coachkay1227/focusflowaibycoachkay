@@ -145,7 +145,7 @@ const Community = () => {
                     <span className="text-xs text-primary font-medium">{post.name[0]}</span>
                   </div>
                   <span className="text-sm font-medium text-foreground">{post.name}</span>
-                  <span className="ml-auto font-mono-label text-primary/40 text-xs">{post.tag}</span>
+                  <span className="ml-auto font-mono-label text-primary text-xs">{post.tag}</span>
                 </div>
                 <p className="text-foreground/80 leading-relaxed text-sm">{post.content}</p>
               </div>

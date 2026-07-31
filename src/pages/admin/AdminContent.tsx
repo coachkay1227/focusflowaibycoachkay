@@ -157,7 +157,7 @@ const AdminContent = () => {
                     </div>
                     <button
                       onClick={() => toggleSetting(mod.id, "featured")}
-                      className={`transition-colors ${isFeatured(mod.id) ? "text-primary" : "text-muted-foreground/30 hover:text-muted-foreground"}`}
+                      className={`transition-colors ${isFeatured(mod.id) ? "text-primary" : "text-muted-foreground hover:text-muted-foreground"}`}
                       title={isFeatured(mod.id) ? "Unfeature" : "Feature"}
                     >
                       <Star className="h-4 w-4" fill={isFeatured(mod.id) ? "currentColor" : "none"} />

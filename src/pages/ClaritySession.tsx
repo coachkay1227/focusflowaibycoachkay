@@ -296,7 +296,7 @@ const ClaritySession = () => {
           style={{ willChange: "transform, opacity" }}
         >
           <h1 className="sr-only">{moduleTitle} — Clarity Session with Coach Kay</h1>
-          <span className="font-mono-label text-primary/60 tracking-[0.2em]">{question.label}</span>
+          <span className="font-mono-label text-primary tracking-[0.2em]">{question.label}</span>
 
           <h2
             className="font-heading text-3xl md:text-4xl lg:text-5xl font-light mt-4 mb-3 leading-tight"

@@ -357,7 +357,7 @@ const ResultScreen = () => {
 
                     {emailStatus === "sent" && (
                       <div className="mt-5">
-                        <p className="font-mono-label text-primary/60 tracking-[0.15em] text-xs mb-3">
+                        <p className="font-mono-label text-primary tracking-[0.15em] text-xs mb-3">
                           Your Next Move
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3">
@@ -397,7 +397,7 @@ const ResultScreen = () => {
             {sections.map((section, i) => (
               <AnimatedSection key={section.label} delay={i * 200}>
                 <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8">
-                  <span className="font-mono-label text-primary/60 tracking-[0.15em]">{section.label}</span>
+                  <span className="font-mono-label text-primary tracking-[0.15em]">{section.label}</span>
                   <h3 className={`font-heading text-xl md:text-2xl font-light mt-2 mb-4 ${section.color}`}>
                     {section.title}
                   </h3>
@@ -427,11 +427,11 @@ const ResultScreen = () => {
                       <p className="text-foreground/80 leading-relaxed">{patterns.summary}</p>
                       <div className="grid md:grid-cols-2 gap-4 mt-4">
                         <div className="p-4 rounded-lg bg-card/20 border border-border/50">
-                          <span className="font-mono-label text-primary/60 text-xs">Recurring</span>
+                          <span className="font-mono-label text-primary text-xs">Recurring</span>
                           <p className="text-foreground/70 text-sm mt-2">{patterns.recurring}</p>
                         </div>
                         <div className="p-4 rounded-lg bg-card/20 border border-border/50">
-                          <span className="font-mono-label text-primary/60 text-xs">Growth</span>
+                          <span className="font-mono-label text-primary text-xs">Growth</span>
                           <p className="text-foreground/70 text-sm mt-2">{patterns.growth}</p>
                         </div>
                       </div>
@@ -473,7 +473,7 @@ const ResultScreen = () => {
               {/* Recommended Path */}
               <AnimatedSection delay={1050} className="mt-8">
                 <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8">
-                  <span className="font-mono-label text-primary/60 tracking-[0.15em]">Your Recommended Path</span>
+                  <span className="font-mono-label text-primary tracking-[0.15em]">Your Recommended Path</span>
                   <p className="text-muted-foreground text-sm mt-2 mb-6">Based on your answers, here's where to start.</p>
 
                   <div className="grid gap-4">
@@ -483,10 +483,10 @@ const ResultScreen = () => {
                         onClick={() => navigate("/clarity", { state: { moduleId: recommendedModule.id } })}
                         className="w-full text-left p-5 rounded-lg border border-border/50 bg-card/20 hover:border-primary/30 transition-all group"
                       >
-                        <span className="font-mono-label text-primary/50 text-xs">Recommended Module</span>
+                        <span className="font-mono-label text-primary text-xs">Recommended Module</span>
                         <h4 className="font-heading text-lg font-light mt-1 group-hover:text-primary transition-colors">{recommendedModule.title}</h4>
                         <p className="text-muted-foreground text-sm mt-1">{recommendedModule.subtitle}</p>
-                        <span className="inline-flex items-center gap-1 text-primary/60 text-xs mt-2 group-hover:text-primary transition-colors">
+                        <span className="inline-flex items-center gap-1 text-primary text-xs mt-2 group-hover:text-primary transition-colors">
                           Start session <ArrowRight className="h-3 w-3" />
                         </span>
                       </button>
@@ -497,12 +497,12 @@ const ResultScreen = () => {
                       onClick={() => navigate(`/challenges/${trackResult.recommendedChallengeType}`)}
                       className="w-full text-left p-5 rounded-lg border border-border/50 bg-card/20 hover:border-primary/30 transition-all group"
                     >
-                      <span className="font-mono-label text-primary/50 text-xs">Recommended Challenge</span>
+                      <span className="font-mono-label text-primary text-xs">Recommended Challenge</span>
                       <h4 className="font-heading text-lg font-light mt-1 group-hover:text-primary transition-colors">
                         {challengeLabel}
                       </h4>
                       <p className="text-muted-foreground text-sm mt-1">A structured daily coaching experience matched to your current phase.</p>
-                      <span className="inline-flex items-center gap-1 text-primary/60 text-xs mt-2 group-hover:text-primary transition-colors">
+                      <span className="inline-flex items-center gap-1 text-primary text-xs mt-2 group-hover:text-primary transition-colors">
                         Begin challenge <ArrowRight className="h-3 w-3" />
                       </span>
                     </button>
@@ -513,7 +513,7 @@ const ResultScreen = () => {
                         onClick={() => navigate(`/programs/${recommendedProgram.slug}`)}
                         className="w-full text-left p-5 rounded-lg border border-primary/20 bg-primary/[0.04] hover:border-primary/40 hover:bg-primary/[0.07] transition-all group"
                       >
-                        <span className="font-mono-label text-primary/60 text-xs">Recommended Program</span>
+                        <span className="font-mono-label text-primary text-xs">Recommended Program</span>
                         <div className="flex items-start justify-between mt-1">
                           <h4 className="font-heading text-lg font-light group-hover:text-primary transition-colors">
                             {recommendedProgram.title}

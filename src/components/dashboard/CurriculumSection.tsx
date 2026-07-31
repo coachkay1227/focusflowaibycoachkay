@@ -58,7 +58,7 @@ export default function CurriculumSection() {
                         <Clock className="h-3 w-3" />
                         {mod.durationLabel}
                       </span>
-                      <span className="text-[11px] text-primary/50 group-hover:text-primary transition-colors flex items-center gap-1">
+                      <span className="text-[11px] text-primary group-hover:text-primary transition-colors flex items-center gap-1">
                         Open <ArrowRight className="h-3 w-3" />
                       </span>
                     </div>

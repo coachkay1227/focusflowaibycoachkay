@@ -190,7 +190,7 @@ const MirrorChallenge = () => {
                   ? "border-primary/40 bg-primary/5 text-primary/80"
                   : unlocked
                   ? "border-border text-muted-foreground hover:border-primary/30"
-                  : "border-border/30 text-muted-foreground/30 cursor-not-allowed"
+                  : "border-border/30 text-muted-foreground cursor-not-allowed"
               }`}
               disabled={!unlocked}
             >
@@ -277,8 +277,8 @@ const MirrorChallenge = () => {
           <AnimatedSection delay={300}>
             <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="font-mono-label text-primary/60">Day {selectedDay}</span>
-                {isDayCompleted && <span className="font-mono-label text-primary/40">· Completed</span>}
+                <span className="font-mono-label text-primary">Day {selectedDay}</span>
+                {isDayCompleted && <span className="font-mono-label text-primary">· Completed</span>}
               </div>
 
               <h3

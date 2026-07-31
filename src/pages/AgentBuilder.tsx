@@ -215,7 +215,7 @@ const AgentBuilder = () => {
           style={{ willChange: 'transform, opacity' }}
         >
           <h1 className="sr-only">Agent Builder — FocusFlow AI</h1>
-          <span className="font-mono-label text-primary/60 tracking-[0.2em]">
+          <span className="font-mono-label text-primary tracking-[0.2em]">
             {question.label}
           </span>
 
