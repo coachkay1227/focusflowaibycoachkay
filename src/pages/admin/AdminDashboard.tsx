@@ -183,7 +183,7 @@ const AdminDashboard = () => {
                           <span className="text-muted-foreground">{event.detail}</span>
                         </p>
                       </div>
-                      <span className="font-mono-label text-xs text-muted-foreground/60 shrink-0">{ago}</span>
+                      <span className="font-mono-label text-xs text-muted-foreground shrink-0">{ago}</span>
                     </div>
                   );
                 })}

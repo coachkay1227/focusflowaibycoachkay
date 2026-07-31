@@ -106,7 +106,7 @@ const AdminNewsletter = () => {
                         {r.synced_to_beehiiv ? (
                           <span className="text-primary text-xs">synced</span>
                         ) : (
-                          <span className="text-muted-foreground/60 text-xs">local</span>
+                          <span className="text-muted-foreground text-xs">local</span>
                         )}
                       </td>
                       <td className="px-4 py-2 text-muted-foreground text-xs">

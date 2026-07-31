@@ -281,7 +281,7 @@ const ClaritySession = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">{moduleTitle}</span>
         </div>
-        <span className="font-mono-label text-muted-foreground/60">
+        <span className="font-mono-label text-muted-foreground">
           {currentStep + 1} / {questions.length}
         </span>
       </div>
@@ -395,11 +395,11 @@ const ClaritySession = () => {
               {gateSubmitting ? "Unlocking..." : "Unlock My Clarity Code"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <div className="mt-4 flex items-center justify-center gap-2 font-mono-label text-muted-foreground/60 text-[10px] tracking-[0.15em]">
+            <div className="mt-4 flex items-center justify-center gap-2 font-mono-label text-muted-foreground text-[10px] tracking-[0.15em]">
               <Zap className="h-3 w-3" />
               NO SPAM · NO CARD · UNSUBSCRIBE ANY TIME
             </div>
-            <p className="text-center text-[11px] text-muted-foreground/40 mt-2">
+            <p className="text-center text-[11px] text-muted-foreground mt-2">
               By continuing you agree to our{" "}
               <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
             </p>

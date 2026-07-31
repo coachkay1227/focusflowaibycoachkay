@@ -148,7 +148,7 @@ const Sitemap = () => (
         </ul>
       </section>
 
-      <p className="text-[11px] text-muted-foreground/50 border-t border-border/30 pt-6">
+      <p className="text-[11px] text-muted-foreground border-t border-border/30 pt-6">
         Focus Flow AI LLC · DBA Coach Kay Elevates · Columbus, OH · hello@coachkayelevates.org
       </p>
     </div>

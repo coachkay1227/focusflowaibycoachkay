@@ -248,7 +248,7 @@ const Index = () => {
             </div>
             <a
               href="#how-it-works"
-              className="group flex items-center gap-3 md:gap-4 text-muted-foreground/60 hover:text-primary transition-colors"
+              className="group flex items-center gap-3 md:gap-4 text-muted-foreground hover:text-primary transition-colors"
             >
               <span className="font-mono-label text-[9px] tracking-[0.2em] uppercase font-bold">Scroll to Begin</span>
               <span
@@ -301,7 +301,7 @@ const Index = () => {
                 AI-powered systems, workflows, and builds. Explore the tools and services that run Coach Kay's client
                 engine.
               </p>
-              <span className="inline-flex items-center gap-2 text-foreground/60 text-sm font-medium group-hover:text-primary group-hover:gap-3 transition-all">
+              <span className="inline-flex items-center gap-2 text-foreground/80 text-sm font-medium group-hover:text-primary group-hover:gap-3 transition-all">
                 Explore AI Systems
                 <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
               </span>
@@ -524,7 +524,7 @@ const Index = () => {
                 <p className="text-foreground/90 text-sm leading-relaxed italic flex-1">"{item.quote}"</p>
                 <div className="mt-6 pt-4 border-t border-border/50">
                   <p className="font-medium text-sm text-foreground">{item.name}</p>
-                  <p className="font-mono-label text-muted-foreground/60 mt-1">{item.role}</p>
+                  <p className="font-mono-label text-muted-foreground mt-1">{item.role}</p>
                   <p className="font-mono-label text-primary/80 tracking-[0.2em] text-[10px] mt-2">{item.pillar}</p>
                 </div>
               </div>

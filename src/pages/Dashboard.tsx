@@ -254,7 +254,7 @@ const Dashboard = () => {
                         </div>
                         <p className="text-muted-foreground text-sm mb-3">{("subtitle" in (mod || {})) ? (mod as CoachingModule).subtitle : (mod as Program)?.tagline}</p>
                         <div className="flex items-center justify-between">
-                          <span className="font-mono-label text-muted-foreground/60">{enrollment.sessionsCount} sessions</span>
+                          <span className="font-mono-label text-muted-foreground">{enrollment.sessionsCount} sessions</span>
                           <span className="text-sm text-primary/60 group-hover:text-primary transition-colors flex items-center gap-1">
                             Continue <ArrowRight className="h-3 w-3" />
                           </span>
@@ -328,7 +328,7 @@ const Dashboard = () => {
                             <p className="text-muted-foreground text-sm mt-1 line-clamp-1">{session.insight.truth}</p>
                           )}
                         </div>
-                        <span className="font-mono-label text-muted-foreground/50 shrink-0 ml-4">
+                        <span className="font-mono-label text-muted-foreground shrink-0 ml-4">
                           {new Date(session.timestamp).toLocaleDateString()}
                         </span>
                       </div>

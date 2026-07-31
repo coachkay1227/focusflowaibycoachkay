@@ -35,7 +35,7 @@ const BrandLogo = ({ size = "md", withTagline = false, className, to = "/" }: Br
         <span className="text-primary font-medium ml-1">AI</span>
       </span>
       {withTagline && (
-        <span className="text-muted-foreground/60 text-xs font-body tracking-wide">
+        <span className="text-muted-foreground text-xs font-body tracking-wide">
           by Coach Kay
         </span>
       )}

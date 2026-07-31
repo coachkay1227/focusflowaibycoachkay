@@ -111,7 +111,7 @@ const AuditLanding = () => {
             <p className="text-xs text-primary font-mono tracking-wider uppercase mb-2">Recommended Path</p>
             <p className="text-sm text-muted-foreground">Based on your stage and stack, Rent-an-Agent Starter tier would recoup its cost within 2 weeks of implementation.</p>
           </div>
-          <p className="text-xs text-muted-foreground/60 italic text-center pt-2">* Sample only. Your audit is personalized to your business.</p>
+          <p className="text-xs text-muted-foreground italic text-center pt-2">* Sample only. Your audit is personalized to your business.</p>
         </div>
       </div>
     </div>

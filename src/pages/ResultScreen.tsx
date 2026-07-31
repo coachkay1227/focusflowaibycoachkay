@@ -311,7 +311,7 @@ const ResultScreen = () => {
                     </div>
                   ))}
                 </div>
-                <p className="mt-6 text-xs text-muted-foreground/60">
+                <p className="mt-6 text-xs text-muted-foreground">
                   Your words. Read them again before you read what I see below.
                 </p>
               </div>
@@ -464,7 +464,7 @@ const ResultScreen = () => {
                     {trackResult.phaseLabel}
                   </h3>
                   <p className="text-foreground/80 leading-relaxed mb-4">{trackResult.phaseDescription}</p>
-                  <p className="text-muted-foreground/50 text-xs italic">
+                  <p className="text-muted-foreground text-xs italic">
                     This is a coaching reflection, not a diagnosis. It's based on the patterns in your answers.
                   </p>
                 </div>

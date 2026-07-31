@@ -195,7 +195,7 @@ const AgentBuilder = () => {
         <div className="font-heading text-lg font-light">
           <span className="text-primary">Agent</span> Builder
         </div>
-        <span className="font-mono-label text-muted-foreground/60">
+        <span className="font-mono-label text-muted-foreground">
           {currentStep + 1} / {TOTAL_STEPS}
         </span>
       </div>

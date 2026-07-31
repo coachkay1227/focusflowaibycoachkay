@@ -107,7 +107,7 @@ const ClarityScoreCard = () => {
                 }}
               />
             </div>
-            <span className="text-xs text-muted-foreground/60 mt-1 block">{value}/{max}</span>
+            <span className="text-xs text-muted-foreground mt-1 block">{value}/{max}</span>
           </div>
         ))}
       </div>

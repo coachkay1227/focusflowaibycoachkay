@@ -132,7 +132,7 @@ const WeeklyInsights = () => {
       {recap && !loading && (
         <div className="space-y-4">
           {meta && (
-            <div className="flex items-center gap-4 text-sm text-muted-foreground/60 font-mono-label mb-4">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground font-mono-label mb-4">
               <span>{meta.sessionsCount} sessions</span>
               <span>•</span>
               <span>{meta.challengesActive} challenges</span>

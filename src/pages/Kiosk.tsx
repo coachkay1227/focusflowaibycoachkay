@@ -49,7 +49,7 @@ const Kiosk = () => {
       <div className="z-10 absolute top-8 left-8">
         <div className="font-heading text-xl font-light tracking-wide text-foreground" role="img" aria-label="FocusFlow">
           <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow</span>
-          <span className="text-muted-foreground/40 text-sm ml-2">by Coach Kay</span>
+          <span className="text-muted-foreground text-sm ml-2">by Coach Kay</span>
         </div>
       </div>
 
@@ -86,10 +86,10 @@ const Kiosk = () => {
           className="mt-12 max-w-lg transition-opacity duration-500"
           style={{ opacity: fade ? 1 : 0 }}
         >
-          <p className="text-foreground/60 text-sm italic leading-relaxed">
+          <p className="text-foreground/80 text-sm italic leading-relaxed">
             "{current.quote}"
           </p>
-          <p className="text-muted-foreground/40 text-xs mt-2 font-mono-label">
+          <p className="text-muted-foreground text-xs mt-2 font-mono-label">
             — {current.name}
           </p>
         </div>

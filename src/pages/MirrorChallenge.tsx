@@ -199,7 +199,7 @@ const MirrorChallenge = () => {
           );
         })}
         {totalDays > maxVisible && (
-          <span className="text-muted-foreground/40 text-xs self-center ml-1">
+          <span className="text-muted-foreground text-xs self-center ml-1">
             {start > 0 && "..."} Day {start + 1}–{Math.min(start + maxVisible, totalDays)} of {totalDays}
           </span>
         )}
@@ -310,7 +310,7 @@ const MirrorChallenge = () => {
                   )}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground/50">
+                <div className="text-center py-8 text-muted-foreground">
                   <Lock className="h-8 w-8 mx-auto mb-4 opacity-30" />
                   <p>Complete the previous day to unlock this prompt.</p>
                 </div>

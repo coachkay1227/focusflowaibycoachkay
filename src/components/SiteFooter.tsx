@@ -135,7 +135,7 @@ const SiteFooter = () => {
 
         {/* Disclaimer */}
         <div className="border-t border-border/30 pt-6 space-y-4">
-          <p className="text-[11px] text-muted-foreground/60 max-w-3xl mx-auto text-center leading-relaxed">
+          <p className="text-[11px] text-muted-foreground max-w-3xl mx-auto text-center leading-relaxed">
             FocusFlow AI provides AI-powered coaching, education, and productivity tools — not a
             substitute for licensed medical, mental-health, legal, financial, or tax advice.
             AI-generated insights are for personal development only. Results vary.{" "}
@@ -145,7 +145,7 @@ const SiteFooter = () => {
           </p>
 
           {/* Legal row */}
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] text-muted-foreground/60">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] text-muted-foreground">
             <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
             <span aria-hidden>·</span>
             <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
@@ -155,7 +155,7 @@ const SiteFooter = () => {
             <Link to="/refund-policy" className="hover:text-primary transition-colors">Refund Policy</Link>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-2 text-[11px] text-muted-foreground/50">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-2 text-[11px] text-muted-foreground">
             <p>© {year} Focus Flow AI LLC · DBA Coach Kay Elevates.</p>
             <a href="mailto:hello@coachkayelevates.org" className="hover:text-primary transition-colors">
               hello@coachkayelevates.org

@@ -150,7 +150,7 @@ const Community = () => {
                 <p className="text-foreground/80 leading-relaxed text-sm">{post.content}</p>
               </div>
             ))}
-            <p className="text-center text-xs text-muted-foreground/50 mt-2">
+            <p className="text-center text-xs text-muted-foreground mt-2">
               Member testimonials from the FocusFlow Elevation Hub
             </p>
           </div>

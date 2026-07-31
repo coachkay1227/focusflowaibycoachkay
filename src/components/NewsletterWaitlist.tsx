@@ -93,7 +93,7 @@ const NewsletterWaitlist = ({
               disabled={loading}
               maxLength={320}
               aria-label="Email address"
-              className="w-full rounded-full border border-border/60 bg-background/60 pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/60 disabled:opacity-60"
+              className="w-full rounded-full border border-border/60 bg-background/60 pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 disabled:opacity-60"
             />
           </div>
           <button
@@ -106,7 +106,7 @@ const NewsletterWaitlist = ({
         </form>
       )}
       {variant !== "compact" && !done && (
-        <p className="text-[11px] text-muted-foreground/60 mt-3">
+        <p className="text-[11px] text-muted-foreground mt-3">
           No spam. Unsubscribe anytime. We'll never share your email.{" "}
           <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
         </p>

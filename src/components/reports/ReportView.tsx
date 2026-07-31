@@ -159,7 +159,7 @@ const ReportView = ({
             GENERATED · {generatedLabel}
           </p>
         )}
-        <p className="mt-2 font-mono-label text-[10px] tracking-[0.2em] text-muted-foreground/60">
+        <p className="mt-2 font-mono-label text-[10px] tracking-[0.2em] text-muted-foreground">
           AI-GENERATED · REVIEW WITH DISCERNMENT
         </p>
       </header>

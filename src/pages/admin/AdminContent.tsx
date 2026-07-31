@@ -176,11 +176,11 @@ const AdminContent = () => {
                 </div>
                 <p className="text-muted-foreground text-sm mb-3">{mod.subtitle}</p>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono-label text-xs text-muted-foreground/60">
+                  <span className="font-mono-label text-xs text-muted-foreground">
                     {mod.questions.length} questions
                   </span>
-                  <span className="text-muted-foreground/40">·</span>
-                  <span className="font-mono-label text-xs text-muted-foreground/60">
+                  <span className="text-muted-foreground">·</span>
+                  <span className="font-mono-label text-xs text-muted-foreground">
                     {mod.duration}
                   </span>
                 </div>

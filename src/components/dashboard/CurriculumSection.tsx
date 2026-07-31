@@ -38,7 +38,7 @@ export default function CurriculumSection() {
                   {pillarKey}
                 </span>
                 <h3 className="font-heading text-lg font-light">{pillar.full}</h3>
-                <span className="text-xs text-muted-foreground/60">{pillarModules.length} modules</span>
+                <span className="text-xs text-muted-foreground">{pillarModules.length} modules</span>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {pillarModules.map((mod) => (
@@ -54,7 +54,7 @@ export default function CurriculumSection() {
                       {mod.tagline}
                     </p>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="flex items-center gap-1 text-[11px] text-muted-foreground/50">
+                      <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
                         <Clock className="h-3 w-3" />
                         {mod.durationLabel}
                       </span>
