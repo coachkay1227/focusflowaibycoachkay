@@ -153,13 +153,25 @@ serve(async (req) => {
         ctx: { session_id: session.id, mode: session.mode, payment_status: session.payment_status },
       });
 
-      // Only process paid sessions
-      if (session.payment_status !== "paid" || session.status !== "complete") {
+      // Only process settled sessions. `no_payment_required` is a legitimate
+      // settled state: it is what Stripe reports when a 100%-off promotion
+      // code or credit balance covers the whole total, so those orders must
+      // fulfil exactly like a paid one.
+      const settled = session.payment_status === "paid" ||
+        session.payment_status === "no_payment_required";
+      if (!settled || session.status !== "complete") {
         log.info("session_not_paid_or_complete", {
           ctx: { payment_status: session.payment_status, status: session.status },
         });
         return ok(req);
       }
+
+      // Amount actually collected plus any discount Stripe applied. Order-total
+      // cross-checks compare against this gross figure so a legitimate
+      // promotion code cannot look like a tampered price.
+      const grossAmount = typeof session.amount_total === "number"
+        ? session.amount_total + (session.total_details?.amount_discount ?? 0)
+        : null;
 
       // Book Store branch: if metadata carries a book_order_id, mark the
       // book order as paid (idempotent) and exit. Does not touch tier logic.
@@ -192,10 +204,9 @@ serve(async (req) => {
           });
           return ok(req);
         }
-        const amountTotal = typeof session.amount_total === "number" ? session.amount_total : null;
-        if (amountTotal === null || amountTotal !== pending.order_total) {
+        if (grossAmount === null || grossAmount !== pending.order_total) {
           await fail("book_order", "amount_mismatch", {
-            context: { book_order_id: bookOrderId, session_amount: amountTotal, expected: pending.order_total },
+            context: { book_order_id: bookOrderId, session_amount: grossAmount, expected: pending.order_total },
           });
           return ok(req, { received: true, ignored: "amount_mismatch" });
         }
