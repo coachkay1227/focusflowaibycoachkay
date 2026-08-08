@@ -3,6 +3,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { readFulfillmentStages, ORDER_TABLES } from "../_shared/fulfillment-stages.ts";
 
 /** Single source of truth for the post-checkout screen.
  *  Reads the real Stripe payment_status and checks whether fulfillment
@@ -55,42 +56,21 @@ serve(async (req: Request) => {
       { auth: { persistSession: false } },
     );
 
-    const lookups: Array<{ table: string; label: string }> = [
-      { table: "business_audits", label: "AI Business Audit" },
-      { table: "one_time_orders", label: "Order" },
-      { table: "agent_orders", label: "Agent Build" },
-      { table: "book_orders", label: "Book Order" },
-      { table: "autism_orders", label: "Social Story Order" },
-    ];
+    const customerEmail = session.customer_details?.email ?? session.customer_email ?? null;
 
-    let fulfilledIn: string | null = null;
-    let recordId: string | null = null;
-    for (const l of lookups) {
-      const { data } = await supabase
-        .from(l.table)
-        .select("id")
-        .eq("stripe_session_id", sessionId)
-        .maybeSingle();
-      if (data?.id) {
-        fulfilledIn = l.table;
-        recordId = data.id as string;
-        break;
-      }
-    }
+    // Per-stage delivery truth, every value read from a real row.
+    const snapshot = await readFulfillmentStages(supabase, {
+      sessionId,
+      paymentStatus: session.payment_status ?? null,
+      sessionStatus: session.status ?? null,
+      customerEmail,
+      mode: session.mode ?? null,
+    });
 
-    // Subscriptions fulfil by flipping the buyer's tier rather than writing
-    // an order row, so treat a recorded webhook event as fulfillment there.
-    let eventRecorded = false;
-    if (!fulfilledIn) {
-      const { data } = await supabase
-        .from("processed_stripe_events")
-        .select("event_id")
-        .eq("event_type", "checkout.session.completed")
-        .limit(1);
-      eventRecorded = !!data?.length;
-    }
-
-    const fulfilled = !!fulfilledIn || (session.mode === "subscription" && eventRecorded);
+    // "confirmed" still means the order landed, so existing callers keep
+    // behaving exactly as before. The stages carry the finer detail.
+    const orderStage = snapshot.stages.find((s) => s.key === "order");
+    const fulfilled = orderStage?.state === "done";
 
     return json({
       state: fulfilled ? "confirmed" : "processing",
@@ -101,9 +81,14 @@ serve(async (req: Request) => {
       // from this, not from amount_total, so a 100%-off coupon (e.g. the
       // internal FFTEST100 test) can't misclassify a real purchase as a $0 one.
       amount_subtotal: session.amount_subtotal,
-      customer_email: session.customer_details?.email ?? session.customer_email ?? null,
-      fulfilled_in: fulfilledIn,
-      record_id: recordId,
+      customer_email: customerEmail,
+      fulfilled_in: snapshot.fulfilledIn,
+      record_id: snapshot.recordId,
+      audit_id: snapshot.auditId,
+      stages: snapshot.stages,
+      complete: snapshot.complete,
+      needs_attention: snapshot.needsAttention,
+      product_label: ORDER_TABLES.find((t) => t.table === snapshot.fulfilledIn)?.label ?? null,
     });
   } catch (_e) {
     return json({ error: "Internal server error" }, 500);
