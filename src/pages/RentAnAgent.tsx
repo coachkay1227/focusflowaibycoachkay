@@ -6,15 +6,9 @@ import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
-import { redirectToLeadGenIfConfigured } from "@/lib/lead-gen";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import {
   RENT_AGENT_TIERS,
   RENT_AGENT_ENTERPRISE,
-  LEAD_ENGINE_TIERS,
-  LEAD_ENGINE_ENTERPRISE,
   ENTRY_OFFERS,
 } from "@/lib/offer-catalog";
 import { webPage, breadcrumb, serviceSchema, SITE_URL, ORG_ID } from "@/lib/seo-schema";
@@ -44,14 +38,11 @@ const HOW_IT_WORKS = [
 
 const RentAnAgent = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [founding, setFounding] = useState<boolean>(() => {
     if (typeof window === "undefined") return true;
     const stored = window.localStorage.getItem(FOUNDING_STORAGE_KEY);
     return stored === null ? true : stored === "true";
   });
-  const [busyPriceId, setBusyPriceId] = useState<string | null>(null);
   const [inquiry, setInquiry] = useState<{ open: boolean; lane: string; context?: string }>({
     open: false,
     lane: "",
@@ -61,40 +52,6 @@ const RentAnAgent = () => {
     setFounding(next);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(FOUNDING_STORAGE_KEY, String(next));
-    }
-  };
-
-  const startCheckout = async (priceId: string, tierName: string, successPath?: string) => {
-    // All Rent-an-Agent tiers are $297+/mo, so they defer to the lead-gen page
-    // when one is configured (checked before the sign-in prompt so visitors
-    // are not asked to create an account just to be redirected).
-    if (await redirectToLeadGenIfConfigured()) return;
-    if (!user) {
-      toast({ title: "Sign in to subscribe", description: "Create an account so we can attach your subscription." });
-      navigate(`/auth?next=${encodeURIComponent("/rent-an-agent")}`);
-      return;
-    }
-    setBusyPriceId(priceId);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: {
-          priceId,
-          successPath: successPath ?? `/order-success?tier=${encodeURIComponent(tierName)}`,
-          cancelPath: "/rent-an-agent?checkout=cancelled",
-        },
-      });
-      if (error) throw error;
-      const url = (data as { url?: string })?.url;
-      if (!url) throw new Error("No checkout URL returned");
-      window.location.href = url;
-    } catch (e) {
-      toast({
-        title: "Checkout could not start",
-        description: e instanceof Error ? e.message : "Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setBusyPriceId(null);
     }
   };
 
