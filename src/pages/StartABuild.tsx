@@ -142,6 +142,7 @@ const StartABuild = () => {
       <SEOHead
         title="Start a Build — Tell Coach Kay What You Need"
         description="One short form. Tell us what you want built, who it serves, and what it needs to solve. Coach Kay scopes it and replies within one business day."
+        path="/start-a-build"
       />
       <main className="mx-auto max-w-2xl px-4 py-16">
         {submitted ? (
