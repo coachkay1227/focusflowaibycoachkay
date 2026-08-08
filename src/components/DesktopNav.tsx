@@ -33,13 +33,11 @@ const workGroup: NavGroup = {
   items: [
     { label: "Transformation Paths", path: "/modules", icon: BookOpen, desc: "Personal · Business · Full AI programs" },
     { label: "Books & AI Kits", path: "/store", icon: BookMarked, desc: "Self-paced tools, templates & guides" },
-    { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart, desc: "Part of Books: AI-personalized stories for families" },
     { label: "AI Agents & Automation", path: "/agents", icon: Bot, desc: "The full ladder: audit, builds, retainers, autonomous" },
-    { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "A managed AI team on monthly retainer" },
     { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
     { label: "AI Task Force", path: "/ai-task-force", icon: Layers, desc: "Independent partners for larger AI builds" },
-    { label: "Business Audit", path: "/advisory", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
+    { label: "Business Audit", path: "/audit/landing", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
   ],
 };
 
