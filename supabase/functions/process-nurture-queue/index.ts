@@ -15,7 +15,10 @@ import {
   extractHighlights,
   idempotencyKeyFor,
   NURTURE_STEPS,
+  smsBodyFor,
 } from "../_shared/nurture.ts";
+const APP_ORIGIN = "https://coachkayai.life";
+
 import { getBookingLinks } from "../_shared/booking-links.ts";
 
 const BATCH_SIZE = 25;
@@ -86,7 +89,7 @@ Deno.serve(async (req) => {
       try {
         const { data: audit } = await supabase
           .from("business_audits")
-          .select("id,guest_name,report,status")
+          .select("id,guest_name,report,status,phone,sms_consent_at")
           .eq("id", touch.audit_id)
           .maybeSingle();
 
@@ -181,6 +184,35 @@ Deno.serve(async (req) => {
           })
           .eq("id", touch.id);
         summary.sent++;
+
+        // SMS companion, only for buyers who gave a number AND opted in.
+        // Handed to the CRM so STOP handling stays in one place. Best effort:
+        // a texting failure must not undo a delivered email.
+        if (audit.phone && audit.sms_consent_at) {
+          const smsBody = smsBodyFor(touch.step, {
+            origin: APP_ORIGIN,
+            auditId: audit.id,
+            bookingUrl: bookingLinks.freeClarityUrl,
+          });
+          if (smsBody) {
+            try {
+              await supabase.functions.invoke("ghl-webhook", {
+                body: {
+                  event: "nurture_sms",
+                  payload: {
+                    phone: audit.phone,
+                    email: touch.email,
+                    audit_id: audit.id,
+                    step: touch.step,
+                    message: smsBody,
+                  },
+                },
+              });
+            } catch (smsErr) {
+              console.warn("nurture sms failed", touch.id, smsErr);
+            }
+          }
+        }
       } catch (err) {
         // One bad touch must not stop the batch. Record the attempt and let
         // the next run retry it, or park it after repeated failures.
