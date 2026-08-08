@@ -107,6 +107,12 @@ serve(async (req) => {
       });
     }
 
+    const limit = await enforceRateLimit("pattern-detect", req, {
+      userId: userData.user.id,
+      client: supabase,
+    });
+    if (!limit.allowed) return rateLimitResponse(limit, getCorsHeaders(req));
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
