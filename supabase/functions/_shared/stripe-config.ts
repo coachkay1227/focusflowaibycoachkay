@@ -81,6 +81,7 @@ export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
   // One-time entry offers
   "price_1Tb41vBReje0oFcLjxGozG2X": "payment",      // AI Strategy Intensive $497
   "price_1Tb41PBReje0oFcLMlvzjQQa": "payment",      // AI Business Audit $47
+  "price_1U2HOqBReje0oFcLyJ5Ymk5L": "payment",      // AI Brain — Business Knowledge Base $197
   "price_1TbAaPBReje0oFcLts5JuE5a": "payment", // 30-Day Personal Reset $297
   "price_1TbAguBReje0oFcL3Qh5pIiH": "payment", // 30-Day Business Reset $497
   "price_1TbAhOBReje0oFcL87MVrKFy": "payment", // 30-Day AI Reset $997
