@@ -239,7 +239,7 @@ export const programs: Program[] = [
     description:
       "This is not a feel-good challenge. It's a truth challenge. Over 7 days, you'll confront the identity stories you've built about yourself: the ones that feel like facts but are actually just old programming. Each day delivers a coaching prompt, a mirror exercise, and a reframe designed to replace what's false with what's actually true about who you are.",
     coachNote:
-      "Day 4 breaks something open in almost everyone. I've seen it happen hundreds of times. Stick with it. What comes out on the other side is you, unfiltered.",
+      "Day 4 breaks something open in almost everyone. Stick with it. What comes out on the other side is you, unfiltered.",
     whatYouGet: [
       "7 daily mirror exercises with guided coaching debrief",
       "Identity audit: beliefs that are running you vs. serving you",

@@ -81,7 +81,7 @@ const Community = () => {
             You're not alone in this.
           </h1>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            Join 98+ elevation seekers rebuilding their lives and businesses with intentional growth. Free to join.
+            Join the elevation seekers rebuilding their lives and businesses with intentional growth. Free to join.
           </p>
           <Button
             onClick={() => window.open(SKOOL_URL, "_blank")}

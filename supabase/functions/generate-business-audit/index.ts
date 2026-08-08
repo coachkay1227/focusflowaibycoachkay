@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
 import { composeSystemPrompt } from "../_shared/coach-voice.ts";
+import { enforceRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const AUDIT_CATALOG = `You operate Coach Kay Elevates with two distinct lanes:
 - Shield Her Elevation LLC (for-profit corporate AI training and coaching)

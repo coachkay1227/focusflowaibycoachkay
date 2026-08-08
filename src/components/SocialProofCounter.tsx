@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const CACHE_KEY = "ff_social_proof_count";
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-const FALLBACK_TEXT = "Join hundreds who've found their clarity";
+const FALLBACK_TEXT = "Start your first Clarity Check";
 
 function roundDownToTen(n: number): number {
   return Math.floor(n / 10) * 10;
