@@ -13,8 +13,10 @@ Covers:
   3. Admin sees the order plus its delivery state on /admin/orders.
   4. Recovery re-sends the next-steps email and returns post-recovery stages.
   5. Backend: email_send_log, admin_audit_log, nurture_touches, audit_tokens.
+  6. A real /starter-kit submission delivers its report email (status 'sent'),
+     and a reserved test address is suppressed instead of logged as failed.
 """
-import asyncio, json, os, subprocess, sys
+import asyncio, json, os, re, subprocess, sys, time
 from pathlib import Path
 from playwright.async_api import async_playwright
 
@@ -25,6 +27,12 @@ def env_file(key):
     raise KeyError(key)
 
 BASE = os.environ.get("PHASE4_BASE_URL", "http://localhost:8080")
+# Section 6 puts one real email in a real inbox per run. That is the only way to
+# prove the starter-kit template actually delivers rather than merely enqueues.
+QA_EMAIL = os.environ.get("PHASE4_QA_EMAIL", "Hello@coachkayelevates.org")
+# Reserved by RFC 2606: must be suppressed, never sent, never logged as failed.
+# Unique per run so the row-count assertion measures this run only.
+FAKE_EMAIL = f"phase4-suppression-{int(time.time())}@example.com"
 SHOTS = Path("/tmp/browser/phase4/screenshots"); SHOTS.mkdir(parents=True, exist_ok=True)
 results = []
 FN_URL = env_file("VITE_SUPABASE_URL")
@@ -48,6 +56,47 @@ def sql(q):
 def check(name, ok, detail=""):
     results.append((name, ok, detail))
     print(("PASS " if ok else "FAIL ") + name + (f" :: {detail}" if detail else ""))
+
+
+def skip(name, detail=""):
+    """Record a deliberate non-failure (a correct guardrail fired, e.g. a 429)."""
+    results.append((name, True, detail))
+    print("SKIP " + name + (f" :: {detail}" if detail else ""))
+
+
+def sqlq(email):
+    """psql-safe single-quoted literal."""
+    return email.replace("'", "''")
+
+
+async def submit_starter_kit(page, email, name):
+    """Drive the public /starter-kit form exactly as a visitor would.
+
+    Returns every generate-starter-report HTTP status observed, so the caller can
+    tell a real failure apart from the guest rate limit correctly firing, and can
+    count how many report generations this submission actually triggered.
+    """
+    statuses = []
+    handler = lambda r: statuses.append(r.status) if "generate-starter-report" in r.url else None
+    page.on("response", handler)
+    await page.goto(f"{BASE}/starter-kit", wait_until="domcontentloaded")
+    # Scope to the report form: the page footer also carries a newsletter email
+    # input with the same placeholder.
+    bottleneck = page.get_by_placeholder(re.compile("one thing slowing you down"))
+    form = page.locator("form").filter(has=bottleneck)
+    await form.get_by_placeholder("First name (optional)").fill(name)
+    await form.get_by_placeholder("you@email.com").fill(email)
+    await form.locator("select").select_option("Coaching/Consulting")
+    await bottleneck.fill(
+        "Phase 4 automated delivery check: lead generation and follow-up.")
+    await form.get_by_role("button", name=re.compile("Generate My Quick Start Report")).click()
+    for _ in range(60):
+        if statuses:
+            break
+        await page.wait_for_timeout(1000)
+    await page.wait_for_timeout(3000)
+    page.remove_listener("response", handler)
+    return statuses
 
 
 async def main():
@@ -170,6 +219,33 @@ async def main():
               bad.get("status") == 404 and not (bad.get("data") or {}).get("ok"),
               json.dumps(bad)[:120])
 
+        # ---- 6. starter-kit report email actually delivers ----------------
+        # Regression guard: 21 rows once sat in email_send_log as `failed`
+        # because QA fixtures were addressed to @example.com, which Resend
+        # rejects permanently. Two submissions here: one real address that must
+        # reach 'sent', one reserved address that must be suppressed untouched.
+        sk_before = int(sql("select count(*) from email_send_log where template_name = "
+                            f"'starter-kit-report' and recipient_email ilike '{sqlq(QA_EMAIL)}';")[0])
+        sk_statuses = await submit_starter_kit(page, QA_EMAIL, "Phase4")
+        status = sk_statuses[0] if sk_statuses else 0
+        await page.screenshot(path=str(SHOTS / "4_starter_kit.png"))
+        sk_body = await page.inner_text("body")
+        rate_limited = status == 429
+
+        if rate_limited:
+            skip("starter-kit live send (guest hourly limit reached, limit working)", f"status={status}")
+        else:
+            check("starter-kit form returns a report to the visitor", status == 200,
+                  f"status={status}")
+            check("the report renders on screen",
+                  "Where You Are" in sk_body or "where you are" in sk_body.lower(),
+                  sk_body[:110].replace("\n", " "))
+
+        # ---- 6b. reserved address must be suppressed, never sent ----------
+        fake_statuses = await submit_starter_kit(page, FAKE_EMAIL, "Phase4Fake")
+        fake_ok_calls = sum(1 for s in fake_statuses if s == 200)
+        fake_rate_limited = bool(fake_statuses) and fake_statuses[0] == 429
+
         check("no runtime console errors during the journey",
               len(console_errors) == 0, "; ".join(console_errors[:2])[:200])
         await browser.close()
@@ -200,6 +276,64 @@ async def main():
     live_token = int(sql(
         f"select count(*) from audit_tokens where audit_id = '{audit_id}' and expires_at > now();")[0])
     check("a live access link exists for the order", live_token >= 1, str(live_token))
+
+    # ---- 6. starter-kit delivery assertions (SQL, not the UI) -------------
+    if rate_limited:
+        skip("starter-kit email reached 'sent' (skipped: rate limited)")
+    else:
+        sk_rows = sql(
+            "select status || '|' || coalesce(metadata->>'resend_id','') || '|' || "
+            "coalesce(metadata->>'starter_kit_report_id','') || '|' || coalesce(error_message,'') "
+            "from email_send_log where template_name = 'starter-kit-report' and "
+            f"recipient_email ilike '{sqlq(QA_EMAIL)}' order by created_at desc limit 2;")
+        parsed = [r.split("|") for r in sk_rows]
+        sent = next((p for p in parsed if p[0] == "sent"), None)
+        check("starter-kit email reached 'sent'", sent is not None, str(sk_rows)[:200])
+        check("the send carries a real provider id", bool(sent and sent[1]),
+              sent[1] if sent else "no sent row")
+        check("the send is correlated to the report that triggered it",
+              bool(sent and sent[2]), sent[2] if sent else "no report id")
+        check("no starter-kit row for this recipient is 'failed'",
+              not any(p[0] == "failed" for p in parsed), str(sk_rows)[:200])
+        check("the live send wrote new log rows",
+              int(sql("select count(*) from email_send_log where template_name = "
+                      f"'starter-kit-report' and recipient_email ilike '{sqlq(QA_EMAIL)}';")[0]) > sk_before,
+              f"before={sk_before}")
+
+    if fake_rate_limited:
+        skip("reserved address is suppressed (skipped: rate limited)")
+    else:
+        # Scoped to the report template: one starter-kit submission also fires an
+        # `application-received` email, and both must be suppressed.
+        fake_rows = sql("select status || '|' || coalesce(error_message,'') || '|' || "
+                        "coalesce(metadata->>'suppression_reason','') from email_send_log "
+                        f"where recipient_email = '{sqlq(FAKE_EMAIL)}' "
+                        "and template_name = 'starter-kit-report';")
+        fparsed = [r.split("|") for r in fake_rows]
+        # One log row per generated report, and no more: the reserved-domain
+        # branch must short-circuit instead of adding a pending + failed pair.
+        check("reserved test address logs one row per report, no send attempted",
+              len(fparsed) == fake_ok_calls and fake_ok_calls >= 1,
+              f"rows={len(fparsed)} reports={fake_ok_calls} {str(fake_rows)[:140]}")
+        check("reserved test address is 'suppressed', never 'failed'",
+              bool(fparsed) and all(p[0] == "suppressed" and not p[1] for p in fparsed),
+              str(fake_rows)[:200])
+        check("the suppression records its reason",
+              bool(fparsed) and all(p[2] == "reserved_test_domain" for p in fparsed),
+              str(fake_rows)[:200])
+
+        # Every other template triggered by the same submission must be
+        # suppressed too, not merely the report itself.
+        other = sql("select template_name || '|' || status from email_send_log where "
+                    f"recipient_email = '{sqlq(FAKE_EMAIL)}' and template_name <> 'starter-kit-report';")
+        check("every email to the reserved address is suppressed",
+              all(r.endswith("|suppressed") for r in other), str(other)[:200])
+
+    # Whole-log invariant: a fixture address must never re-introduce a failure.
+    still_failed = sql("select template_name || ' -> ' || recipient_email from email_send_log "
+                       "where status = 'failed' limit 5;")
+    check("no email anywhere in the log is in a 'failed' state",
+          len(still_failed) == 0, str(still_failed)[:200])
 
     passed = sum(1 for _, ok, _ in results if ok)
     print("\n==== PHASE 4 SUMMARY ====")
