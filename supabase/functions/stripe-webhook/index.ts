@@ -6,6 +6,7 @@ import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PRO
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 import { planTouches } from "../_shared/nurture.ts";
+import { sendNextStepsEmail } from "../_shared/next-steps-email.ts";
 
 const SOURCE = "stripe-webhook";
 
@@ -216,6 +217,37 @@ serve(async (req) => {
       const grossAmount = typeof session.amount_total === "number"
         ? session.amount_total + (session.total_details?.amount_discount ?? 0)
         : null;
+
+      // Immediate "what to do now" email. Fires once for every settled
+      // checkout, before the product-specific branches, so no product path can
+      // skip it. Idempotent on the session id, so Stripe retries never double
+      // send. Fire-and-forget: it must never block or fail fulfilment.
+      try {
+        const nsEmail =
+          (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
+          (typeof session.customer_email === "string" && session.customer_email) ||
+          null;
+        if (nsEmail) {
+          let nsProductName: string | null = null;
+          try {
+            const nsItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+            nsProductName = nsItems.data?.[0]?.description ?? null;
+          } catch { /* product name is optional */ }
+          void sendNextStepsEmail(supabaseClient, {
+            sessionId: session.id,
+            email: nsEmail,
+            name: (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null,
+            productName: nsProductName,
+            subtotalCents: session.amount_subtotal ?? grossAmount,
+            origin: req.headers.get("origin") || "https://coachkayai.life",
+            reportPending: /audit/i.test(nsProductName ?? ""),
+          }).catch((e) => log.warn("next_steps_email_failed", {
+            message: e instanceof Error ? e.message : String(e),
+          }));
+        }
+      } catch (e) {
+        log.warn("next_steps_email_error", { message: e instanceof Error ? e.message : String(e) });
+      }
 
       // Book Store branch: if metadata carries a book_order_id, mark the
       // book order as paid (idempotent) and exit. Does not touch tier logic.
