@@ -136,7 +136,7 @@ const CoachKay = () => {
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                   onClick={() => window.open("https://coachkayelevates.org/", "_blank", "noopener,noreferrer")}
                 >
-                  Book a session with Kay <ExternalLink className="ml-2 h-4 w-4" />
+                  Book a session with Coach Kay <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
                 <Button
                   size="lg"
@@ -170,14 +170,14 @@ const CoachKay = () => {
               </h2>
               <p className="text-[15px] text-muted-foreground leading-[1.8]">
                 As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs, solo and high-touch.
-                As <strong className="text-foreground/85">Operations Architect &amp; Lead Developer at Collective AI</strong>, she leads
-                the multidisciplinary team that ships enterprise builds, automations, and AI systems.
+                 As an <strong className="text-foreground/85">AI partner in the AI Task Force</strong>, the independent company founded by John Moyler,
+                 she can bring added engineering, research, design, and QA capacity into larger scopes.
               </p>
               <Link
-                to="/collective"
+                 to="/ai-task-force"
                 className="mt-4 inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
               >
-                Meet the Collective <ArrowRight className="h-4 w-4" />
+                 Meet the AI Task Force <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </AnimatedSection>
@@ -194,8 +194,8 @@ const CoachKay = () => {
             <div className="space-y-5 text-foreground/80 leading-relaxed">
               <p>
                 Coach Kay is a Columbus-based founder, 5x certified life coach,
-                full-time banking professional, and single mom to a daughter with
-                autism. Her frameworks weren't built in a classroom. They were
+                 full-time professional, and mother. Her frameworks were not built
+                 in a classroom. They were
                 built in the margins of a real life, for people doing the same.
               </p>
               <p>

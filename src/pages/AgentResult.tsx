@@ -279,7 +279,7 @@ const AgentResult = () => {
             Ready to build your agent?
           </h2>
           <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
-            Submit your details and Coach Kay's team will get started within 1 business day.
+            Submit your details and Coach Kay's specialist partners will review the scope within one business day.
           </p>
 
           <Button
