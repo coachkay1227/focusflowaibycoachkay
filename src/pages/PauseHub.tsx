@@ -81,6 +81,13 @@ export default function PauseHub() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [flashing, setFlashing] = useState<Set<string>>(new Set());
   const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
+  // Freshness must describe the content, not the fetch. The socket being
+  // connected says nothing about whether a new alert has been published.
+  const newestPublishedAt = alerts.reduce<string | null>(
+    (newest, a) =>
+      a.published_at && (!newest || a.published_at > newest) ? a.published_at : newest,
+    null,
+  );
   const [tick, setTick] = useState(0);
   // Real connection state, straight from the realtime channel. Never assumed.
   const [liveStatus, setLiveStatus] = useState<"connecting" | "live" | "offline">("connecting");
@@ -313,7 +320,10 @@ export default function PauseHub() {
                 : "Offline · showing last load"}
           </span>
           <span className="text-[11px] text-muted-foreground/70" key={tick}>
-            {alerts.length} active · updated {timeAgo(new Date(lastUpdate).toISOString()) || "just now"}
+            {alerts.length} active ·{" "}
+            {newestPublishedAt
+              ? `newest alert ${timeAgo(newestPublishedAt) || "just now"}`
+              : "no alerts published yet"}
           </span>
         </div>
       </section>

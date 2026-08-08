@@ -1072,6 +1072,7 @@ export type Database = {
           is_published: boolean
           published_at: string | null
           slug: string
+          source_feed: string | null
           source_url: string | null
           summary: string
           threat_level: Database["public"]["Enums"]["scam_threat_level"]
@@ -1089,6 +1090,7 @@ export type Database = {
           is_published?: boolean
           published_at?: string | null
           slug: string
+          source_feed?: string | null
           source_url?: string | null
           summary: string
           threat_level?: Database["public"]["Enums"]["scam_threat_level"]
@@ -1106,6 +1108,7 @@ export type Database = {
           is_published?: boolean
           published_at?: string | null
           slug?: string
+          source_feed?: string | null
           source_url?: string | null
           summary?: string
           threat_level?: Database["public"]["Enums"]["scam_threat_level"]

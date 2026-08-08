@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Save, Trash2, X, ShieldAlert } from "lucide-react";
+import { Plus, Save, Trash2, X, ShieldAlert, RefreshCw, ExternalLink } from "lucide-react";
 
 type ThreatLevel = "red_flag" | "caution" | "watch" | "resolved";
 
@@ -21,12 +21,13 @@ interface ScamAlert {
   category: string;
   action_rules: string[];
   source_url: string | null;
+  source_feed: string | null;
   is_published: boolean;
   published_at: string | null;
   created_at: string;
 }
 
-const EMPTY: Omit<ScamAlert, "id" | "created_at"> = {
+const EMPTY: Omit<ScamAlert, "id" | "created_at" | "source_feed"> = {
   title: "",
   slug: "",
   summary: "",
@@ -53,6 +54,9 @@ export default function AdminScamAlerts() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<(typeof EMPTY & { id?: string }) | null>(null);
   const [saving, setSaving] = useState(false);
+  const [ingesting, setIngesting] = useState(false);
+  const drafts = alerts.filter((a) => !a.is_published);
+  const live = alerts.filter((a) => a.is_published);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -72,6 +76,49 @@ export default function AdminScamAlerts() {
   }, []);
 
   const startNew = () => setEditing({ ...EMPTY });
+
+  // Manual trigger for the same worker pg_cron runs weekly. Drafts land
+  // unpublished, so this button can never put anything on the public hub.
+  const runIngestion = async () => {
+    setIngesting(true);
+    const { data, error } = await supabase.functions.invoke("ingest-scam-alerts", { body: {} });
+    setIngesting(false);
+    if (error) {
+      toast({ title: "Ingestion failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    const drafted = (data as { drafted?: number })?.drafted ?? 0;
+    toast({
+      title: drafted > 0 ? `${drafted} new draft${drafted === 1 ? "" : "s"} ready` : "No new alerts found",
+      description:
+        drafted > 0
+          ? "Review below, then publish the ones you want live."
+          : "The feeds had nothing new since the last run.",
+    });
+    load();
+  };
+
+  const publishNow = async (a: ScamAlert) => {
+    if (!a.source_url) {
+      toast({
+        title: "Source URL required to publish",
+        description: "Open Edit and add the source link first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const { error } = await supabase
+      .from("scam_alerts")
+      .update({ is_published: true, published_at: new Date().toISOString() })
+      .eq("id", a.id);
+    if (error) {
+      toast({ title: "Publish failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Published", description: "It is live on /pause-hub now." });
+    load();
+  };
+
   const startEdit = (a: ScamAlert) =>
     setEditing({
       id: a.id,
@@ -173,11 +220,22 @@ export default function AdminScamAlerts() {
             </p>
           </div>
           {!editing && (
-            <Button onClick={startNew} className="gap-2">
-              <Plus className="h-4 w-4" /> New alert
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={runIngestion} disabled={ingesting} className="gap-2">
+                <RefreshCw className={`h-4 w-4 ${ingesting ? "animate-spin" : ""}`} />
+                {ingesting ? "Pulling feeds..." : "Run ingestion now"}
+              </Button>
+              <Button onClick={startNew} className="gap-2">
+                <Plus className="h-4 w-4" /> New alert
+              </Button>
+            </div>
           )}
         </div>
+
+        <p className="text-xs text-muted-foreground -mt-3 mb-6">
+          Alerts are drafted automatically each week from public FTC and CISA feeds. Drafts stay
+          private until you publish them.
+        </p>
 
         {editing && (
           <div className="rounded-xl border border-border bg-card p-6 mb-8 space-y-4">
@@ -288,34 +346,118 @@ export default function AdminScamAlerts() {
         ) : alerts.length === 0 ? (
           <p className="text-sm text-muted-foreground">No alerts yet. Create your first one.</p>
         ) : (
-          <div className="space-y-3">
-            {alerts.map((a) => (
-              <div key={a.id} className="rounded-lg border border-border bg-card p-4 flex items-start gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider mb-1">
-                    <span className={`px-2 py-0.5 rounded-full border ${a.threat_level === "red_flag" ? "border-destructive/40 text-destructive" : a.threat_level === "caution" ? "border-primary/40 text-primary" : "border-border text-muted-foreground"}`}>
-                      {a.threat_level.replace("_", " ")}
-                    </span>
-                    <span className="text-muted-foreground">{a.category}</span>
-                    {a.is_published ? (
-                      <span className="text-primary">● live</span>
-                    ) : (
-                      <span className="text-muted-foreground">○ draft</span>
-                    )}
-                  </div>
-                  <h3 className="font-medium truncate">{a.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{a.summary}</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Button size="sm" variant="outline" onClick={() => startEdit(a)}>Edit</Button>
-                  <Button size="sm" variant="ghost" onClick={() => remove(a.id)} className="text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+          <div className="space-y-8">
+            {drafts.length > 0 && (
+              <div>
+                <h2 className="font-heading text-xl mb-1">
+                  Waiting for your approval
+                  <span className="ml-2 text-xs align-middle rounded-full bg-primary/15 text-primary px-2 py-0.5">
+                    {drafts.length}
+                  </span>
+                </h2>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Not visible to anyone until you publish. Check the source before you do.
+                </p>
+                <div className="space-y-3">
+                  {drafts.map((a) => (
+                    <AlertRow
+                      key={a.id}
+                      alert={a}
+                      onEdit={startEdit}
+                      onDelete={remove}
+                      onPublish={publishNow}
+                    />
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
+
+            <div>
+              <h2 className="font-heading text-xl mb-3">
+                Live on the hub
+                <span className="ml-2 text-xs align-middle text-muted-foreground">{live.length}</span>
+              </h2>
+              {live.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nothing published yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {live.map((a) => (
+                    <AlertRow key={a.id} alert={a} onEdit={startEdit} onDelete={remove} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function AlertRow({
+  alert: a,
+  onEdit,
+  onDelete,
+  onPublish,
+}: {
+  alert: ScamAlert;
+  onEdit: (a: ScamAlert) => void;
+  onDelete: (id: string) => void;
+  onPublish?: (a: ScamAlert) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 flex items-start gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider mb-1">
+          <span
+            className={`px-2 py-0.5 rounded-full border ${
+              a.threat_level === "red_flag"
+                ? "border-destructive/40 text-destructive"
+                : a.threat_level === "caution"
+                  ? "border-primary/40 text-primary"
+                  : "border-border text-muted-foreground"
+            }`}
+          >
+            {a.threat_level.replace("_", " ")}
+          </span>
+          <span className="text-muted-foreground">{a.category}</span>
+          {a.is_published ? (
+            <span className="text-primary">● live</span>
+          ) : (
+            <span className="text-muted-foreground">○ draft</span>
+          )}
+          {a.source_feed && <span className="text-muted-foreground/70">via {a.source_feed}</span>}
+        </div>
+        <h3 className="font-medium truncate">{a.title}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-2">{a.summary}</p>
+        {a.source_url && (
+          <a
+            href={a.source_url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" /> Check the source
+          </a>
+        )}
+      </div>
+      <div className="flex flex-col gap-2 shrink-0">
+        {onPublish && (
+          <Button size="sm" onClick={() => onPublish(a)}>
+            Publish
+          </Button>
+        )}
+        <Button size="sm" variant="outline" onClick={() => onEdit(a)}>
+          Edit
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => onDelete(a.id)}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
