@@ -1,10 +1,12 @@
 // Admin console for the post-purchase audit nurture sequence.
 //
-// One endpoint, four actions, all admin-only:
+// One endpoint, five actions, all admin-only:
 //   lookup   - find an audit by id / session id / email and return its touches
 //   preview  - render a step's email exactly as the buyer would receive it
 //   enqueue  - create the missing steps for an audit (never duplicates a step)
 //   resend   - send one step right now with a fresh idempotency key
+//   queue    - fleet-wide queue status and delivery outcome per step, keyed by
+//              the same idempotency key the worker sends with
 //
 // The worker (process-nurture-queue) still owns scheduled delivery. This only
 // gives Coach Kay a way to see and repair a single buyer's sequence.
@@ -17,6 +19,7 @@ import { TEMPLATES } from "../_shared/transactional-email-templates/registry.ts"
 import { getBookingLinks } from "../_shared/booking-links.ts";
 import {
   extractHighlights,
+  idempotencyKeyFor,
   NURTURE_STEPS,
   planTouches,
   smsBodyFor,
