@@ -17,6 +17,7 @@ import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import YourProgramPanel from "@/components/dashboard/YourProgramPanel";
+import { BuyerStartCard } from "@/components/BuyerStartCard";
 import CurriculumSection from "@/components/dashboard/CurriculumSection";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
