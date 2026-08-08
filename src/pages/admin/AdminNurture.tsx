@@ -245,6 +245,26 @@ export default function AdminNurture() {
   const missingSteps = audit ? steps.filter((d) => !touches.some((t) => t.step === d.step)) : [];
   const queuedSteps = steps.filter((d) => touches.some((t) => t.step === d.step));
 
+  // Something can still change: a queued touch has not settled, or a
+  // report-dependent step is still waiting on the report to generate.
+  const hasWorkInFlight =
+    !!audit &&
+    (touches.some((t) => t.status === "pending") ||
+      (steps.some((d) => d.requiresReport) && !audit.has_report));
+
+  const live = useLiveRefresh({
+    refresh: quietRefresh,
+    active: hasWorkInFlight,
+    enabled: !!audit,
+    isBusy: busy !== null || loading,
+    onFailureLimit: () =>
+      toast({
+        title: "Live updates paused",
+        description: "Could not reach the nurture service. Use Refresh to try again.",
+        variant: "destructive",
+      }),
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead title="Nurture Sequences | Admin" description="Preview, queue, and re-send audit nurture emails." path="/admin/nurture" noIndex />
