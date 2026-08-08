@@ -105,6 +105,30 @@ export function idempotencyKeyFor(auditId: string, step: number): string {
 }
 
 /**
+ * Short SMS companion for a touch. Delivery goes through the CRM, which owns
+ * STOP handling and carrier compliance, so this only produces the body text.
+ * Returns null for steps that should stay email-only.
+ */
+export function smsBodyFor(
+  step: number,
+  ctx: { origin: string; auditId: string; bookingUrl?: string | null },
+): string | null {
+  const base = ctx.origin.replace(/\/$/, "");
+  switch (step) {
+    case 1:
+      return `Coach Kay here. Your audit found one leak worth fixing first. I emailed it, and the full report is at ${base}/audit/report/${ctx.auditId}. Reply STOP to opt out.`;
+    case 3:
+      return `Your audit also unlocked coaching challenges and your dashboard. Pick one and start: ${base}/challenges. Reply STOP to opt out.`;
+    case 7:
+      return ctx.bookingUrl
+        ? `One week in. Want 15 free minutes on your audit? Grab a time: ${ctx.bookingUrl}. Reply STOP to opt out.`
+        : null;
+    default:
+      return null;
+  }
+}
+
+/**
  * Pull the single highest-leverage finding out of a generated report.
  * Every field is optional in practice, so each one degrades to null rather
  * than rendering an empty section or throwing.
