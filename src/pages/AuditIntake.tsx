@@ -28,6 +28,10 @@ const PATH = ["DIY with guidance", "Done-with-me coaching", "Done-for-me service
 const intakeSchema = z.object({
   full_name: z.string().trim().min(1, "Full name is required").max(200),
   email: z.string().trim().email("Valid email required").max(255),
+  // Optional throughout. Texting is a convenience, never a condition of
+  // buying, so an empty phone must always validate.
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  sms_consent: z.boolean().default(false),
   business_name: z.string().trim().min(1).max(200),
   website: z.string().trim().max(500).optional().or(z.literal("")),
   industry: z.enum(INDUSTRIES as [string, ...string[]]),
@@ -52,7 +56,7 @@ const intakeSchema = z.object({
 type IntakeState = z.input<typeof intakeSchema>;
 
 const defaultState: IntakeState = {
-  full_name: "", email: "",
+  full_name: "", email: "", phone: "", sms_consent: false,
   business_name: "", website: "", industry: "Coaching/Consulting",
   stage: "Idea", monthly_revenue: "$0", team_size: "Solo",
   current_tools: [], current_tools_other: "",
