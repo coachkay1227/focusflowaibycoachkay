@@ -344,6 +344,7 @@ export default function AdminNurture() {
                       ? "All steps queued"
                       : `Queue ${missingSteps.length} missing step${missingSteps.length === 1 ? "" : "s"}`}
                 </Button>
+                <LiveIndicator state={live.state} onPause={live.pause} onResume={live.resume} />
               </div>
               {!audit.email && (
                 <p className="text-sm text-muted-foreground mt-3">
