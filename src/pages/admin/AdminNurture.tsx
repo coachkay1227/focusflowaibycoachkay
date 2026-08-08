@@ -17,7 +17,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Send, Eye, ListPlus, RefreshCw, Mail, MessageSquare } from "lucide-react";
+import {
+  Search,
+  Send,
+  Eye,
+  ListPlus,
+  RefreshCw,
+  Mail,
+  MessageSquare,
+  CheckCircle2,
+  Clock,
+  CircleDashed,
+  AlertTriangle,
+} from "lucide-react";
 
 interface Touch {
   id: string;
@@ -81,6 +93,41 @@ const statusTone: Record<string, string> = {
 
 const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
 
+const DAY_MS = 86_400_000;
+
+/** Mirrors the worker's plan: Day N is scheduled N days after the purchase. */
+function plannedSendAt(purchasedAt: string, step: number) {
+  return new Date(new Date(purchasedAt).getTime() + step * DAY_MS);
+}
+
+/**
+ * Why a step has no queue row yet, and what queueing will actually do. Written
+ * for a human deciding whether to press the button.
+ */
+function missingStepReason(
+  def: StepDef,
+  audit: AuditInfo,
+): { reason: string; effect: string } {
+  const due = plannedSendAt(audit.created_at, def.step);
+  const overdue = due.getTime() < Date.now();
+  const effect = overdue
+    ? `Queueing creates it dated ${fmt(due.toISOString())}, which is already past, so the worker sends it on its next run.`
+    : `Queueing creates it scheduled for ${fmt(due.toISOString())}.`;
+
+  if (def.requiresReport && !audit.has_report) {
+    return {
+      reason:
+        "No queue row exists, and this step needs a generated report. The worker holds it until the report lands.",
+      effect,
+    };
+  }
+  return {
+    reason:
+      "No queue row exists, so nothing will ever send for this step on its own. This happens when the sequence was never planned at checkout, or the row was cleared.",
+    effect,
+  };
+}
+
 export default function AdminNurture() {
   const { toast } = useToast();
   const [query, setQuery] = useState("");
@@ -89,6 +136,7 @@ export default function AdminNurture() {
   const [result, setResult] = useState<LookupResult | null>(null);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [confirmStep, setConfirmStep] = useState<number | null>(null);
+  const [confirmEnqueue, setConfirmEnqueue] = useState(false);
 
   const call = useCallback(
     async <T,>(body: Record<string, unknown>): Promise<T | null> => {
@@ -172,6 +220,8 @@ export default function AdminNurture() {
   const audit = result?.audit;
   const touches = result?.touches ?? [];
   const steps = result?.steps ?? [];
+  const missingSteps = audit ? steps.filter((d) => !touches.some((t) => t.step === d.step)) : [];
+  const queuedSteps = steps.filter((d) => touches.some((t) => t.step === d.step));
 
   return (
     <div className="min-h-screen bg-background">
@@ -241,15 +291,88 @@ export default function AdminNurture() {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Refresh
                 </Button>
-                <Button onClick={doEnqueue} disabled={busy !== null || !audit.email}>
+                <Button
+                  onClick={() => setConfirmEnqueue(true)}
+                  disabled={busy !== null || !audit.email || missingSteps.length === 0}
+                >
                   <ListPlus className="h-4 w-4 mr-2" />
-                  {busy === "enqueue" ? "Queueing..." : "Queue missing steps"}
+                  {busy === "enqueue"
+                    ? "Queueing..."
+                    : missingSteps.length === 0
+                      ? "All steps queued"
+                      : `Queue ${missingSteps.length} missing step${missingSteps.length === 1 ? "" : "s"}`}
                 </Button>
               </div>
               {!audit.email && (
                 <p className="text-sm text-muted-foreground mt-3">
                   This audit has no email address, so nothing can be queued or sent for it.
                 </p>
+              )}
+            </section>
+
+            <section>
+              <h2 className="font-heading text-xl font-light mb-2">Queue coverage</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {missingSteps.length === 0
+                  ? "Every step in this sequence has a row in the queue. Nothing needs to be added before you send."
+                  : `${queuedSteps.length} of ${steps.length} steps are queued. The ${missingSteps.length} below have no row, so the worker will never send them until you queue them.`}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3 mb-4">
+                {steps.map((def) => {
+                  const touch = touches.find((t) => t.step === def.step);
+                  const queued = touch !== undefined;
+                  const overdue =
+                    touch?.status === "pending" && new Date(touch.scheduled_for).getTime() < Date.now();
+                  const Icon = !queued
+                    ? CircleDashed
+                    : touch!.status === "sent"
+                      ? CheckCircle2
+                      : touch!.status === "failed"
+                        ? AlertTriangle
+                        : Clock;
+                  const tone = !queued
+                    ? "border-dashed border-border text-muted-foreground"
+                    : touch!.status === "failed"
+                      ? "border-destructive/40 text-destructive"
+                      : touch!.status === "sent"
+                        ? "border-primary/40 text-primary"
+                        : "border-border text-foreground";
+                  return (
+                    <div key={def.step} className={`rounded-lg border p-3 ${tone}`}>
+                      <p className="flex items-center gap-2 font-medium">
+                        <Icon className="h-4 w-4" />
+                        Day {def.step}
+                      </p>
+                      <p className="text-xs mt-1">
+                        {!queued
+                          ? "Not queued"
+                          : touch!.status === "sent"
+                            ? `Sent ${fmt(touch!.sent_at)}`
+                            : overdue
+                              ? `Overdue since ${fmt(touch!.scheduled_for)}`
+                              : `${touch!.status} · ${fmt(touch!.scheduled_for)}`}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              {missingSteps.length > 0 && (
+                <ul className="space-y-3">
+                  {missingSteps.map((def) => {
+                    const { reason, effect } = missingStepReason(def, audit);
+                    return (
+                      <li key={def.step} className="rounded-lg border border-dashed border-border p-4">
+                        <p className="font-medium flex items-center gap-2">
+                          <ListPlus className="h-4 w-4 text-primary" />
+                          Day {def.step} will be added
+                          <span className="text-xs font-mono text-muted-foreground">{def.templateName}</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">{reason}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{effect}</p>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </section>
 
@@ -325,6 +448,26 @@ export default function AdminNurture() {
           <p className="text-sm text-muted-foreground">
             Rendered with this buyer's real data. Goes to {preview?.recipient ?? "no address on file"}.
           </p>
+          {preview !== null && audit && (
+            touches.some((t) => t.step === preview.step) ? (
+              <p className="text-sm text-muted-foreground">
+                Day {preview.step} is already in the queue
+                {(() => {
+                  const t = touches.find((x) => x.step === preview.step)!;
+                  return t.status === "sent"
+                    ? `, sent ${fmt(t.sent_at)}.`
+                    : ` as ${t.status}, scheduled ${fmt(t.scheduled_for)}.`;
+                })()}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Day {preview.step} is not queued yet. {missingStepReason(
+                  { step: preview.step, templateName: preview.templateName, requiresReport: preview.requiresReport },
+                  audit,
+                ).effect}
+              </p>
+            )
+          )}
           {preview?.requiresReport && !preview?.hasReport && (
             <p className="text-sm text-destructive">
               This step needs a generated report. The worker holds it until one exists.
@@ -369,6 +512,44 @@ export default function AdminNurture() {
               }}
             >
               Send it
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={confirmEnqueue} onOpenChange={setConfirmEnqueue}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Queue {missingSteps.length} missing step{missingSteps.length === 1 ? "" : "s"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-left">
+                <p>
+                  Steps already in the queue are left untouched. Only these get created for{" "}
+                  {audit?.email}:
+                </p>
+                <ul className="space-y-2">
+                  {audit &&
+                    missingSteps.map((def) => (
+                      <li key={def.step}>
+                        <span className="font-medium text-foreground">Day {def.step}</span>{" "}
+                        {missingStepReason(def, audit).effect}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmEnqueue(false);
+                doEnqueue();
+              }}
+            >
+              Queue them
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
