@@ -313,7 +313,10 @@ export default function PauseHub() {
                 : "Offline · showing last load"}
           </span>
           <span className="text-[11px] text-muted-foreground/70" key={tick}>
-            {alerts.length} active · updated {timeAgo(new Date(lastUpdate).toISOString()) || "just now"}
+            {alerts.length} active ·{" "}
+            {newestPublishedAt
+              ? `newest alert ${timeAgo(newestPublishedAt) || "just now"}`
+              : "no alerts published yet"}
           </span>
         </div>
       </section>
