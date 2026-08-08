@@ -55,6 +55,8 @@ export default function AdminScamAlerts() {
   const [editing, setEditing] = useState<(typeof EMPTY & { id?: string }) | null>(null);
   const [saving, setSaving] = useState(false);
   const [ingesting, setIngesting] = useState(false);
+  const drafts = alerts.filter((a) => !a.is_published);
+  const live = alerts.filter((a) => a.is_published);
 
   const load = async () => {
     const { data, error } = await supabase
