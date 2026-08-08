@@ -136,7 +136,7 @@ const SiteFooter = () => {
         {/* Disclaimer */}
         <div className="border-t border-border/30 pt-6 space-y-4">
           <p className="text-[11px] text-muted-foreground max-w-3xl mx-auto text-center leading-relaxed">
-            FocusFlow AI provides AI-powered coaching, education, and productivity tools — not a
+            FocusFlow AI provides AI-powered coaching, education, and productivity tools, not a
             substitute for licensed medical, mental-health, legal, financial, or tax advice.
             AI-generated insights are for personal development only. Results vary.{" "}
             <Link to="/disclaimer" className="text-primary/70 hover:text-primary underline underline-offset-2">

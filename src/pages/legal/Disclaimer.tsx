@@ -4,20 +4,20 @@ import SEOHead from "@/components/SEOHead";
 const Disclaimer = () => (
   <>
     <SEOHead
-      title="Disclaimer — FocusFlow AI"
-      description="Important context about what FocusFlow AI by Coach Kay is — and what it isn't."
+      title="Disclaimer: FocusFlow AI"
+      description="Important context about what FocusFlow AI by Coach Kay is, and what it isn't."
       path="/disclaimer"
     />
   <LegalLayout
     eyebrow="LEGAL · DISCLAIMER"
     title="Coaching, Wellness & Earnings Disclaimer"
-    description="Important context about what FocusFlow AI by Coach Kay is — and what it isn't."
+    description="Important context about what FocusFlow AI by Coach Kay is, and what it isn't."
     path="/disclaimer"
     lastUpdated="May 26, 2026"
   >
     <p>
       Coach Kay is a <strong>Master Certified Life Coach</strong>. FocusFlow AI is a coaching,
-      education, and AI-productivity platform. Please read the following carefully — by using the
+      education, and AI-productivity platform. Please read the following carefully, by using the
       Service you acknowledge and agree to these statements.
     </p>
 
@@ -38,7 +38,7 @@ const Disclaimer = () => (
       your jurisdiction before making legal, financial, or tax decisions.
     </p>
 
-    <h2 className="font-heading text-2xl font-light text-primary pt-4">Results vary — no guarantees</h2>
+    <h2 className="font-heading text-2xl font-light text-primary pt-4">Results vary, no guarantees</h2>
     <p>
       Personal-development outcomes depend on your honesty, consistency, and life circumstances.
       Business and income outcomes depend on your effort, your market, your offer, and many

@@ -79,7 +79,7 @@ export default function OrderSuccess() {
         if (res.stages) setStages(res.stages);
         if (res.state === "confirmed") return setVerify("confirmed");
         if (res.state === "processing") {
-          // Payment settled but the webhook has not landed yet — keep polling.
+          // Payment settled but the webhook has not landed yet, keep polling.
           setVerify("processing");
           if (attempts.current < 8) setTimeout(poll, 2500);
           return;
@@ -104,7 +104,7 @@ export default function OrderSuccess() {
           body: { session_id: sessionId },
         });
         if (error || !data || !(data as OrderSummary).package_name) {
-          // No matching book_orders row — treat as a non-book checkout
+          // No matching book_orders row, treat as a non-book checkout
           // (Rent-an-Agent subscription, AI Audit, Strategy Intensive, etc.)
           setMode("non_book");
           return;
@@ -138,7 +138,7 @@ export default function OrderSuccess() {
     return (
       <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
         <SEOHead
-          title="Confirming Your Payment — FocusFlow AI"
+          title="Confirming Your Payment: FocusFlow AI"
           description="We're confirming your payment with our payment processor."
           path="/order-success"
           noIndex
@@ -146,11 +146,11 @@ export default function OrderSuccess() {
         <div className="max-w-xl w-full text-center">
           <Loader2 className="h-10 w-10 text-primary animate-spin mx-auto mb-8" />
           <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">
-            {verify === "processing" ? "Payment received — finalising your access" : "Confirming your payment"}
+            {verify === "processing" ? "Payment received, finalising your access" : "Confirming your payment"}
           </h1>
           <p className="text-muted-foreground leading-relaxed">
             {verify === "processing"
-              ? "Your payment went through. We're setting up your access now — this usually takes a few seconds. You can safely stay on this page."
+              ? "Your payment went through. We're setting up your access now, this usually takes a few seconds. You can safely stay on this page."
               : "Checking with our payment processor. This only takes a moment."}
           </p>
           {sessionId && stages && verify === "processing" && (
@@ -184,7 +184,7 @@ export default function OrderSuccess() {
             We couldn't confirm this payment
           </h1>
           <p className="text-muted-foreground leading-relaxed mb-8">
-            Nothing has been unlocked yet. If you were charged, you have not lost anything — email{" "}
+            Nothing has been unlocked yet. If you were charged, you have not lost anything, email{" "}
             <a href="mailto:hello@coachkayelevates.org" className="text-primary underline">
               hello@coachkayelevates.org
             </a>{" "}
@@ -204,7 +204,7 @@ export default function OrderSuccess() {
   }
 
   // Fulfillment is confirmed. Everything below is driven by the backend
-  // verification response and the fulfillment row — never by URL params.
+  // verification response and the fulfillment row, never by URL params.
   const isAutism = mode === "autism";
   const isBookish = isAutism || mode === "book";
 
@@ -219,7 +219,7 @@ export default function OrderSuccess() {
     : mode === "book"
       ? "Your order and your vision are both confirmed. Here's what you can do right now while the work gets underway."
       : tierLabel
-        ? `Welcome to ${tierLabel}. Your access is unlocked — here's what to do now.`
+        ? `Welcome to ${tierLabel}. Your access is unlocked, here's what to do now.`
         : "Your purchase is confirmed and your access is unlocked. Here's what to do now.";
 
   return (
@@ -227,8 +227,8 @@ export default function OrderSuccess() {
       <SEOHead
         title={
           isBookish
-            ? "Order Confirmed — FocusFlow AI"
-            : "Payment Confirmed — FocusFlow AI"
+            ? "Order Confirmed. FocusFlow AI"
+            : "Payment Confirmed. FocusFlow AI"
         }
         description="Your purchase is confirmed and your access is unlocked. Book your call or start your first challenge."
         path="/order-success"

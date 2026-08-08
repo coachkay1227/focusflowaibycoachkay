@@ -94,9 +94,9 @@ export default function AdminAudits() {
                           <Badge className={statusColor}>{statusLabel}</Badge>
                         </td>
                         <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                          {a.generated_at ? new Date(a.generated_at).toLocaleDateString() : "—"}
+                          {a.generated_at ? new Date(a.generated_at).toLocaleDateString() : ", "}
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{a.recommended_offer ?? "—"}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{a.recommended_offer ?? ", "}</td>
                         <td className="px-4 py-3">
                           {a.sms_consent_at ? (
                             <div className="flex flex-col gap-1">

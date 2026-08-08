@@ -24,7 +24,7 @@ export interface NextStepsPanelProps {
   amountTotalCents?: number | null;
   /** Receipt recipient, as Stripe recorded it. */
   customerEmail?: string | null;
-  /** Stripe checkout mode — subscriptions always get the strategy call. */
+  /** Stripe checkout mode, subscriptions always get the strategy call. */
   mode?: string | null;
   /** For analytics attribution. */
   sessionId?: string | null;
@@ -42,7 +42,7 @@ const formatCents = (cents: number) =>
  *
  * Only ever rendered after the backend has confirmed BOTH a settled Stripe
  * payment and a real fulfillment record. Every fact shown here comes from that
- * backend response — never from URL parameters, which a visitor can edit.
+ * backend response, never from URL parameters, which a visitor can edit.
  */
 export const NextStepsPanel = ({
   headline,
@@ -120,7 +120,7 @@ export const NextStepsPanel = ({
     ? "Book your 60-minute strategy session"
     : "Book your free 15-minute clarity call";
   const bookingNote = wantsStrategyCall
-    ? "A separately booked paid session — pick a time that works for you."
+    ? "A separately booked paid session, pick a time that works for you."
     : "No charge, no pitch. Bring the one thing you're stuck on.";
 
   const track = (action: "book_call" | "start_challenge" | "start_here") => {
@@ -182,7 +182,7 @@ export const NextStepsPanel = ({
           </dl>
           <div className="mt-4 flex items-center gap-2 border-t border-border/60 pt-4 text-sm text-primary">
             <Unlock className="h-4 w-4 shrink-0" />
-            <span>Your access is unlocked now — nothing else is pending.</span>
+            <span>Your access is unlocked now, nothing else is pending.</span>
           </div>
         </div>
       )}
@@ -232,7 +232,7 @@ export const NextStepsPanel = ({
           <Trophy className="h-6 w-6 text-accent mb-3" />
           <h3 className="font-heading text-lg text-foreground mb-2">Start moving today</h3>
           <p className="text-sm text-muted-foreground mb-5 flex-1">
-            Choose a challenge that fits your week — from a 3-day reset to a full 30-day
+            Choose a challenge that fits your week, from a 3-day reset to a full 30-day
             transformation. It starts the day you begin it.
           </p>
           <Button
@@ -284,7 +284,7 @@ export const NextStepsPanel = ({
             <Mail className="h-4 w-4 text-primary mt-0.5 shrink-0" />
             <span>
               Your receipt is in your inbox
-              {customerEmail ? ` at ${customerEmail}` : ""} — check spam if you don't see it.
+              {customerEmail ? ` at ${customerEmail}` : ""}, check spam if you don't see it.
             </span>
           </li>
           <li className="flex items-start gap-3">
@@ -293,7 +293,7 @@ export const NextStepsPanel = ({
           </li>
           <li className="flex items-start gap-3">
             <CalendarDays className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-            <span>Book your call whenever you're ready — there's no deadline.</span>
+            <span>Book your call whenever you're ready, there's no deadline.</span>
           </li>
           <li className="flex items-start gap-3">
             <Trophy className="h-4 w-4 text-accent mt-0.5 shrink-0" />

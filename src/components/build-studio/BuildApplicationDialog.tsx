@@ -71,12 +71,12 @@ const BuildApplicationDialog = ({
           name: name.trim(),
           email: email.trim(),
           organization: company.trim() || undefined,
-          programName: `Build Studio — ${projectType}`,
+          programName: `Build Studio, ${projectType}`,
           message,
         },
       });
       if (emailErr) {
-        // DB record is already in — surface a softer message, don't fail UX.
+        // DB record is already in, surface a softer message, don't fail UX.
         console.warn("apply-now notification failed", emailErr);
       }
 

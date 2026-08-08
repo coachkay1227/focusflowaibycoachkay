@@ -69,6 +69,6 @@ export function trackCta(
   path: FunnelPath,
   properties: Record<string, unknown> = {}
 ): void {
-  // Fire-and-forget — no await needed at call sites.
+  // Fire-and-forget, no await needed at call sites.
   void trackEvent("cta_click", { cta, ...properties }, path);
 }

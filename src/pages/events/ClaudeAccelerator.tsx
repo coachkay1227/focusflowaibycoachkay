@@ -35,7 +35,7 @@ const eventSchema = {
   },
   "organizer": {
     "@type": "Organization",
-    "name": "FocusFlow AI — Coach Kay",
+    "name": "FocusFlow AI. Coach Kay",
     "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com"
   },
   "performer": {
@@ -163,7 +163,7 @@ const allSchemas = [eventSchema, howToSchema, faqSchema, courseSchema];
 export default function ClaudeAcceleratorPage() {
   return (
     <>
-      {/* HIDDEN SEO HEAD — Google reads this */}
+      {/* HIDDEN SEO HEAD. Google reads this */}
       <SEOHead
         title="Claude AI Business Accelerator: Free Training"
         description="Free, in-person AI training for Columbus small business owners. Open to all with emphasis on Black entrepreneurs. Build real AI workflows live. 150 seats."
@@ -217,7 +217,7 @@ export default function ClaudeAcceleratorPage() {
               href="https://TheClaudeAIBusinessAccelerator.eventbrite.com"
               className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg text-lg font-bold hover:scale-105 transition-transform"
             >
-              Register Free — 150 Seats
+              Register Free. 150 Seats
             </a>
           </div>
         </section>
@@ -294,7 +294,7 @@ export default function ClaudeAcceleratorPage() {
                   <h4 className="inline">Is this only for Black entrepreneurs?</h4>
                 </summary>
                 <p className="mt-4 text-gray-300">
-                  No — open to all Columbus small business owners. We emphasize Black entrepreneurship 
+                  No, open to all Columbus small business owners. We emphasize Black entrepreneurship 
                   because these tools close gaps where support has been lightest.
                 </p>
               </details>
@@ -312,7 +312,7 @@ export default function ClaudeAcceleratorPage() {
                   <h4 className="inline">Will this be recorded?</h4>
                 </summary>
                 <p className="mt-4 text-gray-300">
-                  Yes — all registered attendees get lifetime access to the recording, templates, 
+                  Yes, all registered attendees get lifetime access to the recording, templates, 
                   and AI prompt library within 24 hours.
                 </p>
               </details>

@@ -9,7 +9,7 @@ import { webPage, breadcrumb, serviceSchema, SITE_URL, ORG_ID } from "@/lib/seo-
 
 const LeadEngine = () => {
   const jsonLd = [
-    webPage("/agents/lead-engine", "AI Lead Engine — Outbound Systems", "CollectionPage"),
+    webPage("/agents/lead-engine", "AI Lead Engine. Outbound Systems", "CollectionPage"),
     serviceSchema({
       name: "AI Lead Engine",
       description:
@@ -36,7 +36,7 @@ const LeadEngine = () => {
         position: i + 1,
         item: {
           "@type": "Service",
-          name: tier.name.startsWith("Lead Engine") ? tier.name : `AI Lead Engine — ${tier.name}`,
+          name: tier.name.startsWith("Lead Engine") ? tier.name : `AI Lead Engine, ${tier.name}`,
           description: tier.headline,
           provider: { "@id": ORG_ID },
           url: `${SITE_URL}/agents/lead-engine`,

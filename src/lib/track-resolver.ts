@@ -1,8 +1,8 @@
 // ============================================================
-// FocusFlow — Track Resolver
+// FocusFlow. Track Resolver
 // Lightweight recommendation engine that classifies user signals
 // into a primary support path and returns phase-aware recommendations.
-// Pure function — no API calls, no DB, no side effects.
+// Pure function, no API calls, no DB, no side effects.
 // ============================================================
 
 export type SupportTrack =

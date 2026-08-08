@@ -302,7 +302,7 @@ export function AutismIntakeModal({ open, onOpenChange, packageSlug, initialGift
                   Preparing checkout…
                 </span>
               ) : (
-                <>Proceed to Payment — {formatUSD(total)}</>
+                <>Proceed to Payment, {formatUSD(total)}</>
               )}
             </Button>
           </div>

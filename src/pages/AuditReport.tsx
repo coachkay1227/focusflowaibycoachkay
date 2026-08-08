@@ -92,7 +92,7 @@ const AuditReport = () => {
       {
         heading: "7-Day Action Plan",
         body: report.seven_day_plan
-          .map((d) => `Day ${d.day} — ${d.title} [${d.focus_pillar}]\n${d.action}\nWhy: ${d.why}`)
+          .map((d) => `Day ${d.day}, ${d.title} [${d.focus_pillar}]\n${d.action}\nWhy: ${d.why}`)
           .join("\n\n"),
       },
       {
@@ -136,7 +136,7 @@ const AuditReport = () => {
         </h1>
         <p className="text-muted-foreground mb-6 max-w-md">
           {hasIntake
-            ? "Your intake is saved and your report is generating. This usually takes under 2 minutes — refresh to check."
+            ? "Your intake is saved and your report is generating. This usually takes under 2 minutes, refresh to check."
             : "Your payment is confirmed. Complete the intake questions so we can generate your personalized audit."}
         </p>
         {hasIntake ? (
@@ -192,7 +192,7 @@ const AuditReport = () => {
 
   return (
     <div className="min-h-dvh bg-background text-foreground report-view">
-      <SEOHead title="Your AI Business Audit — FocusFlow AI" description="Your custom AI Business Audit by Coach Kay." path="/audit/report" noIndex />
+      <SEOHead title="Your AI Business Audit: FocusFlow AI" description="Your custom AI Business Audit by Coach Kay." path="/audit/report" noIndex />
       <style>{`
         @media print {
           body * { visibility: hidden !important; }
@@ -225,19 +225,19 @@ const AuditReport = () => {
           )}
         </header>
 
-        {/* 1 — Executive Snapshot */}
+        {/* 1. Executive Snapshot */}
         <section className="mb-8 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">YOUR EXECUTIVE SNAPSHOT</h2>
           <p className="mt-2 text-foreground/90 leading-relaxed whitespace-pre-line">{report.executive_snapshot}</p>
         </section>
 
-        {/* 2 — Where You're Leaking */}
+        {/* 2. Where You're Leaking */}
         <section className="mb-8 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">WHERE YOU'RE LEAKING</h2>
           <p className="mt-2 text-foreground/90 leading-relaxed whitespace-pre-line">{report.where_youre_leaking}</p>
         </section>
 
-        {/* 3 — F.O.C.U.S. Diagnostic */}
+        {/* 3. F.O.C.U.S. Diagnostic */}
         <section className="mb-8 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">YOUR F.O.C.U.S. DIAGNOSTIC</h2>
           <div className="mt-4 space-y-4">
@@ -260,7 +260,7 @@ const AuditReport = () => {
           </div>
         </section>
 
-        {/* 4 — 7-Day Plan */}
+        {/* 4. 7-Day Plan */}
         <section className="mb-8 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">YOUR 7-DAY ACTION PLAN</h2>
           <ol className="mt-4 space-y-4 border-l border-primary/30 pl-5">
@@ -276,7 +276,7 @@ const AuditReport = () => {
           </ol>
         </section>
 
-        {/* 5 — Tool Stack */}
+        {/* 5. Tool Stack */}
         <section className="mb-8 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">TOOL STACK RECOMMENDATIONS</h2>
           <div className="mt-4 overflow-x-auto">
@@ -298,7 +298,7 @@ const AuditReport = () => {
           </div>
         </section>
 
-        {/* 6 — Custom Prompts */}
+        {/* 6. Custom Prompts */}
         <section className="mb-8 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">CUSTOM PROMPTS BUILT FOR YOU</h2>
           <div className="mt-4 grid gap-3">
@@ -314,7 +314,7 @@ const AuditReport = () => {
           </div>
         </section>
 
-        {/* 7 — Next Best Move */}
+        {/* 7. Next Best Move */}
         <section className="mb-8 rounded-xl border-2 border-primary bg-primary/10 p-7">
           <div className="text-xs font-mono-label tracking-[0.2em] text-primary mb-1">⭐ YOUR NEXT BEST MOVE</div>
           <h2 className="font-heading text-3xl text-primary">{nbm.offer_name}</h2>
@@ -353,7 +353,7 @@ const AuditReport = () => {
           </div>
         </section>
 
-        {/* 8 — All Pathways */}
+        {/* 8. All Pathways */}
         <section className="mb-12 rounded-lg border border-border bg-card/40 p-6">
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">ALL YOUR PATHWAYS</h2>
           <p className="mt-2 text-foreground/90 whitespace-pre-line">{report.all_pathways_note}</p>

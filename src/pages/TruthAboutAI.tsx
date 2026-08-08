@@ -59,7 +59,7 @@ const FEARS = [
   { fear: "I'm already too far behind", truth: "Tools change every few months. Being behind six months ago means nothing today. Start now." },
   { fear: "I can't trust AI content", truth: "You're right to be skeptical. AI is a tool, not a source. Critical thinking is the skill that matters." },
   { fear: "AI will destroy creativity", truth: "AI can generate. It cannot create from lived experience, values, or perspective. That's yours." },
-  { fear: "I'll get scammed", truth: "Fake gurus, wrapper products, passive-income promises — all real. I teach you to spot them on sight." },
+  { fear: "I'll get scammed", truth: "Fake gurus, wrapper products, passive-income promises, all real. I teach you to spot them on sight." },
   { fear: "I don't know who to trust", truth: "Trust the people who tell you what AI can't do as clearly as what it can. That's the bar." },
 ];
 
@@ -67,7 +67,7 @@ const ENVIRONMENT: { kind: "false" | "nuanced" | "true"; claim: string; truth: s
   {
     kind: "false",
     claim: "Every ChatGPT query uses a 500ml bottle of water",
-    truth: "The viral figure aggregates training + on-site cooling + power-plant water per session, not per query. Real per-query on-site water is closer to ~5ml — a teaspoon. Less than a Google image search, a rounding error next to one almond (3L). [3]",
+    truth: "The viral figure aggregates training + on-site cooling + power-plant water per session, not per query. Real per-query on-site water is closer to ~5ml, a teaspoon. Less than a Google image search, a rounding error next to one almond (3L). [3]",
   },
   {
     kind: "true",
@@ -77,7 +77,7 @@ const ENVIRONMENT: { kind: "false" | "nuanced" | "true"; claim: string; truth: s
   {
     kind: "nuanced",
     claim: "AI is destroying the climate",
-    truth: "Individual chatbot use is climate-negligible — one beef burger, one short drive, or one transatlantic flight dwarfs a year of prompts. Training frontier models is genuinely energy-intensive (one GPT-class run ≈ thousands of homes-years). The honest concern is grid pressure and power-source mix, not your prompts. [2]",
+    truth: "Individual chatbot use is climate-negligible, one beef burger, one short drive, or one transatlantic flight dwarfs a year of prompts. Training frontier models is genuinely energy-intensive (one GPT-class run ≈ thousands of homes-years). The honest concern is grid pressure and power-source mix, not your prompts. [2]",
   },
   {
     kind: "true",
@@ -87,7 +87,7 @@ const ENVIRONMENT: { kind: "false" | "nuanced" | "true"; claim: string; truth: s
   {
     kind: "false",
     claim: "If I stop using AI, I'll save the planet",
-    truth: "You won't. A year of moderate ChatGPT use is roughly the carbon footprint of a single 1-hour drive. Skipping AI to save the planet is like skipping toast to fund a mortgage. Direct your effort at flying, driving, heating, and meat — that's where the leverage is. [2]",
+    truth: "You won't. A year of moderate ChatGPT use is roughly the carbon footprint of a single 1-hour drive. Skipping AI to save the planet is like skipping toast to fund a mortgage. Direct your effort at flying, driving, heating, and meat, that's where the leverage is. [2]",
   },
   {
     kind: "nuanced",
@@ -97,10 +97,10 @@ const ENVIRONMENT: { kind: "false" | "nuanced" | "true"; claim: string; truth: s
 ];
 
 const ENVIRONMENT_SOURCES = [
-  { n: 1, label: "IEA — Energy and AI / 2025 data-centre update", url: "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary" },
-  { n: 2, label: "Hannah Ritchie — How much electricity does AI consume? [2025]", url: "https://hannahritchie.substack.com/p/ai-electricity-2025" },
-  { n: 3, label: "Sean Goedecke — Talking to ChatGPT costs 5ml of water, not 500ml", url: "https://www.seangoedecke.com/water-impact-of-ai/" },
-  { n: 4, label: "Industrial Info Resources — 4,500 data-centre projects in pipeline (2026)", url: "https://www.industrialinfo.com/iirenergy/industry-news/article/iea-data-centers-pose-challenge-to-global-power-industry--356703" },
+  { n: 1, label: "IEA. Energy and AI / 2025 data-centre update", url: "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary" },
+  { n: 2, label: "Hannah Ritchie. How much electricity does AI consume? [2025]", url: "https://hannahritchie.substack.com/p/ai-electricity-2025" },
+  { n: 3, label: "Sean Goedecke. Talking to ChatGPT costs 5ml of water, not 500ml", url: "https://www.seangoedecke.com/water-impact-of-ai/" },
+  { n: 4, label: "Industrial Info Resources. 4,500 data-centre projects in pipeline (2026)", url: "https://www.industrialinfo.com/iirenergy/industry-news/article/iea-data-centers-pose-challenge-to-global-power-industry--356703" },
 ];
 
 const RED_FLAGS = [
@@ -158,7 +158,7 @@ const TRUST_PILLARS = [
   {
     icon: AlertTriangle,
     title: "I'll tell you 'no'",
-    body: "If you don't need what I sell, I'll send you somewhere that fits — even if that somewhere is rest. Trust over revenue, every time.",
+    body: "If you don't need what I sell, I'll send you somewhere that fits, even if that somewhere is rest. Trust over revenue, every time.",
   },
 ];
 
@@ -198,12 +198,12 @@ const PATHS = [
   {
     eyebrow: "Full Transformation",
     title: "Rebuild your life AND business with AI",
-    tagline: "For the rare person who's done playing small — ready to integrate the personal and the strategic.",
+    tagline: "For the rare person who's done playing small, ready to integrate the personal and the strategic.",
     features: [
       "90-day Full AI Transformation curriculum",
       "6-month Private Partnership with Kay",
       "Custom AI agents, dashboards, and decision systems",
-      "Highest-touch — limited intake per quarter",
+      "Highest-touch, limited intake per quarter",
     ],
     price: "$2,997",
     priceSuffix: "/ from",
@@ -277,7 +277,7 @@ export default function TruthAboutAI() {
               <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-primary/[0.06] blur-2xl pointer-events-none" />
               <div className="absolute -bottom-32 -left-20 w-96 h-96 rounded-full bg-primary/[0.04] blur-3xl pointer-events-none" />
               <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-primary mb-4">
-                The AI Reality Guide — Coach Kay
+                The AI Reality Guide. Coach Kay
               </p>
               <h1 className="font-heading font-light text-foreground text-[2.4rem] md:text-[3.6rem] leading-[1.05] mb-6 max-w-3xl">
                 The truth about AI.
@@ -286,7 +286,7 @@ export default function TruthAboutAI() {
               </h1>
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mb-8 font-light">
                 Most AI content online is panic or propaganda. Neither serves you. This is the honest
-                breakdown — for your life, your business, and what comes next.
+                breakdown, for your life, your business, and what comes next.
               </p>
               <div className="flex flex-wrap gap-2 mb-9">
                 {TAGS.map((t) => (
@@ -320,7 +320,7 @@ export default function TruthAboutAI() {
             <Section label="Let's start here" title="Yes, AI is changing everything. That's not a reason to panic.">
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
                 I'll be honest the way I am with every client: AI is a significant shift. It's not
-                going away. And most people are responding from one of two broken places — full
+                going away. And most people are responding from one of two broken places, full
                 fear, or delusional hype.
               </p>
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
@@ -334,8 +334,7 @@ export default function TruthAboutAI() {
                 </p>
               </blockquote>
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
-                My job — whether I'm with a Fortune-500 board or a single mom rebuilding her life —
-                is to give you the clarity to make smart decisions. That's what this page is.
+                My job, whether I'm with a Fortune-500 board or a single mom rebuilding her life, is to give you the clarity to make smart decisions. That's what this page is.
               </p>
             </Section>
           </AnimatedSection>
@@ -362,7 +361,7 @@ export default function TruthAboutAI() {
             </Section>
           </AnimatedSection>
 
-          {/* ENVIRONMENT — fact-cited */}
+          {/* ENVIRONMENT, fact-cited */}
           <AnimatedSection>
             <Section
               label="The environmental question"
@@ -371,7 +370,7 @@ export default function TruthAboutAI() {
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 You've seen the headlines. "Every ChatGPT query drinks a bottle of water." "AI is
                 boiling the planet." Some of that is real. Most of it is wildly out of context.
-                Here's the honest math — every number cited.
+                Here's the honest math, every number cited.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {ENVIRONMENT.map((e, i) => (
@@ -386,7 +385,7 @@ export default function TruthAboutAI() {
               </div>
               <p className="mt-6 text-[14px] text-foreground/85 leading-relaxed font-light italic">
                 Use AI when it helps you. Vote and pressure your utility on where the power comes
-                from. Those are different problems — and pretending they're the same is its own kind
+                from. Those are different problems, and pretending they're the same is its own kind
                 of dishonesty.
               </p>
               <div className="mt-6 rounded-lg border border-border/30 bg-card/30 p-4">
@@ -455,7 +454,7 @@ export default function TruthAboutAI() {
             <Section label="The fear conversation" title="Let's talk about what you're actually afraid of">
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-5">
                 The fear is real. Most of it is fed by incomplete information. Here's what I hear
-                most — and the honest truth behind it.
+                most, and the honest truth behind it.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {FEARS.map((f, i) => (
@@ -536,7 +535,7 @@ export default function TruthAboutAI() {
                 ))}
               </div>
 
-              {/* F.O.C.U.S. bridge — mindset/life coaching tie-in */}
+              {/* F.O.C.U.S. bridge, mindset/life coaching tie-in */}
               <div className="mt-7 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-7">
                 <p className="text-[13px] md:text-[14px] text-foreground/90 leading-relaxed font-light mb-5">
                   Mindset isn't a separate program. It lives inside{" "}
@@ -597,12 +596,12 @@ export default function TruthAboutAI() {
               </div>
               <p className="mt-5 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground/80">
                 <Wrench className="h-3.5 w-3.5" strokeWidth={1.5} />
-                Updated as my stack changes — not when a vendor pays
+                Updated as my stack changes, not when a vendor pays
               </p>
             </Section>
           </AnimatedSection>
 
-          {/* THE THREE PATHS — conversion engine */}
+          {/* THE THREE PATHS, conversion engine */}
           <AnimatedSection>
             <div ref={pathsRef} className="scroll-mt-28">
               <Section
@@ -611,7 +610,7 @@ export default function TruthAboutAI() {
               >
                 <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-7">
                   Personal, business, or full transformation. Each path is a real product with a
-                  real price. Start small or go deep — but start.
+                  real price. Start small or go deep, but start.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
                   {PATHS.map((p) => (
@@ -655,7 +654,7 @@ export default function TruthAboutAI() {
   );
 }
 
-/* — Shared section shell ———————————————————————————————— */
+/*. Shared section shell, —, —, —, —, —, —, —, —, —, —, —, —, —, —, —, — */
 function Section({
   label,
   title,

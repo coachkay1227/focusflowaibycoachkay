@@ -260,7 +260,7 @@ const Assessment = () => {
   } | null>(null);
   const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
 
-  // Admin preview shortcut — fill every question with the first option.
+  // Admin preview shortcut, fill every question with the first option.
   useEffect(() => {
     if (!isAdmin) return;
     if (searchParams.get("preview") !== "1") return;
@@ -643,7 +643,7 @@ const Assessment = () => {
               )}
             </div>
 
-            {/* THE next move — single decisive card */}
+            {/* THE next move, single decisive card */}
             <div className="mt-8">
               <span className="font-mono-label text-[10px] tracking-wider text-primary/70">
                 YOUR NEXT MOVE

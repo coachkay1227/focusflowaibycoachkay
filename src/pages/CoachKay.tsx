@@ -104,7 +104,7 @@ const CoachKay = () => {
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/20 blur-lg" />
                 <img
                   src={coachKayImg}
-                  alt="Coach Kay — Kenza Alaoui Ismaili, AI & Life Transformation Coach"
+                  alt="Coach Kay. Kenza Alaoui Ismaili, AI & Life Transformation Coach"
                   className="relative rounded-2xl object-cover shadow-2xl w-full"
                   loading="eager"
                   {...{ fetchpriority: "high" }}
@@ -119,7 +119,7 @@ const CoachKay = () => {
                 Meet Your Coach
               </p>
               <h1 className="mb-4 font-heading text-4xl font-bold leading-tight md:text-5xl">
-                Meet Coach Kay — AI &amp; Life Transformation Coach
+                Meet Coach Kay. AI &amp; Life Transformation Coach
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
                 Kenza Alaoui Ismaili · AI &amp; Life Transformation Coach
@@ -152,7 +152,7 @@ const CoachKay = () => {
         </div>
       </section>
 
-      {/* TWO HATS — Collective AI positioning */}
+      {/* TWO HATS. Collective AI positioning */}
       <section id="two-hats" className="py-12 md:py-16 bg-secondary/10">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <AnimatedSection>
@@ -292,7 +292,7 @@ const CoachKay = () => {
         </div>
       </section>
 
-      {/* Where this work lives — two brands */}
+      {/* Where this work lives, two brands */}
       <section className="bg-secondary/20 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <AnimatedSection>

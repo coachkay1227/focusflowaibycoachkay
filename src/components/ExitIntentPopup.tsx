@@ -130,7 +130,7 @@ const ExitIntentPopup = () => {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Before you go — get your free AI readiness score"
+      aria-label="Before you go, get your free AI readiness score"
       className="fixed inset-0 z-[70] flex items-center justify-center px-4"
       style={{ background: "rgba(0,0,0,0.70)", backdropFilter: "blur(4px)" }}
     >

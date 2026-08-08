@@ -46,14 +46,14 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
   const agentCountNum = answers.agentCount === '4+' ? 4 : answers.agentCount === '2-3' ? 2 : 1;
   const knowledgeBaseFlag = answers.hasDocuments === 'yes';
 
-  // GHL — always custom quote
+  // GHL, always custom quote
   if (path === 'ghl') {
     return {
       path: 'ghl',
       tier,
-      headline: 'GoHighLevel AI Agent — Human-Like Conversations',
+      headline: 'GoHighLevel AI Agent. Human-Like Conversations',
       description:
-        'Your use case requires real-time, human-like communication — calls, texts, or live chat. GHL agents are custom-scoped and quoted based on your specific workflows, integrations, and call volume.',
+        'Your use case requires real-time, human-like communication, calls, texts, or live chat. GHL agents are custom-scoped and quoted based on your specific workflows, integrations, and call volume.',
       includes: [
         'Custom GoHighLevel agent configuration',
         'Phone call and SMS automation',
@@ -113,7 +113,7 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
       'Delivery within 3–7 business days',
     ];
     if (tier === 'agency') {
-      includes.push('Branded GPT Dashboard ($297 value — included for 4+ builds)');
+      includes.push('Branded GPT Dashboard ($297 value, included for 4+ builds)');
     }
 
     return {
@@ -121,10 +121,10 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
       tier,
       headline:
         tier === 'single'
-          ? 'Claude Project Agent — Strategic Thinking, Built for You'
+          ? 'Claude Project Agent. Strategic Thinking, Built for You'
           : tier === 'bundle'
-          ? 'Claude Agent Bundle — Your AI Strategic Team'
-          : 'Claude Agency Build — Full AI Intelligence Stack',
+          ? 'Claude Agent Bundle. Your AI Strategic Team'
+          : 'Claude Agency Build. Full AI Intelligence Stack',
       description:
         'Claude agents excel at deep reasoning, strategic analysis, and nuanced decision support. Perfect for business owners who need an AI that thinks before it acts.',
       includes,
@@ -147,7 +147,7 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
       priceLines.push({ label: 'Custom GPT Agent (hosted)', amount: 97, isMonthly: true });
       totalMonthly = 97;
     } else {
-      // bundle or agency — $47/agent/mo
+      // bundle or agency, $47/agent/mo
       priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} @ $47/agent (hosted)`, amount: 47 * agentCountNum, isMonthly: true });
       totalMonthly = 47 * agentCountNum;
     }
@@ -157,11 +157,11 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
       priceLines.push({ label: 'Custom GPT Agent', amount: 297 });
       totalOneTime = 297;
     } else if (tier === 'bundle') {
-      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} ($97 each — bundle rate)`, amount: 97 * agentCountNum });
+      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} ($97 each, bundle rate)`, amount: 97 * agentCountNum });
       totalOneTime = 97 * agentCountNum;
     } else {
       // agency 4+
-      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} ($97 each — agency rate)`, amount: 97 * agentCountNum });
+      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} ($97 each, agency rate)`, amount: 97 * agentCountNum });
       priceLines.push({ label: 'Branded GPT Dashboard (included for 4+ builds)', amount: 297 });
       totalOneTime = 97 * agentCountNum + 297;
     }
@@ -175,10 +175,10 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
     'Delivery within 3–7 business days',
   ];
   if (tier === 'agency') {
-    includes.push('Branded GPT Dashboard — your own white-label AI hub');
+    includes.push('Branded GPT Dashboard, your own white-label AI hub');
     includes.push('Agency-level onboarding and setup support');
   } else if (tier === 'bundle') {
-    includes.push('Bundle pricing — save vs. individual builds');
+    includes.push('Bundle pricing, save vs. individual builds');
   }
 
   return {
@@ -186,16 +186,16 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
     tier,
     headline:
       tier === 'single'
-        ? 'Custom GPT Agent — Built for Your Business'
+        ? 'Custom GPT Agent. Built for Your Business'
         : tier === 'bundle'
-        ? 'Custom GPT Bundle — Your AI Team, Done for You'
-        : 'Custom GPT Agency Build — Full AI Agent Suite',
+        ? 'Custom GPT Bundle. Your AI Team, Done for You'
+        : 'Custom GPT Agency Build. Full AI Agent Suite',
     description:
       tier === 'single'
-        ? 'A custom-configured GPT agent trained on your business, brand voice, and workflows. Handles the tasks that eat your time — so you can focus on what moves the needle.'
+        ? 'A custom-configured GPT agent trained on your business, brand voice, and workflows. Handles the tasks that eat your time, so you can focus on what moves the needle.'
         : tier === 'bundle'
-        ? 'Multiple GPT agents, each specialized for a different function in your business. Bundle pricing applies — you save vs. individual builds.'
-        : 'A full suite of specialized GPT agents for your agency or team, plus a branded dashboard so your clients see your brand — not ChatGPT.',
+        ? 'Multiple GPT agents, each specialized for a different function in your business. Bundle pricing applies, you save vs. individual builds.'
+        : 'A full suite of specialized GPT agents for your agency or team, plus a branded dashboard so your clients see your brand, not ChatGPT.',
     includes,
     priceLines,
     totalOneTime,

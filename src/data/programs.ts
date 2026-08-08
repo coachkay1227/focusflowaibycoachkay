@@ -1,5 +1,5 @@
 // ============================================================
-// FocusFlow — Master Program Data
+// FocusFlow. Master Program Data
 // src/data/programs.ts
 // Coach Kay Elevates | Focus Flow AI LLC
 // Framework: F.O.C.U.S. (Foundation · Opportunity · Create · Uplift · Support)
@@ -98,7 +98,7 @@ export const FOCUS_PILLARS: Record<FocusPillar, { full: string; color: string; d
 export const programs: Program[] = [
 
   // ─────────────────────────────────────────────
-  // FREE TIER — Assessment & Quick Tools
+  // FREE TIER. Assessment & Quick Tools
   // ─────────────────────────────────────────────
 
   {
@@ -182,7 +182,7 @@ export const programs: Program[] = [
   },
 
   // ─────────────────────────────────────────────
-  // F — FOUNDATION (Core Inner Work)
+  // F. FOUNDATION (Core Inner Work)
   // ─────────────────────────────────────────────
 
   {
@@ -666,7 +666,7 @@ export const programs: Program[] = [
   },
 
   // ─────────────────────────────────────────────
-  // O — OPPORTUNITY (Stressed / Overwhelmed)
+  // O. OPPORTUNITY (Stressed / Overwhelmed)
   // ─────────────────────────────────────────────
 
   {
@@ -950,7 +950,7 @@ export const programs: Program[] = [
   },
 
   // ─────────────────────────────────────────────
-  // C — CREATE (Transformation & Identity)
+  // C. CREATE (Transformation & Identity)
   // ─────────────────────────────────────────────
 
   {
@@ -1194,7 +1194,7 @@ export const programs: Program[] = [
   },
 
   // ─────────────────────────────────────────────
-  // U — UPLIFT (Habits, Routines & Lifestyle)
+  // U. UPLIFT (Habits, Routines & Lifestyle)
   // ─────────────────────────────────────────────
 
   {
@@ -1558,7 +1558,7 @@ export const programs: Program[] = [
   },
 
   // ─────────────────────────────────────────────
-  // S — SUPPORT (AI & Tech-Adjacent + Community)
+  // S. SUPPORT (AI & Tech-Adjacent + Community)
   // ─────────────────────────────────────────────
 
   {
@@ -1842,7 +1842,7 @@ export const programs: Program[] = [
   },
 
   // ─────────────────────────────────────────────
-  // SIGNATURE PROGRAMS — Multi-week Flagship Offers
+  // SIGNATURE PROGRAMS. Multi-week Flagship Offers
   // ─────────────────────────────────────────────
 
   {
@@ -2178,7 +2178,7 @@ export function getProgramsByPath(path: PublicPath | "all"): Program[] {
   return pub.filter((p) => p.path === path || p.path === "shared");
 }
 
-/** Backend curriculum items — only shown to enrolled users inside the dashboard. */
+/** Backend curriculum items, only shown to enrolled users inside the dashboard. */
 export function getBackendPrograms(): Program[] {
   return programs.filter((p) => p.visibility === "backend").sort((a, b) => a.order - b.order);
 }

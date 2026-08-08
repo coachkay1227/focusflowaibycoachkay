@@ -21,7 +21,7 @@ const NOT_FIT = [
 
 const Hermes = () => {
   const jsonLd = [
-    webPage("/agents/hermes", "Hermes — Autonomous Agent Systems"),
+    webPage("/agents/hermes", "Hermes. Autonomous Agent Systems"),
     serviceSchema({
       name: HERMES.name,
       description:

@@ -59,9 +59,9 @@ const RentAnAgent = () => {
     setInquiry({ open: true, lane, context });
 
   const jsonLd = [
-    webPage("/rent-an-agent", "Rent-an-Agent — Automation & Agent Systems", "CollectionPage"),
+    webPage("/rent-an-agent", "Rent-an-Agent. Automation & Agent Systems", "CollectionPage"),
     serviceSchema({
-      name: "Rent-an-Agent — Done-for-You AI Agent System",
+      name: "Rent-an-Agent. Done-for-You AI Agent System",
       description: "Rent a fully-managed AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows, built, deployed, and maintained for you.",
       url: `${SITE_URL}/rent-an-agent`,
       idSuffix: "rent-an-agent",
@@ -94,7 +94,7 @@ const RentAnAgent = () => {
         position: i + 1,
         item: {
           "@type": "Service",
-          name: `Rent-an-Agent — ${tier.name}`,
+          name: `Rent-an-Agent, ${tier.name}`,
           description: tier.tagline,
           provider: { "@id": ORG_ID },
           url: `${SITE_URL}/rent-an-agent`,
@@ -122,8 +122,8 @@ const RentAnAgent = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Rent-an-Agent — AI Agent Systems by Coach Kay"
-        description="Rent a done-for-you AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows — delivered and maintained for you."
+        title="Rent-an-Agent: AI Agent Systems by Coach Kay"
+        description="Rent a done-for-you AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows, delivered and maintained for you."
         path="/rent-an-agent"
         keywords={[
           "rent an AI agent",
@@ -188,7 +188,7 @@ const RentAnAgent = () => {
             size="lg"
             variant="outline"
             className="border-border"
-            onClick={() => openInquiry("Rent-an-Agent — Discovery Call", "Book a 20-minute discovery call to scope the right tier.")}
+            onClick={() => openInquiry("Rent-an-Agent. Discovery Call", "Book a 20-minute discovery call to scope the right tier.")}
           >
             Book a Discovery Call
           </Button>
@@ -290,7 +290,7 @@ const RentAnAgent = () => {
           })}
         </div>
 
-        {/* Enterprise — centered banner, set apart from the tier grid */}
+        {/* Enterprise, centered banner, set apart from the tier grid */}
         <div className="mt-10 max-w-3xl mx-auto">
           <div className="relative overflow-hidden rounded-2xl border border-primary/40 ring-1 ring-primary/15 bg-gradient-to-br from-card/60 via-card/40 to-primary/5 backdrop-blur-sm p-8 md:p-10">
             <div className="grid md:grid-cols-[1.4fr_1fr] gap-8 md:gap-10 items-center">
@@ -318,7 +318,7 @@ const RentAnAgent = () => {
                 <Button
                   variant="outline"
                   className="w-full md:w-auto border-primary/50 text-primary hover:bg-primary/10"
-                  onClick={() => openInquiry("Rent-an-Agent — Enterprise", "Tell us about the scope: number of agents, integrations, compliance needs, and timeline.")}
+                  onClick={() => openInquiry("Rent-an-Agent. Enterprise", "Tell us about the scope: number of agents, integrations, compliance needs, and timeline.")}
                 >
                   Request Enterprise Scope
                 </Button>
@@ -328,7 +328,7 @@ const RentAnAgent = () => {
         </div>
       </section>
 
-      {/* AI LEAD ENGINE — lives on its own page now */}
+      {/* AI LEAD ENGINE, lives on its own page now */}
       <section className="relative z-10 px-6 sm:px-10 py-16 max-w-4xl mx-auto">
         <AnimatedSection>
           <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm p-8 sm:p-10 text-center">

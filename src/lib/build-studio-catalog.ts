@@ -1,9 +1,9 @@
 // ============================================================
-// FocusFlow — Collective AI Build Studio catalog
+// FocusFlow. Collective AI Build Studio catalog
 // Single source of truth for the Build Studio page.
 // Tier 1 (one-time) + Tier 5 (recurring) have Stripe price IDs
 // and ship via the existing create-checkout edge function.
-// Tier 2/3 are application-only — no Stripe products yet.
+// Tier 2/3 are application-only, no Stripe products yet.
 // ============================================================
 
 export interface BuildTierOffer {
@@ -19,9 +19,9 @@ export interface BuildTierOffer {
    * shows an exact figure. Always paired with inquiryOnly.
    */
   estimate?: boolean;
-  /** Present for Tier 1 / Tier 5 — drives direct Stripe checkout. */
+  /** Present for Tier 1 / Tier 5, drives direct Stripe checkout. */
   priceId?: string;
-  /** Present for Tier 2 / Tier 3 — opens the qualification dialog. */
+  /** Present for Tier 2 / Tier 3, opens the qualification dialog. */
   inquiryOnly?: boolean;
   /**
    * Care plans attach to a build instead of being sold cold. Lists the Quick Win

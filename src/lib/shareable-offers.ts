@@ -1,5 +1,5 @@
 // ============================================================
-// Shareable offer links — the source of truth for QR codes.
+// Shareable offer links, the source of truth for QR codes.
 //
 // Every offer that can be printed on a flyer, a slide, or a workshop handout
 // appears here exactly once. Build Studio entries are derived from
@@ -22,7 +22,7 @@ export interface ShareableOffer {
 }
 
 const STATIC_OFFERS: ShareableOffer[] = [
-  // Front doors — the "reveal a problem" entry points.
+  // Front doors, the "reveal a problem" entry points.
   { slug: "ai_business_audit", label: "AI Business Audit", group: "Front doors", path: "/audit", directPurchase: true },
   { slug: "assessment", label: "F.O.C.U.S. Assessment", group: "Front doors", path: "/assessment", directPurchase: false },
   { slug: "starter_kit", label: "Quick Start Report", group: "Front doors", path: "/starter-kit", directPurchase: false },

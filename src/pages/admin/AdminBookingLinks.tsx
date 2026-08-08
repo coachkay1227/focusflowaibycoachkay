@@ -106,7 +106,7 @@ export default function AdminBookingLinks() {
           </h1>
           <p className="text-muted-foreground mt-2 max-w-2xl">
             Edit the two booking URLs used across the site, dashboard, and post-purchase emails.
-            Changes apply immediately — no redeploy needed.
+            Changes apply immediately, no redeploy needed.
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function AdminBookingLinks() {
           <BookingField
             id="leadgen-url"
             label="Lead-Gen Page (mid & high-ticket offers)"
-            description="Leave blank to keep direct Stripe checkout. Once set, every $297+ offer — transformation paths, Rent-an-Agent tiers, and Build Studio packages — sends visitors here instead of to checkout. The $47 AI Business Audit, Autism Social Stories, and the book store keep taking payment directly."
+            description="Leave blank to keep direct Stripe checkout. Once set, every $297+ offer, transformation paths, Rent-an-Agent tiers, and Build Studio packages, sends visitors here instead of to checkout. The $47 AI Business Audit, Autism Social Stories, and the book store keep taking payment directly."
             value={leadGen}
             onChange={setLeadGen}
             updatedLabel={fmt(leadGenUpdated)}

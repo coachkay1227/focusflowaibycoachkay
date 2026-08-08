@@ -22,7 +22,7 @@ const BrandLogo = ({ size = "md", withTagline = false, className, to = "/" }: Br
   return (
     <Link
       to={to}
-      aria-label="FocusFlow AI by Coach Kay — Home"
+      aria-label="FocusFlow AI by Coach Kay. Home"
       className={cn(
         "inline-flex items-baseline gap-2 font-heading font-light hover:opacity-90 transition-opacity",
         sizes[size],

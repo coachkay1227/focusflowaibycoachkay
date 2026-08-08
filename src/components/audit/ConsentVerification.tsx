@@ -8,7 +8,7 @@
 
 export function maskPhone(phone: string | null | undefined): string {
   const digits = (phone ?? "").replace(/\D/g, "");
-  if (digits.length < 4) return "—";
+  if (digits.length < 4) return ", ";
   return `••• ••• ${digits.slice(-4)}`;
 }
 

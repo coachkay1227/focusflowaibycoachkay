@@ -460,7 +460,7 @@ export default function AdminOrders() {
                         </td>
                         <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                           {!o.stripe_session_id || !PAID_STATUSES.includes(o.status) ? (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">, </span>
                           ) : needsAttention(o) ? (
                             <div className="flex items-center gap-2">
                               <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] text-destructive">
@@ -560,7 +560,7 @@ export default function AdminOrders() {
               <Section title="Client">
                 <Field label="Name" value={drawer.client_name} />
                 <Field label="Email" value={drawer.client_email} />
-                <Field label="Phone" value={drawer.client_phone ?? "—"} />
+                <Field label="Phone" value={drawer.client_phone ?? ", "} />
                 <Field label="Referral" value={drawer.referral_source} />
               </Section>
 

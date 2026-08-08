@@ -80,16 +80,16 @@ const Index = () => {
         FOCUSFLOW AI
       </div>
 
-      {/* Global navigation — single source of truth across all pages */}
+      {/* Global navigation, single source of truth across all pages */}
       <div className="md:hidden relative z-10 flex items-center justify-end px-6 py-4">
         <MobileNav />
       </div>
 
-      {/* Hero — Editorial Asymmetry (60/40) */}
+      {/* Hero. Editorial Asymmetry (60/40) */}
       <section className="relative z-10 px-4 md:px-8 pb-6 md:pt-20">
         <div className="w-full max-w-7xl mx-auto relative overflow-hidden border border-foreground/5 bg-background/40 backdrop-blur-sm shadow-2xl">
           <div className="flex flex-col md:flex-row min-h-[78vh]">
-            {/* 60% — Content */}
+            {/* 60%. Content */}
             <div className="w-full md:w-[60%] p-8 md:p-14 lg:p-20 flex flex-col justify-center relative">
               {/* Vertical decorative line */}
               <div
@@ -181,10 +181,10 @@ const Index = () => {
               </div>
             </div>
 
-            {/* 40% — Portrait */}
+            {/* 40%. Portrait */}
             <div className="w-full md:w-[40%] relative bg-navy-deep overflow-hidden group min-h-[50vh] md:min-h-0">
               {/* Overlays */}
-              {/* Top fade — masks any white edge in the source asset */}
+              {/* Top fade, masks any white edge in the source asset */}
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
                 style={{
@@ -208,7 +208,7 @@ const Index = () => {
               {/* Portrait */}
               <img
                 src={coachKayPortrait}
-                alt="Coach Kay — Master Certified Life Coach"
+                alt="Coach Kay. Master Certified Life Coach"
                 loading="eager"
                 {...{ fetchpriority: "high" }}
                 decoding="async"
@@ -260,21 +260,21 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── PATH FORK — Where are you stuck? ─────────────────────────────── */}
+      {/* ── PATH FORK. Where are you stuck? ─────────────────────────────── */}
       <section className="relative z-10 px-4 md:px-8 py-10 md:py-14">
         <div className="max-w-4xl mx-auto">
           <p className="font-mono-label text-primary tracking-[0.2em] text-center mb-6 text-xs">
             WHERE DO YOU WANT TO START?
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Card A — Clarity / Thinking lane */}
+            {/* Card A. Clarity / Thinking lane */}
             <button
               onClick={() => navigate("/modules")}
               className="group relative text-left p-8 border border-primary/20 bg-background/60 backdrop-blur-sm hover:border-primary/60 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <span className="font-mono-label text-primary text-xs tracking-[0.2em] mb-3 block">PATH A · CLARITY</span>
               <h2 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
-                My thinking is foggy —<br />I need clarity &amp; direction.
+                My thinking is foggy, <br />I need clarity &amp; direction.
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 Decisions, focus, and mental clarity. Start with the F.O.C.U.S. framework and find your next move in 90
@@ -286,7 +286,7 @@ const Index = () => {
               </span>
             </button>
 
-            {/* Card B — AI Systems lane */}
+            {/* Card B. AI Systems lane */}
             <button
               onClick={() => navigate("/rent-an-agent")}
               className="group relative text-left p-8 border border-foreground/10 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
@@ -295,7 +295,7 @@ const Index = () => {
                 PATH B · AI SYSTEMS
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-light text-foreground mb-3 leading-tight">
-                My business systems need AI —<br />I need to automate &amp; scale.
+                My business systems need AI, <br />I need to automate &amp; scale.
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 AI-powered systems, workflows, and builds. Explore the tools and services that run Coach Kay's client
@@ -310,7 +310,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Start Here — Free */}
+      {/* Start Here. Free */}
       <section className="relative z-10 py-16 md:py-20 px-6">
         <AnimatedSection className="max-w-6xl mx-auto">
           <div className="text-center mb-10">

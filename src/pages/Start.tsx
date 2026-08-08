@@ -210,7 +210,7 @@ export default function Start() {
           </div>
         </div>
 
-        {/* Step 1 — what we found */}
+        {/* Step 1, what we found */}
         {step === 1 && (
           <section className="animate-in fade-in duration-300">
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-3">
@@ -327,7 +327,7 @@ export default function Start() {
           </section>
         )}
 
-        {/* Step 2 — recommended next move */}
+        {/* Step 2, recommended next move */}
         {step === 2 && (
           <section className="animate-in fade-in duration-300">
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-3">
@@ -411,7 +411,7 @@ export default function Start() {
           </section>
         )}
 
-        {/* Step 3 — one button */}
+        {/* Step 3, one button */}
         {step === 3 && (
           <section className="animate-in fade-in duration-300">
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-3">

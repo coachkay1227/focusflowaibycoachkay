@@ -50,7 +50,7 @@ export const WebhookHealthBanner = () => {
         <div className="min-w-0">
           <p className="font-medium text-foreground">
             {critical
-              ? "Payment webhook is broken — purchases cannot be fulfilled"
+              ? "Payment webhook is broken, purchases cannot be fulfilled"
               : degraded
                 ? "Payment webhook reported failures"
                 : "Payment webhook healthy"}

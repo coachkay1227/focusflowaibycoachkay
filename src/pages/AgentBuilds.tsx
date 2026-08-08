@@ -53,7 +53,7 @@ const AgentBuilds = () => {
   };
 
   const jsonLd = [
-    webPage("/agents/builds", "Agent Builds — Your First AI Agent", "CollectionPage"),
+    webPage("/agents/builds", "Agent Builds. Your First AI Agent", "CollectionPage"),
     serviceSchema({
       name: "AI Agent Builds",
       description:

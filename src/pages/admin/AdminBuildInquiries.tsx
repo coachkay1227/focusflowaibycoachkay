@@ -75,10 +75,10 @@ export default function AdminBuildInquiries() {
                     <td className="px-4 py-3 text-foreground">{r.project_type}</td>
                     <td className="px-4 py-3 text-xs text-primary">{r.tier}</td>
                     <td className="px-4 py-3 text-xs">
-                      <div className="text-foreground">{r.budget_range ?? "—"}</div>
-                      <div className="text-muted-foreground">{r.timeline ?? "—"}</div>
+                      <div className="text-foreground">{r.budget_range ?? ", "}</div>
+                      <div className="text-muted-foreground">{r.timeline ?? ", "}</div>
                     </td>
-                    <td className="px-4 py-3 text-xs text-foreground/85 whitespace-pre-wrap">{r.notes ?? "—"}</td>
+                    <td className="px-4 py-3 text-xs text-foreground/85 whitespace-pre-wrap">{r.notes ?? ", "}</td>
                     <td className="px-4 py-3 text-xs capitalize">{r.status.replace(/_/g, " ")}</td>
                   </tr>
                 ))}

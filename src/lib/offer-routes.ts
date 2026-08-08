@@ -29,7 +29,7 @@ export interface OfferRoute {
 }
 
 const ROUTES: Record<string, OfferRoute> = {
-  // Door 1 — Transformation lane. Short resets are self-serve; the long
+  // Door 1. Transformation lane. Short resets are self-serve; the long
   // programs and the private partnership start with a conversation.
   transform_30_personal: { href: "/modules", contact: "self_serve" },
   transform_30_business: { href: "/modules", contact: "self_serve" },
@@ -39,20 +39,20 @@ const ROUTES: Record<string, OfferRoute> = {
   transform_90_ai: { href: "/modules", contact: "application" },
   transform_6mo_partnership: { href: "/modules", contact: "application" },
 
-  // Door 2 — Rent-an-Agent. Managed builds, always scoped on a call.
+  // Door 2. Rent-an-Agent. Managed builds, always scoped on a call.
   rent_agent_starter: { href: "/rent-an-agent#starter", contact: "application" },
   rent_agent_pro: { href: "/rent-an-agent#pro", contact: "application" },
   rent_agent_dreamteam: { href: "/rent-an-agent#dreamteam", contact: "application" },
   rent_agent_enterprise: { href: "/rent-an-agent#enterprise", contact: "application" },
 
-  // Door 2 — Lead Engine (lives inside /rent-an-agent).
+  // Door 2. Lead Engine (lives inside /rent-an-agent).
   lead_engine_essentials: { href: "/rent-an-agent#lead-engine-essentials", contact: "application" },
   lead_engine_pro: { href: "/rent-an-agent#lead-engine-pro", contact: "application" },
   lead_engine_growth: { href: "/rent-an-agent#lead-engine-growth", contact: "application" },
   lead_engine_scale: { href: "/rent-an-agent#lead-engine-scale", contact: "application" },
   lead_engine_enterprise: { href: "/rent-an-agent#lead-engine-enterprise", contact: "application" },
 
-  // Door 3 — Advisory, speaking, corporate. Proposal or call first.
+  // Door 3. Advisory, speaking, corporate. Proposal or call first.
   advisory_strategy_intensive: { href: "/advisory#strategy-intensive", contact: "application" },
   advisory_executive: { href: "/advisory#executive", contact: "application" },
   advisory_speaking: { href: "/advisory#speaking", contact: "application" },
@@ -60,17 +60,17 @@ const ROUTES: Record<string, OfferRoute> = {
   advisory_university: { href: "/advisory#university", contact: "application" },
   group_programs: { href: "/advisory#group-programs", contact: "application" },
 
-  // Door 4 — Publishing studio, bought in the store.
+  // Door 4. Publishing studio, bought in the store.
   studio_mini_story: { href: "/store#mini-story", contact: "self_serve" },
   studio_storybook_pro: { href: "/store#storybook-pro", contact: "self_serve" },
   studio_other: { href: "/store", contact: "self_serve" },
 
-  // Build Studio — announced, not open. Callers render waitlist UI.
+  // Build Studio, announced, not open. Callers render waitlist UI.
   build_studio_landing: { href: "#", opening_soon: true, label: "Opening soon, get notified", contact: "application" },
   build_studio_site: { href: "#", opening_soon: true, label: "Opening soon, get notified", contact: "application" },
   build_studio_dashboard: { href: "#", opening_soon: true, label: "Opening soon, get notified", contact: "application" },
 
-  // Community door — free, fiscally sponsored lane.
+  // Community door, free, fiscally sponsored lane.
   focus_flow_elevation_hub: {
     href: SKOOL_URL,
     external: true,

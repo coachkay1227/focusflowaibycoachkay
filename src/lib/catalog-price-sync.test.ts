@@ -57,7 +57,7 @@ describe("catalog price sync", () => {
         missing.push(`${id} (referenced in: ${files.map((f) => f.replace(SRC_ROOT, "src")).join(", ")})`);
       }
     }
-    expect(missing, `Price IDs missing from PRICE_MODE_MAP — create-checkout will reject these:\n${missing.join("\n")}`).toEqual([]);
+    expect(missing, `Price IDs missing from PRICE_MODE_MAP, create-checkout will reject these:\n${missing.join("\n")}`).toEqual([]);
   });
 
   it("the $47 AI Business Audit price stays registered (regression pin)", () => {

@@ -282,7 +282,7 @@ const AdminAnalytics = () => {
           <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-6 mt-6">
             <h3 className="font-heading text-lg font-light mb-1">Studio Funnel</h3>
             <p className="text-xs text-muted-foreground mb-4">
-              Story, Legacy &amp; Publishing Studio — lifetime events. Inquiry
+              Story, Legacy &amp; Publishing Studio, lifetime events. Inquiry
               submissions also trigger an email to Coach Kay&apos;s team.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

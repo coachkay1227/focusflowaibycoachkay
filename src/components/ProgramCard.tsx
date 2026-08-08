@@ -52,8 +52,8 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
     const label = buying
       ? "Opening checkout…"
       : user
-        ? `Buy now — ${program.priceDisplay}`
-        : `Sign in to buy — ${program.priceDisplay}`;
+        ? `Buy now, ${program.priceDisplay}`
+        : `Sign in to buy, ${program.priceDisplay}`;
     primaryCta = {
       label,
       onClick: async () => {

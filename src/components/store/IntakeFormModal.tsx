@@ -313,7 +313,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
                 <select className={selectCls} {...register("package_slug")}>
                   {PACKAGES.map((p) => (
                     <option key={p.slug} value={p.slug}>
-                      {p.name} — {formatUSD(p.priceCents)}
+                      {p.name}, {formatUSD(p.priceCents)}
                     </option>
                   ))}
                 </select>
@@ -465,7 +465,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
                 <>
                   {isInquiry
                     ? "Request Custom Quote"
-                    : `Proceed to Payment — ${formatUSD(orderTotal)}`}
+                    : `Proceed to Payment, ${formatUSD(orderTotal)}`}
                 </>
               )}
             </Button>

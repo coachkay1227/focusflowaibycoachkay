@@ -48,7 +48,7 @@ const AdminDashboard = () => {
 
         setRecentUsers(statsData?.recentUsers || []);
       } catch (error) {
-        // Stats fetch failed — toast handled by UI
+        // Stats fetch failed, toast handled by UI
       } finally {
         setLoading(false);
       }

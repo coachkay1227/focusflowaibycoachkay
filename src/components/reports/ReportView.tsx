@@ -72,7 +72,7 @@ const ReportView = ({
 
   return (
     <div className="report-view">
-      {/* Print stylesheet — hides app chrome, styles the report. */}
+      {/* Print stylesheet, hides app chrome, styles the report. */}
       <style>{`
         @media print {
           /* Hide every app-chrome element by default */
@@ -181,7 +181,7 @@ const ReportView = ({
         ))}
       </div>
 
-      {/* Footer CTA — interactive, hidden on print */}
+      {/* Footer CTA, interactive, hidden on print */}
       {footerCta && (
         <div className="no-print mt-10 rounded-lg border border-primary/30 bg-primary/5 p-6 text-center">
           <a

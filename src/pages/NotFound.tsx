@@ -17,7 +17,7 @@ const NotFound = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
       <SEOHead
-        title="Page Not Found — FocusFlow AI"
+        title="Page Not Found: FocusFlow AI"
         description="The page you're looking for doesn't exist. Return to FocusFlow AI to explore clarity coaching, programs, and free assessments by Coach Kay."
         path="/404"
         noIndex

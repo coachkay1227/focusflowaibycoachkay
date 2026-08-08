@@ -7,7 +7,7 @@ import { FAQ_LANES, faqPageSchema } from "@/data/faqs";
 import { breadcrumb, webPage, SITE_URL } from "@/lib/seo-schema";
 
 /**
- * Master FAQ index — one section per lane, each with its own
+ * Master FAQ index, one section per lane, each with its own
  * FAQPage JSON-LD block (Google supports multiple FAQPage entities
  * on a single URL when they describe distinct topical groupings).
  */

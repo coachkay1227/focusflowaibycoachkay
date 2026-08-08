@@ -38,7 +38,7 @@ const Kiosk = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay flex flex-col items-center justify-center px-8 pt-20 pb-16 cursor-default select-none">
       <SEOHead
-        title="FocusFlow Clarity Kiosk — Scan to Begin"
+        title="FocusFlow Clarity Kiosk: Scan to Begin"
         description="In-person FocusFlow AI kiosk experience. Scan the QR code to start a free 5-minute clarity check with Coach Kay and enter the 30-Day Coaching Drawing."
         path="/kiosk"
         noIndex
@@ -89,8 +89,7 @@ const Kiosk = () => {
           <p className="text-foreground/80 text-sm italic leading-relaxed">
             "{current.quote}"
           </p>
-          <p className="text-muted-foreground text-xs mt-2 font-mono-label">
-            — {current.name}
+          <p className="text-muted-foreground text-xs mt-2 font-mono-label">, {current.name}
           </p>
         </div>
       </div>

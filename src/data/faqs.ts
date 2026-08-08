@@ -1,5 +1,5 @@
 // ============================================================
-// FocusFlow — Lane FAQ Catalog
+// FocusFlow. Lane FAQ Catalog
 // Single source of truth for FAQs across lane pages and /faq.
 // Each lane's items power both on-page FAQ sections and JSON-LD
 // FAQPage schema for SEO/AI search.

@@ -225,7 +225,7 @@ export default function AdminScamAlerts() {
                   placeholder="https://..."
                 />
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  Required to publish. No source, no publish — this hub is built on validated resources.
+                  Required to publish. No source, no publish, this hub is built on validated resources.
                 </p>
               </div>
               <div className="sm:col-span-2">

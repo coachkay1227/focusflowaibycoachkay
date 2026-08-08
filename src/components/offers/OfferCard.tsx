@@ -65,7 +65,7 @@ export default function OfferCard({
       data-offer-card
       className={`group relative h-full flex flex-col rounded-2xl border ${ring} bg-card/40 backdrop-blur-sm ${padding} transition-all hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-20px_hsl(43_75%_52%/0.25)]`}
     >
-      {/* Zone 1 — eyebrow + badge */}
+      {/* Zone 1, eyebrow + badge */}
       <div className={`flex items-start justify-between gap-3 ${compact ? "mb-3" : "mb-4"} min-h-[20px]`}>
         <span className="text-[10px] font-medium tracking-[0.18em] uppercase text-primary">
           {eyebrow}
@@ -77,17 +77,17 @@ export default function OfferCard({
         )}
       </div>
 
-      {/* Zone 2 — title (locked 2-line min height) */}
+      {/* Zone 2, title (locked 2-line min height) */}
       <h3 className={`font-heading text-foreground ${titleSize}`}>
         {title}
       </h3>
 
-      {/* Zone 3 — tagline */}
+      {/* Zone 3, tagline */}
       {tagline && <p className={taglineCls}>{tagline}</p>}
 
       {features.length > 0 && <div className={`h-px bg-border/40 ${compact ? "mb-4" : "mb-5"}`} />}
 
-      {/* Zone 4 — features (stretches) */}
+      {/* Zone 4, features (stretches) */}
       {features.length > 0 ? (
         <ul className={`space-y-2.5 ${compact ? "mb-4" : "mb-6"} flex-1`}>
           {features.map((f, i) => (
@@ -101,7 +101,7 @@ export default function OfferCard({
         <div className="flex-1" />
       )}
 
-      {/* Zone 5a — price */}
+      {/* Zone 5a, price */}
       {price && (
         <div className={primaryCta || secondaryCta ? (compact ? "mb-4" : "mb-5") : ""}>
           <div className="flex items-baseline gap-1.5">
@@ -113,7 +113,7 @@ export default function OfferCard({
         </div>
       )}
 
-      {/* Zone 5b — CTAs always anchored to bottom */}
+      {/* Zone 5b. CTAs always anchored to bottom */}
       {(primaryCta || secondaryCta) && (
         <div className="flex flex-col gap-2 mt-auto">
           {primaryCta && <CtaButton cta={primaryCta} kind="primary" />}

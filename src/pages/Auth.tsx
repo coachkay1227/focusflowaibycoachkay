@@ -50,7 +50,7 @@ const Auth = () => {
   const banner = (() => {
     try {
       const m = new URLSearchParams(location.search).get("message");
-      if (m === "audit-ready") return "Your audit is being prepared — create your account to view your report.";
+      if (m === "audit-ready") return "Your audit is being prepared, create your account to view your report.";
       return null;
     } catch { return null; }
   })();
@@ -157,7 +157,7 @@ const Auth = () => {
 
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
-      <SEOHead title="Sign In — FocusFlow AI" description="Sign in or create your FocusFlow AI account to save your clarity sessions, track progress, and unlock personalized coaching." path="/auth" noIndex />
+      <SEOHead title="Sign In: FocusFlow AI" description="Sign in or create your FocusFlow AI account to save your clarity sessions, track progress, and unlock personalized coaching." path="/auth" noIndex />
       <FloatingOrbs />
       <div className="mouse-glow" />
 

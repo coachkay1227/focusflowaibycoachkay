@@ -61,7 +61,7 @@ const BlogPost = () => {
     },
     publisher: {
       "@type": "Organization",
-      name: "FocusFlow AI — Coach Kay",
+      name: "FocusFlow AI. Coach Kay",
       logo: {
         "@type": "ImageObject",
         url: `${SITE}/og-image.png`,
@@ -121,7 +121,7 @@ const BlogPost = () => {
     },
     organizer: {
       "@type": "Organization",
-      name: "FocusFlow AI — Coach Kay",
+      name: "FocusFlow AI. Coach Kay",
       url: SITE,
     },
     url: "https://TheClaudeAIBusinessAccelerator.eventbrite.com",
@@ -203,7 +203,7 @@ const BlogPost = () => {
           <div className="relative rounded-2xl overflow-hidden border border-primary/10 mb-16">
             <img
               src={post.image}
-              alt="Quiet workspace — laptop, notebook, and coffee"
+              alt="Quiet workspace, laptop, notebook, and coffee"
               width={1600}
               height={896}
               className="w-full h-auto"
@@ -239,7 +239,7 @@ const BlogPost = () => {
                 "You spend time thinking about what to post online.",
               ].map((item) => (
                 <li key={item} className="flex gap-3">
-                  <span className="text-primary mt-2">—</span>
+                  <span className="text-primary mt-2">, </span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -266,7 +266,7 @@ const BlogPost = () => {
               writing feels natural, the reasoning is sharper, and it handles
               real-world business tasks without the over-formatted, robotic
               output other tools produce. Whichever you pick, the workflow is
-              the same — one tool, one habit, repeated daily.
+              the same, one tool, one habit, repeated daily.
             </p>
 
             <H2>The Five Workflows That Save 10 Hours a Week</H2>
@@ -313,7 +313,7 @@ const BlogPost = () => {
               Most small business owners don't lose hours to one big task. They
               lose hours to dozens of tiny decisions throughout the day. AI
               shrinks those decisions. It gives you a draft, a starting point,
-              a structure — so you stop staring at blank screens.
+              a structure, so you stop staring at blank screens.
             </p>
 
             <H2>How to Start This Week</H2>
@@ -341,7 +341,7 @@ const BlogPost = () => {
             <H2>The Bigger Picture</H2>
             <p>
               The owners who win the next five years are the ones who treat AI
-              as part of their daily operation — not a side experiment. You
+              as part of their daily operation, not a side experiment. You
               don't need a tech team. You don't need to be early. You need a
               system. And $20 a month is a small price to buy back your time,
               your energy, and the freedom to actually grow.
@@ -354,7 +354,7 @@ const BlogPost = () => {
               Want to see where AI can save time in your business?
             </h3>
             <p className="text-cream/70 mb-6">
-              Take the free assessment — get a personalized AI starting point in two minutes.
+              Take the free assessment, get a personalized AI starting point in two minutes.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link

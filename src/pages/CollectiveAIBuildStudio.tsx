@@ -118,7 +118,7 @@ const CollectiveAIBuildStudio = () => {
 
   const startCheckout = async (offer: BuildTierOffer) => {
     if (!offer.priceId) return;
-    // Build Studio packages are mid/high-ticket — defer to the lead-gen page
+    // Build Studio packages are mid/high-ticket, defer to the lead-gen page
     // when one is configured.
     if (await redirectToLeadGenIfConfigured()) return;
     setBusyPriceId(offer.priceId);
@@ -285,7 +285,7 @@ const CollectiveAIBuildStudio = () => {
         </div>
       </section>
 
-      {/* WHAT WE BUILD — TIER TABS */}
+      {/* WHAT WE BUILD. TIER TABS */}
       <section id="what-we-build" className="relative z-10 px-6 sm:px-10 pb-20 max-w-7xl mx-auto">
         <AnimatedSection className="text-center mb-10">
           <span className="font-mono-label text-primary tracking-[0.28em] text-xs">WHAT WE BUILD</span>

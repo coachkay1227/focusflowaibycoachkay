@@ -27,7 +27,7 @@ const LEGACY_CLARITY_REDIRECTS: Record<
   string,
   { legacyName: string; redirectTo: string; redirectLabel: string; reason?: string }
 > = {
-  // Old standalone modules — now folded into the Personal Clarity Check
+  // Old standalone modules, now folded into the Personal Clarity Check
   "emotional-reset": {
     legacyName: "Emotional Reset",
     redirectTo: "/clarity",
@@ -48,13 +48,13 @@ const LEGACY_CLARITY_REDIRECTS: Record<
     redirectTo: "/clarity",
     redirectLabel: "the Personal Clarity Check",
   },
-  // Business assessment slug — moved to its own route
+  // Business assessment slug, moved to its own route
   "mac-type-assessment": {
     legacyName: "M.A.C. Type Assessment",
     redirectTo: "/assessment",
     redirectLabel: "the Business Clarity Assessment",
   },
-  // AI starter slug — moved to the Starter Kit
+  // AI starter slug, moved to the Starter Kit
   "kpi-roi-tracker": {
     legacyName: "KPI & ROI Tracker",
     redirectTo: "/starter-kit",
@@ -70,8 +70,7 @@ const ClaritySession = () => {
   const { toast } = useToast();
 
   // Decide up-front whether this URL should show the unified "has evolved"
-  // retired screen instead of running a quiz. Renders are predictable —
-  // no silent in-place fallbacks to the default Personal quiz.
+  // retired screen instead of running a quiz. Renders are predictable, // no silent in-place fallbacks to the default Personal quiz.
   const legacyRedirect =
     moduleId && moduleId !== "clarity-check"
       ? LEGACY_CLARITY_REDIRECTS[moduleId] ?? null
@@ -119,7 +118,7 @@ const ClaritySession = () => {
   }, []);
 
   // Admin-only preview: ?preview=1 prefills answers with the first option of each question
-  // and immediately routes to the result screen — no public exposure.
+  // and immediately routes to the result screen, no public exposure.
   useEffect(() => {
     if (!isAdmin) return;
     if (searchParams.get("preview") !== "1") return;
@@ -131,7 +130,7 @@ const ClaritySession = () => {
       if (q.type === "options" && q.options && q.options.length > 0) {
         prefilled[q.id] = q.options[0].value;
       } else {
-        prefilled[q.id] = "Preview answer — admin dev mode.";
+        prefilled[q.id] = "Preview answer, admin dev mode.";
       }
     }
     navigate("/result", {
@@ -162,7 +161,7 @@ const ClaritySession = () => {
       { moduleId: resolvedModuleId, questionCount: questions.length },
       "personal"
     );
-    // Auth users skip the gate — they've already given us their email
+    // Auth users skip the gate, they've already given us their email
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         navigate("/result", { state: { answers: finalAnswers as unknown as ClarityAnswers, moduleId: resolvedModuleId } });
@@ -183,7 +182,7 @@ const ClaritySession = () => {
       await supabase.from("cohort_registrations").insert({
         email,
         first_name: firstName,
-        cohort_name: "Clarity Code — Free Check",
+        cohort_name: "Clarity Code. Free Check",
         source: resolvedModuleId,
       });
     } catch (err) {
@@ -255,7 +254,7 @@ const ClaritySession = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title={`${moduleTitle} — FocusFlow AI`}
+        title={`${moduleTitle}. FocusFlow AI`}
         description={`Begin the ${moduleTitle} clarity check. Answer honest questions and receive personalized insights about your patterns, blockers, and next clear action.`}
         path={moduleId ? `/clarity/${moduleId}` : "/clarity"}
         jsonLd={{
@@ -295,7 +294,7 @@ const ClaritySession = () => {
           className={`w-full max-w-2xl ${animState === "enter" ? "animate-question-enter" : animState === "exit" ? "animate-question-exit" : ""}`}
           style={{ willChange: "transform, opacity" }}
         >
-          <h1 className="sr-only">{moduleTitle} — Clarity Session with Coach Kay</h1>
+          <h1 className="sr-only">{moduleTitle}. Clarity Session with Coach Kay</h1>
           <span className="font-mono-label text-primary tracking-[0.2em]">{question.label}</span>
 
           <h2
@@ -350,7 +349,7 @@ const ClaritySession = () => {
         </div>
       </div>
 
-      {/* Email gate — shown after final answer for anon users */}
+      {/* Email gate, shown after final answer for anon users */}
       {showGate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-6">
           <form

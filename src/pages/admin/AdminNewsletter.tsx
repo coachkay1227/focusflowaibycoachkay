@@ -100,8 +100,8 @@ const AdminNewsletter = () => {
                   {rows.map((r) => (
                     <tr key={r.id} className="border-t border-border/30">
                       <td className="px-4 py-2 text-foreground">{r.email}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{r.name ?? "—"}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{r.source ?? "—"}</td>
+                      <td className="px-4 py-2 text-muted-foreground">{r.name ?? ", "}</td>
+                      <td className="px-4 py-2 text-muted-foreground">{r.source ?? ", "}</td>
                       <td className="px-4 py-2">
                         {r.synced_to_beehiiv ? (
                           <span className="text-primary text-xs">synced</span>

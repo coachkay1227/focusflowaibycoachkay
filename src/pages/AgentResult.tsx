@@ -43,7 +43,7 @@ const AgentResult = () => {
 
   useMouseGlow(containerRef);
 
-  // Guard — if no state, redirect back
+  // Guard, if no state, redirect back
   if (!recommendation || !answers) {
     return (
       <div className="relative min-h-dvh flex items-center justify-center bg-background text-foreground px-6">
@@ -85,7 +85,7 @@ const AgentResult = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="Your Agent Recommendation — FocusFlow AI"
+        title="Your Agent Recommendation: FocusFlow AI"
         description="Your personalized AI agent recommendation from Coach Kay. See exactly what to build and how much it costs."
         path="/agent-result"
         noIndex
@@ -136,7 +136,7 @@ const AgentResult = () => {
             {recommendation.isCustomQuote ? (
               <div className="mt-4">
                 <p className="font-heading text-2xl font-light text-primary">
-                  Custom Quote — based on your scope
+                  Custom Quote, based on your scope
                 </p>
                 <p className="text-muted-foreground text-sm mt-2">
                   GHL agents are priced based on your call volume, integrations, and workflows. Request a quote and we'll scope it together.
@@ -327,7 +327,7 @@ const AgentResult = () => {
         open={applyOpen}
         onOpenChange={setApplyOpen}
         mode="application"
-        programName={`${pathLabel(recommendation.path)} — ${recommendation.isCustomQuote ? 'Custom Quote' : totalText}${kbText}`}
+        programName={`${pathLabel(recommendation.path)}, ${recommendation.isCustomQuote ? 'Custom Quote' : totalText}${kbText}`}
       />
     </div>
   );
