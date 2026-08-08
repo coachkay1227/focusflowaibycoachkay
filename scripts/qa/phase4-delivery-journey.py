@@ -119,14 +119,25 @@ async def main():
         check("admin can filter to orders needing attention", "needs attention" in abody)
 
         # ---- 4. recovery -------------------------------------------------
+        # supabase-js swallows the body on non-2xx, so read the raw response:
+        # the cap's 429 payload is part of what this journey asserts.
         recovery = await page.evaluate(
             """async (sid) => {
                 const mod = await import('/src/integrations/supabase/client.ts');
-                const { data, error } = await mod.supabase.functions.invoke(
-                  'fulfillment-recovery', { body: { session_id: sid, action: 'resend_next_steps' } });
-                return { data, error: error ? error.message : null };
+                const { data: { session } } = await mod.supabase.auth.getSession();
+                const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fulfillment-recovery`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                    ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
+                  },
+                  body: JSON.stringify({ session_id: sid, action: 'resend_next_steps' }),
+                });
+                return { status: res.status, data: await res.json().catch(() => null) };
             }""", session_id)
         data = recovery.get("data") or {}
+        print("recovery status:", recovery.get("status"))
         rate_capped = isinstance(data.get("error"), str) and "already been sent" in data["error"]
         if rate_capped:
             # The 3-per-hour cap fired, which is itself correct behaviour.
@@ -140,12 +151,16 @@ async def main():
 
         bad = await page.evaluate(
             """async () => {
-                const mod = await import('/src/integrations/supabase/client.ts');
-                const { data } = await mod.supabase.functions.invoke(
-                  'fulfillment-recovery', { body: { session_id: 'cs_live_doesnotexist', action: 'resend_next_steps' } });
-                return data;
+                const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fulfillment-recovery`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+                  body: JSON.stringify({ session_id: 'cs_live_doesnotexist', action: 'resend_next_steps' }),
+                });
+                return { status: res.status, data: await res.json().catch(() => null) };
             }""")
-        check("recovery refuses an unknown session", not (bad or {}).get("ok"), json.dumps(bad)[:120])
+        check("recovery refuses an unknown session",
+              bad.get("status") == 404 and not (bad.get("data") or {}).get("ok"),
+              json.dumps(bad)[:120])
 
         check("no runtime console errors during the journey",
               len(console_errors) == 0, "; ".join(console_errors[:2])[:200])
