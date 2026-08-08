@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Zap, Cog, Crown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
