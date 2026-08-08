@@ -1,11 +1,11 @@
 # Payment & Audit Link Report
-Generated: 2026-08-08T02:34:18.660Z
+Generated: 2026-08-08T02:42:18.656Z
 
 - Registered priceIds: **43**
 - Referenced priceIds (unique): **33**
 - Failures: **0**
 
-## Price IDs (45 references)
+## Price IDs (46 references)
 
 | Price ID | Resolved | File | Line | Status |
 | --- | --- | --- | --- | --- |
@@ -54,6 +54,7 @@ Generated: 2026-08-08T02:34:18.660Z
 | `price_1TbCmCBReje0oFcLcedSOHi6` | payment — Autism Premium Illustrated Social Story $297 | supabase/functions/_shared/autism-catalog.ts | 37 | ok |
 | `price_1TbCmqBReje0oFcLt06k0wdp` | payment — Autism Therapy Practice Bundle (5 Stories) $997 | supabase/functions/_shared/autism-catalog.ts | 44 | ok |
 | `price_1TbCnGBReje0oFcLRN9Mx1ND` | payment — Autism Gift Wrap + Personalized Note $25 (add-on) | supabase/functions/_shared/autism-catalog.ts | 66 | ok |
+| `price_1Tb41PBReje0oFcLMlvzjQQa` | payment — AI Business Audit $47 | supabase/functions/run-audit-fulfillment-test/index.ts | 21 | ok |
 
 ## Audit Funnel Entry Points
 

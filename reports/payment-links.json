@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T02:34:18.660Z",
+  "generatedAt": "2026-08-08T02:42:18.656Z",
   "summary": {
     "priceIdsReferenced": 33,
     "priceIdsRegistered": 43,
@@ -410,6 +410,15 @@
       "line": 66,
       "resolvedTarget": "payment — Autism Gift Wrap + Personalized Note $25 (add-on)",
       "label": "Autism Gift Wrap + Personalized Note $25 (add-on)",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb41PBReje0oFcLMlvzjQQa",
+      "file": "supabase/functions/run-audit-fulfillment-test/index.ts",
+      "line": 21,
+      "resolvedTarget": "payment — AI Business Audit $47",
+      "label": "AI Business Audit $47",
       "status": "ok"
     },
     {
