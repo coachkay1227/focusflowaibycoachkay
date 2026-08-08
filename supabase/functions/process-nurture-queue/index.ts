@@ -5,9 +5,12 @@
 // double-fired cron or a retried batch cannot email anyone twice.
 //
 // This function is triggered by pg_cron, which cannot present a user JWT, so it
-// authenticates on either a service-role bearer token (the pattern the email
-// queue cron already uses) or a shared secret header. Without one of those it
-// would be a publicly callable send trigger.
+// authenticates on the bearer credential the cron pulls from Vault. Rather than
+// string-matching one particular key (the project holds both legacy JWT and
+// newer secret-key forms of the service-role credential, and they are not equal
+// as strings), the caller's own token is used to read a table that only
+// service_role and admins can reach. If that read is refused, so is the call.
+// Without this the function would be a publicly callable send trigger.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { getCorsHeaders } from "../_shared/cors.ts";
@@ -23,14 +26,6 @@ const APP_ORIGIN = "https://coachkayai.life";
 import { getBookingLinks } from "../_shared/booking-links.ts";
 
 const BATCH_SIZE = 25;
-
-/** Timing-safe string compare so the secret cannot be guessed byte by byte. */
-function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
 
 function json(body: unknown, status = 200, corsHeaders: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
@@ -53,29 +48,37 @@ Deno.serve(async (req) => {
   const cors = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
 
-  const expected = Deno.env.get("NURTURE_CRON_SECRET") ?? "";
-  const provided = req.headers.get("x-nurture-secret") ?? "";
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   const authHeader = req.headers.get("Authorization") ?? "";
   const bearer = authHeader.startsWith("Bearer ")
     ? authHeader.slice("Bearer ".length).trim()
     : "";
 
-  // Never trust a decoded role claim here. Compare the raw token to the real
-  // service-role key so a forged alg:none JWT cannot get in.
-  const bySecret = expected.length > 0 && safeEqual(expected, provided);
-  const byServiceRole = serviceKey.length > 0 && safeEqual(serviceKey, bearer);
-
-  if (!bySecret && !byServiceRole) {
-    console.warn("process-nurture-queue rejected unauthenticated call");
+  if (!bearer) {
+    console.warn("process-nurture-queue rejected call with no credential");
     return json({ error: "Forbidden" }, 403, cors);
   }
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    serviceKey,
-    { auth: { persistSession: false } },
-  );
+  // Authorization probe. nurture_touches is granted to service_role and
+  // readable by admins only, so an anon key or a forged token fails here.
+  const callerClient = createClient(supabaseUrl, bearer, {
+    auth: { persistSession: false },
+    global: { headers: { Authorization: `Bearer ${bearer}` } },
+  });
+  const { error: probeError } = await callerClient
+    .from("nurture_touches")
+    .select("id")
+    .limit(1);
+  if (probeError) {
+    console.warn("process-nurture-queue rejected unauthorized caller", probeError.message);
+    return json({ error: "Forbidden" }, 403, cors);
+  }
+
+  // Work itself always runs with the function's own service-role client.
+  const supabase = createClient(supabaseUrl, serviceKey, {
+    auth: { persistSession: false },
+  });
 
   const summary = { claimed: 0, sent: 0, deferred: 0, skipped: 0, failed: 0 };
 
