@@ -18,9 +18,17 @@ import asyncio, json, os, subprocess, sys
 from pathlib import Path
 from playwright.async_api import async_playwright
 
+def env_file(key):
+    for line in Path("/dev-server/.env").read_text().splitlines():
+        if line.startswith(key + "="):
+            return line.split("=", 1)[1].strip().strip('"')
+    raise KeyError(key)
+
 BASE = os.environ.get("PHASE4_BASE_URL", "http://localhost:8080")
 SHOTS = Path("/tmp/browser/phase4/screenshots"); SHOTS.mkdir(parents=True, exist_ok=True)
 results = []
+FN_URL = env_file("VITE_SUPABASE_URL")
+FN_KEY = env_file("VITE_SUPABASE_PUBLISHABLE_KEY")
 
 # Dev-mode noise, plus the non-2xx statuses this journey deliberately provokes
 # (the unknown-session 404 and the resend-cap 429). Both are asserted on
@@ -122,20 +130,20 @@ async def main():
         # supabase-js swallows the body on non-2xx, so read the raw response:
         # the cap's 429 payload is part of what this journey asserts.
         recovery = await page.evaluate(
-            """async (sid) => {
+            """async ({ sid, url, key }) => {
                 const mod = await import('/src/integrations/supabase/client.ts');
                 const { data: { session } } = await mod.supabase.auth.getSession();
-                const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fulfillment-recovery`, {
+                const res = await fetch(`${url}/functions/v1/fulfillment-recovery`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
-                    apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                    apikey: key,
                     ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
                   },
                   body: JSON.stringify({ session_id: sid, action: 'resend_next_steps' }),
                 });
                 return { status: res.status, data: await res.json().catch(() => null) };
-            }""", session_id)
+            """, {"sid": session_id, "url": FN_URL, "key": FN_KEY})
         data = recovery.get("data") or {}
         print("recovery status:", recovery.get("status"))
         rate_capped = isinstance(data.get("error"), str) and "already been sent" in data["error"]
@@ -150,14 +158,14 @@ async def main():
             check("recovery reports the order complete", data.get("complete") is True)
 
         bad = await page.evaluate(
-            """async () => {
-                const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fulfillment-recovery`, {
+            """async ({ url, key }) => {
+                const res = await fetch(`${url}/functions/v1/fulfillment-recovery`, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+                  headers: { 'Content-Type': 'application/json', apikey: key },
                   body: JSON.stringify({ session_id: 'cs_live_doesnotexist', action: 'resend_next_steps' }),
                 });
                 return { status: res.status, data: await res.json().catch(() => null) };
-            }""")
+            }""", {"url": FN_URL, "key": FN_KEY})
         check("recovery refuses an unknown session",
               bad.get("status") == 404 and not (bad.get("data") or {}).get("ok"),
               json.dumps(bad)[:120])
