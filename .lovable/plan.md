@@ -258,3 +258,67 @@ Verified: ten Clarity Check rows with three missing insights, two map rows, one 
 Assumed until tested: that the un-awaited send is the sole reason the assessment emails never arrive, and that the three insight-less Clarity rows come from the save landing before the AI result.
 
 Tests 1 through 5 are complete. The remediation set is ready to be sequenced on your word.
+
+---
+
+# Test 6 Findings: Model Calls, Prompts, Grounding, Retrieval, Structured Output, Safety, Cost, Tools, Agent Approvals
+
+Read-only. Evidence came from the live AI gateway request log, the function-level auth configuration, the stored AI output rows, and the shared model-call helper.
+
+## What exists
+
+Seven model call sites: the audit report, the assessment elaboration, the starter kit report, the clarity insight, the pattern detector, the weekly recap, and the newsletter drafter. Plus one streaming conversation surface, the coach chat. Every one of them calls the same gateway with the same single model, and every one routes its voice through the shared identity prompt built from your voice bible.
+
+## Verified end-to-end (backend evidence)
+
+- Model calls really happen and really succeed. Six gateway requests in the last seven days, every one a 200, all on the same model, ten to twelve seconds each, a consistent 3,813 tokens of prompt in and roughly 1,300 to 1,500 out per report. Cost per report is a fraction of a credit. There is no silent local stub anywhere in these paths.
+- Structured output is genuinely enforced, not prompted. Every report path forces a single named function call and returns only its parsed arguments. A response with no tool call, or with unparseable arguments, is rejected as an error rather than passed through as prose. This is the single strongest thing in the AI layer and it is what makes hallucinated free-text impossible in report bodies.
+- Grounded output is stored, not just displayed. The five audit reports, two assessment insights, one starter report, and seven clarity insights are all real rows carrying the model's structured payload. The output survives the request.
+- Provider failure is handled honestly and specifically. Rate limiting and credit exhaustion are surfaced as their own distinct errors with real user-facing text, and every other failure returns an error rather than an empty success. The screen says it could not generate the report.
+- The offer recommendation is constrained to a fixed catalog. The audit prompt lists the exact allowed offer identifiers and the schema requires one of them, so the model cannot invent an offer or a price. Recommendation routing is also independently re-derived from the stored value in application code.
+- Prompt injection is actively mitigated on the conversation surface. User-supplied session text interpolated into the system prompt is stripped of control characters, truncated, and capped at twenty answer entries. The chat itself rejects anything that is not a user or assistant turn, caps history at fifty messages, and caps each message at ten thousand characters. That is real defensive work, not decoration.
+- The key never reaches the browser. Every call is server-side and the secret is read from the function environment.
+
+## Broken
+
+- Nothing in the AI layer is currently broken in the sense of failing. Zero errors in the log window.
+
+## Functional with gaps
+
+- Four paid or semi-paid AI generators are callable by anyone with no sign-in and no rate limit. The assessment elaboration, the starter kit report, and the clarity insight all accept an unauthenticated request, treat authentication as optional enrichment, and then call the model. There is no per-address cap, no per-address cooldown, and no daily ceiling anywhere in the code. Today's volume is six calls a week so nothing has burned, but the exposure is a script away from being a credit bill. The audit generator is the exception and it is correct: it requires either the signed-in owner of the audit row or an unexpired single-use token.
+- Cost is observable but not governed. The gateway log shows exactly what each call cost. Nothing in the app reads that, caps it, alerts on it, or attributes it to a user. There is no budget and no admin cost view.
+- The output is grounded in the prompt, not in retrieval. There are no embeddings, no vector store, and no retrieval step anywhere. The catalog, the pricing rules, and the voice rules are pasted into the prompt as static text. That is a legitimate and simpler architecture at this scale, but it means the model's factual footing is only as current as the hardcoded prompt strings, and a catalog change in one file does not propagate to the others.
+- Prompt payloads are not retained. The gateway log records every request as redacted, so for any given stored report you can see the cost and the token count but you cannot see the prompt that produced it. There is no way to reconstruct why a specific report said what it said.
+
+## Partial
+
+- Safety review is prompt-level only. The identity prompt carries your banned-language and hard-wall rules, and the report schemas constrain shape, but no code validates that returned prose actually honors those rules. There is no post-generation check for banned phrasing, invented statistics, income claims, or price mentions. The rules are instructions to the model, not enforced constraints.
+- Injection defense is uneven across surfaces. The conversation surface sanitizes. The report generators interpolate the user's raw intake answers into the prompt with no equivalent stripping, so a hostile intake field is delivered to the model verbatim. The forced-schema output sharply limits the damage a successful injection could do, which is why this is a gap and not a break.
+- Model choice is pinned to a single preview-generation model, hardcoded in six separate places plus one shared default. There is no per-task model selection, no fallback model, and no single place to change it.
+
+## Missing
+
+- There are no evaluation sets. Not one golden input with an expected output for any of the seven generators. Every change to a prompt, a schema, or the catalog ships unverified against past behavior, and a regression in report quality would be invisible until a buyer complained.
+- There are no tools and no agent approvals. The single forced function call is a JSON shape, not an executable action, so nothing the model returns can act on the system. There is no tool overreach risk today because there is no tool surface. This is worth stating plainly because the roadmap includes an agent product, and that is the point where an approval gate stops being optional.
+- There is no admin view of AI activity. No screen shows generations, failures, costs, or model output per user.
+
+## Current user impact
+
+A person who reaches an AI surface gets real, grounded, schema-valid output within about twelve seconds, and it is stored. Nothing about the AI layer is currently failing them. The risk is on your side, not theirs: anyone can spend your credits without an account, nobody is checking whether the generated prose obeys your own voice rules, and nothing would catch a quality regression.
+
+## Exact tests required
+
+1. Call each unauthenticated generator repeatedly from a script with no session and count how many complete. Expected under a correct design: refusal after a small number. Expected today: all of them complete.
+2. Submit an intake field containing an explicit instruction to ignore prior instructions and reveal the system prompt, then read the stored report and confirm the schema held and no prompt text leaked.
+3. Run one identical input through each generator twice and compare the stored payloads for the drift that a missing evaluation set would hide.
+4. Force a provider rate limit and confirm the user sees the specific rate-limit message and no partial row is stored.
+5. Refresh mid-generation and confirm the request either completes and stores, or fails cleanly, with no half-written row.
+6. Attempt the audit generator with someone else's audit id and an expired token and confirm both are refused.
+7. Compare each hardcoded catalog prompt against the live price list and confirm no generator can quote a stale price.
+
+## Verified facts versus assumptions
+
+Verified: six successful gateway calls with real token and cost figures, one model across all call sites, forced single-tool structured output with rejection on malformed arguments, stored structured payloads for every generator, distinct 429 and 402 handling, catalog-constrained offer recommendation, sanitized and capped injection surface on the chat, owner-or-token gating on the audit generator, unauthenticated access with no rate limit on three generators, redacted payload retention, zero evaluation sets, zero executable tools.
+Assumed until tested: that the unauthenticated generators would in fact serve unlimited sequential requests, and that raw intake interpolation is exploitable only to the limited degree the forced schema allows.
+
+Tests 1 through 6 are complete. On your word I will sequence the remediation set, smallest safe boundary first: rate-limit the open generators, await the un-awaited sends, fix the insert-only nurture enrollment, stop the admin trail asserting sends that never happened, and add the first evaluation set.
