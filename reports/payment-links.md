@@ -1,11 +1,11 @@
 # Payment & Audit Link Report
-Generated: 2026-08-08T20:20:34.533Z
+Generated: 2026-08-08T21:09:47.480Z
 
-- Registered priceIds: **43**
-- Referenced priceIds (unique): **33**
+- Registered priceIds: **44**
+- Referenced priceIds (unique): **34**
 - Failures: **0**
 
-## Price IDs (46 references)
+## Price IDs (47 references)
 
 | Price ID | Resolved | File | Line | Status |
 | --- | --- | --- | --- | --- |
@@ -36,7 +36,8 @@ Generated: 2026-08-08T20:20:34.533Z
 | `price_1Tb3c4BReje0oFcLInI8JGZv` | subscription — Pro/Growth Standard $997/mo | src/lib/offer-catalog.ts | 55 | ok |
 | `price_1Tb3wwBReje0oFcLLlE6CDGO` | subscription — Dream Team Founding $997/mo | src/lib/offer-catalog.ts | 74 | ok |
 | `price_1Tb40yBReje0oFcLIciRVQSD` | subscription — Dream Team Standard $1497/mo | src/lib/offer-catalog.ts | 79 | ok |
-| `price_1Tb41vBReje0oFcLjxGozG2X` | payment — AI Strategy Intensive $497 | src/lib/offer-catalog.ts | 191 | ok |
+| `price_1U2HOqBReje0oFcLyJ5Ymk5L` | payment — AI Brain — Business Knowledge Base $197 | src/lib/offer-catalog.ts | 225 | ok |
+| `price_1Tb41vBReje0oFcLjxGozG2X` | payment — AI Strategy Intensive $497 | src/lib/offer-catalog.ts | 365 | ok |
 | `price_1THJVvBReje0oFcLhkxCXesA` | subscription — Subscriber $27/mo | src/lib/stripe-tiers.ts | 14 | ok |
 | `price_1Tb3ZzBReje0oFcLQFSaEnr4` | subscription — Starter Founding $297/mo | src/lib/stripe-tiers.ts | 22 | ok |
 | `price_1Tb3bHBReje0oFcLkVgjsUl0` | subscription — Starter Standard $497/mo | src/lib/stripe-tiers.ts | 23 | ok |

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import SEOHead from "@/components/SEOHead";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  AGENT_BUILDS,
+  RENT_AGENT_TIERS,
+  RENT_AGENT_ENTERPRISE,
+  LEAD_ENGINE_TIERS,
+  LEAD_ENGINE_ENTERPRISE,
+  HERMES,
+} from "@/lib/offer-catalog";
 
 const TIMELINE_OPTIONS = [
   { value: '3_days', label: '3 days' },
@@ -17,9 +25,25 @@ const TIMELINE_OPTIONS = [
   { value: '2_weeks', label: '2 weeks' },
 ];
 
+/** Every offer that can deep-link into this intake with `?offer=<key>`.
+ *  Derived from the catalog so a new offer cannot go missing here. */
+const OFFER_LABELS: Record<string, string> = {
+  ...Object.fromEntries(AGENT_BUILDS.map((b) => [b.key, b.name])),
+  ...Object.fromEntries(RENT_AGENT_TIERS.map((t) => [`rent_${t.key}`, `Rent-an-Agent — ${t.name}`])),
+  rent_enterprise: `Rent-an-Agent — ${RENT_AGENT_ENTERPRISE.name}`,
+  ...Object.fromEntries(
+    LEAD_ENGINE_TIERS.map((t) => [`lead_engine_${t.key}`, `AI Lead Engine — ${t.name}`]),
+  ),
+  [`lead_engine_${LEAD_ENGINE_ENTERPRISE.key}`]: LEAD_ENGINE_ENTERPRISE.name,
+  [HERMES.key]: HERMES.name,
+};
+
 const AgentIntake = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const offerKey = searchParams.get("offer") ?? "";
+  const offerLabel = OFFER_LABELS[offerKey];
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -64,6 +88,8 @@ const AgentIntake = () => {
         brand_voice: brandVoice.trim() || null,
         documents: documents.trim() || null,
         timeline,
+        offer_key: offerLabel ? offerKey : null,
+        offer_name: offerLabel ?? null,
       };
 
       // Insert into agent_orders table (table not in generated types yet)
@@ -94,7 +120,7 @@ const AgentIntake = () => {
             recipientEmail: email,
             idempotencyKey: `agent-intake-${orderData?.id ?? Date.now()}`,
             templateData: {
-              agentType: 'Custom AI Agent',
+              agentType: offerLabel ?? 'Custom AI Agent',
               agentCount: 1,
               timeline: TIMELINE_OPTIONS.find((t) => t.value === timeline)?.label ?? timeline,
             },
@@ -114,6 +140,7 @@ const AgentIntake = () => {
               email,
               order_id: orderData?.id ?? null,
               business_name: businessName.trim(),
+              offer: offerLabel ?? null,
               timeline: TIMELINE_OPTIONS.find((t) => t.value === timeline)?.label ?? timeline,
             },
           },
@@ -141,7 +168,8 @@ const AgentIntake = () => {
             Your intake is in.
           </h1>
           <p className="text-muted-foreground leading-relaxed">
-            Coach Kay will have your agent ready within your selected timeline. You'll receive an email with your files and setup instructions when it's done.
+            Coach Kay reviews every intake personally. You will get a scope and a payment link back, so
+            you never pay for a build before you know exactly what you are getting.
           </p>
           <Button
             onClick={() => navigate('/dashboard')}
@@ -186,8 +214,14 @@ const AgentIntake = () => {
           <h1 className="font-heading text-3xl md:text-4xl font-light mt-4 leading-tight">
             Let's build your agent.
           </h1>
+          {offerLabel && (
+            <p className="mt-4 inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs tracking-[0.16em] uppercase text-primary">
+              {offerLabel}
+            </p>
+          )}
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            This takes about 5 minutes. The more detail you give, the better your agent will sound like you.
+            This takes about 5 minutes. You are not paying yet. Coach Kay scopes your build first, then
+            sends the price and a payment link.
           </p>
         </div>
 
@@ -352,7 +386,7 @@ const AgentIntake = () => {
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">
-            Coach Kay reviews every intake personally. Expect delivery within your selected timeline.
+            Coach Kay reviews every intake personally. You get a scope back before any payment.
           </p>
         </form>
       </div>

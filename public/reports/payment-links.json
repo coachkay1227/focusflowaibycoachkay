@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-08T20:20:34.533Z",
+  "generatedAt": "2026-08-08T21:09:47.480Z",
   "summary": {
-    "priceIdsReferenced": 33,
-    "priceIdsRegistered": 43,
+    "priceIdsReferenced": 34,
+    "priceIdsRegistered": 44,
     "failures": 0
   },
   "failures": [],
@@ -252,9 +252,18 @@
     },
     {
       "type": "priceId",
+      "value": "price_1U2HOqBReje0oFcLyJ5Ymk5L",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 225,
+      "resolvedTarget": "payment — AI Brain — Business Knowledge Base $197",
+      "label": "AI Brain — Business Knowledge Base $197",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
       "value": "price_1Tb41vBReje0oFcLjxGozG2X",
       "file": "src/lib/offer-catalog.ts",
-      "line": 191,
+      "line": 365,
       "resolvedTarget": "payment — AI Strategy Intensive $497",
       "label": "AI Strategy Intensive $497",
       "status": "ok"

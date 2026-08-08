@@ -6,15 +6,9 @@ import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
-import { redirectToLeadGenIfConfigured } from "@/lib/lead-gen";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import {
   RENT_AGENT_TIERS,
   RENT_AGENT_ENTERPRISE,
-  LEAD_ENGINE_TIERS,
-  LEAD_ENGINE_ENTERPRISE,
   ENTRY_OFFERS,
 } from "@/lib/offer-catalog";
 import { webPage, breadcrumb, serviceSchema, SITE_URL, ORG_ID } from "@/lib/seo-schema";
@@ -44,14 +38,11 @@ const HOW_IT_WORKS = [
 
 const RentAnAgent = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [founding, setFounding] = useState<boolean>(() => {
     if (typeof window === "undefined") return true;
     const stored = window.localStorage.getItem(FOUNDING_STORAGE_KEY);
     return stored === null ? true : stored === "true";
   });
-  const [busyPriceId, setBusyPriceId] = useState<string | null>(null);
   const [inquiry, setInquiry] = useState<{ open: boolean; lane: string; context?: string }>({
     open: false,
     lane: "",
@@ -61,40 +52,6 @@ const RentAnAgent = () => {
     setFounding(next);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(FOUNDING_STORAGE_KEY, String(next));
-    }
-  };
-
-  const startCheckout = async (priceId: string, tierName: string, successPath?: string) => {
-    // All Rent-an-Agent tiers are $297+/mo, so they defer to the lead-gen page
-    // when one is configured (checked before the sign-in prompt so visitors
-    // are not asked to create an account just to be redirected).
-    if (await redirectToLeadGenIfConfigured()) return;
-    if (!user) {
-      toast({ title: "Sign in to subscribe", description: "Create an account so we can attach your subscription." });
-      navigate(`/auth?next=${encodeURIComponent("/rent-an-agent")}`);
-      return;
-    }
-    setBusyPriceId(priceId);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: {
-          priceId,
-          successPath: successPath ?? `/order-success?tier=${encodeURIComponent(tierName)}`,
-          cancelPath: "/rent-an-agent?checkout=cancelled",
-        },
-      });
-      if (error) throw error;
-      const url = (data as { url?: string })?.url;
-      if (!url) throw new Error("No checkout URL returned");
-      window.location.href = url;
-    } catch (e) {
-      toast({
-        title: "Checkout could not start",
-        description: e instanceof Error ? e.message : "Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setBusyPriceId(null);
     }
   };
 
@@ -203,7 +160,7 @@ const RentAnAgent = () => {
           Rent the agent. <span className="text-primary italic">Keep the leverage.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Subscribe to a dedicated AI agent, or a full squad, tuned to your business by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer.
+          A dedicated AI agent, or a full squad, built and run for you by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer. Every retainer starts with an intake so you know the scope before you pay.
         </p>
 
         <p className="mt-6 text-sm text-primary/80 max-w-lg mx-auto">
@@ -320,12 +277,14 @@ const RentAnAgent = () => {
                 </ul>
                 <p className="mt-4 text-xs text-muted-foreground italic">{tier.best_for}</p>
                 <Button
-                  onClick={() => startCheckout(active.priceId, `Rent-an-Agent ${tier.name} (${founding ? "Founding" : "Standard"})`)}
-                  disabled={busyPriceId === active.priceId}
+                  onClick={() => navigate(`/agent-intake?offer=rent_${tier.key}`)}
                   className="mt-6 w-full bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {busyPriceId === active.priceId ? "Starting…" : `Subscribe — ${active.priceDisplay}`}
+                  Start my intake
                 </Button>
+                <p className="mt-2 text-[11px] text-center text-muted-foreground/80">
+                  {active.priceDisplay} once your build is scoped. You approve before you pay.
+                </p>
               </div>
             );
           })}
@@ -369,111 +328,23 @@ const RentAnAgent = () => {
         </div>
       </section>
 
-      {/* AI LEAD ENGINE */}
-      <section className="relative z-10 px-6 sm:px-10 py-16 max-w-6xl mx-auto">
-        <AnimatedSection className="text-center mb-10">
-          <span className="font-mono-label text-primary tracking-[0.28em] text-xs">AI LEAD ENGINE</span>
-          <h2 className="font-heading text-3xl sm:text-4xl mt-3">
-            Done-with-you outreach systems
-          </h2>
-          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-            From enriched lead lists to a full voice + LinkedIn + appointment booking stack. Each engagement is scoped to your CRM and outreach goals.
-          </p>
-        </AnimatedSection>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
-          {LEAD_ENGINE_TIERS.map((tier) => {
-            const highlighted = "highlighted" in tier && tier.highlighted;
-            return (
-              <div
-                key={tier.name}
-                className={`flex flex-col h-full rounded-xl border bg-card/40 backdrop-blur-sm p-6 transition-colors ${
-                  highlighted
-                    ? "border-primary/60 ring-1 ring-primary/30"
-                    : "border-border/60 hover:border-primary/40"
-                }`}
-              >
-                {highlighted && (
-                  <span className="inline-block self-start mb-3 text-[10px] tracking-[0.2em] uppercase text-primary bg-primary/10 border border-primary/30 rounded-full px-2 py-0.5">
-                    Most Popular
-                  </span>
-                )}
-                <h3 className="font-heading text-xl text-foreground">Lead Engine: {tier.name}</h3>
-                <h4 className="text-[10px] uppercase tracking-[0.16em] text-primary/75">Lead Engine Tier</h4>
-                <h3 className="font-heading text-xl text-foreground">Lead Engine — {tier.name}</h3>
-                <p className="mt-2 text-sm text-foreground/85 font-medium leading-snug min-h-[3.5rem]">
-                  {tier.headline}
-                </p>
-                <div className="mt-4">
-                  <div className="text-2xl font-bold text-primary">{tier.price}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{tier.setup}</div>
-                </div>
-                <ul className="mt-5 space-y-2 flex-1">
-                  {tier.bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-2 text-sm text-foreground/85">
-                      <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 text-[11px] font-mono-label tracking-[0.18em] uppercase text-primary/80">
-                  {tier.timeline}
-                </p>
-                <p className="mt-2 text-xs text-muted-foreground italic">{tier.best_for}</p>
-                <Button
-                  variant={highlighted ? "default" : "outline"}
-                  className={`mt-6 w-full ${
-                    highlighted
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "border-border"
-                  }`}
-                  onClick={() => openInquiry(`AI Lead Engine — ${tier.name}`, "We'll scope your CRM, channels, and outreach volume on a discovery call.")}
-                >
-                  Request Scope
-                </Button>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Enterprise — centered banner */}
-        <div className="mt-10 max-w-3xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl border border-primary/40 ring-1 ring-primary/15 bg-gradient-to-br from-card/60 via-card/40 to-primary/5 backdrop-blur-sm p-8 md:p-10">
-            <div className="grid md:grid-cols-[1.4fr_1fr] gap-8 md:gap-10 items-center">
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <Crown className="h-5 w-5 text-primary" strokeWidth={1.5} />
-                  <span className="font-mono-label text-[10px] tracking-[0.2em] uppercase text-primary bg-primary/10 border border-primary/30 rounded-full px-2 py-0.5">
-                    By application
-                  </span>
-                </div>
-                <h3 className="font-heading text-2xl text-foreground">{LEAD_ENGINE_ENTERPRISE.name}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{LEAD_ENGINE_ENTERPRISE.headline}</p>
-                <ul className="mt-5 space-y-2">
-                  {LEAD_ENGINE_ENTERPRISE.bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-2 text-sm text-foreground/85">
-                      <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 text-xs text-muted-foreground italic">{LEAD_ENGINE_ENTERPRISE.best_for}</p>
-              </div>
-              <div className="flex flex-col gap-4 md:items-end">
-                <div className="text-2xl font-semibold text-primary md:text-right">
-                  {LEAD_ENGINE_ENTERPRISE.priceDisplay}
-                </div>
-                <Button
-                  variant="outline"
-                  className="w-full md:w-auto border-primary/50 text-primary hover:bg-primary/10"
-                  onClick={() => openInquiry("AI Lead Engine — Enterprise", "Tell us about brands, regions, channels, compliance needs, and target volume.")}
-                >
-                  Request Enterprise Scope
-                </Button>
-              </div>
-            </div>
+      {/* AI LEAD ENGINE — lives on its own page now */}
+      <section className="relative z-10 px-6 sm:px-10 py-16 max-w-4xl mx-auto">
+        <AnimatedSection>
+          <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm p-8 sm:p-10 text-center">
+            <span className="font-mono-label text-primary tracking-[0.28em] text-xs">AI LEAD ENGINE</span>
+            <h2 className="font-heading text-2xl sm:text-3xl mt-3">
+              Need the pipeline filled, not just the work handled?
+            </h2>
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              A retainer takes work off your plate. The Lead Engine puts new people on it: enriched and
+              intent-scored leads, multi-channel follow-up, and calls booked straight into your calendar.
+            </p>
+            <Button asChild size="lg" variant="outline" className="mt-6 border-primary/50 text-primary hover:bg-primary/10">
+              <Link to="/agents/lead-engine">See the Lead Engine tiers</Link>
+            </Button>
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* AUDIT REPEAT CTA */}
