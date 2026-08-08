@@ -245,6 +245,35 @@ serve(async (req) => {
           }).catch((e) => log.warn("next_steps_email_failed", {
             message: e instanceof Error ? e.message : String(e),
           }));
+
+          // Admin audit trail: the verified fulfillment, and the exact next-step
+          // links this buyer was handed. Never blocks fulfilment.
+          const nsSubtotal = session.amount_subtotal ?? grossAmount ?? 0;
+          const nsOrigin = req.headers.get("origin") || "https://coachkayai.life";
+          const nsPaidCall = nsSubtotal >= 29700 || session.mode === "subscription";
+          void logOrderAudit(supabaseClient, {
+            action: ORDER_AUDIT_ACTIONS.fulfillmentVerified,
+            targetTable: "stripe_checkout_session",
+            targetId: session.id,
+            metadata: {
+              product_name: nsProductName,
+              customer_email: nsEmail,
+              mode: session.mode,
+              payment_status: session.payment_status,
+              amount_total_cents: session.amount_total ?? null,
+              amount_subtotal_cents: session.amount_subtotal ?? null,
+              discount_cents: session.total_details?.amount_discount ?? 0,
+              booking_tier: nsPaidCall ? "paid_strategy" : "free_clarity",
+              link_targets: {
+                start: `${nsOrigin}/start`,
+                order_success: `${nsOrigin}/order-success?session_id=${session.id}`,
+                challenges: `${nsOrigin}/challenges`,
+                dashboard: `${nsOrigin}/dashboard`,
+              },
+              next_steps_email_sent: true,
+              verified_at: new Date().toISOString(),
+            },
+          });
         }
       } catch (e) {
         log.warn("next_steps_email_error", { message: e instanceof Error ? e.message : String(e) });
