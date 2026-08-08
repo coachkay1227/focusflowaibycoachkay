@@ -88,14 +88,15 @@ Deno.serve(async (req) => {
     let query = supabase
       .from("email_delivery_retries")
       .select("id,message_id,template_name,recipient_email,source_id,attempts,max_attempts")
-      .eq("status", "pending")
       .order("next_attempt_at", { ascending: true })
       .limit(BATCH_SIZE);
 
     if (onlyId) {
+      // A manual "retry now" reaches parked and exhausted rows too, which is the
+      // whole point of the button. Scheduled runs only touch pending work.
       query = query.eq("id", onlyId);
     } else {
-      query = query.lte("next_attempt_at", new Date().toISOString());
+      query = query.eq("status", "pending").lte("next_attempt_at", new Date().toISOString());
     }
 
     const { data: due, error: dueError } = await query;
@@ -106,8 +107,10 @@ Deno.serve(async (req) => {
     if (rows.length === 0) return json({ ok: true, ...summary }, 200, cors);
 
     for (const row of rows) {
-      const attempt = (row.attempts ?? 0) + 1;
       const cap = Math.min(row.max_attempts ?? MAX_RETRY_ATTEMPTS, MAX_RETRY_ATTEMPTS);
+      const attempt = (row.attempts ?? 0) + 1;
+      // The stored counter can never exceed the cap the table allows.
+      const recordedAttempts = Math.min(attempt, cap);
 
       const park = async (reason: string) => {
         await supabase
@@ -181,7 +184,7 @@ Deno.serve(async (req) => {
 
         await supabase
           .from("email_delivery_retries")
-          .update({ status: "sent", attempts: attempt, last_error: null })
+          .update({ status: "sent", attempts: recordedAttempts, last_error: null })
           .eq("id", row.id);
         summary.sent++;
       } catch (err) {
@@ -191,7 +194,7 @@ Deno.serve(async (req) => {
         await supabase
           .from("email_delivery_retries")
           .update({
-            attempts: attempt,
+            attempts: recordedAttempts,
             last_error: message.slice(0, 500),
             status: due ? "pending" : "exhausted",
             next_attempt_at: (due ?? new Date()).toISOString(),
