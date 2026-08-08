@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useLiveRefresh } from "@/hooks/use-live-refresh";
+import { useLiveRefresh, type LiveRefreshState } from "@/hooks/use-live-refresh";
 import { AdminNav } from "@/components/admin/AdminNav";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
