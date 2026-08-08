@@ -204,7 +204,7 @@ const CoachKay = () => {
                 COED partner serving working families across Central Ohio with
                 cohort-based learning, live sessions, and pilot programs for
                 organizations. <strong>Forward Focus Elevation</strong> is her
-                separate nonprofit, providing trauma-informed, income-based
+                fiscally sponsored community lane, providing trauma-informed, income-based
                 support for justice-impacted families and crime victims and
                 survivors.
               </p>
@@ -345,7 +345,7 @@ const CoachKay = () => {
                     <Heart className="h-5 w-5 text-primary" />
                   </div>
                   <span className="font-mono-label text-primary tracking-[0.2em] text-[10px]">
-                    NONPROFIT · JUSTICE-IMPACTED FAMILIES
+                    FISCALLY SPONSORED · JUSTICE-IMPACTED FAMILIES
                   </span>
                 </div>
                 <h3 className="font-heading text-2xl mb-2">Forward Focus Elevation</h3>
@@ -373,7 +373,8 @@ const CoachKay = () => {
             </AnimatedSection>
           </div>
           <p className="mt-8 text-center text-xs text-muted-foreground/70 max-w-2xl mx-auto">
-            Forward Focus Elevation is a separate nonprofit entity. Donations and
+            Forward Focus Elevation is a fiscally sponsored program, not a 501(c)(3).
+            Donations and
             program participation are governed by that organization's own terms
             and privacy policy. Coach Kay Elevates is a for-profit woman-owned
             business.
