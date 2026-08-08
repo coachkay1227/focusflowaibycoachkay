@@ -124,7 +124,16 @@ serve(async (req: Request) => {
         );
       }
 
-      const email = `fulfillment-test+${Date.now()}@example.com`;
+      // Must be a genuinely deliverable address: the email provider rejects
+      // example.com outright, which made the confirmation-email check
+      // permanently fail for reasons unrelated to fulfillment. Sub-addressing
+      // the admin's own inbox keeps the test real and self-contained.
+      const adminEmail = caller.email;
+      if (!adminEmail || !adminEmail.includes("@")) {
+        return json({ error: "Your admin account needs an email address to run this test." }, 400);
+      }
+      const [local, domain] = adminEmail.split("@");
+      const email = `${local}+fftest${Date.now()}@${domain}`;
       const { data: lead, error: leadErr } = await admin
         .from("business_audits")
         .insert({

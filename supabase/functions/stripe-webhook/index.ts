@@ -8,6 +8,43 @@ import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-
 
 const SOURCE = "stripe-webhook";
 
+/** Cold-start guard: proves the signature verifier can actually verify a payload
+ *  we signed ourselves. This exists because a synchronous constructEvent() call
+ *  silently rejected every real Stripe delivery — the failure was invisible
+ *  until a customer paid. Runs once per isolate. */
+let verifierChecked = false;
+async function assertVerifierHealthy(
+  stripe: Stripe,
+  supabase: ReturnType<typeof createClient>,
+  log: ReturnType<typeof createLogger>,
+) {
+  if (verifierChecked) return;
+  verifierChecked = true;
+  const probeSecret = "whsec_selfcheck_" + "0".repeat(24);
+  const payload = JSON.stringify({ id: "evt_selfcheck", type: "ping", data: { object: {} } });
+  try {
+    const ts = Math.floor(Date.now() / 1000);
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw", enc.encode(probeSecret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
+    );
+    const mac = await crypto.subtle.sign("HMAC", key, enc.encode(`${ts}.${payload}`));
+    const hex = [...new Uint8Array(mac)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    await stripe.webhooks.constructEventAsync(payload, `t=${ts},v1=${hex}`, probeSecret);
+    log.info("verifier_selfcheck_ok");
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    log.error("verifier_selfcheck_failed", { message });
+    await recordFailureAndMaybeAlert(supabase, log, {
+      source: SOURCE,
+      stage: "selfcheck",
+      reason: "verifier_unhealthy",
+      message,
+      context: { note: "Signature verification is broken; no payment can be fulfilled." },
+    }).catch(() => {});
+  }
+}
+
 const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
   new Response(JSON.stringify(body), {
     headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
@@ -94,6 +131,8 @@ serve(async (req) => {
     const sig = req.headers.get("stripe-signature");
     const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
 
+    await assertVerifierHealthy(stripe, supabaseClient, log);
+
     let event: Stripe.Event;
 
     if (!webhookSecret) {
@@ -113,7 +152,11 @@ serve(async (req) => {
     }
 
     try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+      // MUST be the async variant: the Deno runtime only exposes SubtleCrypto,
+      // and the synchronous constructEvent() throws
+      // "SubtleCryptoProvider cannot be used in a synchronous context",
+      // which silently rejected every real Stripe delivery with 400.
+      event = await stripe.webhooks.constructEventAsync(body, sig, webhookSecret);
     } catch (e) {
       await fail("signature", "signature_verification_failed", {
         message: e instanceof Error ? e.message : String(e),

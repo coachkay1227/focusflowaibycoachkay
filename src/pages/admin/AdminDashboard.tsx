@@ -3,6 +3,7 @@ import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { AdminPreviewToggle } from "@/components/admin/AdminPreviewToggle";
+import { WebhookHealthBanner } from "@/components/admin/WebhookHealthBanner";
 import { Users, CreditCard, Zap, Trophy, UserPlus, BookOpen, Target, Clock } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -103,6 +104,10 @@ const AdminDashboard = () => {
 
         <div className="mt-8">
           <AdminNav />
+        </div>
+
+        <div className="mt-6">
+          <WebhookHealthBanner />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
