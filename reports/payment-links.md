@@ -1,5 +1,5 @@
 # Payment & Audit Link Report
-Generated: 2026-08-08T13:49:53.601Z
+Generated: 2026-08-08T16:41:17.392Z
 
 - Registered priceIds: **43**
 - Referenced priceIds (unique): **33**
@@ -21,15 +21,15 @@ Generated: 2026-08-08T13:49:53.601Z
 | `price_1TbAhtBReje0oFcLscEqWHEK` | payment — 90-Day Personal Transformation $997 | src/data/programs.ts | 2096 | ok |
 | `price_1TbAiNBReje0oFcLrit7Ko5x` | payment — 90-Day Business Transformation $1,497 | src/data/programs.ts | 2114 | ok |
 | `price_1TbAimBReje0oFcL4Uti8udD` | payment — 90-Day Full AI Transformation $2,497 | src/data/programs.ts | 2132 | ok |
-| `price_1Tbbj0BReje0oFcL4qqcndi2` | payment — Link-in-Bio Hub $297 | src/lib/build-studio-catalog.ts | 32 | ok |
-| `price_1Tbbn5BReje0oFcLV5aYSxdp` | payment — Personal Brand Site $397 | src/lib/build-studio-catalog.ts | 47 | ok |
-| `price_1TbbqcBReje0oFcLPvFHVSAJ` | payment — Conversion Landing Page $497 | src/lib/build-studio-catalog.ts | 62 | ok |
-| `price_1TbbqyBReje0oFcL2lbGJDQl` | payment — Lead Magnet Funnel $697 | src/lib/build-studio-catalog.ts | 78 | ok |
-| `price_1TbbxuBReje0oFcL07dnyiRf` | payment — AI Chatbot Widget Setup $797 | src/lib/build-studio-catalog.ts | 93 | ok |
-| `price_1TbbyIBReje0oFcL02mjIa6U` | subscription — Site Care $97/mo | src/lib/build-studio-catalog.ts | 219 | ok |
-| `price_1Tbc2mBReje0oFcLKStT1NEj` | subscription — Collective Membership $97/mo | src/lib/build-studio-catalog.ts | 229 | ok |
-| `price_1Tbc3yBReje0oFcLpQCYOLeJ` | subscription — Agent Care $197/mo | src/lib/build-studio-catalog.ts | 239 | ok |
-| `price_1Tbc4SBReje0oFcLeEXu6hlp` | subscription — Monthly Build Credits $497/mo | src/lib/build-studio-catalog.ts | 249 | ok |
+| `price_1Tbbj0BReje0oFcL4qqcndi2` | payment — Link-in-Bio Hub $297 | src/lib/build-studio-catalog.ts | 38 | ok |
+| `price_1Tbbn5BReje0oFcLV5aYSxdp` | payment — Personal Brand Site $397 | src/lib/build-studio-catalog.ts | 53 | ok |
+| `price_1TbbqcBReje0oFcLPvFHVSAJ` | payment — Conversion Landing Page $497 | src/lib/build-studio-catalog.ts | 68 | ok |
+| `price_1TbbqyBReje0oFcL2lbGJDQl` | payment — Lead Magnet Funnel $697 | src/lib/build-studio-catalog.ts | 84 | ok |
+| `price_1TbbxuBReje0oFcL07dnyiRf` | payment — AI Chatbot Widget Setup $797 | src/lib/build-studio-catalog.ts | 99 | ok |
+| `price_1TbbyIBReje0oFcL02mjIa6U` | subscription — Site Care $97/mo | src/lib/build-studio-catalog.ts | 235 | ok |
+| `price_1Tbc2mBReje0oFcLKStT1NEj` | subscription — Collective Membership $97/mo | src/lib/build-studio-catalog.ts | 245 | ok |
+| `price_1Tbc3yBReje0oFcLpQCYOLeJ` | subscription — Agent Care $197/mo | src/lib/build-studio-catalog.ts | 255 | ok |
+| `price_1Tbc4SBReje0oFcLeEXu6hlp` | subscription — Monthly Build Credits $497/mo | src/lib/build-studio-catalog.ts | 265 | ok |
 | `price_1Tb3ZzBReje0oFcLQFSaEnr4` | subscription — Starter Founding $297/mo | src/lib/offer-catalog.ts | 27 | ok |
 | `price_1Tb3bHBReje0oFcLkVgjsUl0` | subscription — Starter Standard $497/mo | src/lib/offer-catalog.ts | 32 | ok |
 | `price_1Tb3blBReje0oFcLw6tk3kcg` | subscription — Pro/Growth Founding $697/mo | src/lib/offer-catalog.ts | 50 | ok |
