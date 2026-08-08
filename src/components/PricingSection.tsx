@@ -8,6 +8,7 @@ import OfferCard from "@/components/offers/OfferCard";
 import { getSymmetricGridClass } from "@/lib/grid";
 import { trackCheckoutStart } from "@/lib/gtag";
 import { useBookingLinks } from "@/hooks/use-booking-links";
+import { redirectToLeadGenIfConfigured } from "@/lib/lead-gen";
 
 // Partnership offer copy explicitly says "Begins with a 60-min discovery call",
 // so this card uses the paid 60-min strategy call URL (admin-editable).
@@ -156,6 +157,9 @@ export default function PricingSection() {
     async (priceId: string) => {
       setLoadingPriceId(priceId);
       try {
+        // Every offer on this section is $297+, so all of them defer to the
+        // lead-gen page when an admin has configured one.
+        if (await redirectToLeadGenIfConfigured()) return;
         const { data, error } = await supabase.functions.invoke("create-checkout", {
           body: {
             priceId,
