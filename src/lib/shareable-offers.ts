@@ -55,12 +55,16 @@ const STATIC_OFFERS: ShareableOffer[] = [
   // Positioning.
   { slug: "ai_task_force", label: "The Collective (AI task force)", group: "Positioning", path: "/collective", directPurchase: false },
   { slug: "start_a_build", label: "Start a build (inquiry)", group: "Positioning", path: "/start-a-build", directPurchase: false },
+
+  // Care plans attach to a build. For an existing site they start as an inquiry.
+  { slug: "build_site_care", label: "Site Care (existing site)", group: "Build Studio", path: "/start-a-build?offer=care", directPurchase: false },
+  { slug: "build_agent_care", label: "Agent Care (existing assistant)", group: "Build Studio", path: "/start-a-build?offer=agent_care", directPurchase: false },
 ];
 
 /** Build Studio offers, derived so the catalog stays the single definition. */
 const buildStudioOffers = (): ShareableOffer[] =>
   BUILD_STUDIO_TIERS.flatMap((tier) =>
-    tier.offers.map((offer) => ({
+    tier.offers.filter((offer) => !offer.hidden).map((offer) => ({
       slug: `build_${offer.key}`,
       label: `${tier.label} · ${offer.name}`,
       group: "Build Studio",

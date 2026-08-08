@@ -15,7 +15,7 @@ import {
   QUICK_WINS,
   BUSINESS_BUILDS,
   CUSTOM_AI_APPS,
-  CARE_PLANS,
+  ATTACHABLE_CARE_PLANS,
   type BuildStudioTierId,
   type BuildTierOffer,
 } from "@/lib/build-studio-catalog";
@@ -48,7 +48,11 @@ const PROCESS = [
     body: "We build fast: first preview within 48 hours for Tier 1, 1 week for larger.",
   },
   { step: "03", title: "Launch", body: "We deploy, wire your domain, and walk you through the handoff." },
-  { step: "04", title: "Care", body: "Optional monthly care plan keeps it running: updates, edits, monitoring." },
+  {
+    step: "04",
+    title: "Care",
+    body: "After launch you can add a monthly care plan: updates, edits, monitoring. Offered when your build is done, never required.",
+  },
 ];
 
 const FAQS = [
@@ -62,7 +66,11 @@ const FAQS = [
   },
   {
     q: "What if I want changes after launch?",
-    a: "Quick Wins include one round of revisions. Larger builds include two. After that, add a Care plan or book build time.",
+    a: "Quick Wins include one round of revisions. Larger builds include two. After that, you can add a monthly care plan. It's offered right after your build is delivered, so you already know what you're caring for.",
+  },
+  {
+    q: "Can you take care of a site you didn't build?",
+    a: "Yes, by inquiry. Send it over and I'll look at what's actually running before either of us commits to a monthly plan. Start at the scope and estimate form.",
   },
   {
     q: "Can I see examples before I buy?",
@@ -81,8 +89,7 @@ const FAQS = [
 const tierIcon = (id: BuildStudioTierId) => {
   if (id === "quick_wins") return Zap;
   if (id === "business") return Cog;
-  if (id === "custom_ai") return Sparkles;
-  return Crown;
+  return Sparkles;
 };
 
 const CollectiveAIBuildStudio = () => {
@@ -158,12 +165,12 @@ const CollectiveAIBuildStudio = () => {
       "@id": `${SITE_URL}/build-studio#service`,
       name: "Collective AI Build Studio",
       description:
-        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. Quick Wins from $297, care plans from $97/mo, and larger builds quoted after a scoping call.",
+        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. Quick Wins from $297, and larger builds quoted after a scoping call.",
       provider: { "@id": ORG_ID },
       areaServed: "Global",
       // Only instant-checkout offers publish a price. Apply-to-build offers are
       // estimate bands scoped on a call, so they never emit an exact figure.
-      offers: [...QUICK_WINS, ...CARE_PLANS, ...BUSINESS_BUILDS, ...CUSTOM_AI_APPS].map((o) => ({
+      offers: [...QUICK_WINS, ...BUSINESS_BUILDS, ...CUSTOM_AI_APPS].map((o) => ({
         "@type": "Offer",
         name: o.name,
         ...(o.estimate || !o.priceId
@@ -234,7 +241,7 @@ const CollectiveAIBuildStudio = () => {
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Builds that normally take months move in weeks here, because we build <em>with</em> AI, not
-          around it. Landing pages, dashboards, lead-gen tools, AI apps, and the care plans that keep them growing.
+          around it. Landing pages, dashboards, lead-gen tools, and custom AI apps.
         </p>
         <p className="mt-4 text-xs text-muted-foreground/80">
           You contract with Focus Flow AI LLC for Coach Kay's work. Larger scopes bring in partners
@@ -340,6 +347,28 @@ const CollectiveAIBuildStudio = () => {
               />
             );
           })}
+        </div>
+
+        {/* Care is an attachment to a build, not a tier of its own. */}
+        <div className="mt-8 rounded-xl border border-border/60 bg-card/30 p-6 text-center max-w-2xl mx-auto">
+          <h3 className="font-heading text-xl text-foreground">After launch: care plans</h3>
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            {ATTACHABLE_CARE_PLANS.map((p) => p.name).join(" and ")} keep your build running: updates,
+            monitoring, prompt tuning, and small edits. You'll see the plan that matches your build
+            right after it's delivered, so you're never paying for care before there's something to
+            care for.
+          </p>
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            Already have a site or an AI assistant someone else built? Care for those starts with a
+            short look at what's running.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-5 border-primary/40 text-primary hover:bg-primary/10"
+            onClick={() => navigate("/start-a-build?offer=care")}
+          >
+            Ask about care for an existing build
+          </Button>
         </div>
       </section>
 

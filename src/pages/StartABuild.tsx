@@ -18,6 +18,8 @@ import { CheckCircle2 } from "lucide-react";
 const WANTS = [
   "Not sure yet, help me scope it",
   ...BUILD_STUDIO_TIERS.flatMap((t) => t.offers.map((o) => `${t.label}: ${o.name}`)),
+  "Care for a site you did not build",
+  "Care for an AI assistant you did not build",
   "Rent-an-Agent (managed AI team)",
   "AI Lead Engine",
   "Corporate training or workshop",
@@ -54,6 +56,10 @@ const StartABuild = () => {
   const prefill = useMemo(() => {
     const offerParam = params.get("offer") ?? params.get("interest");
     if (!offerParam) return "";
+    if (offerParam === "care" || offerParam === "site_care") {
+      return "Care for a site you did not build";
+    }
+    if (offerParam === "agent_care") return "Care for an AI assistant you did not build";
     const direct = WANTS.find((w) => w.toLowerCase().includes(offerParam.toLowerCase()));
     if (direct) return direct;
     const known = SHAREABLE_OFFERS.find((o) => o.slug === offerParam || o.slug === `build_${offerParam}`);

@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, CalendarDays, Trophy, Mail, Unlock } from "lucide-react";
+import { ArrowRight, Check, CalendarDays, Trophy, Mail, Unlock, LifeBuoy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { attachedCarePlan } from "@/lib/build-studio-catalog";
 import { useBookingLinks } from "@/hooks/use-booking-links";
 import { trackEvent } from "@/lib/analytics";
 import { wantsStrategyCall as earnsStrategyCall } from "@/lib/booking-thresholds";
@@ -53,6 +57,44 @@ export const NextStepsPanel = ({
   customerName,
 }: NextStepsPanelProps) => {
   const { freeClarityUrl, paidStrategyUrl } = useBookingLinks();
+  const { toast } = useToast();
+  const [careBusy, setCareBusy] = useState(false);
+
+  // Care plans are only ever offered attached to a build that just shipped.
+  const carePlan = mode === "subscription" ? null : attachedCarePlan(productName);
+
+  const startCareCheckout = async () => {
+    if (!carePlan?.priceId) return;
+    setCareBusy(true);
+    try {
+      void trackEvent("post_purchase_care_offer", {
+        action: "start_care_checkout",
+        session_id: sessionId,
+        product_name: productName,
+        care_plan: carePlan.name,
+      });
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          priceId: carePlan.priceId,
+          successPath: `/order-success?tier=${encodeURIComponent(carePlan.name)}`,
+          cancelPath: "/build-studio?checkout=cancelled",
+          customerEmail: customerEmail ?? undefined,
+        },
+      });
+      if (error) throw error;
+      const url = (data as { url?: string } | null)?.url;
+      if (!url) throw new Error("No checkout URL returned");
+      window.location.href = url;
+    } catch (e) {
+      toast({
+        title: "Care plan checkout could not start",
+        description: e instanceof Error ? e.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setCareBusy(false);
+    }
+  };
 
   const wantsStrategyCall = earnsStrategyCall({ amountSubtotalCents, mode });
 
@@ -203,6 +245,35 @@ export const NextStepsPanel = ({
           </Button>
         </div>
       </div>
+
+      {carePlan && (
+        <div className="rounded-lg border border-border/60 bg-card/30 p-6 mb-10 text-left">
+          <LifeBuoy className="h-6 w-6 text-primary mb-3" />
+          <h2 className="font-heading text-xl text-foreground mb-2">
+            Step four: keep it running
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            {carePlan.tagline} {carePlan.priceDisplay}, cancel anytime. Skip it and nothing about
+            your order changes.
+          </p>
+          <ul className="mb-5 space-y-2 text-sm text-foreground/85">
+            {carePlan.features.map((f) => (
+              <li key={f} className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Button
+            variant="outline"
+            className="border-primary/40 text-primary hover:bg-primary/10 w-full sm:w-auto"
+            disabled={careBusy}
+            onClick={startCareCheckout}
+          >
+            {careBusy ? "Starting…" : `Add ${carePlan.name} for ${carePlan.priceDisplay}`}
+          </Button>
+        </div>
+      )}
 
       <div className="rounded-lg border border-border/60 bg-card/30 p-6 mb-10 text-left">
         <h2 className="font-mono-label text-xs uppercase tracking-wider text-muted-foreground mb-4">

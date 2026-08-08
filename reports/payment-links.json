@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T19:07:02.824Z",
+  "generatedAt": "2026-08-08T20:20:34.533Z",
   "summary": {
     "priceIdsReferenced": 33,
     "priceIdsRegistered": 43,
@@ -119,7 +119,7 @@
       "type": "priceId",
       "value": "price_1Tbbj0BReje0oFcL4qqcndi2",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 38,
+      "line": 48,
       "resolvedTarget": "payment — Link-in-Bio Hub $297",
       "label": "Link-in-Bio Hub $297",
       "status": "ok"
@@ -128,7 +128,7 @@
       "type": "priceId",
       "value": "price_1Tbbn5BReje0oFcLV5aYSxdp",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 53,
+      "line": 63,
       "resolvedTarget": "payment — Personal Brand Site $397",
       "label": "Personal Brand Site $397",
       "status": "ok"
@@ -137,7 +137,7 @@
       "type": "priceId",
       "value": "price_1TbbqcBReje0oFcLPvFHVSAJ",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 68,
+      "line": 78,
       "resolvedTarget": "payment — Conversion Landing Page $497",
       "label": "Conversion Landing Page $497",
       "status": "ok"
@@ -146,7 +146,7 @@
       "type": "priceId",
       "value": "price_1TbbqyBReje0oFcL2lbGJDQl",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 84,
+      "line": 94,
       "resolvedTarget": "payment — Lead Magnet Funnel $697",
       "label": "Lead Magnet Funnel $697",
       "status": "ok"
@@ -155,7 +155,7 @@
       "type": "priceId",
       "value": "price_1TbbxuBReje0oFcL07dnyiRf",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 99,
+      "line": 109,
       "resolvedTarget": "payment — AI Chatbot Widget Setup $797",
       "label": "AI Chatbot Widget Setup $797",
       "status": "ok"
@@ -164,7 +164,7 @@
       "type": "priceId",
       "value": "price_1TbbyIBReje0oFcL02mjIa6U",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 235,
+      "line": 245,
       "resolvedTarget": "subscription — Site Care $97/mo",
       "label": "Site Care $97/mo",
       "status": "ok"
@@ -173,7 +173,7 @@
       "type": "priceId",
       "value": "price_1Tbc2mBReje0oFcLKStT1NEj",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 245,
+      "line": 256,
       "resolvedTarget": "subscription — Collective Membership $97/mo",
       "label": "Collective Membership $97/mo",
       "status": "ok"
@@ -182,7 +182,7 @@
       "type": "priceId",
       "value": "price_1Tbc3yBReje0oFcLpQCYOLeJ",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 255,
+      "line": 267,
       "resolvedTarget": "subscription — Agent Care $197/mo",
       "label": "Agent Care $197/mo",
       "status": "ok"
@@ -191,7 +191,7 @@
       "type": "priceId",
       "value": "price_1Tbc4SBReje0oFcLeEXu6hlp",
       "file": "src/lib/build-studio-catalog.ts",
-      "line": 265,
+      "line": 278,
       "resolvedTarget": "subscription — Monthly Build Credits $497/mo",
       "label": "Monthly Build Credits $497/mo",
       "status": "ok"
