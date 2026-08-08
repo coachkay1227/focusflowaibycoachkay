@@ -23,6 +23,16 @@ export interface BuildTierOffer {
   priceId?: string;
   /** Present for Tier 2 / Tier 3 — opens the qualification dialog. */
   inquiryOnly?: boolean;
+  /**
+   * Care plans attach to a build instead of being sold cold. Lists the Quick Win
+   * keys this plan follows; `"*"` is the fallback for any other build.
+   */
+  attachTo?: string[];
+  /**
+   * True when the offer is intentionally not shown on the Build Studio page.
+   * The Stripe price stays live so existing subscribers keep billing.
+   */
+  hidden?: boolean;
   features: string[];
   highlighted?: boolean;
 }
@@ -233,6 +243,7 @@ export const CARE_PLANS: BuildTierOffer[] = [
     priceDisplay: "$97/mo",
     turnaround: "Monthly",
     priceId: "price_1TbbyIBReje0oFcL02mjIa6U",
+    attachTo: ["*"],
     features: ["Hosting included", "Security + uptime monitoring", "Small edits each month", "Cancel anytime"],
   },
   {
@@ -243,6 +254,7 @@ export const CARE_PLANS: BuildTierOffer[] = [
     priceDisplay: "$97/mo",
     turnaround: "Monthly",
     priceId: "price_1Tbc2mBReje0oFcLKStT1NEj",
+    hidden: true,
     features: ["Member template library", "Monthly office hours", "Priority build queue", "Cancel anytime"],
   },
   {
@@ -253,6 +265,7 @@ export const CARE_PLANS: BuildTierOffer[] = [
     priceDisplay: "$197/mo",
     turnaround: "Monthly",
     priceId: "price_1Tbc3yBReje0oFcLpQCYOLeJ",
+    attachTo: ["chatbot_setup"],
     features: ["Prompt + model tuning", "Uptime + cost monitoring", "Monthly recommendations", "Cancel anytime"],
   },
   {
@@ -263,16 +276,31 @@ export const CARE_PLANS: BuildTierOffer[] = [
     priceDisplay: "$497/mo",
     turnaround: "Monthly",
     priceId: "price_1Tbc4SBReje0oFcLeEXu6hlp",
+    hidden: true,
     highlighted: true,
     features: ["4 hrs build time / mo", "Roll over up to 2 months", "Priority turnaround", "Cancel anytime"],
   },
 ];
 
+/**
+ * Care is offered right after a build purchase, never as its own tier tab.
+ * `attachedCarePlan` picks the one plan that matches what was bought.
+ */
+export const ATTACHABLE_CARE_PLANS = CARE_PLANS.filter((p) => !!p.attachTo);
+
+export function attachedCarePlan(productName?: string | null): BuildTierOffer | null {
+  if (!productName) return null;
+  const name = productName.toLowerCase();
+  const match = QUICK_WINS.find((q) => name.includes(q.name.toLowerCase()));
+  if (!match) return null;
+  const specific = ATTACHABLE_CARE_PLANS.find((p) => p.attachTo?.includes(match.key));
+  return specific ?? ATTACHABLE_CARE_PLANS.find((p) => p.attachTo?.includes("*")) ?? null;
+}
+
 export const BUILD_STUDIO_TIERS = [
   { id: "quick_wins", label: "Quick Wins", price: "$297 – $797", offers: QUICK_WINS, inquiryOnly: false },
   { id: "business", label: "Business Builds", price: "Bands from $2K", offers: BUSINESS_BUILDS, inquiryOnly: true },
   { id: "custom_ai", label: "Custom AI Apps", price: "Bands from $8K", offers: CUSTOM_AI_APPS, inquiryOnly: true },
-  { id: "care", label: "Care Plans", price: "$97 – $497/mo", offers: CARE_PLANS, inquiryOnly: false },
 ] as const;
 
 export type BuildStudioTierId = (typeof BUILD_STUDIO_TIERS)[number]["id"];
