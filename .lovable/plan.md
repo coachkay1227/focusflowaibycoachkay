@@ -9,6 +9,8 @@ The SEO contract check is failing and that stops the dev server from booting. Th
 - `/start-a-build` goes in INDEXABLE (it is a public lead-gen entry point).
 - `/admin/qr-codes` goes in ADMIN_EXEMPT.
 
+Nothing below can be runtime-verified until this passes, because the preview is currently refusing connections.
+
 ## 1. Investment bands on the 12 apply-to-build offers
 
 Exact prices and exact timelines come off every `inquiryOnly` offer (Business Builds, Custom AI Apps). Instant-checkout products keep their real prices: Quick Wins ($297 to $797) and Care Plans ($97/mo to $497/mo).
