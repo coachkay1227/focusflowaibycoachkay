@@ -101,6 +101,7 @@ const ADMIN_EXEMPT = new Set<string>([
   "/admin/newsletter-draft/:id",
   "/admin/booking-links",
   "/admin/nurture",
+  "/admin/nurture-queue",
   "/admin/audit-log",
   "/admin/payment-links",
   "/admin/fulfillment-test",
