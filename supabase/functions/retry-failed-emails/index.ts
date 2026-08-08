@@ -157,7 +157,7 @@ async function resendNextSteps(supabase: Client, row: RetryRow, attempt: number)
 
   // Booking tier is recomputed from the stored pre-discount price, never reused
   // from the failed attempt.
-  await sendNextStepsEmail(supabase, {
+  await sendNextStepsEmail(supabase as unknown as Parameters<typeof sendNextStepsEmail>[0], {
     sessionId,
     email: String(email),
     name: order.guest_name,
