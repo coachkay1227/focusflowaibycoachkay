@@ -4,6 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 import { getBookingLinks } from '../_shared/booking-links.ts'
 import { isReservedTestRecipient } from '../_shared/reserved-recipients.ts'
+import { nextRetryAt, retryDecisionFor, MAX_RETRY_ATTEMPTS } from '../_shared/email-retry.ts'
 
 // Sender configuration — all transactional email is delivered via Resend.
 // `coachkayai.life` is the verified sending domain in Resend.
@@ -35,6 +36,47 @@ function generateToken(): string {
 function classifyResendFailure(status: number): 'permanent' | 'retryable' {
   if (status === 408 || status === 429) return 'retryable'
   return status >= 400 && status < 500 ? 'permanent' : 'retryable'
+}
+
+// Queue a failed send for the automatic retry worker. Retryable failures get a
+// due time from the shared backoff schedule; permanent ones are recorded as
+// `parked` so admins can see them without the worker ever retrying them.
+// Best effort: a bookkeeping problem must not change what we tell the caller.
+async function enqueueDeliveryRetry(
+  supabase: ReturnType<typeof createClient>,
+  args: {
+    messageId: string
+    templateName: string
+    recipientEmail: string
+    failureClass: 'permanent' | 'retryable'
+    errorMessage: string
+    metadata: Record<string, unknown>
+  },
+): Promise<void> {
+  const decision = retryDecisionFor(args.templateName, args.failureClass)
+  if (!decision.enqueue) return
+
+  const sourceId = args.metadata?.starter_kit_report_id
+  const due = decision.status === 'pending' ? nextRetryAt(0) : null
+
+  const { error } = await supabase.from('email_delivery_retries').upsert(
+    {
+      message_id: args.messageId,
+      template_name: args.templateName,
+      recipient_email: args.recipientEmail,
+      source_id: typeof sourceId === 'string' ? sourceId : null,
+      attempts: 0,
+      max_attempts: MAX_RETRY_ATTEMPTS,
+      next_attempt_at: (due ?? new Date()).toISOString(),
+      status: decision.status,
+      failure_class: args.failureClass,
+      last_error: args.errorMessage.slice(0, 500),
+    },
+    { onConflict: 'message_id' },
+  )
+  if (error) {
+    console.error('Failed to enqueue delivery retry', { error: error.message, messageId: args.messageId })
+  }
 }
 
 // Auth: this function MUST only be invoked by server-side code holding the
@@ -435,6 +477,14 @@ Deno.serve(async (req: Request) => {
         status: 'failed',
         error_message: `Resend ${res.status}: ${errBody.slice(0, 500)}`,
       })
+      await enqueueDeliveryRetry(supabase, {
+        messageId,
+        templateName,
+        recipientEmail: effectiveRecipient,
+        failureClass,
+        errorMessage: `Resend ${res.status}: ${errBody.slice(0, 500)}`,
+        metadata: logMetadata,
+      })
       return new Response(JSON.stringify({ error: 'Email send failed' }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -470,6 +520,14 @@ Deno.serve(async (req: Request) => {
       recipient_email: effectiveRecipient,
       status: 'failed',
       error_message: msg.slice(0, 500),
+    })
+    await enqueueDeliveryRetry(supabase, {
+      messageId,
+      templateName,
+      recipientEmail: effectiveRecipient,
+      failureClass: 'retryable',
+      errorMessage: msg,
+      metadata: logMetadata,
     })
     return new Response(JSON.stringify({ error: 'Email send exception' }), {
       status: 500,
