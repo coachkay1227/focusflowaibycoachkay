@@ -291,15 +291,88 @@ export default function AdminNurture() {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Refresh
                 </Button>
-                <Button onClick={doEnqueue} disabled={busy !== null || !audit.email}>
+                <Button
+                  onClick={() => setConfirmEnqueue(true)}
+                  disabled={busy !== null || !audit.email || missingSteps.length === 0}
+                >
                   <ListPlus className="h-4 w-4 mr-2" />
-                  {busy === "enqueue" ? "Queueing..." : "Queue missing steps"}
+                  {busy === "enqueue"
+                    ? "Queueing..."
+                    : missingSteps.length === 0
+                      ? "All steps queued"
+                      : `Queue ${missingSteps.length} missing step${missingSteps.length === 1 ? "" : "s"}`}
                 </Button>
               </div>
               {!audit.email && (
                 <p className="text-sm text-muted-foreground mt-3">
                   This audit has no email address, so nothing can be queued or sent for it.
                 </p>
+              )}
+            </section>
+
+            <section>
+              <h2 className="font-heading text-xl font-light mb-2">Queue coverage</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {missingSteps.length === 0
+                  ? "Every step in this sequence has a row in the queue. Nothing needs to be added before you send."
+                  : `${queuedSteps.length} of ${steps.length} steps are queued. The ${missingSteps.length} below have no row, so the worker will never send them until you queue them.`}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3 mb-4">
+                {steps.map((def) => {
+                  const touch = touches.find((t) => t.step === def.step);
+                  const queued = touch !== undefined;
+                  const overdue =
+                    touch?.status === "pending" && new Date(touch.scheduled_for).getTime() < Date.now();
+                  const Icon = !queued
+                    ? CircleDashed
+                    : touch!.status === "sent"
+                      ? CheckCircle2
+                      : touch!.status === "failed"
+                        ? AlertTriangle
+                        : Clock;
+                  const tone = !queued
+                    ? "border-dashed border-border text-muted-foreground"
+                    : touch!.status === "failed"
+                      ? "border-destructive/40 text-destructive"
+                      : touch!.status === "sent"
+                        ? "border-primary/40 text-primary"
+                        : "border-border text-foreground";
+                  return (
+                    <div key={def.step} className={`rounded-lg border p-3 ${tone}`}>
+                      <p className="flex items-center gap-2 font-medium">
+                        <Icon className="h-4 w-4" />
+                        Day {def.step}
+                      </p>
+                      <p className="text-xs mt-1">
+                        {!queued
+                          ? "Not queued"
+                          : touch!.status === "sent"
+                            ? `Sent ${fmt(touch!.sent_at)}`
+                            : overdue
+                              ? `Overdue since ${fmt(touch!.scheduled_for)}`
+                              : `${touch!.status} · ${fmt(touch!.scheduled_for)}`}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              {missingSteps.length > 0 && (
+                <ul className="space-y-3">
+                  {missingSteps.map((def) => {
+                    const { reason, effect } = missingStepReason(def, audit);
+                    return (
+                      <li key={def.step} className="rounded-lg border border-dashed border-border p-4">
+                        <p className="font-medium flex items-center gap-2">
+                          <ListPlus className="h-4 w-4 text-primary" />
+                          Day {def.step} will be added
+                          <span className="text-xs font-mono text-muted-foreground">{def.templateName}</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">{reason}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{effect}</p>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </section>
 
