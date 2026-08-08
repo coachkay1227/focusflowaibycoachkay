@@ -7,6 +7,7 @@ import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
 import { planTouches } from "../_shared/nurture.ts";
 import { sendNextStepsEmail } from "../_shared/next-steps-email.ts";
+import { logOrderAudit, ORDER_AUDIT_ACTIONS } from "../_shared/order-audit.ts";
 
 const SOURCE = "stripe-webhook";
 
