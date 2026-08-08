@@ -146,6 +146,14 @@ const AuditReport = () => {
             Complete My Intake
           </Button>
         )}
+        {auditSessionId && stages && (
+          <DeliveryStatusPanel
+            sessionId={auditSessionId}
+            stages={stages}
+            onRecovered={setStages}
+            className="mt-8 w-full max-w-xl"
+          />
+        )}
       </div>
     );
   }
