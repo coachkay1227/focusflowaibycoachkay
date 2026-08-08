@@ -10,6 +10,7 @@ import { offerRoute } from "@/lib/offer-routes";
 import { wantsStrategyCall } from "@/lib/booking-thresholds";
 import { buildBookingUrl } from "@/lib/booking-url";
 import { trackEvent } from "@/lib/analytics";
+import { logOrderNextStep, type OrderNextStepAction } from "@/lib/order-next-step-log";
 
 const PILLARS = ["foundation", "opportunity", "create", "uplift", "support"] as const;
 const TOTAL_STEPS = 3;
@@ -130,6 +131,28 @@ export default function Start() {
     void trackEvent("buyer_onboarding_cta", {
       cta: cta.kind,
       recommended_offer: recommendedSlug,
+    });
+    // Admin audit trail: chosen next action plus the exact link target.
+    const actionByKind: Record<string, OrderNextStepAction> = {
+      paid_call: "book_call",
+      free_call: "book_call",
+      community: "join_community",
+      waitlist: "join_waitlist",
+      offer: "view_offer",
+    };
+    logOrderNextStep({
+      action: actionByKind[cta.kind] ?? "view_offer",
+      sessionId: purchase?.sessionId ?? null,
+      orderId: audit?.id ?? null,
+      linkTarget: cta.href,
+      sessionType: cta.kind === "paid_call"
+        ? "paid_strategy"
+        : cta.kind === "free_call"
+          ? "free_clarity"
+          : null,
+      productName: purchase?.productName ?? nextMove?.offer_name ?? null,
+      amountSubtotalCents: purchase?.amountCents ?? null,
+      placement: "start",
     });
     void markCompleted();
   };
