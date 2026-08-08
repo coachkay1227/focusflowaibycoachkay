@@ -64,6 +64,10 @@ const RentAnAgent = () => {
   };
 
   const startCheckout = async (priceId: string, tierName: string, successPath?: string) => {
+    // All Rent-an-Agent tiers are $297+/mo, so they defer to the lead-gen page
+    // when one is configured (checked before the sign-in prompt so visitors
+    // are not asked to create an account just to be redirected).
+    if (await redirectToLeadGenIfConfigured()) return;
     if (!user) {
       toast({ title: "Sign in to subscribe", description: "Create an account so we can attach your subscription." });
       navigate(`/auth?next=${encodeURIComponent("/rent-an-agent")}`);
