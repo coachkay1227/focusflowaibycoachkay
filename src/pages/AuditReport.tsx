@@ -11,7 +11,7 @@ import { reportToPlaintext } from "@/lib/report-to-plaintext";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { offerRoute } from "@/lib/offer-routes";
+import { offerRoute, SKOOL_URL } from "@/lib/offer-routes";
 
 type Diagnostic = { score: number; note: string };
 type AuditReport = {
