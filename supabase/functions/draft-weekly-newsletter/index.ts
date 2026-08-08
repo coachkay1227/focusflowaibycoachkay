@@ -4,8 +4,8 @@
 // Triggered by pg_cron weekly. Idempotency: refuses to create a new draft if
 // an unsent draft from the last 6 days already exists.
 //
-// Auth: callable by service_role only (cron uses anon key + verify_jwt=false
-// is NOT used here — we enforce service_role like send-transactional-email).
+// Auth: requires either the service_role key (used by the weekly pg_cron job)
+// or a signed-in admin JWT (has_role(uid, 'admin')). Everyone else gets 401/403.
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { COACH_KAY_IDENTITY, COACH_KAY_VOICE } from '../_shared/coach-voice.ts'
@@ -97,14 +97,36 @@ async function generateDraft(args: {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
-  // Auth model: this endpoint is intentionally public. It is self-rate-limited
-  // (refuses to draft if an unsent issue exists from the last 6 days) and the
-  // generated draft only emails the fixed admin inbox. Abuse surface: an
-  // attacker can trigger at most one draft per week, which only Coach Kay sees.
-
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const supabase = createClient(supabaseUrl, serviceKey)
+
+  // --- Auth guard: service_role (cron) or admin user ---
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : ''
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  if (token !== serviceKey) {
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token)
+    if (userErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const { data: isAdmin } = await supabase.rpc('has_role', {
+      _user_id: userData.user.id,
+      _role: 'admin',
+    })
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+  }
 
   // Skip if a fresh unsent draft already exists
   const { data: existing } = await supabase
