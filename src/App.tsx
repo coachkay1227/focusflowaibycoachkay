@@ -166,6 +166,7 @@ const App = () => (
             <Route path="/admin/booking-links" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBookingLinks /></Suspense></ProtectedRoute>} />
             <Route path="/admin/audit-log" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAuditLog /></Suspense></ProtectedRoute>} />
             <Route path="/admin/payment-links" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminPaymentLinks /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/qr-codes" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminQrCodes /></Suspense></ProtectedRoute>} />
             <Route path="/admin/fulfillment-test" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminFulfillmentTest /></Suspense></ProtectedRoute>} />
             <Route path="/admin/nurture" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurture /></Suspense></ProtectedRoute>} />
             <Route path="/admin/nurture-queue" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurtureQueue /></Suspense></ProtectedRoute>} />
