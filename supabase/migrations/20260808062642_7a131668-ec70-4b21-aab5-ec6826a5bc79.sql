@@ -1,0 +1,1 @@
+GRANT ALL ON public.ai_call_events TO service_role;

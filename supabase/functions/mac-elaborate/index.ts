@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { generateReport } from "../_shared/generate-report.ts";
 import { composeSystemPrompt } from "../_shared/coach-voice.ts";
+import { enforceRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const SYSTEM_PROMPT = composeSystemPrompt("mac-elaborate");
 
@@ -77,6 +78,13 @@ serve(async (req: Request) => {
       const { data } = await supabase.auth.getUser(token);
       if (data?.user?.id) userId = data.user.id;
     }
+
+    const limit = await enforceRateLimit("mac-elaborate", req, {
+      userId,
+      email: guestEmail,
+      client: supabase,
+    });
+    if (!limit.allowed) return rateLimitResponse(limit, cors);
 
     const result = await generateReport({
       systemPrompt: SYSTEM_PROMPT,

@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import ReportView from "@/components/reports/ReportView";
 import PillarStrip from "@/components/PillarStrip";
 import PillarBadge from "@/components/PillarBadge";
+import { readFunctionError } from "@/lib/function-error";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Operator × Bottleneck Map
@@ -431,9 +432,13 @@ const Assessment = () => {
       }
     } catch (err) {
       console.error("mac-elaborate failed", err);
+      const { message, rateLimited } = await readFunctionError(
+        err,
+        "Please try again in a moment.",
+      );
       toast({
-        title: "Couldn't generate your report",
-        description: "Please try again in a moment.",
+        title: rateLimited ? "Take a breath" : "Couldn't generate your report",
+        description: message,
         variant: "destructive",
       });
     } finally {

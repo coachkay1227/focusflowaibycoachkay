@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { composeSystemPrompt } from "../_shared/coach-voice.ts";
+import { enforceRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const SYSTEM_PROMPT = composeSystemPrompt("weekly-insights");
 
@@ -23,6 +24,9 @@ serve(async (req) => {
     if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
+
+    const limit = await enforceRateLimit("weekly-insights", req, { userId: user.id });
+    if (!limit.allowed) return rateLimitResponse(limit, getCorsHeaders(req));
 
     // Fetch last 7 days of data
     const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();

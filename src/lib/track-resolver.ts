@@ -149,7 +149,7 @@ const PHASE_DESCRIPTIONS: Record<LifePhase, string> = {
 };
 
 const SUPPORT_MESSAGES: Record<LifePhase, string> = {
-  burnout: "Coach Kay has helped hundreds of people rebuild after burnout. You don't have to figure this out alone.",
+  burnout: "Rebuilding after burnout is work Coach Kay does with people every week. You don't have to figure this out alone.",
   "identity-shift": "Identity work is Coach Kay's specialty. Let's explore this together, on your terms.",
   reinvention: "Ready to build what's next? Coach Kay can help you design a reinvention path that actually fits your life.",
   overwhelm: "Let's simplify. Coach Kay can help you cut through the noise and find your one next step.",

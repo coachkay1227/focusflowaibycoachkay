@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { composeSystemPrompt } from "../_shared/coach-voice.ts";
+import { enforceRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const SYSTEM_PROMPT = composeSystemPrompt("live-chat");
 
@@ -33,6 +34,15 @@ serve(async (req: Request) => {
     const body = await req.json();
     const messages = body?.messages;
     const context = body?.context;
+
+    // Conversational endpoint: a real coaching session is many turns, so this
+    // ceiling is deliberately higher than the one-shot generators.
+    const limit = await enforceRateLimit("coach-chat", req, {
+      userId: userData.user.id,
+      client: supabase,
+      rule: { perHour: 60, perDay: 200 },
+    });
+    if (!limit.allowed) return rateLimitResponse(limit, getCorsHeaders(req));
 
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 50) {
       return new Response(JSON.stringify({ error: "Invalid messages array" }), {

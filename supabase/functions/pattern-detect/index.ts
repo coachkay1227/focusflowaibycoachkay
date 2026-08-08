@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { composeSystemPrompt } from "../_shared/coach-voice.ts";
+import { enforceRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 interface SessionInsight {
   truth: string;
@@ -106,6 +107,12 @@ serve(async (req) => {
         status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
+
+    const limit = await enforceRateLimit("pattern-detect", req, {
+      userId: userData.user.id,
+      client: supabase,
+    });
+    if (!limit.allowed) return rateLimitResponse(limit, getCorsHeaders(req));
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
