@@ -33,12 +33,12 @@ const workGroup: NavGroup = {
   items: [
     { label: "Transformation Paths", path: "/modules", icon: BookOpen, desc: "Personal · Business · Full AI programs" },
     { label: "Books & AI Kits", path: "/store", icon: BookMarked, desc: "Self-paced tools, templates & guides" },
+    { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart, desc: "Part of Books: AI-personalized stories for families" },
     { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "Done-with-you AI agents on your stack" },
     { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
     { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
     { label: "Business Audit", path: "/advisory", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
-    { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart, desc: "AI-personalized stories for families" },
   ],
 };
 

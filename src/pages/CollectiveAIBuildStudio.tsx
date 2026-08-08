@@ -230,15 +230,15 @@ const CollectiveAIBuildStudio = () => {
           <span className="text-primary italic">From launch to scale on autopilot.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          What agencies build in 4 months, the Collective ships in 14 days, because we build <em>with</em> AI, not
+          Builds that normally take months move in weeks here, because we build <em>with</em> AI, not
           around it. Landing pages, dashboards, lead-gen tools, AI apps, and the care plans that keep them growing.
         </p>
         <p className="mt-4 text-xs text-muted-foreground/80">
-          Delivered by the{" "}
+          Scoped by Coach Kay, delivered with{" "}
           <Link to="/collective" className="text-primary hover:underline">
-            Collective AI team
+            Collective AI
           </Link>{" "}
-          · Contracted under Focus Flow AI LLC
+          , an independent company founded by John Moyler. Contracted under Focus Flow AI LLC.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Button
