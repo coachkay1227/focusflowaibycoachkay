@@ -298,10 +298,9 @@ serve(async (req) => {
           });
           return ok(req);
         }
-        const amountTotal = typeof session.amount_total === "number" ? session.amount_total : null;
-        if (amountTotal === null || amountTotal !== pending.order_total) {
+        if (grossAmount === null || grossAmount !== pending.order_total) {
           await fail("autism_order", "amount_mismatch", {
-            context: { autism_order_id: autismOrderId, session_amount: amountTotal, expected: pending.order_total },
+            context: { autism_order_id: autismOrderId, session_amount: grossAmount, expected: pending.order_total },
           });
           return ok(req, { received: true, ignored: "amount_mismatch" });
         }
