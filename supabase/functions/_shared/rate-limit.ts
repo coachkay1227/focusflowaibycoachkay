@@ -80,12 +80,18 @@ export async function resolveIdentity(
 export async function enforceRateLimit(
   functionName: string,
   req: Request,
-  opts: { userId?: string | null; email?: string | null; client?: SupabaseClient } = {},
+  opts: {
+    userId?: string | null;
+    email?: string | null;
+    client?: SupabaseClient;
+    /** Override the default ceilings (e.g. conversational endpoints). */
+    rule?: RateLimitRule;
+  } = {},
 ): Promise<RateLimitResult> {
   try {
     const supabase = opts.client ?? serviceClient();
     const { key, authenticated } = await resolveIdentity(req, opts);
-    const rule = authenticated ? RATE_LIMITS.user : RATE_LIMITS.guest;
+    const rule = opts.rule ?? (authenticated ? RATE_LIMITS.user : RATE_LIMITS.guest);
 
     const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
