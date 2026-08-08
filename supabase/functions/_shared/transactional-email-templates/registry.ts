@@ -34,6 +34,9 @@ import { template as assessmentResult } from './assessment-result.tsx'
 import { template as starterKitReport } from './starter-kit-report.tsx'
 import { template as weeklyNewsletterDraft } from './weekly-newsletter-draft.tsx'
 import { template as weeklyNewsletterIssue } from './weekly-newsletter-issue.tsx'
+import { template as auditNurtureInsight } from './audit-nurture-insight.tsx'
+import { template as auditNurtureAccess } from './audit-nurture-access.tsx'
+import { template as auditNurtureBooking } from './audit-nurture-booking.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -61,4 +64,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'starter-kit-report': starterKitReport,
   'weekly-newsletter-draft': weeklyNewsletterDraft,
   'weekly-newsletter-issue': weeklyNewsletterIssue,
+  'audit-nurture-insight': auditNurtureInsight,
+  'audit-nurture-access': auditNurtureAccess,
+  'audit-nurture-booking': auditNurtureBooking,
 }
