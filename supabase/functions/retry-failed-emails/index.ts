@@ -247,66 +247,12 @@ Deno.serve(async (req) => {
       };
 
       try {
-        const spec = RETRYABLE_TEMPLATES[row.template_name];
-        if (!spec) {
+        const rebuild = REBUILDERS[row.template_name];
+        if (!rebuild || !RETRYABLE_TEMPLATES[row.template_name]) {
           await park(`template ${row.template_name} is not retry-eligible`);
           continue;
         }
-        if (!row.source_id) {
-          await park("no source record recorded for this send");
-          continue;
-        }
-
-        // Rebuild the payload from the stored source. The recipient always comes
-        // from that row, never from anything a caller supplied.
-        const { data: source } = await supabase
-          .from(spec.sourceTable)
-          .select("id,email,name,business_type,report")
-          .eq("id", row.source_id)
-          .maybeSingle();
-
-        if (!source) {
-          await park("source record no longer exists");
-          continue;
-        }
-
-        // Someone who unsubscribed or bounced mid-window is dropped, not retried.
-        const { data: suppression } = await supabase
-          .from("suppressed_emails")
-          .select("email")
-          .eq("email", String(source.email).toLowerCase())
-          .limit(1);
-        if ((suppression ?? []).length > 0) {
-          await park("recipient is suppressed");
-          continue;
-        }
-
-        const report = (source.report ?? {}) as Record<string, unknown>;
-        const { error: sendError } = await supabase.functions.invoke(
-          "send-transactional-email",
-          {
-            body: {
-              templateName: row.template_name,
-              recipientEmail: source.email,
-              idempotencyKey: `starter-kit-${source.id}-r${attempt}`,
-              metadata: {
-                source: "retry-failed-emails",
-                starter_kit_report_id: source.id,
-                retry_attempt: attempt,
-                original_message_id: row.message_id,
-              },
-              templateData: {
-                name: source.name,
-                businessType: source.business_type,
-                whereYouAre: report.where_you_are ?? null,
-                whatToFocusOn: report.what_to_focus_on ?? null,
-                actionThisWeek: report.action_this_week ?? null,
-              },
-            },
-          },
-        );
-
-        if (sendError) throw sendError;
+        await rebuild(supabase, row, attempt);
 
         await supabase
           .from("email_delivery_retries")
@@ -314,6 +260,12 @@ Deno.serve(async (req) => {
           .eq("id", row.id);
         summary.sent++;
       } catch (err) {
+        // A row that can never be rebuilt is parked for a human instead of
+        // burning the remaining attempts on the same certain failure.
+        if (err instanceof ParkRow) {
+          await park(err.message);
+          continue;
+        }
         const message = err instanceof Error ? err.message : String(err);
         console.error("email retry attempt failed", row.id, message);
         const due = attempt >= cap ? null : nextRetryAt(attempt);
