@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ShieldAlert, ShieldCheck, Eye, CheckCircle2, ExternalLink, Bell, Radio } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
@@ -277,19 +277,40 @@ export default function PauseHub() {
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Active AI scams, overhyped trends, and productivity traps: tracked in plain English for
-          single parents, second-chance seekers, and working families. Updated live. No paywall.
+          working parents, second-chance seekers, and busy families. No paywall.
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <span
-            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] tracking-[0.18em] uppercase text-primary"
-            aria-label="Live feed"
+            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] tracking-[0.18em] uppercase ${
+              liveStatus === "live"
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-muted-foreground/30 bg-muted/30 text-muted-foreground"
+            }`}
+            aria-live="polite"
+            aria-label={
+              liveStatus === "live"
+                ? "Live feed connected"
+                : liveStatus === "connecting"
+                  ? "Connecting to live feed"
+                  : "Live feed offline, showing last loaded alerts"
+            }
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+              {liveStatus === "live" && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+              )}
+              <span
+                className={`relative inline-flex h-2 w-2 rounded-full ${
+                  liveStatus === "live" ? "bg-primary" : "bg-muted-foreground/60"
+                }`}
+              />
             </span>
             <Radio className="h-3 w-3" strokeWidth={2} />
-            Live · auto-updating
+            {liveStatus === "live"
+              ? "Live · auto-updating"
+              : liveStatus === "connecting"
+                ? "Connecting…"
+                : "Offline · showing last load"}
           </span>
           <span className="text-[11px] text-muted-foreground/70" key={tick}>
             {alerts.length} active · updated {timeAgo(new Date(lastUpdate).toISOString()) || "just now"}
