@@ -246,11 +246,39 @@ export const NextStepsPanel = ({
         </div>
       </div>
 
+      {carePlan && (
+        <div className="rounded-lg border border-border/60 bg-card/30 p-6 mb-10 text-left">
+          <LifeBuoy className="h-6 w-6 text-primary mb-3" />
+          <h2 className="font-heading text-xl text-foreground mb-2">
+            Step four: keep it running
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            {carePlan.tagline} {carePlan.priceDisplay}, cancel anytime. Skip it and nothing about
+            your order changes.
+          </p>
+          <ul className="mb-5 space-y-2 text-sm text-foreground/85">
+            {carePlan.features.map((f) => (
+              <li key={f} className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Button
+            variant="outline"
+            className="border-primary/40 text-primary hover:bg-primary/10 w-full sm:w-auto"
+            disabled={careBusy}
+            onClick={startCareCheckout}
+          >
+            {careBusy ? "Starting…" : `Add ${carePlan.name} for ${carePlan.priceDisplay}`}
+          </Button>
+        </div>
+      )}
+
       <div className="rounded-lg border border-border/60 bg-card/30 p-6 mb-10 text-left">
         <h2 className="font-mono-label text-xs uppercase tracking-wider text-muted-foreground mb-4">
           What happens next
         </h2>
-        {/* placeholder-anchor */}
         <ul className="space-y-3 text-sm text-foreground/85">
           <li className="flex items-start gap-3">
             <Mail className="h-4 w-4 text-primary mt-0.5 shrink-0" />
