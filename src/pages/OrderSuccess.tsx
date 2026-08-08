@@ -112,7 +112,7 @@ export default function OrderSuccess() {
       : null;
 
   // Still verifying, or settled but not yet fulfilled: say exactly that.
-  if (verify === "checking" || verify === "processing") {
+  if (verify === "checking" || verify === "processing" || (verify === "confirmed" && mode === "loading")) {
     return (
       <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
         <SEOHead
