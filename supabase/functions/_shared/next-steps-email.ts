@@ -18,6 +18,10 @@ export interface NextStepsEmailInput {
   origin?: string | null;
   /** True when an AI report is still generating for this order. */
   reportPending?: boolean;
+  /** Overrides the Resend idempotency key so a deliberate resend is not deduped. */
+  idempotencyKey?: string;
+  /** Recorded on the email_send_log row, e.g. "recovery". */
+  reason?: string;
 }
 
 export async function sendNextStepsEmail(
@@ -42,7 +46,12 @@ export async function sendNextStepsEmail(
     body: {
       templateName: "purchase-next-steps",
       recipientEmail: input.email,
-      idempotencyKey: `next-steps-${input.sessionId}`,
+      idempotencyKey: input.idempotencyKey ?? `next-steps-${input.sessionId}`,
+      metadata: {
+        session_id: input.sessionId,
+        purpose: "purchase_next_steps",
+        reason: input.reason ?? "fulfillment",
+      },
       templateData: {
         name: input.name ?? null,
         productName: input.productName ?? null,
