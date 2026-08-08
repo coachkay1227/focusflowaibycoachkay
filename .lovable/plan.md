@@ -1,6 +1,6 @@
 # Finish the offer-sheet lock-in
 
-Four items remain. Nothing else gets touched.
+Four offer-sheet items remain, plus the two logic problems you just named and a standing rule so I stop missing them.
 
 ## 0. Unblock the dev server (do this first)
 
