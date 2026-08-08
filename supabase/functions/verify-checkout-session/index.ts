@@ -97,6 +97,10 @@ serve(async (req: Request) => {
       payment_status: session.payment_status,
       mode: session.mode,
       amount_total: session.amount_total,
+      // Pre-discount amount. The next-steps screen picks which call to offer
+      // from this, not from amount_total, so a 100%-off coupon (e.g. the
+      // internal FFTEST100 test) can't misclassify a real purchase as a $0 one.
+      amount_subtotal: session.amount_subtotal,
       customer_email: session.customer_details?.email ?? session.customer_email ?? null,
       fulfilled_in: fulfilledIn,
       record_id: recordId,
