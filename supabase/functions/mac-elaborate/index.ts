@@ -121,9 +121,9 @@ serve(async (req: Request) => {
 
     if (insert.error) {
       console.error("mac-elaborate insert error:", insert.error);
-      // Still return the insight so the user sees their result.
-      // Fire GHL webhook best-effort even on insert error.
-      supabase.functions.invoke("ghl-webhook", {
+      // Still return the insight so the user sees their result, but report the
+      // save failure truthfully instead of a bare 200.
+      await supabase.functions.invoke("ghl-webhook", {
         body: {
           event: "assessment_completed",
           payload: {
@@ -137,7 +137,13 @@ serve(async (req: Request) => {
       }).catch((e: unknown) => {
         console.warn("[mac-elaborate] ghl-webhook failed:", e);
       });
-      return json(200, { id: null, code, insight: result.data });
+      return json(200, {
+        id: null,
+        code,
+        insight: result.data,
+        persisted: false,
+        warning: "Your result was generated but could not be saved. Save or screenshot it before leaving.",
+      });
     }
 
     // Resolve recipient email: guest provided it in body, or look up authenticated user.
@@ -149,43 +155,46 @@ serve(async (req: Request) => {
       } catch { /* non-critical */ }
     }
 
-    // Fire GHL webhook after successful assessment (best-effort, non-blocking).
-    supabase.functions.invoke("ghl-webhook", {
-      body: {
-        event: "assessment_completed",
-        payload: {
-          email: emailToNotify,
-          user_id: userId,
-          assessment_type: "mac-type",
-          bottleneck: primaryBucket,
-          archetype: (result.data as { archetype_name?: string })?.archetype_name ?? null,
-        },
-      },
-    }).catch((e: unknown) => {
-      console.warn("[mac-elaborate] ghl-webhook failed:", e);
-    });
-
-    // Send assessment result email to user (best-effort, idempotent).
-    if (emailToNotify) {
-      supabase.functions.invoke("send-transactional-email", {
+    // GHL + result email. AWAITED: un-awaited invokes are cancelled when the
+    // worker shuts down after the response, which is why these never sent.
+    const outbound: Promise<unknown>[] = [
+      supabase.functions.invoke("ghl-webhook", {
         body: {
-          templateName: "assessment-result",
-          recipientEmail: emailToNotify,
-          idempotencyKey: `mac-result-${insert.data?.id ?? crypto.randomUUID()}`,
-          templateData: {
-            name: guestName,
-            archetypeName: (result.data as { archetype_name?: string })?.archetype_name ?? null,
-            comboLine: (result.data as { combo_line?: string })?.combo_line ?? null,
-            patternLine: (result.data as { pattern_line?: string })?.pattern_line ?? null,
-            primaryBucket,
+          event: "assessment_completed",
+          payload: {
+            email: emailToNotify,
+            user_id: userId,
+            assessment_type: "mac-type",
+            bottleneck: primaryBucket,
+            archetype: (result.data as { archetype_name?: string })?.archetype_name ?? null,
           },
         },
-      }).catch((e: unknown) => {
-        console.warn("[mac-elaborate] assessment-result email failed:", e);
-      });
+      }),
+    ];
+    if (emailToNotify) {
+      outbound.push(
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "assessment-result",
+            recipientEmail: emailToNotify,
+            idempotencyKey: `mac-result-${insert.data?.id ?? crypto.randomUUID()}`,
+            templateData: {
+              name: guestName,
+              archetypeName: (result.data as { archetype_name?: string })?.archetype_name ?? null,
+              comboLine: (result.data as { combo_line?: string })?.combo_line ?? null,
+              patternLine: (result.data as { pattern_line?: string })?.pattern_line ?? null,
+              primaryBucket,
+            },
+          },
+        }),
+      );
     }
+    const settled = await Promise.allSettled(outbound);
+    settled.forEach((s) => {
+      if (s.status === "rejected") console.warn("[mac-elaborate] outbound failed:", s.reason);
+    });
 
-    return json(200, { id: insert.data?.id ?? null, code, insight: result.data });
+    return json(200, { id: insert.data?.id ?? null, code, insight: result.data, persisted: true });
   } catch (e) {
     console.error("mac-elaborate error:", e);
     return json(500, { error: e instanceof Error ? e.message : "Unknown error" });

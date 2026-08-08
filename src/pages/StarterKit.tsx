@@ -76,6 +76,12 @@ const StarterKit = () => {
 
       setReport(data.report);
       setGeneratedAt(new Date());
+      if (data.persisted === false) {
+        toast({
+          title: "Saved copy unavailable",
+          description: data.warning ?? "Your report was generated but not saved. Screenshot it before leaving.",
+        });
+      }
       void trackEvent("starter_kit_submitted", { email: cleanEmail, business_type: businessType }, "ai");
     } catch (err) {
       toast({

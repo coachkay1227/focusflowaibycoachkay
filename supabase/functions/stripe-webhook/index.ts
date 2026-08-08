@@ -222,7 +222,8 @@ serve(async (req) => {
       // Immediate "what to do now" email. Fires once for every settled
       // checkout, before the product-specific branches, so no product path can
       // skip it. Idempotent on the session id, so Stripe retries never double
-      // send. Fire-and-forget: it must never block or fail fulfilment.
+      // send. AWAITED: an un-awaited promise is killed when the worker
+      // terminates after the response, which is why these never sent.
       try {
         const nsEmail =
           (typeof session.customer_details?.email === "string" && session.customer_details!.email) ||
@@ -234,24 +235,30 @@ serve(async (req) => {
             const nsItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
             nsProductName = nsItems.data?.[0]?.description ?? null;
           } catch { /* product name is optional */ }
-          void sendNextStepsEmail(supabaseClient, {
-            sessionId: session.id,
-            email: nsEmail,
-            name: (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null,
-            productName: nsProductName,
-            subtotalCents: session.amount_subtotal ?? grossAmount,
-            origin: req.headers.get("origin") || "https://coachkayai.life",
-            reportPending: /audit/i.test(nsProductName ?? ""),
-          }).catch((e) => log.warn("next_steps_email_failed", {
-            message: e instanceof Error ? e.message : String(e),
-          }));
+          let nsEmailSent = false;
+          try {
+            await sendNextStepsEmail(supabaseClient, {
+              sessionId: session.id,
+              email: nsEmail,
+              name: (typeof session.customer_details?.name === "string" && session.customer_details!.name) || null,
+              productName: nsProductName,
+              subtotalCents: session.amount_subtotal ?? grossAmount,
+              origin: req.headers.get("origin") || "https://coachkayai.life",
+              reportPending: /audit/i.test(nsProductName ?? ""),
+            });
+            nsEmailSent = true;
+          } catch (e) {
+            log.warn("next_steps_email_failed", {
+              message: e instanceof Error ? e.message : String(e),
+            });
+          }
 
           // Admin audit trail: the verified fulfillment, and the exact next-step
           // links this buyer was handed. Never blocks fulfilment.
           const nsSubtotal = session.amount_subtotal ?? grossAmount ?? 0;
           const nsOrigin = req.headers.get("origin") || "https://coachkayai.life";
           const nsPaidCall = nsSubtotal >= 29700 || session.mode === "subscription";
-          void logOrderAudit(supabaseClient, {
+          await logOrderAudit(supabaseClient, {
             action: ORDER_AUDIT_ACTIONS.fulfillmentVerified,
             targetTable: "stripe_checkout_session",
             targetId: session.id,
@@ -270,10 +277,12 @@ serve(async (req) => {
                 challenges: `${nsOrigin}/challenges`,
                 dashboard: `${nsOrigin}/dashboard`,
               },
-              next_steps_email_sent: true,
+              next_steps_email_sent: nsEmailSent,
               verified_at: new Date().toISOString(),
             },
-          });
+          }).catch((e) => log.warn("order_audit_failed", {
+            message: e instanceof Error ? e.message : String(e),
+          }));
         }
       } catch (e) {
         log.warn("next_steps_email_error", { message: e instanceof Error ? e.message : String(e) });
@@ -508,17 +517,20 @@ serve(async (req) => {
             .eq("stripe_session_id", session.id)
             .maybeSingle();
 
-          if (existing?.id) {
-            log.info("audit_already_created", { ctx: { audit_id: existing.id, session_id: session.id } });
-            return ok(req, { received: true, audit_created: false, audit_id: existing.id });
-          }
-
           // Preferred path: the lead was persisted pre-payment by
           // start-audit-intake, so the intake already lives in the row.
           // Flip that same row to paid instead of creating an empty one.
           const preAuditId = readMetaString(session.metadata, "audit_id");
           let inserted: { id: string } | null = null;
-          if (preAuditId && UUID_RE.test(preAuditId)) {
+          // A row already carrying this session id means a previous delivery of
+          // this event got part-way. We do NOT bail out here: enrollment and the
+          // confirmation email are idempotent, and bailing early is exactly why
+          // buyers on the pre-intake path never got their follow-ups.
+          const alreadyCreated = !!existing?.id;
+          if (alreadyCreated) {
+            log.info("audit_already_created", { ctx: { audit_id: existing!.id, session_id: session.id } });
+            inserted = { id: existing!.id };
+          } else if (preAuditId && UUID_RE.test(preAuditId)) {
             const { data: claimed, error: claimErr } = await supabaseClient
               .from("business_audits")
               .update({
@@ -566,19 +578,33 @@ serve(async (req) => {
             inserted = created;
           }
 
-          const token = `aud_${crypto.randomUUID().replace(/-/g, "")}${crypto.randomUUID().replace(/-/g, "")}`;
-          const { error: tokenErr } = await supabaseClient
+          // Reuse the existing access token on a replayed event so the buyer's
+          // already-emailed magic link keeps working.
+          let token = "";
+          const { data: priorToken } = await supabaseClient
             .from("audit_tokens")
-            .insert({
-              token,
-              audit_id: inserted.id,
-              email: customerEmail || "",
-            });
-          if (tokenErr) {
-            await fail("audit", "audit_token_insert_failed", {
-              message: tokenErr.message,
-              context: { audit_id: inserted.id },
-            });
+            .select("token")
+            .eq("audit_id", inserted.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (priorToken?.token) {
+            token = priorToken.token as string;
+          } else {
+            token = `aud_${crypto.randomUUID().replace(/-/g, "")}${crypto.randomUUID().replace(/-/g, "")}`;
+            const { error: tokenErr } = await supabaseClient
+              .from("audit_tokens")
+              .insert({
+                token,
+                audit_id: inserted.id,
+                email: customerEmail || "",
+              });
+            if (tokenErr) {
+              await fail("audit", "audit_token_insert_failed", {
+                message: tokenErr.message,
+                context: { audit_id: inserted.id },
+              });
+            }
           }
 
           // Magic link uses the request origin if available, falling back to live host.
@@ -651,7 +677,7 @@ serve(async (req) => {
           log.info("audit_purchase_processed", {
             ctx: { audit_id: inserted.id, session_id: session.id, has_user: !!auditUserId },
           });
-          return ok(req, { received: true, audit_created: true, audit_id: inserted.id });
+          return ok(req, { received: true, audit_created: !alreadyCreated, audit_id: inserted.id });
         }
       } catch (e) {
         await fail("audit", "audit_branch_exception", {

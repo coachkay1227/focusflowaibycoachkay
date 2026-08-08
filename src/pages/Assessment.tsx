@@ -420,6 +420,12 @@ const Assessment = () => {
       if (data?.insight) {
         setInsight(data.insight);
         setGeneratedAt(new Date());
+        if (data.persisted === false) {
+          toast({
+            title: "Saved copy unavailable",
+            description: data.warning ?? "Your result was generated but not saved. Screenshot it before leaving.",
+          });
+        }
       } else {
         throw new Error("No insight returned");
       }
