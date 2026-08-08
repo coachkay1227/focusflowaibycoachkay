@@ -637,6 +637,54 @@ export type Database = {
         }
         Relationships: []
       }
+      email_delivery_retries: {
+        Row: {
+          attempts: number
+          created_at: string
+          failure_class: string | null
+          id: string
+          last_error: string | null
+          max_attempts: number
+          message_id: string
+          next_attempt_at: string
+          recipient_email: string
+          source_id: string | null
+          status: string
+          template_name: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          failure_class?: string | null
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          message_id: string
+          next_attempt_at?: string
+          recipient_email: string
+          source_id?: string | null
+          status?: string
+          template_name: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          failure_class?: string | null
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          message_id?: string
+          next_attempt_at?: string
+          recipient_email?: string
+          source_id?: string | null
+          status?: string
+          template_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
