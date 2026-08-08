@@ -5,15 +5,13 @@
 // double-fired cron or a retried batch cannot email anyone twice.
 //
 // This function is triggered by pg_cron, which cannot present a user JWT, so it
-// authenticates on the bearer credential the cron pulls from Vault. Rather than
-// string-matching one particular key (the project holds both legacy JWT and
-// newer secret-key forms of the service-role credential, and they are not equal
-// as strings), the caller's own token is used to read a table that only
-// service_role and admins can reach. If that read is refused, so is the call.
-// Without this the function would be a publicly callable send trigger.
+// authenticates on the bearer credential the cron pulls from Vault, or on a
+// signed-in admin (see _shared/worker-auth.ts). Without this the function would
+// be a publicly callable send trigger.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { authorizeWorkerCaller } from "../_shared/worker-auth.ts";
 import {
   decideTouch,
   extractHighlights,
@@ -50,28 +48,10 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  const authHeader = req.headers.get("Authorization") ?? "";
-  const bearer = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length).trim()
-    : "";
 
-  if (!bearer) {
-    console.warn("process-nurture-queue rejected call with no credential");
-    return json({ error: "Forbidden" }, 403, cors);
-  }
-
-  // Authorization probe. nurture_touches is granted to service_role and
-  // readable by admins only, so an anon key or a forged token fails here.
-  const callerClient = createClient(supabaseUrl, bearer, {
-    auth: { persistSession: false },
-    global: { headers: { Authorization: `Bearer ${bearer}` } },
-  });
-  const { error: probeError } = await callerClient
-    .from("nurture_touches")
-    .select("id")
-    .limit(1);
-  if (probeError) {
-    console.warn("process-nurture-queue rejected unauthorized caller", probeError.message);
+  const auth = await authorizeWorkerCaller(req, supabaseUrl);
+  if (!auth.ok) {
+    console.warn("process-nurture-queue rejected unauthorized caller", auth.reason);
     return json({ error: "Forbidden" }, 403, cors);
   }
 

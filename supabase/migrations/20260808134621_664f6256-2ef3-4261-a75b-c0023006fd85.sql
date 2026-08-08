@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.is_privileged_caller() FROM anon;

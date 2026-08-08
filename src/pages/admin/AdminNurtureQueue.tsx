@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { RefreshCw, Copy, AlertTriangle } from "lucide-react";
+import { DeliveryRetriesPanel } from "@/components/admin/DeliveryRetriesPanel";
 
 interface QueueRow {
   id: string;
@@ -149,6 +150,8 @@ export default function AdminNurtureQueue() {
             Refresh
           </Button>
         </header>
+
+        <DeliveryRetriesPanel />
 
         <div className="grid gap-4 md:grid-cols-3 mb-6">
           {perStep.map((s) => (
