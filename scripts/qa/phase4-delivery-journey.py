@@ -143,7 +143,7 @@ async def main():
                   body: JSON.stringify({ session_id: sid, action: 'resend_next_steps' }),
                 });
                 return { status: res.status, data: await res.json().catch(() => null) };
-            """, {"sid": session_id, "url": FN_URL, "key": FN_KEY})
+            }""", {"sid": session_id, "url": FN_URL, "key": FN_KEY})
         data = recovery.get("data") or {}
         print("recovery status:", recovery.get("status"))
         rate_capped = isinstance(data.get("error"), str) and "already been sent" in data["error"]
