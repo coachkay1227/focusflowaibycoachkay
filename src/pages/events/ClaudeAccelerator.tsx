@@ -165,7 +165,7 @@ export default function ClaudeAcceleratorPage() {
     <>
       {/* HIDDEN SEO HEAD — Google reads this */}
       <SEOHead
-        title="The Claude AI Business Accelerator | Free Training June 4, 2026"
+        title="Claude AI Business Accelerator: Free Training"
         description="Free, in-person AI training for Columbus small business owners. Open to all with emphasis on Black entrepreneurs. Build real AI workflows live. 150 seats."
         path="/events/claude-ai-business-accelerator-june-2026"
         ogImage="https://coachkayai.life/images/event-june-4-2026.jpg"

@@ -103,8 +103,8 @@ const AgentBuilds = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="AI Agent Builds: Your First Agent, Live in 72 Hours"
-        description="Get one trained AI agent built for you, from $297. Starts with the $197 AI Brain, the knowledge base every agent draws from. Built, delivered, and taught to you by Coach Kay's team."
+        title="AI Agent Builds: Live in 72 Hours"
+        description="One trained AI agent built for you, from $297. Starts with the $197 AI Brain, the knowledge base every agent draws from. Built by Coach Kay's team."
         path="/agents/builds"
         keywords={[
           "custom AI agent build",

@@ -55,8 +55,8 @@ const CoachKay = () => {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
-        description="Meet Coach Kay — Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum through AI-powered coaching."
+        title="Meet Coach Kay: AI and Life Transformation Coach"
+        description="Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum with AI."
         path="/coach-kay"
         keywords={[
           "Coach Kay",

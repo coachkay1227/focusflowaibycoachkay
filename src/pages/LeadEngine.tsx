@@ -48,8 +48,8 @@ const LeadEngine = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="AI Lead Engine: Outbound That Books Its Own Meetings"
-        description="Enriched, intent-scored leads plus multi-channel outreach, voice qualification, and auto-booking. Built and run by Coach Kay's team so your pipeline stops depending on your energy."
+        title="AI Lead Engine: Outbound That Books Meetings"
+        description="Enriched, intent-scored leads plus multi-channel outreach, voice qualification, and auto-booking. Built and run by Coach Kay's team."
         path="/agents/lead-engine"
         keywords={[
           "AI lead generation system",

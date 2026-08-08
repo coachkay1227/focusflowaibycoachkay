@@ -53,8 +53,8 @@ const AgentsHub = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="AI Agents & Automation, Built and Managed for You"
-        description="AI agents and automation systems built, hosted, and managed by Coach Kay's team. Start with a $47 audit, add your first agent, then scale to a managed AI team or autonomous system."
+        title="AI Agents and Automation, Built for You"
+        description="AI agents and automation built, hosted, and managed by Coach Kay's team. Start with a $47 audit, add your first agent, then scale to a managed team."
         path="/agents"
         keywords={[
           "AI agents for business",

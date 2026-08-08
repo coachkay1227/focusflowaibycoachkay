@@ -151,7 +151,7 @@ const CollectiveAIBuildStudio = () => {
     navigate(`/start-a-build?offer=${encodeURIComponent(offer.key)}`);
 
   const jsonLd = [
-    webPage("/build-studio", "Collective AI Build Studio: From Idea to Live in Days", "CollectionPage"),
+    webPage("/build-studio", "Build Studio: From Idea to Live AI in Days", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -195,7 +195,7 @@ const CollectiveAIBuildStudio = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Collective AI Build Studio: From Idea to Live in Days"
+        title="Build Studio: From Idea to Live AI in Days"
         description="Custom AI builds scoped by Coach Kay and delivered with Collective AI partners. From idea to live AI system in days. Web apps, automations, agents, and more."
         path="/build-studio"
         keywords={[

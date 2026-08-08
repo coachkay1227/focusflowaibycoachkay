@@ -18,7 +18,7 @@ export default function AiToolsDirectory() {
   );
 
   const jsonLd = [
-    webPage("/ai-tools", "AI Tools Directory — Coach Kay's Working Stack", "CollectionPage"),
+    webPage("/ai-tools", "AI Tools Directory: Coach Kay's Working Stack", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -48,7 +48,7 @@ export default function AiToolsDirectory() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="AI Tools Directory — Coach Kay's Working Stack"
+        title="AI Tools Directory: Coach Kay's Working Stack"
         description={`${toolCount} vetted AI tools scored and reviewed by Coach Kay. The only AI tools directory curated by a Master Certified Coach — practical, honest, no affiliate fluff.`}
         path="/ai-tools"
         keywords={[

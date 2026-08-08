@@ -38,7 +38,7 @@ const FAQS = [
 
 export default function Collective() {
   const jsonLd = [
-    webPage("/collective", "Collective AI: The Partner Network Behind Bigger Builds", "AboutPage"),
+    webPage("/collective", "Collective AI: Partners Behind Bigger Builds", "AboutPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -71,8 +71,8 @@ export default function Collective() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Collective AI: The Partner Network Behind Bigger Builds"
-        description="Collective AI is an independent company founded by John Moyler. Coach Kay is an AI partner there. Solo coaching stays with Coach Kay. Heavy build scopes bring in Collective partners."
+        title="Collective AI: Partners Behind Bigger Builds"
+        description="Collective AI is an independent company founded by John Moyler. Coach Kay is an AI partner there. Heavy build scopes bring in Collective partners."
         path="/collective"
         keywords={[
           "Collective AI partner network",

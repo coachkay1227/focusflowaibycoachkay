@@ -42,8 +42,8 @@ const Hermes = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Hermes: Autonomous AI Agent Systems, Scoped on a Call"
-        description="Hermes builds autonomous multi-agent systems that own an outcome across your tools and escalate only when judgment is needed. From $5,000, scoped on a call with Coach Kay."
+        title="Hermes: Autonomous AI Agent Systems"
+        description="Hermes builds autonomous multi-agent systems that own an outcome across your tools and escalate only when judgment is needed. Scoped on a call."
         path="/agents/hermes"
         keywords={[
           "autonomous AI agents",

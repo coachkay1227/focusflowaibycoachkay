@@ -110,8 +110,8 @@ export default function Store() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="Story, Legacy & Publishing Studio | FocusFlow AI"
-        description="Turn stories, expertise, and lived experience into powerful assets. Storybooks, legacy memoirs, expert books, creator bundles, and autism social stories, all done for you."
+        title="Story, Legacy and Publishing Studio"
+        description="Turn stories, expertise, and lived experience into assets. Storybooks, legacy memoirs, expert books, creator bundles, and autism social stories."
         path="/store"
         keywords={[
           "done for you book creation",

@@ -21,8 +21,8 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Blog — AI for Small Business"
-        description="Practical AI workflows, prompts, and systems for small business owners. Real strategies from Coach Kay — built for salons, real estate, coaches, notaries, and service founders."
+        title="Blog: AI for Small Business"
+        description="Practical AI workflows, prompts, and systems for small business owners. Real strategies from Coach Kay, built for service businesses and founders."
         path="/blog"
         jsonLd={itemList}
       />
