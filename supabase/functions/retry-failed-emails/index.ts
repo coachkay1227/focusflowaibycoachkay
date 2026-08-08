@@ -6,13 +6,14 @@
 // send-transactional-email. Attempts follow a widening backoff and stop at a
 // hard cap, after which the row is marked `exhausted` for a human to look at.
 //
-// Authorization mirrors process-nurture-queue: the scheduler cannot present a
-// user JWT, so the caller's own bearer credential is used to read a table only
-// service_role and admins can reach. If that read is refused, so is the call.
-// Without this the function would be a publicly callable send trigger.
+// Authorization accepts exactly two credentials (see _shared/worker-auth.ts):
+// the service-role key the scheduler pulls from Vault, or a signed-in admin for
+// the manual "retry now" button. Without this the function would be a publicly
+// callable send trigger.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { authorizeWorkerCaller } from "../_shared/worker-auth.ts";
 import {
   MAX_RETRY_ATTEMPTS,
   nextRetryAt,
@@ -44,26 +45,10 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  const authHeader = req.headers.get("Authorization") ?? "";
-  const bearer = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length).trim()
-    : "";
 
-  if (!bearer) {
-    console.warn("retry-failed-emails rejected call with no credential");
-    return json({ error: "Forbidden" }, 403, cors);
-  }
-
-  const callerClient = createClient(supabaseUrl, bearer, {
-    auth: { persistSession: false },
-    global: { headers: { Authorization: `Bearer ${bearer}` } },
-  });
-  const { error: probeError } = await callerClient
-    .from("email_delivery_retries")
-    .select("id")
-    .limit(1);
-  if (probeError) {
-    console.warn("retry-failed-emails rejected unauthorized caller", probeError.message);
+  const auth = await authorizeWorkerCaller(req, supabaseUrl);
+  if (!auth.ok) {
+    console.warn("retry-failed-emails rejected unauthorized caller", auth.reason);
     return json({ error: "Forbidden" }, 403, cors);
   }
 
