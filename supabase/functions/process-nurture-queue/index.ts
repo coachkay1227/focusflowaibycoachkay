@@ -4,9 +4,10 @@
 // send-transactional-email. Every send carries a stable idempotency key, so a
 // double-fired cron or a retried batch cannot email anyone twice.
 //
-// This function is triggered by pg_cron with no JWT, so it authenticates on a
-// shared secret header instead. Without that it would be a publicly callable
-// send trigger.
+// This function is triggered by pg_cron, which cannot present a user JWT, so it
+// authenticates on either a service-role bearer token (the pattern the email
+// queue cron already uses) or a shared secret header. Without one of those it
+// would be a publicly callable send trigger.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corsHeaders } from "../_shared/cors.ts";
@@ -53,14 +54,25 @@ Deno.serve(async (req) => {
 
   const expected = Deno.env.get("NURTURE_CRON_SECRET") ?? "";
   const provided = req.headers.get("x-nurture-secret") ?? "";
-  if (!expected || !safeEqual(expected, provided)) {
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const authHeader = req.headers.get("Authorization") ?? "";
+  const bearer = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length).trim()
+    : "";
+
+  // Never trust a decoded role claim here. Compare the raw token to the real
+  // service-role key so a forged alg:none JWT cannot get in.
+  const bySecret = expected.length > 0 && safeEqual(expected, provided);
+  const byServiceRole = serviceKey.length > 0 && safeEqual(serviceKey, bearer);
+
+  if (!bySecret && !byServiceRole) {
     console.warn("process-nurture-queue rejected unauthenticated call");
     return json({ error: "Forbidden" }, 403);
   }
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    serviceKey,
     { auth: { persistSession: false } },
   );
 
