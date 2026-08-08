@@ -344,34 +344,118 @@ export default function AdminScamAlerts() {
         ) : alerts.length === 0 ? (
           <p className="text-sm text-muted-foreground">No alerts yet. Create your first one.</p>
         ) : (
-          <div className="space-y-3">
-            {alerts.map((a) => (
-              <div key={a.id} className="rounded-lg border border-border bg-card p-4 flex items-start gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider mb-1">
-                    <span className={`px-2 py-0.5 rounded-full border ${a.threat_level === "red_flag" ? "border-destructive/40 text-destructive" : a.threat_level === "caution" ? "border-primary/40 text-primary" : "border-border text-muted-foreground"}`}>
-                      {a.threat_level.replace("_", " ")}
-                    </span>
-                    <span className="text-muted-foreground">{a.category}</span>
-                    {a.is_published ? (
-                      <span className="text-primary">● live</span>
-                    ) : (
-                      <span className="text-muted-foreground">○ draft</span>
-                    )}
-                  </div>
-                  <h3 className="font-medium truncate">{a.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{a.summary}</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Button size="sm" variant="outline" onClick={() => startEdit(a)}>Edit</Button>
-                  <Button size="sm" variant="ghost" onClick={() => remove(a.id)} className="text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+          <div className="space-y-8">
+            {drafts.length > 0 && (
+              <div>
+                <h2 className="font-heading text-xl mb-1">
+                  Waiting for your approval
+                  <span className="ml-2 text-xs align-middle rounded-full bg-primary/15 text-primary px-2 py-0.5">
+                    {drafts.length}
+                  </span>
+                </h2>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Not visible to anyone until you publish. Check the source before you do.
+                </p>
+                <div className="space-y-3">
+                  {drafts.map((a) => (
+                    <AlertRow
+                      key={a.id}
+                      alert={a}
+                      onEdit={startEdit}
+                      onDelete={remove}
+                      onPublish={publishNow}
+                    />
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
+
+            <div>
+              <h2 className="font-heading text-xl mb-3">
+                Live on the hub
+                <span className="ml-2 text-xs align-middle text-muted-foreground">{live.length}</span>
+              </h2>
+              {live.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nothing published yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {live.map((a) => (
+                    <AlertRow key={a.id} alert={a} onEdit={startEdit} onDelete={remove} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function AlertRow({
+  alert: a,
+  onEdit,
+  onDelete,
+  onPublish,
+}: {
+  alert: ScamAlert;
+  onEdit: (a: ScamAlert) => void;
+  onDelete: (id: string) => void;
+  onPublish?: (a: ScamAlert) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 flex items-start gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider mb-1">
+          <span
+            className={`px-2 py-0.5 rounded-full border ${
+              a.threat_level === "red_flag"
+                ? "border-destructive/40 text-destructive"
+                : a.threat_level === "caution"
+                  ? "border-primary/40 text-primary"
+                  : "border-border text-muted-foreground"
+            }`}
+          >
+            {a.threat_level.replace("_", " ")}
+          </span>
+          <span className="text-muted-foreground">{a.category}</span>
+          {a.is_published ? (
+            <span className="text-primary">● live</span>
+          ) : (
+            <span className="text-muted-foreground">○ draft</span>
+          )}
+          {a.source_feed && <span className="text-muted-foreground/70">via {a.source_feed}</span>}
+        </div>
+        <h3 className="font-medium truncate">{a.title}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-2">{a.summary}</p>
+        {a.source_url && (
+          <a
+            href={a.source_url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" /> Check the source
+          </a>
+        )}
+      </div>
+      <div className="flex flex-col gap-2 shrink-0">
+        {onPublish && (
+          <Button size="sm" onClick={() => onPublish(a)}>
+            Publish
+          </Button>
+        )}
+        <Button size="sm" variant="outline" onClick={() => onEdit(a)}>
+          Edit
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => onDelete(a.id)}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
