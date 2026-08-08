@@ -152,6 +152,9 @@ const AuditIntake = () => {
           intake: payloadIntake,
           email: parsed.data.email,
           full_name: parsed.data.full_name,
+          // Consent is only honoured when a number was actually given.
+          phone: parsed.data.phone || null,
+          sms_consent: parsed.data.sms_consent === true && !!parsed.data.phone,
         },
       });
       if (leadErr) throw new Error("We couldn't save your answers. Please retry.");
