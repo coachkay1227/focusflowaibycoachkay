@@ -223,7 +223,7 @@ export default function OrderSuccess() {
         : "Your purchase is confirmed and your access is unlocked. Here's what to do now.";
 
   return (
-    <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col items-center justify-center px-6 py-16">
       <SEOHead
         title={
           isBookish
@@ -249,6 +249,14 @@ export default function OrderSuccess() {
         sessionId={sessionId}
         orderSource={verified?.fulfilled_in ?? null}
       />
+      {sessionId && stages && (
+        <DeliveryStatusPanel
+          sessionId={sessionId}
+          stages={stages}
+          onRecovered={setStages}
+          className="mt-8 w-full max-w-2xl"
+        />
+      )}
     </div>
   );
 }
