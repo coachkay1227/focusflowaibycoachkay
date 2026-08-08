@@ -82,6 +82,8 @@ export default function PauseHub() {
   const [flashing, setFlashing] = useState<Set<string>>(new Set());
   const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
   const [tick, setTick] = useState(0);
+  // Real connection state, straight from the realtime channel. Never assumed.
+  const [liveStatus, setLiveStatus] = useState<"connecting" | "live" | "offline">("connecting");
 
   // Tick every 10s so "updated Xs ago" stays fresh
   useEffect(() => {
@@ -100,28 +102,46 @@ export default function PauseHub() {
     }, 2000);
   };
 
+  const fetchAlerts = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("scam_alerts")
+      .select("id, title, slug, summary, body, threat_level, category, action_rules, source_url, published_at")
+      .eq("is_published", true)
+      .order("published_at", { ascending: false, nullsFirst: false });
+    if (error) {
+      console.error("Failed to load scam alerts", error);
+      return false;
+    }
+    setAlerts((data ?? []) as ScamAlert[]);
+    setLastUpdate(Date.now());
+    return true;
+  }, []);
+
   // Initial load
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data, error } = await supabase
-        .from("scam_alerts")
-        .select("id, title, slug, summary, body, threat_level, category, action_rules, source_url, published_at")
-        .eq("is_published", true)
-        .order("published_at", { ascending: false, nullsFirst: false });
-      if (cancelled) return;
-      if (error) {
-        console.error("Failed to load scam alerts", error);
-      } else {
-        setAlerts((data ?? []) as ScamAlert[]);
-        setLastUpdate(Date.now());
-      }
-      setLoading(false);
+      await fetchAlerts();
+      if (!cancelled) setLoading(false);
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [fetchAlerts]);
+
+  // Refetch whenever the tab comes back into focus. A socket that slept through
+  // an insert would otherwise leave a stale feed behind a "Live" badge.
+  useEffect(() => {
+    const onFocus = () => {
+      if (document.visibilityState === "visible") void fetchAlerts();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
+  }, [fetchAlerts]);
 
   // Realtime subscription — new published alerts slide in live.
   useEffect(() => {
@@ -161,11 +181,21 @@ export default function PauseHub() {
           setLastUpdate(Date.now());
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          setLiveStatus("live");
+          // Catch anything that landed while the socket was connecting.
+          void fetchAlerts();
+        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+          setLiveStatus("offline");
+        } else {
+          setLiveStatus("connecting");
+        }
+      });
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetchAlerts]);
 
   const filtered = useMemo(
     () => (active === "all" ? alerts : alerts.filter((a) => a.threat_level === active)),
