@@ -144,7 +144,12 @@ export default function AdminFulfillmentTest() {
 
   return (
     <div className="min-h-screen bg-background">
-        <SEOHead title="Fulfillment Test | Admin" noIndex />
+        <SEOHead
+          title="Fulfillment Test | Admin"
+          description="Internal admin tool that verifies the audit purchase fulfillment chain end to end."
+          path="/admin/fulfillment-test"
+          noIndex
+        />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <AdminNav />
 
