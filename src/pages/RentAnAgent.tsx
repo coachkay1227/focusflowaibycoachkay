@@ -160,7 +160,7 @@ const RentAnAgent = () => {
           Rent the agent. <span className="text-primary italic">Keep the leverage.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Subscribe to a dedicated AI agent, or a full squad, tuned to your business by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer.
+          A dedicated AI agent, or a full squad, built and run for you by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer. Every retainer starts with an intake so you know the scope before you pay.
         </p>
 
         <p className="mt-6 text-sm text-primary/80 max-w-lg mx-auto">
