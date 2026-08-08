@@ -125,7 +125,10 @@ export default function AdminNurtureQueue() {
     : rows;
 
   const attention = rows.filter(
-    (r) => r.overdue || r.queue_status === "failed" || r.no_delivery(),
+    (r) =>
+      r.overdue ||
+      r.queue_status === "failed" ||
+      (r.queue_status === "sent" && r.delivery_status === null),
   ).length;
 
   return (
