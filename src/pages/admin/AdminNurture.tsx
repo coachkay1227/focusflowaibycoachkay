@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useLiveRefresh, type LiveRefreshState } from "@/hooks/use-live-refresh";
 import { AdminNav } from "@/components/admin/AdminNav";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,9 @@ import {
   Clock,
   CircleDashed,
   AlertTriangle,
+  Radio,
+  Pause,
+  Play,
 } from "lucide-react";
 
 interface Touch {
@@ -180,6 +184,24 @@ export default function AdminNurture() {
     if (data) setResult(data);
   };
 
+  /**
+   * Same read as Refresh, but silent. Polling must not toast on every failed
+   * attempt, and must not clear a preview the admin is reading.
+   * Returns whether the read succeeded so the poller can back off.
+   */
+  const quietRefresh = useCallback(async (): Promise<boolean> => {
+    const auditId = result?.audit?.id;
+    if (!auditId) return true;
+    const { data, error } = await supabase.functions.invoke("admin-nurture", {
+      body: { action: "lookup", auditId },
+    });
+    if (error) return false;
+    const next = data as LookupResult;
+    if (!next?.found) return false;
+    setResult(next);
+    return true;
+  }, [result?.audit?.id]);
+
   const doPreview = async (step: number) => {
     const auditId = result?.audit?.id;
     if (!auditId) return;
@@ -222,6 +244,26 @@ export default function AdminNurture() {
   const steps = result?.steps ?? [];
   const missingSteps = audit ? steps.filter((d) => !touches.some((t) => t.step === d.step)) : [];
   const queuedSteps = steps.filter((d) => touches.some((t) => t.step === d.step));
+
+  // Something can still change: a queued touch has not settled, or a
+  // report-dependent step is still waiting on the report to generate.
+  const hasWorkInFlight =
+    !!audit &&
+    (touches.some((t) => t.status === "pending") ||
+      (steps.some((d) => d.requiresReport) && !audit.has_report));
+
+  const live = useLiveRefresh({
+    refresh: quietRefresh,
+    active: hasWorkInFlight,
+    enabled: !!audit,
+    isBusy: busy !== null || loading,
+    onFailureLimit: () =>
+      toast({
+        title: "Live updates paused",
+        description: "Could not reach the nurture service. Use Refresh to try again.",
+        variant: "destructive",
+      }),
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -302,6 +344,7 @@ export default function AdminNurture() {
                       ? "All steps queued"
                       : `Queue ${missingSteps.length} missing step${missingSteps.length === 1 ? "" : "s"}`}
                 </Button>
+                <LiveIndicator state={live.state} onPause={live.pause} onResume={live.resume} />
               </div>
               {!audit.email && (
                 <p className="text-sm text-muted-foreground mt-3">
@@ -566,3 +609,64 @@ function Field({ label, value, mono }: { label: string; value: string; mono?: bo
     </div>
   );
 }
+
+/**
+ * States the poller can be in, said plainly. The copy always tells the admin
+ * whether what they are looking at is moving on its own or frozen.
+ */
+function LiveIndicator({
+  state,
+  onPause,
+  onResume,
+}: {
+  state: LiveRefreshState;
+  onPause: () => void;
+  onResume: () => void;
+}) {
+  if (state === "idle") return null;
+
+  const copy: Record<Exclude<LiveRefreshState, "idle">, string> = {
+    polling: "Live, updating every 5s",
+    reconnecting: "Reconnecting, showing last known status",
+    "paused-hidden": "Paused while this tab is in the background",
+    "paused-manual": "Live updates off",
+    "paused-timeout": "Paused after 5 minutes of no change",
+    settled: "All steps settled, live updates off",
+  };
+
+  const isRunning = state === "polling" || state === "reconnecting";
+  const canResume = state === "paused-manual" || state === "paused-timeout";
+
+  return (
+    <div
+      className="flex items-center gap-2 text-xs text-muted-foreground"
+      role="status"
+      aria-live="polite"
+    >
+      <Radio
+        className={`h-3.5 w-3.5 ${
+          state === "polling"
+            ? "text-primary animate-pulse"
+            : state === "reconnecting"
+              ? "text-destructive"
+              : ""
+        }`}
+        aria-hidden
+      />
+      <span>{copy[state]}</span>
+      {isRunning && (
+        <Button variant="ghost" size="sm" className="h-7 px-2" onClick={onPause}>
+          <Pause className="h-3 w-3 mr-1" />
+          Pause
+        </Button>
+      )}
+      {canResume && (
+        <Button variant="ghost" size="sm" className="h-7 px-2" onClick={onResume}>
+          <Play className="h-3 w-3 mr-1" />
+          Resume
+        </Button>
+      )}
+    </div>
+  );
+}
+
