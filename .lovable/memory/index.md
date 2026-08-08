@@ -26,6 +26,7 @@
 - [Monetization](mem://billing/monetization-strategy) — Stripe subscriptions and one-time payment logic
 - [Lead-Gen Routing](mem://features/lead-gen-routing) — leadgen.offer_url switch that reroutes $297+ CTAs off Stripe checkout
 - [Community](mem://features/community) — Skool FocusFlow Elevation Hub URL
+- [Care Plan Placement](mem://features/care-plan-placement) — Care attaches after a build; Membership/Build Credits off the Build Studio page
 - [API Protection](mem://security/api-protection) — JWT rules for edge functions and unauth exceptions
 - [Clarity Score Logic](mem://features/clarity-score-logic) — Timezone-aware bucketing for streaks
 - [Access Paths](mem://strategy/access-paths) — Overview of the 5 marketed access paths
