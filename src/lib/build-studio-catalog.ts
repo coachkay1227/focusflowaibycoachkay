@@ -13,6 +13,12 @@ export interface BuildTierOffer {
   price: number;
   priceDisplay: string;
   turnaround: string;
+  /**
+   * True when priceDisplay/turnaround are estimate bands rather than a real
+   * checkout price. The card renders an explicit "estimate" qualifier and never
+   * shows an exact figure. Always paired with inquiryOnly.
+   */
+  estimate?: boolean;
   /** Present for Tier 1 / Tier 5 — drives direct Stripe checkout. */
   priceId?: string;
   /** Present for Tier 2 / Tier 3 — opens the qualification dialog. */
