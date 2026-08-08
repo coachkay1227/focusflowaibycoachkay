@@ -324,6 +324,96 @@ Deno.serve(async (req) => {
       }, 200, cors);
     }
 
+    // Fleet-wide fulfillment view. One row per queued touch, with the exact
+    // idempotency key the worker uses and the latest delivery outcome recorded
+    // for that key in email_send_log (deduped: one email can log several rows).
+    if (action === "queue") {
+      const days = typeof body.days === "number" && body.days > 0 ? Math.min(body.days, 180) : 30;
+      const statusFilter = typeof body.status === "string" && body.status !== "all" ? body.status : null;
+      const stepFilter = typeof body.step === "number" && NURTURE_STEPS.some((s) => s.step === body.step)
+        ? body.step
+        : null;
+      const includeTest = body.includeTest === true;
+      const since = new Date(Date.now() - days * 86_400_000).toISOString();
+
+      let q = supabase
+        .from("nurture_touches")
+        .select("id,audit_id,email,step,template_name,status,scheduled_for,sent_at,attempts,last_error,is_test,created_at")
+        .gte("created_at", since)
+        .order("scheduled_for", { ascending: false })
+        .limit(500);
+      if (!includeTest) q = q.eq("is_test", false);
+      if (statusFilter) q = q.eq("status", statusFilter);
+      if (stepFilter) q = q.eq("step", stepFilter);
+
+      const { data: touchRows, error: qErr } = await q;
+      if (qErr) throw qErr;
+      const touches = touchRows ?? [];
+
+      const keys = touches.map((t) => idempotencyKeyFor(t.audit_id, t.step));
+      const latestByKey = new Map<string, { status: string; error: string | null; at: string }>();
+      if (keys.length > 0) {
+        const { data: logRows } = await supabase
+          .from("email_send_log")
+          .select("message_id,status,error_message,created_at")
+          .in("message_id", keys)
+          .order("created_at", { ascending: true });
+        for (const row of logRows ?? []) {
+          if (!row.message_id) continue;
+          latestByKey.set(row.message_id, {
+            status: row.status,
+            error: row.error_message ?? null,
+            at: row.created_at,
+          });
+        }
+      }
+
+      const nowMs = Date.now();
+      const rows = touches.map((t) => {
+        const key = idempotencyKeyFor(t.audit_id, t.step);
+        const delivery = latestByKey.get(key) ?? null;
+        return {
+          id: t.id,
+          audit_id: t.audit_id,
+          email: t.email,
+          step: t.step,
+          template_name: t.template_name,
+          queue_status: t.status,
+          scheduled_for: t.scheduled_for,
+          sent_at: t.sent_at,
+          attempts: t.attempts ?? 0,
+          last_error: t.last_error,
+          is_test: t.is_test,
+          idempotency_key: key,
+          delivery_status: delivery?.status ?? null,
+          delivery_error: delivery?.error ?? null,
+          delivery_at: delivery?.at ?? null,
+          overdue: t.status === "pending" && new Date(t.scheduled_for).getTime() < nowMs,
+        };
+      });
+
+      const perStep = NURTURE_STEPS.map((s) => {
+        const forStep = rows.filter((r) => r.step === s.step);
+        const count = (fn: (r: typeof rows[number]) => boolean) => forStep.filter(fn).length;
+        return {
+          step: s.step,
+          templateName: s.templateName,
+          total: forStep.length,
+          pending: count((r) => r.queue_status === "pending"),
+          sent: count((r) => r.queue_status === "sent"),
+          skipped: count((r) => r.queue_status === "skipped"),
+          failed: count((r) => r.queue_status === "failed"),
+          overdue: count((r) => r.overdue),
+          delivered: count((r) => r.delivery_status === "sent"),
+          delivery_failed: count((r) => r.delivery_status === "dlq" || r.delivery_status === "failed" || r.delivery_status === "bounced"),
+          suppressed: count((r) => r.delivery_status === "suppressed"),
+          no_delivery_record: count((r) => r.queue_status === "sent" && r.delivery_status === null),
+        };
+      });
+
+      return json({ days, rows, perStep, steps: NURTURE_STEPS }, 200, cors);
+    }
+
     return json({ error: "Unknown action" }, 400, cors);
   } catch (err) {
     console.error("admin-nurture error", err);
