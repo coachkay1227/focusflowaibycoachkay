@@ -176,7 +176,7 @@ const AgentBuilder = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="Build My Agent: FocusFlow AI"
+        title="Build My Agent: Coach Kay Elevates"
         description="Take the 5-minute AI agent assessment and get an exact recommendation for what to build, which platform fits your use case, and how much it costs."
         path="/agent-builder"
       />
@@ -214,7 +214,7 @@ const AgentBuilder = () => {
           }`}
           style={{ willChange: 'transform, opacity' }}
         >
-          <h1 className="sr-only">Agent Builder. FocusFlow AI</h1>
+          <h1 className="sr-only">Agent Builder. Coach Kay Elevates</h1>
           <span className="font-mono-label text-primary tracking-[0.2em]">
             {question.label}
           </span>

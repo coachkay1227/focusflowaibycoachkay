@@ -35,7 +35,7 @@ const eventSchema = {
   },
   "organizer": {
     "@type": "Organization",
-    "name": "FocusFlow AI. Coach Kay",
+    "name": "Coach Kay Elevates",
     "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com"
   },
   "performer": {
@@ -127,7 +127,7 @@ const courseSchema = {
   "description": "Free hands-on training to build AI workflows for your small business",
   "provider": {
     "@type": "Organization",
-    "name": "FocusFlow AI",
+    "name": "Coach Kay Elevates",
     "sameAs": "https://coachkayai.life"
   },
   "hasCourseInstance": {

@@ -5,7 +5,7 @@ import { Sparkles, RefreshCw, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { readFunctionError } from "@/lib/function-error";
 
-const CACHE_KEY = "focusflow_weekly_insights";
+const CACHE_KEY = "coach_kay_elevates_weekly_insights";
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedInsights {

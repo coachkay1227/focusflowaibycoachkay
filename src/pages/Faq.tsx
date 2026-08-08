@@ -33,7 +33,7 @@ const Faq = () => {
         description="Answers about Coach Kay's clarity coaching, Rent-an-Agent, advisory, the $47 AI Business Audit, autism social stories, and the publishing studio."
         path="/faq"
         keywords={[
-          "FocusFlow FAQ",
+          "Coach Kay Elevates FAQ",
           "Coach Kay frequently asked questions",
           "AI coaching FAQ",
           "rent an agent pricing questions",
@@ -53,7 +53,7 @@ const Faq = () => {
         <div
           className="font-heading text-lg font-light"
           role="img"
-          aria-label="FocusFlow AI"
+          aria-label="Coach Kay Elevates"
         >
           <span aria-hidden="true" className="text-primary font-medium">
             Focus

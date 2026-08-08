@@ -139,7 +139,7 @@ const Challenges = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
-      <SEOHead title="Challenges: FocusFlow AI" description="Take on transformative clarity challenges. 3-day, 4-day, or 7-day deep dives into honest self-reflection and growth." path="/challenges" jsonLd={{ "@context": "https://schema.org", "@type": "ItemList", name: "FocusFlow AI Challenges", itemListElement: challengeTypes.map((c, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "Event", name: c.title, description: c.description } })) }} />
+      <SEOHead title="Challenges: Coach Kay Elevates" description="Take on transformative clarity challenges. 3-day, 4-day, or 7-day deep dives into honest self-reflection and growth." path="/challenges" jsonLd={{ "@context": "https://schema.org", "@type": "ItemList", name: "Coach Kay Elevates Challenges", itemListElement: challengeTypes.map((c, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "Event", name: c.title, description: c.description } })) }} />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
@@ -147,8 +147,8 @@ const Challenges = () => {
         <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors" aria-label="Go back home">
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
-        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
+        <div className="font-heading text-lg font-light" role="img" aria-label="Coach Kay Elevates">
+          <span aria-hidden="true" className="text-primary font-medium">Coach Kay</span><span aria-hidden="true" className="text-foreground font-light"> Elevates</span>
         </div>
         <MobileNav />
       </div>

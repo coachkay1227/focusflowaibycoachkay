@@ -1,5 +1,5 @@
 // ============================================================
-// FocusFlow. Master Program Data
+// Coach Kay Elevates. Master Program Data
 // src/data/programs.ts
 // Coach Kay Elevates | Focus Flow AI LLC
 // Framework: F.O.C.U.S. (Foundation · Opportunity · Create · Uplift · Support)
@@ -113,7 +113,7 @@ export const programs: Program[] = [
     durationLabel: "5 minutes",
     tagline: "Know exactly where you are, so you know where to go.",
     description:
-      "Your first step into the FocusFlow ecosystem. This personalized intake assessment reads your current state across all five F.O.C.U.S. pillars and delivers a personalized insight report in Coach Kay's voice. No fluff, just honest clarity about what's working, what's blocked, and what your next move is.",
+      "Your first step into the Coach Kay Elevates ecosystem. This personalized intake assessment reads your current state across all five F.O.C.U.S. pillars and delivers a personalized insight report in Coach Kay's voice. No fluff, just honest clarity about what's working, what's blocked, and what your next move is.",
     coachNote:
       "I built this because most people don't know what they actually need. They just know something isn't working. This tool names it. That's where transformation begins.",
     whatYouGet: [
@@ -1331,7 +1331,7 @@ export const programs: Program[] = [
     description:
       "You're spending an average of 7 hours a day on screens, and most of it isn't serving you. This 7-day challenge is a structured, intentional reduction of tech consumption with coaching guiding you through each stage of the detox. You'll design a technology relationship that works for your life instead of consuming it.",
     coachNote:
-      "I built this specifically because the people using FocusFlow most need to also know when to put the tech down. This challenge models that.",
+      "I built this specifically because the people using Coach Kay Elevates most need to also know when to put the tech down. This challenge models that.",
     whatYouGet: [
       "Tech consumption audit: where your screen time actually goes",
       "7-day mindful tech reduction protocol",
@@ -1940,7 +1940,7 @@ export const programs: Program[] = [
     category: "Signature Program",
     duration: "12week",
     durationLabel: "12 weeks",
-    tagline: "The deepest transformation available in the FocusFlow ecosystem.",
+    tagline: "The deepest transformation available in the Coach Kay Elevates ecosystem.",
     description:
       "Twelve weeks is where real transformation lives, not just the beginning of it. This is Coach Kay's premium program: the full F.O.C.U.S. framework at depth, with group coaching every week, two private 1:1 sessions with Coach Kay, the complete module library, and a transformation so thorough you won't recognize who you were when you started. Application required. Not everyone is accepted. That's intentional.",
     coachNote:

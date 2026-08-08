@@ -92,7 +92,7 @@ const NewsletterPopup = () => {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Join the FocusFlow newsletter"
+      aria-label="Join the Coach Kay Elevates newsletter"
       className="fixed inset-x-0 bottom-0 z-[60] flex justify-center px-4 pb-4 sm:bottom-6 sm:right-6 sm:left-auto sm:px-0 sm:pb-0 sm:justify-end animate-in fade-in slide-in-from-bottom-4"
     >
       <div className="relative w-full max-w-sm rounded-2xl border border-primary/30 bg-navy-deep/95 backdrop-blur-xl p-5 shadow-2xl">
@@ -107,7 +107,7 @@ const NewsletterPopup = () => {
         <NewsletterWaitlist
           source="popup"
           variant="inline"
-          heading="FocusFlow Newsletter"
+          heading="Coach Kay Elevates Newsletter"
           subheading="Weekly clarity drops + AI plays. Join the waitlist before launch."
           className="border-0 bg-transparent p-0"
           onSuccess={() => window.setTimeout(close, 1200)}

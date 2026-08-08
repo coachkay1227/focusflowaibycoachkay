@@ -71,7 +71,7 @@ export const TOOL_PICKS: ToolPick[] = [
   },
   {
     name: "Skool",
-    why: "Home of the FocusFlow Elevation Hub: where Support actually happens between sessions.",
+    why: "Home of the Focus Flow Elevation Hub: where Support actually happens between sessions.",
     category: "Community",
     url: "https://www.skool.com/focusflow-elevation-hub",
     affiliate: true,

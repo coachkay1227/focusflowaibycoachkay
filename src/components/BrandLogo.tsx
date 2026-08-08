@@ -9,8 +9,7 @@ interface BrandLogoProps {
 }
 
 /**
- * Single source of truth for the FocusFlow AI wordmark.
- * Mirrors the Coach Kay Elevates brand pattern: serif wordmark with gold accent.
+ * Single source of truth for the Coach Kay Elevates wordmark.
  */
 const BrandLogo = ({ size = "md", withTagline = false, className, to = "/" }: BrandLogoProps) => {
   const sizes = {
@@ -22,7 +21,7 @@ const BrandLogo = ({ size = "md", withTagline = false, className, to = "/" }: Br
   return (
     <Link
       to={to}
-      aria-label="FocusFlow AI by Coach Kay. Home"
+      aria-label="Coach Kay Elevates. Home"
       className={cn(
         "inline-flex items-baseline gap-2 font-heading font-light hover:opacity-90 transition-opacity",
         sizes[size],
@@ -30,13 +29,12 @@ const BrandLogo = ({ size = "md", withTagline = false, className, to = "/" }: Br
       )}
     >
       <span aria-hidden="true">
-        <span className="text-primary font-medium">Focus</span>
-        <span className="text-foreground font-light">Flow</span>
-        <span className="text-primary font-medium ml-1">AI</span>
+        <span className="text-foreground font-light">Coach Kay</span>
+        <span className="text-primary font-medium ml-1">Elevates</span>
       </span>
       {withTagline && (
         <span className="text-muted-foreground text-xs font-body tracking-wide">
-          by Coach Kay
+          AI & Life Transformation
         </span>
       )}
     </Link>

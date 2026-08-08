@@ -192,7 +192,7 @@ const AuditReport = () => {
 
   return (
     <div className="min-h-dvh bg-background text-foreground report-view">
-      <SEOHead title="Your AI Business Audit: FocusFlow AI" description="Your custom AI Business Audit by Coach Kay." path="/audit/report" noIndex />
+      <SEOHead title="Your AI Business Audit: Coach Kay Elevates" description="Your custom AI Business Audit by Coach Kay." path="/audit/report" noIndex />
       <style>{`
         @media print {
           body * { visibility: hidden !important; }
@@ -358,9 +358,9 @@ const AuditReport = () => {
           <h2 className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">ALL YOUR PATHWAYS</h2>
           <p className="mt-2 text-foreground/90 whitespace-pre-line">{report.all_pathways_note}</p>
           <div className="mt-4 grid gap-2 text-sm no-print">
-            <a className="text-primary hover:underline" href="/rent-an-agent">→ Rent-an-Agent / FocusFlow programs</a>
+            <a className="text-primary hover:underline" href="/rent-an-agent">→ Rent-an-Agent / Coach Kay Elevates programs</a>
             <a className="text-primary hover:underline" href="/advisory">→ Advisory Consultation</a>
-            <a className="text-primary hover:underline" href={SKOOL_URL} target="_blank" rel="noreferrer noopener">→ FocusFlow Elevation Hub (free community)</a>
+            <a className="text-primary hover:underline" href={SKOOL_URL} target="_blank" rel="noreferrer noopener">→ Focus Flow Elevation Hub (free community)</a>
             <a className="text-primary hover:underline" href="/store">→ Studio + Books</a>
           </div>
         </section>

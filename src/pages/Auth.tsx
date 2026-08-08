@@ -157,7 +157,7 @@ const Auth = () => {
 
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay flex items-center justify-center px-6">
-      <SEOHead title="Sign In: FocusFlow AI" description="Sign in or create your FocusFlow AI account to save your clarity sessions, track progress, and unlock personalized coaching." path="/auth" noIndex />
+      <SEOHead title="Sign In: Coach Kay Elevates" description="Sign in or create your Coach Kay Elevates account to save your clarity sessions, track progress, and unlock personalized coaching." path="/auth" noIndex />
       <FloatingOrbs />
       <div className="mouse-glow" />
 
@@ -217,7 +217,7 @@ const Auth = () => {
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <h1 className="font-heading text-3xl md:text-4xl font-light" style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}>
-            {mode === "forgot" ? "Reset Password" : mode === "signin" ? "Welcome Back" : "Join FocusFlow AI"}
+            {mode === "forgot" ? "Reset Password" : mode === "signin" ? "Welcome Back" : "Join Coach Kay Elevates"}
           </h1>
           <p className="text-muted-foreground mt-3 text-sm">
             {mode === "forgot"

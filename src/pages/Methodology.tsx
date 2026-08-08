@@ -32,8 +32,8 @@ const Methodology = () => {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="Assessment Methodology: FocusFlow AI"
-        description="How FocusFlow's Clarity, Business Audit, MAC, and Agent assessments generate results."
+        title="Assessment Methodology: Coach Kay Elevates"
+        description="How Coach Kay Elevates Clarity, Business Audit, MAC, and Agent assessments generate results."
         path="/methodology"
       />
       <div className="max-w-3xl mx-auto px-6 py-12">

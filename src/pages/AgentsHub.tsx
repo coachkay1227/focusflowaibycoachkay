@@ -74,9 +74,9 @@ const AgentsHub = () => {
         >
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
-        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden="true" className="text-primary font-medium">Focus</span>
-          <span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
+        <div className="font-heading text-lg font-light" role="img" aria-label="Coach Kay Elevates">
+          <span aria-hidden="true" className="text-primary font-medium">Coach Kay</span>
+          <span aria-hidden="true" className="text-foreground font-light"> Elevates</span>
         </div>
         <MobileNav />
       </header>

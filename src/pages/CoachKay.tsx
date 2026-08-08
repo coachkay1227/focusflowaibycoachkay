@@ -64,7 +64,7 @@ const CoachKay = () => {
           "clarity coach Columbus Ohio",
           "transformation coaching",
           "mindset and AI strategy coaching",
-          "FocusFlow coach profile",
+          "Coach Kay Elevates profile",
         ]}
         jsonLd={[
           webPage("/coach-kay", "Coach Kay", "AboutPage"),
@@ -86,7 +86,7 @@ const CoachKay = () => {
         >
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
-        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
+        <div className="font-heading text-lg font-light" role="img" aria-label="Coach Kay Elevates">
           <span aria-hidden="true" className="text-primary font-medium">Focus</span>
           <span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
         </div>
@@ -152,7 +152,7 @@ const CoachKay = () => {
         </div>
       </section>
 
-      {/* TWO HATS. Collective AI positioning */}
+      {/* Partner ecosystem positioning */}
       <section id="two-hats" className="py-12 md:py-16 bg-secondary/10">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <AnimatedSection>
@@ -162,22 +162,20 @@ const CoachKay = () => {
                   <Layers className="h-5 w-5 text-primary" />
                 </div>
                 <span className="font-mono-label text-primary tracking-[0.22em] text-[10px]">
-                  TWO HATS · ONE MISSION
+                  COACHING · COMMUNITY · PARTNERSHIP
                 </span>
               </div>
               <h2 className="font-heading text-2xl md:text-3xl text-foreground mb-3">
-                Coach Kay is both the coach and the builder.
+                Human coaching stays at the center.
               </h2>
               <p className="text-[15px] text-muted-foreground leading-[1.8]">
-                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching and programs, solo and high-touch.
-                 As an <strong className="text-foreground/85">AI partner in the AI Task Force</strong>, the independent company founded by John Moyler,
-                 she can bring added engineering, research, design, and QA capacity into larger scopes.
+                As <strong className="text-foreground/85">Coach Kay</strong>, she leads 1:1 coaching, programs, and the Cbus AI Task Force, a Columbus initiative built to give local people a voice in how AI shapes the city. She also participates as an AI partner in Collective AI, a separate enterprise founded by John Moyler.
               </p>
               <Link
                  to="/ai-task-force"
                 className="mt-4 inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
               >
-                 Meet the AI Task Force <ArrowRight className="h-4 w-4" />
+                  Meet the Cbus AI Task Force <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </AnimatedSection>
@@ -425,7 +423,7 @@ const CoachKay = () => {
                 </div>
               </div>
               <p className="mt-6 text-[11px] text-muted-foreground leading-relaxed border-t border-border/40 pt-4">
-                <strong className="text-muted-foreground/80">AI Disclosure:</strong> FocusFlow AI uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
+                <strong className="text-muted-foreground/80">AI Disclosure:</strong> Coach Kay Elevates uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
               </p>
             </div>
           </AnimatedSection>

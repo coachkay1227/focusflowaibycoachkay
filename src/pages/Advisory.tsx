@@ -127,12 +127,12 @@ const Advisory = () => {
         >
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
-        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
+        <div className="font-heading text-lg font-light" role="img" aria-label="Coach Kay Elevates">
           <span aria-hidden="true" className="text-primary font-medium">
-            Focus
+            Coach Kay
           </span>
           <span aria-hidden="true" className="text-foreground font-light">
-            Flow AI
+            Elevates
           </span>
         </div>
         <MobileNav />
