@@ -59,11 +59,6 @@ export default function Start() {
 
   const cta = useMemo<ResolvedCta>(() => {
     const route = offerRoute(recommendedSlug);
-    const paid = wantsStrategyCall({ amountCents: null } as never) // placeholder, replaced below
-      ? true
-      : false;
-    void paid;
-
     // Anyone already above the strategy-call line gets the paid session; the
     // $47 audit on its own gets the free clarity call.
     const earnedPaidCall = wantsStrategyCall({
