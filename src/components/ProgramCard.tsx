@@ -49,6 +49,7 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
       onClick: () => navigate(detailsPath),
     };
   } else if (program.stripePriceId) {
+    const stripePriceId = program.stripePriceId;
     const label = buying
       ? "Opening checkout…"
       : user
@@ -58,13 +59,13 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
       label,
       onClick: async () => {
         if (!user) {
-          try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, program.stripePriceId); } catch { /* noop */ }
+          try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, stripePriceId); } catch { /* noop */ }
           navigate(`/auth?next=${encodeURIComponent("/modules")}`);
           return;
         }
         setBuying(true);
         try {
-          await startProgramCheckout(program.stripePriceId, {
+          await startProgramCheckout(stripePriceId, {
             title: program.title,
             price: program.price,
           });

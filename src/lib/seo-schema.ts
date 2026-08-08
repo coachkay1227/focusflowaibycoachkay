@@ -176,7 +176,8 @@ export const globalGraph = () => {
         founder: {
           "@type": "Person",
           "@id": PERSON_ID,
-          name: "Coach Kay",
+          name: "Kenza Alaoui",
+          alternateName: "Coach Kay",
           jobTitle: "Founder & AI Business Strategist",
           url: SITE_URL,
         },
@@ -197,7 +198,8 @@ export const globalGraph = () => {
       {
         "@type": "Person",
         "@id": PERSON_ID,
-        name: "Coach Kay",
+        name: "Kenza Alaoui",
+        alternateName: "Coach Kay",
         jobTitle: "Founder & AI Business Strategist",
         worksFor: { "@id": ORG_ID },
         url: SITE_URL,
