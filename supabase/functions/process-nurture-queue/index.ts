@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
         if (!audit) {
           await supabase
             .from("nurture_touches")
-            .update({ status: "skipped", skip_reason: "audit_missing", sent_at: null })
+            .update({ status: "skipped", last_error: "audit_missing" })
             .eq("id", touch.id);
           summary.skipped++;
           continue;
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
         if (decision.action === "skip") {
           await supabase
             .from("nurture_touches")
-            .update({ status: "skipped", skip_reason: decision.reason })
+            .update({ status: "skipped", last_error: decision.reason })
             .eq("id", touch.id);
           summary.skipped++;
           continue;
