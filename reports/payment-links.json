@@ -1,11 +1,16 @@
 {
-  "generatedAt": "2026-08-08T20:20:34.533Z",
+  "generatedAt": "2026-08-08T21:09:20.290Z",
   "summary": {
-    "priceIdsReferenced": 33,
+    "priceIdsReferenced": 34,
     "priceIdsRegistered": 43,
-    "failures": 0
+    "failures": 1
   },
-  "failures": [],
+  "failures": [
+    {
+      "rule": "unregistered-price",
+      "detail": "price_1U2HOqBReje0oFcLyJ5Ymk5L referenced in src/lib/offer-catalog.ts but missing from PRICE_MODE_MAP"
+    }
+  ],
   "records": [
     {
       "type": "priceId",
@@ -252,9 +257,16 @@
     },
     {
       "type": "priceId",
+      "value": "price_1U2HOqBReje0oFcLyJ5Ymk5L",
+      "file": "src/lib/offer-catalog.ts",
+      "line": 225,
+      "status": "missing_in_map"
+    },
+    {
+      "type": "priceId",
       "value": "price_1Tb41vBReje0oFcLjxGozG2X",
       "file": "src/lib/offer-catalog.ts",
-      "line": 191,
+      "line": 365,
       "resolvedTarget": "payment — AI Strategy Intensive $497",
       "label": "AI Strategy Intensive $497",
       "status": "ok"
