@@ -139,6 +139,7 @@ const App = () => (
             <Route path="/rent-an-agent" element={<Suspense fallback={<PageSkeleton />}><RentAnAgent /></Suspense>} />
             <Route path="/advisory" element={<Suspense fallback={<PageSkeleton />}><Advisory /></Suspense>} />
             <Route path="/build-studio" element={<Suspense fallback={<PageSkeleton />}><CollectiveAIBuildStudio /></Suspense>} />
+            <Route path="/start-a-build" element={<Suspense fallback={<PageSkeleton />}><StartABuild /></Suspense>} />
             <Route path="/truth" element={<Suspense fallback={<PageSkeleton />}><TruthAboutAI /></Suspense>} />
             <Route path="/collective" element={<Suspense fallback={<PageSkeleton />}><Collective /></Suspense>} />
             <Route path="/pause-hub" element={<Suspense fallback={<PageSkeleton />}><PauseHub /></Suspense>} />
