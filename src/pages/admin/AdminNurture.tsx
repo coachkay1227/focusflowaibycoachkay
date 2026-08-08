@@ -516,6 +516,44 @@ export default function AdminNurture() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={confirmEnqueue} onOpenChange={setConfirmEnqueue}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Queue {missingSteps.length} missing step{missingSteps.length === 1 ? "" : "s"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-left">
+                <p>
+                  Steps already in the queue are left untouched. Only these get created for{" "}
+                  {audit?.email}:
+                </p>
+                <ul className="space-y-2">
+                  {audit &&
+                    missingSteps.map((def) => (
+                      <li key={def.step}>
+                        <span className="font-medium text-foreground">Day {def.step}</span>{" "}
+                        {missingStepReason(def, audit).effect}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmEnqueue(false);
+                doEnqueue();
+              }}
+            >
+              Queue them
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
