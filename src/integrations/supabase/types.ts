@@ -435,6 +435,7 @@ export type Database = {
           is_test: boolean
           recommended_offer: string | null
           report: Json | null
+          status: string
           stripe_session_id: string | null
           user_id: string | null
         }
@@ -448,6 +449,7 @@ export type Database = {
           is_test?: boolean
           recommended_offer?: string | null
           report?: Json | null
+          status?: string
           stripe_session_id?: string | null
           user_id?: string | null
         }
@@ -461,6 +463,7 @@ export type Database = {
           is_test?: boolean
           recommended_offer?: string | null
           report?: Json | null
+          status?: string
           stripe_session_id?: string | null
           user_id?: string | null
         }
@@ -1178,6 +1181,7 @@ export type Database = {
           is_test: boolean
           recommended_offer: string | null
           report: Json | null
+          status: string
           stripe_session_id: string | null
           user_id: string | null
         }[]
