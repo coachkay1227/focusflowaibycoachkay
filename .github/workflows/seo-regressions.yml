@@ -25,6 +25,9 @@ jobs:
           bun run seo:check 2>&1 | tee seo-results.txt
           exit ${PIPESTATUS[0]}
 
+      - name: Run unit test suite
+        run: bun run test
+
       - name: Check email template references
         run: bun run scripts/check-email-templates.ts
 

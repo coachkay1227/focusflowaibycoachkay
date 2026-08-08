@@ -106,7 +106,13 @@ describe("/start buyer onboarding", () => {
     await next();
     // Application-based recommendation, $47 audit only: the free clarity call.
     const cta = screen.getByRole("link", { name: /free 15-minute clarity call/i });
-    expect(cta).toHaveAttribute("href", "https://booking.test/free-clarity");
+    // buildBookingUrl appends verified order proof, so compare the base and the
+    // params rather than the whole string.
+    const ctaUrl = new URL(cta.getAttribute("href")!);
+    expect(`${ctaUrl.origin}${ctaUrl.pathname}`).toBe("https://booking.test/free-clarity");
+    expect(ctaUrl.searchParams.get("session_type")).toBe("free_clarity");
+    expect(ctaUrl.searchParams.get("order_ref")).toBe("audit-1");
+    expect(ctaUrl.searchParams.get("order_source")).toBe("business_audits");
   });
 
   it("says the report is still being written instead of showing an empty box", () => {
@@ -140,9 +146,12 @@ describe("/start buyer onboarding", () => {
 
     await next();
     await next();
-    expect(
-      screen.getByRole("link", { name: /60-minute strategy session/i }),
-    ).toHaveAttribute("href", "https://booking.test/paid-strategy");
+    const paidCta = screen.getByRole("link", { name: /60-minute strategy session/i });
+    const paidUrl = new URL(paidCta.getAttribute("href")!);
+    expect(`${paidUrl.origin}${paidUrl.pathname}`).toBe("https://booking.test/paid-strategy");
+    expect(paidUrl.searchParams.get("session_type")).toBe("paid_strategy");
+    expect(paidUrl.searchParams.get("plan")).toBe("AI Strategy Intensive");
+    expect(paidUrl.searchParams.get("order_source")).toBe("one_time_orders");
   });
 
   it("sends someone with no purchase to the dashboard instead of an empty flow", async () => {
