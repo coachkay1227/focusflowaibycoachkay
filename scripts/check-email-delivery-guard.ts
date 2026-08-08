@@ -114,6 +114,13 @@ if (!existsSync(join(ROOT, RETRY_POLICY))) {
   if (!/MAX_RETRY_ATTEMPTS/.test(policy) || !/RETRY_BACKOFF_MS/.test(policy)) {
     errors.push(`${RETRY_POLICY} must export RETRY_BACKOFF_MS and MAX_RETRY_ATTEMPTS.`);
   }
+  // Purchase and next-steps emails carry money-relevant links. They must stay
+  // in automatic recovery, not fall back to manual resends only.
+  for (const template of ["starter-kit-report", "audit-purchase-confirmation", "purchase-next-steps"]) {
+    if (!policy.includes(`"${template}"`)) {
+      errors.push(`${RETRY_POLICY} must keep "${template}" retry-eligible.`);
+    }
+  }
 }
 
 if (!existsSync(join(ROOT, RETRY_FN))) {
@@ -137,6 +144,13 @@ if (!existsSync(join(ROOT, RETRY_FN))) {
     errors.push(
       `${RETRY_FN} must authorize callers with authorizeWorkerCaller from _shared/worker-auth.ts.`,
     );
+  }
+  // Every retry-eligible template needs a rebuilder, otherwise its rows park
+  // forever while the policy claims they recover.
+  for (const template of ["starter-kit-report", "audit-purchase-confirmation", "purchase-next-steps"]) {
+    if (!worker.includes(`"${template}":`)) {
+      errors.push(`${RETRY_FN} has no rebuilder registered for "${template}".`);
+    }
   }
 }
 

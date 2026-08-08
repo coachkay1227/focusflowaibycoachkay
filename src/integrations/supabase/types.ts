@@ -649,6 +649,7 @@ export type Database = {
           next_attempt_at: string
           recipient_email: string
           source_id: string | null
+          source_ref: string | null
           status: string
           template_name: string
           updated_at: string
@@ -664,6 +665,7 @@ export type Database = {
           next_attempt_at?: string
           recipient_email: string
           source_id?: string | null
+          source_ref?: string | null
           status?: string
           template_name: string
           updated_at?: string
@@ -679,6 +681,7 @@ export type Database = {
           next_attempt_at?: string
           recipient_email?: string
           source_id?: string | null
+          source_ref?: string | null
           status?: string
           template_name?: string
           updated_at?: string

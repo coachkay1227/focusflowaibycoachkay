@@ -4,7 +4,12 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 import { getBookingLinks } from '../_shared/booking-links.ts'
 import { isReservedTestRecipient } from '../_shared/reserved-recipients.ts'
-import { nextRetryAt, retryDecisionFor, MAX_RETRY_ATTEMPTS } from '../_shared/email-retry.ts'
+import {
+  nextRetryAt,
+  retryDecisionFor,
+  sourceRefFromMetadata,
+  MAX_RETRY_ATTEMPTS,
+} from '../_shared/email-retry.ts'
 
 // Sender configuration — all transactional email is delivered via Resend.
 // `coachkayai.life` is the verified sending domain in Resend.
@@ -56,7 +61,7 @@ async function enqueueDeliveryRetry(
   const decision = retryDecisionFor(args.templateName, args.failureClass)
   if (!decision.enqueue) return
 
-  const sourceId = args.metadata?.starter_kit_report_id
+  const ref = sourceRefFromMetadata(args.templateName, args.metadata)
   const due = decision.status === 'pending' ? nextRetryAt(0) : null
 
   const { error } = await supabase.from('email_delivery_retries').upsert(
@@ -64,7 +69,8 @@ async function enqueueDeliveryRetry(
       message_id: args.messageId,
       template_name: args.templateName,
       recipient_email: args.recipientEmail,
-      source_id: typeof sourceId === 'string' ? sourceId : null,
+      source_id: ref?.column === 'source_id' ? ref.value : null,
+      source_ref: ref?.column === 'source_ref' ? ref.value : null,
       attempts: 0,
       max_attempts: MAX_RETRY_ATTEMPTS,
       next_attempt_at: (due ?? new Date()).toISOString(),

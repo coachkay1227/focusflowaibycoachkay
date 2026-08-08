@@ -619,6 +619,9 @@ serve(async (req) => {
                   templateName: "audit-purchase-confirmation",
                   recipientEmail: customerEmail,
                   idempotencyKey: `audit-confirm-${inserted.id}`,
+                  // Lets automatic delivery recovery rebuild this email from the
+                  // audit row if the provider call fails.
+                  metadata: { audit_id: inserted.id, purpose: "audit_purchase_confirmation" },
                   templateData: {
                     name: customerName,
                     audit_id: inserted.id,
