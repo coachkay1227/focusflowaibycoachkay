@@ -47,7 +47,13 @@ const WeeklyInsights = () => {
     try {
       const { data, error: fnError } = await supabase.functions.invoke("weekly-insights");
 
-      if (fnError) throw new Error(fnError.message);
+      if (fnError) {
+        const { message } = await readFunctionError(
+          fnError,
+          "Failed to generate insights",
+        );
+        throw new Error(message);
+      }
       if (data?.error) throw new Error(data.error);
 
       const newMeta = {
