@@ -98,6 +98,9 @@ Deno.serve(async (req: Request) => {
   let idempotencyKey: string
   let messageId: string
   let templateData: Record<string, unknown> = {}
+  // Caller-supplied correlation data (e.g. the Stripe session id) persisted on
+  // every email_send_log row so delivery stages can be read back per order.
+  let logMetadata: Record<string, unknown> = {}
   try {
     const body = await req.json()
     templateName = body.templateName || body.template_name
@@ -106,6 +109,9 @@ Deno.serve(async (req: Request) => {
     idempotencyKey = body.idempotencyKey || body.idempotency_key || messageId
     if (body.templateData && typeof body.templateData === 'object') {
       templateData = body.templateData
+    }
+    if (body.metadata && typeof body.metadata === 'object') {
+      logMetadata = body.metadata as Record<string, unknown>
     }
   } catch {
     return new Response(
@@ -199,6 +205,8 @@ Deno.serve(async (req: Request) => {
     // Log the suppressed attempt
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -232,6 +240,8 @@ Deno.serve(async (req: Request) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
@@ -265,6 +275,9 @@ Deno.serve(async (req: Request) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+    metadata: logMetadata,
+        metadata: logMetadata,
+      metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -294,6 +307,9 @@ Deno.serve(async (req: Request) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+    metadata: logMetadata,
+        metadata: logMetadata,
+      metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -316,6 +332,8 @@ Deno.serve(async (req: Request) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -350,6 +368,7 @@ Deno.serve(async (req: Request) => {
   // Log pending BEFORE send so we have a record even if Resend fails.
   await supabase.from('email_send_log').insert({
     message_id: messageId,
+    metadata: logMetadata,
     template_name: templateName,
     recipient_email: effectiveRecipient,
     status: 'pending',
@@ -387,6 +406,9 @@ Deno.serve(async (req: Request) => {
       console.error('Resend send failed', { status: res.status, errBody, templateName, effectiveRecipient })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+    metadata: logMetadata,
+        metadata: logMetadata,
+      metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -401,6 +423,8 @@ Deno.serve(async (req: Request) => {
     const result = await res.json().catch(() => ({}))
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'sent',
@@ -421,6 +445,8 @@ Deno.serve(async (req: Request) => {
     console.error('Resend send exception', { error: msg, templateName })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
