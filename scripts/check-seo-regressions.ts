@@ -46,6 +46,7 @@ const INDEXABLE: string[] = [
   "/disclaimer",
   "/refund-policy",
   "/methodology",
+  "/start-a-build",
 ];
 
 // Routes that MUST be noindex (SEOHead present with noIndex={true}). Not expected in sitemap.
@@ -105,6 +106,7 @@ const ADMIN_EXEMPT = new Set<string>([
   "/admin/audit-log",
   "/admin/payment-links",
   "/admin/fulfillment-test",
+  "/admin/qr-codes",
   "/email-preview",
 ]);
 
