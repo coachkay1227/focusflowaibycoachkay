@@ -8,6 +8,7 @@
 - JWT auth for edge functions. `clarity-insight` is the exception for unauth guest flow.
 - RLS: Users CANNOT modify their own access tier. NEVER auto-downgrade cohort/premium/corporate tiers.
 - AI state: Save results via local variables before React state updates to prevent race condition data loss.
+- Collective AI is an independent company (founder John Moyler); Coach Kay is an AI partner, never its owner. Contracts sign under Focus Flow AI LLC.
 
 ## Memories
 - [Branding](mem://style/branding) — Visual identity details, colors, and typography
@@ -15,6 +16,7 @@
 - [Architecture](mem://tech/architecture) — Overview of hybrid storage and AI model usage
 - [Clarity Session](mem://features/clarity-session) — One-question UI and AI insight generation
 - [Shareable Offer Links](mem://features/shareable-offer-links) — Permanent QR slug registry, /admin/qr-codes, single /start-a-build inquiry
+- [Collective Positioning](mem://features/collective-positioning) — Independent-company framing, estimate-band rules, /build-studio canonical
 - [Decision Mode](mem://features/decision-mode) — Feature detecting 'stuck' language to present clear options
 - [Clarity Score](mem://features/clarity-score) — 0-100 progression system and user levels
 - [Enrollment System](mem://features/enrollment-system) — Dashboard tracking and error handling rules
