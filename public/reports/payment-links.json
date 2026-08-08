@@ -1,16 +1,11 @@
 {
-  "generatedAt": "2026-08-08T21:09:20.290Z",
+  "generatedAt": "2026-08-08T21:09:47.480Z",
   "summary": {
     "priceIdsReferenced": 34,
-    "priceIdsRegistered": 43,
-    "failures": 1
+    "priceIdsRegistered": 44,
+    "failures": 0
   },
-  "failures": [
-    {
-      "rule": "unregistered-price",
-      "detail": "price_1U2HOqBReje0oFcLyJ5Ymk5L referenced in src/lib/offer-catalog.ts but missing from PRICE_MODE_MAP"
-    }
-  ],
+  "failures": [],
   "records": [
     {
       "type": "priceId",
@@ -260,7 +255,9 @@
       "value": "price_1U2HOqBReje0oFcLyJ5Ymk5L",
       "file": "src/lib/offer-catalog.ts",
       "line": 225,
-      "status": "missing_in_map"
+      "resolvedTarget": "payment — AI Brain — Business Knowledge Base $197",
+      "label": "AI Brain — Business Knowledge Base $197",
+      "status": "ok"
     },
     {
       "type": "priceId",
