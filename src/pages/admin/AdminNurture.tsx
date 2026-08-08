@@ -17,7 +17,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Send, Eye, ListPlus, RefreshCw, Mail, MessageSquare } from "lucide-react";
+import {
+  Search,
+  Send,
+  Eye,
+  ListPlus,
+  RefreshCw,
+  Mail,
+  MessageSquare,
+  CheckCircle2,
+  Clock,
+  CircleDashed,
+  AlertTriangle,
+} from "lucide-react";
 
 interface Touch {
   id: string;
@@ -81,6 +93,41 @@ const statusTone: Record<string, string> = {
 
 const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
 
+const DAY_MS = 86_400_000;
+
+/** Mirrors the worker's plan: Day N is scheduled N days after the purchase. */
+function plannedSendAt(purchasedAt: string, step: number) {
+  return new Date(new Date(purchasedAt).getTime() + step * DAY_MS);
+}
+
+/**
+ * Why a step has no queue row yet, and what queueing will actually do. Written
+ * for a human deciding whether to press the button.
+ */
+function missingStepReason(
+  def: StepDef,
+  audit: AuditInfo,
+): { reason: string; effect: string } {
+  const due = plannedSendAt(audit.created_at, def.step);
+  const overdue = due.getTime() < Date.now();
+  const effect = overdue
+    ? `Queueing creates it dated ${fmt(due.toISOString())}, which is already past, so the worker sends it on its next run.`
+    : `Queueing creates it scheduled for ${fmt(due.toISOString())}.`;
+
+  if (def.requiresReport && !audit.has_report) {
+    return {
+      reason:
+        "No queue row exists, and this step needs a generated report. The worker holds it until the report lands.",
+      effect,
+    };
+  }
+  return {
+    reason:
+      "No queue row exists, so nothing will ever send for this step on its own. This happens when the sequence was never planned at checkout, or the row was cleared.",
+    effect,
+  };
+}
+
 export default function AdminNurture() {
   const { toast } = useToast();
   const [query, setQuery] = useState("");
@@ -89,6 +136,7 @@ export default function AdminNurture() {
   const [result, setResult] = useState<LookupResult | null>(null);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [confirmStep, setConfirmStep] = useState<number | null>(null);
+  const [confirmEnqueue, setConfirmEnqueue] = useState(false);
 
   const call = useCallback(
     async <T,>(body: Record<string, unknown>): Promise<T | null> => {
@@ -172,6 +220,8 @@ export default function AdminNurture() {
   const audit = result?.audit;
   const touches = result?.touches ?? [];
   const steps = result?.steps ?? [];
+  const missingSteps = audit ? steps.filter((d) => !touches.some((t) => t.step === d.step)) : [];
+  const queuedSteps = steps.filter((d) => touches.some((t) => t.step === d.step));
 
   return (
     <div className="min-h-screen bg-background">
