@@ -51,6 +51,7 @@ const INDEXABLE: string[] = [
   "/refund-policy",
   "/methodology",
   "/start-a-build",
+  "/start",
 ];
 
 // Routes that MUST be noindex (SEOHead present with noIndex={true}). Not expected in sitemap.
@@ -58,7 +59,6 @@ const NOINDEX: string[] = [
   "/auth",
   "/reset-password",
   "/onboarding",
-  "/start",
   "/dashboard",
   "/result",
   "/mirror-challenge",
