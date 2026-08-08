@@ -53,7 +53,8 @@ const Hermes = lazy(() => import("./pages/Hermes.tsx"));
 const Advisory = lazy(() => import("./pages/Advisory.tsx"));
 const CollectiveAIBuildStudio = lazy(() => import("./pages/CollectiveAIBuildStudio.tsx"));
 const TruthAboutAI = lazy(() => import("./pages/TruthAboutAI.tsx"));
-const Collective = lazy(() => import("./pages/Collective.tsx"));
+const AITaskForce = lazy(() => import("./pages/AITaskForce.tsx"));
+const CollectiveAI = lazy(() => import("./pages/CollectiveAI.tsx"));
 const PauseHub = lazy(() => import("./pages/PauseHub.tsx"));
 const AiToolsDirectory = lazy(() => import("./pages/AiToolsDirectory.tsx"));
 const AdminBuildInquiries = lazy(() => import("./pages/admin/AdminBuildInquiries.tsx"));
@@ -71,6 +72,7 @@ const AdminFulfillmentTest = lazy(() => import("./pages/admin/AdminFulfillmentTe
 const AdminNurture = lazy(() => import("./pages/admin/AdminNurture.tsx"));
 const AdminNurtureQueue = lazy(() => import("./pages/admin/AdminNurtureQueue.tsx"));
 const AdminQrCodes = lazy(() => import("./pages/admin/AdminQrCodes.tsx"));
+const AdminTaskForceInvitations = lazy(() => import("./pages/admin/AdminTaskForceInvitations.tsx"));
 const StartABuild = lazy(() => import("./pages/StartABuild.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
@@ -149,8 +151,8 @@ const App = () => (
             <Route path="/build-studio" element={<Suspense fallback={<PageSkeleton />}><CollectiveAIBuildStudio /></Suspense>} />
             <Route path="/start-a-build" element={<Suspense fallback={<PageSkeleton />}><StartABuild /></Suspense>} />
             <Route path="/truth" element={<Suspense fallback={<PageSkeleton />}><TruthAboutAI /></Suspense>} />
-            <Route path="/ai-task-force" element={<Suspense fallback={<PageSkeleton />}><Collective /></Suspense>} />
-            <Route path="/collective" element={<Navigate to="/ai-task-force" replace />} />
+            <Route path="/ai-task-force" element={<Suspense fallback={<PageSkeleton />}><AITaskForce /></Suspense>} />
+            <Route path="/collective" element={<Suspense fallback={<PageSkeleton />}><CollectiveAI /></Suspense>} />
             <Route path="/pause-hub" element={<Suspense fallback={<PageSkeleton />}><PauseHub /></Suspense>} />
             <Route path="/ai-tools" element={<Suspense fallback={<PageSkeleton />}><AiToolsDirectory /></Suspense>} />
             <Route path="/ai-tools-directory" element={<Navigate to="/ai-tools" replace />} />
@@ -176,6 +178,7 @@ const App = () => (
             <Route path="/admin/audit-log" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAuditLog /></Suspense></ProtectedRoute>} />
             <Route path="/admin/payment-links" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminPaymentLinks /></Suspense></ProtectedRoute>} />
             <Route path="/admin/qr-codes" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminQrCodes /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/task-force" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminTaskForceInvitations /></Suspense></ProtectedRoute>} />
             <Route path="/admin/fulfillment-test" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminFulfillmentTest /></Suspense></ProtectedRoute>} />
             <Route path="/admin/nurture" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurture /></Suspense></ProtectedRoute>} />
             <Route path="/admin/nurture-queue" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurtureQueue /></Suspense></ProtectedRoute>} />

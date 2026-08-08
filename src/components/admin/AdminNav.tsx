@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, BarChart3, BookOpen, ArrowLeft, ShoppingBag, Sparkles, Wrench, Mail, ShieldAlert, FileText, GraduationCap, Package, MessageCircle, Calendar, ScrollText, CreditCard, FlaskConical, MailCheck, GaugeCircle, QrCode } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3, BookOpen, ArrowLeft, ShoppingBag, Sparkles, Wrench, Mail, ShieldAlert, FileText, GraduationCap, Package, MessageCircle, Calendar, ScrollText, CreditCard, FlaskConical, MailCheck, GaugeCircle, QrCode, Landmark } from "lucide-react";
 
 const navItems = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -20,6 +20,7 @@ const navItems = [
   { to: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
   { to: "/admin/payment-links", label: "Payment Links", icon: CreditCard },
   { to: "/admin/qr-codes", label: "QR Codes", icon: QrCode },
+  { to: "/admin/task-force", label: "Task Force", icon: Landmark },
   { to: "/admin/fulfillment-test", label: "Fulfillment Test", icon: FlaskConical },
   { to: "/admin/nurture", label: "Nurture", icon: MailCheck },
   { to: "/admin/nurture-queue", label: "Nurture Queue", icon: GaugeCircle },

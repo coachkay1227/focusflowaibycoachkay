@@ -36,7 +36,8 @@ const navGroups: NavGroup[] = [
       { label: "AI Agents & Automation", path: "/agents", icon: Bot },
       { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
       { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
-      { label: "AI Task Force", path: "/ai-task-force", icon: Layers },
+      { label: "Cbus AI Task Force", path: "/ai-task-force", icon: Layers },
+      { label: "Collective AI", path: "/collective", icon: Users },
       { label: "Business Audit", path: "/audit/landing", icon: FileSearch },
     ],
   },
@@ -47,7 +48,7 @@ const navGroups: NavGroup[] = [
       { label: "AI Tools Directory", path: "/ai-tools", icon: Library },
       { label: "Pause Hub: Scam Watch", path: "/pause-hub", icon: ShieldAlert },
       { label: "Coach Chat (AI)", path: "/coach", icon: MessageCircle },
-      { label: "FocusFlow Elevation Hub", path: "/community", icon: Users },
+      { label: "Focus Flow Elevation Hub", path: "/community", icon: Users },
     ],
   },
   {

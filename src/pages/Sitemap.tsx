@@ -11,7 +11,7 @@ const freeToolLinks = [
   { path: "/challenges", label: "30-Day Challenges, daily prompts to build the habit" },
   { path: "/ai-tools", label: "AI Tools Directory. 63 vetted tools, scored & reviewed" },
   { path: "/pause-hub", label: "Pause Hub: Scam Watch, live AI scam & threat alerts" },
-  { path: "/community", label: "FocusFlow Elevation Hub, free Skool community" },
+  { path: "/community", label: "Focus Flow Elevation Hub, free Skool community" },
 ];
 
 const serviceLinks = [
@@ -26,7 +26,8 @@ const serviceLinks = [
 
 const companyLinks = [
   { path: "/coach-kay", label: "Meet Coach Kay" },
-  { path: "/ai-task-force", label: "AI Task Force, independent partners for larger builds" },
+  { path: "/ai-task-force", label: "Cbus AI Task Force, Columbus AI program" },
+  { path: "/collective", label: "Collective AI, separate enterprise and partner ecosystem" },
   { path: "/truth", label: "The Truth About AI, no hype, no fear" },
   { path: "/faq", label: "FAQ, every question answered" },
   { path: "/auth", label: "Sign In / Sign Up" },
@@ -47,8 +48,8 @@ const Sitemap = () => (
     <FloatingOrbs />
     <SEOHead
       noIndex
-      title="Sitemap: FocusFlow AI"
-      description="Browse all pages and programs on FocusFlow AI, your clarity coaching platform by Coach Kay."
+      title="Sitemap: Coach Kay Elevates"
+      description="Browse all Coach Kay Elevates pages, programs, tools, and community initiatives."
       path="/sitemap"
     />
     <div className="relative z-10 px-6 md:px-12 py-6">
@@ -58,7 +59,7 @@ const Sitemap = () => (
     </div>
     <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
       <h1 className="font-heading text-3xl font-light mb-2">Sitemap</h1>
-      <p className="text-sm text-muted-foreground mb-10">FocusFlow AI by Coach Kay · coachkayai.life · Columbus, OH</p>
+      <p className="text-sm text-muted-foreground mb-10">Coach Kay Elevates · coachkayai.life · Columbus, OH</p>
 
       <section className="mb-10">
         <h2 className="font-heading text-xl font-light mb-4 text-primary">Free Tools & Entry Points</h2>

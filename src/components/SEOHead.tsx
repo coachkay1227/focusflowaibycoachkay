@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { globalGraph } from "@/lib/seo-schema";
 
 const BASE_URL = "https://coachkayai.life";
-const BRAND_SUFFIX = "Coach Kay AI";
+const BRAND_SUFFIX = "Coach Kay Elevates";
 
 interface SEOHeadProps {
   title: string;
@@ -87,7 +87,7 @@ const SEOHead = ({
       <meta property="og:url" content={canonical} />
       <meta property="og:type" content={ogType} />
       <meta property="og:locale" content="en_US" />
-      <meta property="og:site_name" content="FocusFlow AI by Coach Kay" />
+      <meta property="og:site_name" content="Coach Kay Elevates" />
       <meta property="og:image" content={ogImage} />
 
       {/* Article-specific OG */}

@@ -4,7 +4,7 @@ import BrandLogo from "@/components/BrandLogo";
 import NewsletterWaitlist from "@/components/NewsletterWaitlist";
 
 /**
- * Premium, compliant site footer for FocusFlow AI by Coach Kay.
+ * Premium, compliant site footer for Coach Kay Elevates.
  * 3-column structure mirroring the brand site's restraint.
  */
 const SiteFooter = () => {
@@ -26,14 +26,15 @@ const SiteFooter = () => {
         { label: "Coaching & Advisory", to: "/advisory" },
         { label: "AI Build Studio", to: "/build-studio" },
         { label: "Rent-an-Agent", to: "/rent-an-agent" },
-        { label: "AI Task Force", to: "/ai-task-force" },
+         { label: "Cbus AI Task Force", to: "/ai-task-force" },
+         { label: "Collective AI", to: "/collective" },
       ],
     },
     {
       title: "Company",
       links: [
         { label: "About", to: "/coach-kay" },
-        { label: "FocusFlow Elevation Hub", to: "/community" },
+         { label: "Focus Flow Elevation Hub", to: "/community" },
         { label: "FAQ", to: "/faq" },
         { label: "Contact", to: "mailto:hello@coachkayelevates.org", external: true },
         { label: "Sitemap", to: "/sitemap" },
@@ -57,11 +58,11 @@ const SiteFooter = () => {
                 <Layers className="h-4 w-4 text-primary" />
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Solo coaching by Coach Kay.
+                 The Cbus AI Task Force is Coach Kay’s Columbus program.
                 <br />
                  Larger builds supported by the{" "}
                  <Link to="/ai-task-force" className="text-primary hover:underline font-medium">
-                   AI Task Force
+                    Request a seat at the table
                 </Link>.
               </p>
             </div>
@@ -93,7 +94,7 @@ const SiteFooter = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-xl border border-border/60 p-4">
-              <p className="text-sm font-medium text-foreground">FocusFlow AI</p>
+              <p className="text-sm font-medium text-foreground">Coach Kay Elevates</p>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
                 You are here. Paid AI builds, agents, and advisory.
               </p>
@@ -169,7 +170,7 @@ const SiteFooter = () => {
           <NewsletterWaitlist
             source="footer"
             variant="card"
-            heading="FocusFlow Newsletter, coming soon"
+            heading="Coach Kay Elevates Newsletter, coming soon"
             subheading="Weekly clarity drops, AI plays, and Coach Kay's no-fluff field notes. Get on the waitlist."
           />
         </div>
@@ -177,7 +178,7 @@ const SiteFooter = () => {
         {/* Disclaimer */}
         <div className="border-t border-border/30 pt-6 space-y-4">
           <p className="text-[11px] text-muted-foreground max-w-3xl mx-auto text-center leading-relaxed">
-            FocusFlow AI provides AI-powered coaching, education, and productivity tools, not a
+            Coach Kay Elevates provides AI-powered coaching, education, and productivity tools, not a
             substitute for licensed medical, mental-health, legal, financial, or tax advice.
             AI-generated insights are for personal development only. Results vary.{" "}
             <Link to="/disclaimer" className="text-primary/70 hover:text-primary underline underline-offset-2">

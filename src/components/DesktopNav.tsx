@@ -36,7 +36,8 @@ const workGroup: NavGroup = {
     { label: "AI Agents & Automation", path: "/agents", icon: Bot, desc: "The full ladder: audit, builds, retainers, autonomous" },
     { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
-    { label: "AI Task Force", path: "/ai-task-force", icon: Layers, desc: "Independent partners for larger AI builds" },
+    { label: "Cbus AI Task Force", path: "/ai-task-force", icon: Layers, desc: "A shared table for Columbus and AI" },
+    { label: "Collective AI", path: "/collective", icon: Users, desc: "A separate enterprise and partner ecosystem" },
     { label: "Business Audit", path: "/audit/landing", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
   ],
 };
@@ -48,7 +49,7 @@ const resourcesGroup: NavGroup = {
     { label: "AI Tools Directory", path: "/ai-tools", icon: Library, desc: "63 vetted tools, scored & reviewed" },
     { label: "Pause Hub: Scam Watch", path: "/pause-hub", icon: ShieldAlert, desc: "Live AI scam & threat alerts" },
     { label: "Coach Chat (AI)", path: "/coach", icon: MessageCircle, desc: "Talk to Coach Kay's AI anytime" },
-    { label: "FocusFlow Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
+    { label: "Focus Flow Elevation Hub", path: "/community", icon: Users, desc: "Free Skool community with Coach Kay" },
   ],
 };
 

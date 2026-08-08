@@ -77,7 +77,7 @@ export const offerCatalog = (programs: Program[]) => ({
   "@context": "https://schema.org",
   "@type": "OfferCatalog",
   "@id": `${SITE_URL}/#offer-catalog`,
-  name: "FocusFlow AI Programs",
+  name: "Coach Kay Elevates Programs",
   itemListElement: programs.map((program, index) => ({
     "@type": "Offer",
     position: index + 1,
@@ -106,7 +106,7 @@ export const programSchema = (program: Program): Array<Record<string, unknown>> 
     category: program.category,
     brand: {
       "@type": "Brand",
-      name: "FocusFlow AI",
+      name: "Coach Kay Elevates",
     },
     sku: program.id,
     offers: {
@@ -141,7 +141,7 @@ export const globalGraph = () => {
         "@type": "WebSite",
         "@id": WEBSITE_ID,
         url: SITE_URL,
-        name: "FocusFlow AI by Coach Kay",
+        name: "Coach Kay Elevates",
         description:
           "AI coaching, clarity frameworks, and business automation for small business owners in Columbus and beyond",
         keywords:
@@ -159,8 +159,8 @@ export const globalGraph = () => {
       {
         "@type": "Organization",
         "@id": ORG_ID,
-        name: "FocusFlow AI",
-        alternateName: "Coach Kay AI",
+        name: "Coach Kay Elevates",
+        alternateName: "Coach Kay",
         url: SITE_URL,
         logo: {
           "@type": "ImageObject",
@@ -211,7 +211,7 @@ export const globalGraph = () => {
       {
         "@type": ["ProfessionalService", "LocalBusiness"],
         "@id": LOCAL_BUSINESS_ID,
-        name: "FocusFlow AI. Coach Kay",
+        name: "Coach Kay Elevates",
         description: "Master AI coach platform: clarity sessions, transformation programs, AI business audits, and done-for-you AI agent systems.",
         publisher: { "@id": ORG_ID },
         potentialAction: {
