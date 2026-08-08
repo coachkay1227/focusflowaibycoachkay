@@ -414,7 +414,7 @@ Deno.serve(async (req: Request) => {
     const result = await res.json().catch(() => ({}))
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-      metadata: logMetadata,
+      metadata: { ...logMetadata, resend_id: result?.id ?? null },
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'sent',
