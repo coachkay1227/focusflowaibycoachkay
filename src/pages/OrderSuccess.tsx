@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Check, Loader2, AlertTriangle } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
-import { formatUSD } from "@/lib/book-store";
 import { trackEvent } from "@/lib/analytics";
+import { NextStepsPanel } from "@/components/NextStepsPanel";
 import { TIER_LABELS } from "@/lib/tier-constants";
 import type { AccessTier } from "@/hooks/use-access-level";
 
@@ -22,6 +22,10 @@ type VerifyState = "checking" | "confirmed" | "processing" | "failed";
 interface VerifyResult {
   state?: "confirmed" | "processing" | "unpaid" | "expired" | "unknown";
   amount_total?: number | null;
+  /** Pre-discount amount. Drives which call is offered, so coupons and $0
+   *  internal test runs can't misclassify a real purchase. */
+  amount_subtotal?: number | null;
+  customer_email?: string | null;
   mode?: string;
 }
 
@@ -31,7 +35,6 @@ export default function OrderSuccess() {
   const tierParam = params.get("tier");
   const orderType = params.get("type");
   const [summary, setSummary] = useState<OrderSummary | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"loading" | "book" | "autism" | "non_book">("loading");
   const [verify, setVerify] = useState<VerifyState>(sessionId ? "checking" : "failed");
   const [verified, setVerified] = useState<VerifyResult | null>(null);
