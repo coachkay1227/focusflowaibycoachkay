@@ -221,6 +221,28 @@ const AuditIntake = () => {
               <p className="text-xs text-muted-foreground mt-1">We'll send your audit + receipt here.</p>
             </div>
             <div>
+              <Label>Mobile number (optional)</Label>
+              <Input
+                type="tel"
+                value={data.phone ?? ""}
+                onChange={(e) => setData({ ...data, phone: e.target.value })}
+                placeholder="(555) 123-4567"
+              />
+              <label className="mt-3 flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+                  checked={data.sms_consent === true}
+                  onChange={(e) => setData({ ...data, sms_consent: e.target.checked })}
+                />
+                <span>
+                  Text me when my audit is ready and for my follow-up steps. Message rates may
+                  apply. Reply STOP any time. Leave this unchecked and you'll still get everything
+                  by email.
+                </span>
+              </label>
+            </div>
+            <div>
               <Label>Business name *</Label>
               <Input value={data.business_name} onChange={(e) => setData({ ...data, business_name: e.target.value })} />
             </div>
