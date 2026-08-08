@@ -335,6 +335,49 @@ async def main():
     check("no email anywhere in the log is in a 'failed' state",
           len(still_failed) == 0, str(still_failed)[:200])
 
+    # ---- 7. automatic retry recovery -------------------------------------
+    # A provider-side failure must land in email_delivery_retries and be drained
+    # by the worker. The worker itself is a send trigger, so the first assertion
+    # is that it cannot be called without a privileged credential.
+    import urllib.request, urllib.error, json as _json
+    retry_url = f"{FN_URL}/functions/v1/retry-failed-emails"
+    req = urllib.request.Request(retry_url, method="POST",
+                                 data=b"{}",
+                                 headers={"Content-Type": "application/json",
+                                          "Authorization": f"Bearer {FN_KEY}",
+                                          "apikey": FN_KEY})
+    try:
+        urllib.request.urlopen(req, timeout=30)
+        check("retry worker refuses the public key", False, "call succeeded with anon key")
+    except urllib.error.HTTPError as e:
+        check("retry worker refuses the public key", e.code == 403, f"status={e.code}")
+
+    # Queue invariants. These hold whether or not anything failed this run.
+    over_cap = sql("select id::text from public.email_delivery_retries "
+                   "where attempts > max_attempts limit 5;")
+    check("no retry row ever exceeds its attempt cap", len(over_cap) == 0, str(over_cap)[:200])
+
+    bad_state = sql("select status from public.email_delivery_retries "
+                    "where status not in ('pending','sent','exhausted','parked') limit 5;")
+    check("every retry row is in a known state", len(bad_state) == 0, str(bad_state)[:200])
+
+    # Permanent failures (bad address, invalid payload) must never be retried.
+    retried_permanent = sql("select id::text from public.email_delivery_retries "
+                            "where failure_class = 'permanent' and status = 'pending' limit 5;")
+    check("permanent failures are parked, not retried",
+          len(retried_permanent) == 0, str(retried_permanent)[:200])
+
+    # The scheduler runs every 5 minutes, so a due row should never sit for long.
+    stale = sql("select id::text || ' due ' || next_attempt_at::text from "
+                "public.email_delivery_retries where status = 'pending' "
+                "and next_attempt_at < now() - interval '30 minutes' limit 5;")
+    check("no retry is stuck past its due time", len(stale) == 0, str(stale)[:200])
+
+    # And nothing gave up silently: an exhausted row is a real outage to look at.
+    exhausted = sql("select recipient_email from public.email_delivery_retries "
+                    "where status = 'exhausted' limit 5;")
+    check("no report email exhausted its retries", len(exhausted) == 0, str(exhausted)[:200])
+
     passed = sum(1 for _, ok, _ in results if ok)
     print("\n==== PHASE 4 SUMMARY ====")
     for n, ok, _ in results:
