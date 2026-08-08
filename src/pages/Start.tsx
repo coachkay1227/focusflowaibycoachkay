@@ -142,7 +142,6 @@ export default function Start() {
     };
     logOrderNextStep({
       action: actionByKind[cta.kind] ?? "view_offer",
-      sessionId: purchase?.sessionId ?? null,
       orderId: audit?.id ?? null,
       linkTarget: cta.href,
       sessionType: cta.kind === "paid_call"
