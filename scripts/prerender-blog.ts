@@ -339,6 +339,21 @@ for (const post of POSTS) {
 
 const MAX_PRERENDER_PAGES = 200; // publish-output safety cap
 
+// Routes whose <SEOHead/> builds title/description at runtime. Their crawlable
+// default lives here.
+const META_OVERRIDES: Record<string, { title: string; description: string }> = {
+  "/clarity": {
+    title: "Free Clarity Check: Find Your Next Move",
+    description:
+      "Answer a few honest questions and get personalized insight into your patterns, your blockers, and the next clear action to take.",
+  },
+  "/ai-tools": {
+    title: "AI Tools Directory: Coach Kay's Working Stack",
+    description:
+      "Vetted AI tools scored and reviewed by Coach Kay. Curated by a Master Certified Coach. Practical, honest, no affiliate fluff.",
+  },
+};
+
 const COMMERCIAL_ROUTES = [
   "/",
   "/start",
@@ -430,7 +445,7 @@ for (const routePath of COMMERCIAL_ROUTES) {
   }
   const comp = componentForRoute(routePath);
   const file = comp ? fileForComponent(comp) : null;
-  const meta = file ? metaForRoute(file, routePath) : null;
+  const meta = META_OVERRIDES[routePath] ?? (file ? metaForRoute(file, routePath) : null);
   if (!meta) {
     console.warn(`[prerender] no static metadata for ${routePath} — skipped.`);
     continue;
