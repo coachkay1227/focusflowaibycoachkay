@@ -259,7 +259,7 @@ const Advisory = () => {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-md border border-primary/40 text-primary px-8 py-2.5 text-sm font-medium hover:bg-primary/10 transition-colors"
             >
-              Talk to Kay first <ExternalLink className="h-4 w-4" />
+              Talk to Coach Kay first <ExternalLink className="h-4 w-4" />
             </a>
           </div>
         </div>
@@ -275,18 +275,17 @@ const Advisory = () => {
             <span className="font-mono-label text-primary tracking-[0.22em] text-[10px]">WHO DELIVERS</span>
           </div>
           <h2 className="font-heading text-2xl text-foreground mb-3">
-            Advisory is led by Coach Kay, delivered with the Collective.
+            Advisory is led by Coach Kay, with Task Force capacity when needed.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-            For trainings, cohorts, and enterprise advisory, your engagement is staffed with the right roles around your
-            scope: Operations Architect (Kay), Lead Engineer, AI Researcher, and Designer/QA. Same point of contact,
-            more horsepower.
+            For larger training, cohort, and enterprise scopes, Coach Kay can bring in AI Task Force partners across
+            engineering, AI research, design, and QA. The Task Force is an independent company founded by John Moyler.
           </p>
           <Link
-            to="/collective"
+            to="/ai-task-force"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm"
           >
-            Meet the Collective <ArrowLeft className="h-4 w-4 rotate-180" />
+            Meet the AI Task Force <ArrowLeft className="h-4 w-4 rotate-180" />
           </Link>
         </div>
       </section>

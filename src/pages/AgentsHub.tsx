@@ -54,7 +54,7 @@ const AgentsHub = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="AI Agents and Automation, Built for You"
-        description="AI agents and automation built, hosted, and managed by Coach Kay's team. Start with a $47 audit, add your first agent, then scale to a managed team."
+        description="AI agents and automation scoped by Coach Kay and supported by specialist partners. Start with an audit, add your first agent, then scale."
         path="/agents"
         keywords={[
           "AI agents for business",
@@ -95,7 +95,7 @@ const AgentsHub = () => {
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           If you are answering the same questions, chasing the same follow-ups, and losing leads to
           your own calendar, that is not a discipline problem. That is missing infrastructure. Coach
-          Kay's team builds the agents that carry it, hosts them, and keeps them working.
+           Coach Kay and her specialist partners build the agents that carry it, host them, and keep them working.
         </p>
         <p className="mt-5 text-sm text-primary/80 max-w-xl mx-auto">
           A good assistant runs you $40,000+ a year, and they still clock out at 5pm. Your AI team

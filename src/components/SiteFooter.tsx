@@ -21,12 +21,12 @@ const SiteFooter = () => {
       ],
     },
     {
-      title: "Work With Kay",
+      title: "Work With Coach Kay",
       links: [
         { label: "Coaching & Advisory", to: "/advisory" },
         { label: "AI Build Studio", to: "/build-studio" },
         { label: "Rent-an-Agent", to: "/rent-an-agent" },
-        { label: "Collective AI", to: "/collective" },
+        { label: "AI Task Force", to: "/ai-task-force" },
       ],
     },
     {
@@ -59,9 +59,9 @@ const SiteFooter = () => {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Solo coaching by Coach Kay.
                 <br />
-                Enterprise builds delivered by{" "}
-                <Link to="/collective" className="text-primary hover:underline font-medium">
-                  Collective AI
+                 Larger builds supported by the{" "}
+                 <Link to="/ai-task-force" className="text-primary hover:underline font-medium">
+                   AI Task Force
                 </Link>.
               </p>
             </div>

@@ -13,7 +13,7 @@ const LeadEngine = () => {
     serviceSchema({
       name: "AI Lead Engine",
       description:
-        "Done-with-you outbound systems from Coach Kay's team: enriched and intent-scored leads, multi-channel sequences, voice qualification, and auto-booking into your calendar.",
+         "Done-with-you outbound systems scoped by Coach Kay and supported by specialist partners: enriched and intent-scored leads, multi-channel sequences, voice qualification, and auto-booking.",
       url: `${SITE_URL}/agents/lead-engine`,
       idSuffix: "ai-lead-engine",
     }),
@@ -49,7 +49,7 @@ const LeadEngine = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="AI Lead Engine: Outbound That Books Meetings"
-        description="Enriched, intent-scored leads plus multi-channel outreach, voice qualification, and auto-booking. Built and run by Coach Kay's team."
+        description="Enriched leads, multi-channel outreach, voice qualification, and auto-booking, scoped by Coach Kay and supported by specialist partners."
         path="/agents/lead-engine"
         keywords={[
           "AI lead generation system",

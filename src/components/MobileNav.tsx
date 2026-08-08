@@ -38,7 +38,7 @@ const navGroups: NavGroup[] = [
       { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot },
       { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
       { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
-      { label: "Collective AI", path: "/collective", icon: Layers },
+      { label: "AI Task Force", path: "/ai-task-force", icon: Layers },
       { label: "Business Audit", path: "/advisory", icon: FileSearch },
     ],
   },

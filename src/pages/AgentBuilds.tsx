@@ -57,7 +57,7 @@ const AgentBuilds = () => {
     serviceSchema({
       name: "AI Agent Builds",
       description:
-        "Standalone AI agent builds from Coach Kay's team. Start with the $197 AI Brain, then add a trained agent that answers, follows up, and books, live in about 72 hours.",
+        "Standalone AI agent builds scoped by Coach Kay and supported by specialist partners. Start with the AI Brain, then add a trained agent that answers, follows up, and books.",
       url: `${SITE_URL}/agents/builds`,
       idSuffix: "ai-agent-builds",
     }),
@@ -104,7 +104,7 @@ const AgentBuilds = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="AI Agent Builds: Live in 72 Hours"
-        description="One trained AI agent built for you, from $297. Starts with the $197 AI Brain, the knowledge base every agent draws from. Built by Coach Kay's team."
+        description="One trained AI agent built for you. It starts with the AI Brain, the knowledge base every agent draws from, scoped by Coach Kay."
         path="/agents/builds"
         keywords={[
           "custom AI agent build",

@@ -16,7 +16,6 @@ import ProgramCard from "@/components/ProgramCard";
 import AccessGate from "@/components/AccessGate";
 import MobileNav from "@/components/MobileNav";
 import PillarStrip from "@/components/PillarStrip";
-import PricingSection from "@/components/PricingSection";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSymmetricGridClass } from "@/lib/grid";
@@ -208,8 +207,8 @@ const Modules = () => {
           })}
         </div>
 
-        {/* Programs grouped by F.O.C.U.S. pillar */}
-        <div className="space-y-14">
+        {/* Programs grouped by F.O.C.U.S. pillar. This is the one canonical offer catalog. */}
+        <div id="plans" className="space-y-14 scroll-mt-24">
           {grouped.map((group) => (
             <section key={group.pillar} aria-labelledby={`pillar-${group.pillar}`}>
               <div className="flex items-end justify-between flex-wrap gap-3 mb-5 border-b border-border/50 pb-3">
@@ -275,10 +274,6 @@ const Modules = () => {
           <PillarStrip />
         </div>
 
-        {/* Plans, anchor target for AccessGate "View Plans" CTA */}
-        <section id="plans" className="scroll-mt-24 mt-16">
-          <PricingSection />
-        </section>
       </div>
     </div>
   );

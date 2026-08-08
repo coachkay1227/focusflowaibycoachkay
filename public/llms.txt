@@ -1,10 +1,10 @@
 # FocusFlow AI by Coach Kay
 
-> AI-powered clarity coaching platform by Master Certified Life Coach, Coach Kay (Kenza Alaoui Ismaili). Specializing in AI coaching, clarity coaching, AI business audits, rent-an-agent services, and custom AI builds. Based in Columbus, OH. Site: https://coachkayai.life
+> AI-powered clarity coaching platform by Coach Kay (Kenza Alaoui). Specializing in AI coaching, clarity coaching, AI business audits, agent systems, and custom AI builds. Based in Columbus, OH. Site: https://coachkayai.life
 
 ## Who is Coach Kay?
 
-Coach Kay (Kenza Alaoui Ismaili, also known as Coach Kay Elevates) is a 5x Certified Life Coach, AI Strategist, AI Prompt Engineer, and the founder of FocusFlow AI and Collective AI. She is a Master Certified Life Coach specializing in AI integration, clarity coaching, and business transformation. Her platform helps entrepreneurs, professionals, and families gain clarity, focus, and momentum using AI-powered coaching.
+Coach Kay (Kenza Alaoui) is a 5x Certified Life Coach, Certified AI Prompt Engineer, CPD-Accredited AI Consultant, and founder of FocusFlow AI. She is an AI partner in the AI Task Force, an independent company founded by John Moyler. Her platform helps entrepreneurs, professionals, and families gain clarity, focus, and momentum using AI-powered coaching.
 
 - Primary website: https://coachkayai.life
 - Secondary: https://coachkayelevates.org
@@ -18,7 +18,7 @@ Coach Kay (Kenza Alaoui Ismaili, also known as Coach Kay Elevates) is a 5x Certi
 1. **AI Life Coaching** — 1:1 AI-powered coaching sessions, 30-day reset programs, and 90-day transformation tracks. Free clarity check available.
 2. **AI Business Audit ($47)** — Personalized audit identifying exactly where AI fits your business. Delivered within 24 hours. Credits toward larger engagements.
 3. **Rent-an-Agent** — Subscription-based done-for-you AI agent systems. Custom AI automations, lead generation, and business workflows built and maintained for you.
-4. **Collective AI Build Studio** — Custom AI builds end-to-end: web apps, automations, agents, dashboards. From $297 quick wins to $14,997 full custom builds. Most ship in days.
+4. **AI Build Studio** — Custom web apps, automations, agents, and dashboards. Larger scopes may include independent AI Task Force partners.
 5. **Fractional AI Advisory** — Strategic partnership for leaders, founders, and organizations integrating AI at scale. Includes speaking, cohorts, and corporate EAP trainings.
 6. **Autism & Social Stories** — AI-personalized social stories for autism families. HSA/FSA reimbursement eligible. Customized by behavior, communication style, and learning goals.
 7. **AI Tools Directory** — Curated, scored reviews of 63+ vetted AI tools by a Master Certified Coach. No affiliate fluff.
@@ -28,11 +28,12 @@ Coach Kay (Kenza Alaoui Ismaili, also known as Coach Kay Elevates) is a 5x Certi
 
 - [Home](/): FocusFlow AI overview — free clarity session, programs, and AI coaching by Coach Kay.
 - [Meet Coach Kay](/coach-kay): About Coach Kay — Master Certified Life Coach and AI integration strategist.
-- [AI Transformation Programs](/modules): Programs on the F.O.C.U.S. pillars — personal, business, and AI paths. Free and paid from $27/month.
+- [Transformation Paths](/modules): The canonical catalog for personal, business, and Full AI transformation offers.
 - [Rent-an-Agent](/rent-an-agent): Done-for-you AI agent systems. Lead gen, automations, custom workflows. Founding and Standard pricing.
 - [AI Business Audit](/rent-an-agent): $47 AI Business Audit — discover where AI fits in your business, delivered in 24 hours.
 - [Advisory & Events](/advisory): Fractional AI advisory, speaking, cohorts, and the Collective AI Summit.
-- [Collective AI Build Studio](/build-studio): Custom AI builds — web apps, automations, agents. Idea to live in days.
+- [AI Build Studio](/build-studio): Custom AI builds including web apps, automations, agents, and dashboards.
+- [AI Task Force](/ai-task-force): Independent partner company founded by John Moyler. Coach Kay is an AI partner, not the founder or owner.
 - [The Truth About AI](/truth): Honest breakdown of AI in 2026 — no hype, no fear. What AI is, what it can do, how to use it.
 - [AI Tools Directory](/ai-tools): 63 vetted AI tools scored and reviewed by Coach Kay.
 - [Autism & Social Stories](/autism-social-stories): AI-personalized social stories for autism families. HSA/FSA eligible.

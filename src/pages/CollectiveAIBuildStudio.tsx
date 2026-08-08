@@ -196,7 +196,7 @@ const CollectiveAIBuildStudio = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Build Studio: From Idea to Live AI in Days"
-        description="Custom AI builds scoped by Coach Kay and delivered with Collective AI partners. From idea to live AI system in days. Web apps, automations, agents, and more."
+        description="Custom AI builds scoped by Coach Kay, with AI Task Force partners added when larger work needs more capacity. Web apps, automations, agents, and dashboards."
         path="/build-studio"
         keywords={[
           "AI build studio",
@@ -204,7 +204,7 @@ const CollectiveAIBuildStudio = () => {
           "business automation development",
           "AI workflow implementation",
           "rapid MVP development with AI",
-          "Collective AI partner builds",
+          "AI Task Force partner builds",
         ]}
         jsonLd={jsonLd}
       />
@@ -246,8 +246,8 @@ const CollectiveAIBuildStudio = () => {
         <p className="mt-4 text-xs text-muted-foreground/80">
           You contract with Focus Flow AI LLC for Coach Kay's work. Larger scopes bring in partners
           from{" "}
-          <Link to="/collective" className="text-primary hover:underline">
-            Collective AI
+           <Link to="/ai-task-force" className="text-primary hover:underline">
+             AI Task Force
           </Link>
           , an independent company founded by John Moyler.
         </p>

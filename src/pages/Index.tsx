@@ -8,7 +8,6 @@ import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, Zap } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
-import PricingSection from "@/components/PricingSection";
 import { getPublicPrograms } from "@/data/programs";
 import { webPage, breadcrumb, offerCatalog } from "@/lib/seo-schema";
 import { getFaqLane, faqPageSchema } from "@/data/faqs";
@@ -479,8 +478,25 @@ const Index = () => {
         </div>
       </section>
 
-      {/* 3 Paths to Transformation */}
-      <PricingSection />
+      {/* Single entry to the canonical Transformation Paths catalog */}
+      <section className="relative z-10 py-20 md:py-24 px-6 border-y border-border/30 bg-card/20">
+        <AnimatedSection className="max-w-4xl mx-auto text-center">
+          <span className="font-mono-label text-primary tracking-[0.2em]">TRANSFORMATION PATHS</span>
+          <h2 className="font-heading text-3xl md:text-5xl font-light mt-4">
+            Personal. Business. Full AI.
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Compare every current path in one place, including who it is for, what is included, the duration, and the confirmed price.
+          </p>
+          <Button
+            onClick={() => navigate("/modules")}
+            size="lg"
+            className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            View Transformation Paths <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </AnimatedSection>
+      </section>
 
       {/* Social Proof */}
       <section className="relative z-10 py-24 md:py-32 px-6">

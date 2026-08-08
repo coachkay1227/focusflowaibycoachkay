@@ -182,7 +182,7 @@ export function IntakeFormModal({ open, onOpenChange, defaultPackageSlug }: Prop
         );
         toast({
           title: "Inquiry received",
-          description: "Coach Kay's team will follow up by email shortly.",
+          description: "Coach Kay and her specialist partners will follow up by email shortly.",
         });
         setSubmitting(false);
         onOpenChange(false);

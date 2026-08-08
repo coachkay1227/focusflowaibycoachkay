@@ -27,7 +27,7 @@ const HOW_IT_WORKS = [
   {
     icon: Bot,
     title: "2. Deploy",
-    body: "Coach Kay's team configures your agent(s) on your stack: inbox, CRM, calendar, content, or custom flows.",
+    body: "Coach Kay and specialist partners configure your agents on your stack: inbox, CRM, calendar, content, or custom flows.",
   },
   {
     icon: Zap,
@@ -62,7 +62,7 @@ const RentAnAgent = () => {
     webPage("/rent-an-agent", "Rent-an-Agent. Automation & Agent Systems", "CollectionPage"),
     serviceSchema({
       name: "Rent-an-Agent. Done-for-You AI Agent System",
-      description: "Rent a fully-managed AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows, built, deployed, and maintained for you.",
+      description: "Rent a fully managed AI agent scoped by Coach Kay and supported by specialist partners. Automations, lead generation systems, and workflows are maintained for you.",
       url: `${SITE_URL}/rent-an-agent`,
       idSuffix: "rent-an-agent",
     }),
@@ -123,7 +123,7 @@ const RentAnAgent = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Rent-an-Agent: AI Agent Systems by Coach Kay"
-        description="Rent a done-for-you AI agent from Coach Kay's team. Custom AI automations, lead generation systems, and business workflows, delivered and maintained for you."
+        description="Rent a done-for-you AI agent scoped by Coach Kay and supported by specialist partners. Business workflows are delivered and maintained for you."
         path="/rent-an-agent"
         keywords={[
           "rent an AI agent",
@@ -160,7 +160,7 @@ const RentAnAgent = () => {
           Rent the agent. <span className="text-primary italic">Keep the leverage.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          A dedicated AI agent, or a full squad, built and run for you by Coach Kay's team. Inbox triage, sales follow-up, content production, and ops automation, all under one monthly retainer. Every retainer starts with an intake so you know the scope before you pay.
+          A dedicated AI agent, or a full squad, scoped by Coach Kay and built with specialist partners. Inbox triage, sales follow-up, content production, and operations automation, all under one monthly retainer. Every retainer starts with an intake so you know the scope before you pay.
         </p>
 
         <p className="mt-6 text-sm text-primary/80 max-w-lg mx-auto">
