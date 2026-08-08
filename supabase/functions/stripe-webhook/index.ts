@@ -5,6 +5,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS, BUILD_STUDIO_PRODUCTS, ADVISORY_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
+import { planTouches } from "../_shared/nurture.ts";
 
 const SOURCE = "stripe-webhook";
 
