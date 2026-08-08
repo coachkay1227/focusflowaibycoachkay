@@ -250,6 +250,7 @@ export const NextStepsPanel = ({
         <h2 className="font-mono-label text-xs uppercase tracking-wider text-muted-foreground mb-4">
           What happens next
         </h2>
+        {/* placeholder-anchor */}
         <ul className="space-y-3 text-sm text-foreground/85">
           <li className="flex items-start gap-3">
             <Mail className="h-4 w-4 text-primary mt-0.5 shrink-0" />
