@@ -1,5 +1,9 @@
 # Test 1 Findings: Auth, Roles, Admin Ownership, Protected Routes, Paid Access
 
+> Running findings log. Test 1 and Test 2 recorded below. Nothing implemented yet, by your instruction.
+>
+> Parked note for later: move Autism & Social Stories under the Books and Publishing family, and create a new AIOS page (the operating system) that links to the FocusFlow Command app for building your AI brain. Not part of these audits.
+
 Read-only audit. No code, database, provider, or secret was changed. Findings recorded only, no fixes implemented yet (holding until all 5 tests are done).
 
 ## Verified end-to-end (backend evidence, not screens)
@@ -43,3 +47,53 @@ Read-only audit. No code, database, provider, or secret was changed. Findings re
 Nothing here is a claim based on how the code looks. Every verified item came from a live backend response or a direct database read. Everything I could not prove from the backend is filed as unknown.
 
 Ready for Test 2 when you are.
+
+---
+
+# Test 2 Findings: Edge Functions, External APIs, Webhooks, Validation, Idempotency, Rate Limits, Retries
+
+Read-only. 38 edge functions, the Stripe webhook, the GHL webhook, the email pipeline, and the nurture queue were inspected against live backend records and logs.
+
+## Verified end-to-end (backend evidence)
+
+- Stripe webhook signature verification is real and working. It uses the async verification variant required by this runtime, refuses a request with no signature header, and refuses a bad signature. Evidence: three recorded webhook failures, all of them rejected unsigned or badly signed attempts (missing signature header, no matching signature, unparseable header). No unsigned payload has ever been processed.
+- The webhook also self-checks its own verifier health before processing, and records a config failure if the signing secret is missing instead of falling through.
+- Idempotency is enforced at the database, not in memory. Every event id is inserted into the processed-events table first, and a duplicate insert short-circuits with a duplicate response. Three settled checkout events are recorded, all distinct. Duplicate side effects on retry are structurally prevented.
+- Only settled and complete sessions fulfil. Fully discounted sessions (100 percent off promo) are treated as settled on purpose, which is correct for your test promo code.
+- Price tampering has a guard: fulfilment compares against gross amount including any Stripe discount, so a legitimate promo cannot look like a tampered price.
+- The GHL webhook and the internal senders refuse callers that are not the service role, so they cannot be triggered from a browser.
+- Every admin-facing function re-checks admin server-side through the roles function, using a service client. No email fallback anywhere.
+- The nurture queue has real retry semantics: attempt counter increments per failure, the row stays pending for the next run, and it parks as failed after five attempts. Nothing is stuck: zero pending and zero failed nurture rows right now.
+- AI calls handle provider pressure explicitly: rate limiting returns a 429 with a retry message, and exhausted credits return a distinct 402 rather than a generic failure.
+
+## Functional with gaps
+
+- The email pipeline works, and the failures in the log are test artifacts, not a broken system. Of 52 send-log rows, the real failures are five rejected because the recipient was an example.com test address, and three older ones from a period when project email was disabled. Every real recipient shows a pending row followed by a sent row. Gap: those failures are only visible if someone opens the log. There is no alert when a real buyer email fails.
+- Failure visibility generally is passive. Webhook failures, dead-lettered emails, and parked nurture rows all land in tables with admin screens, but nothing pages you. An invisible error stays invisible until you look.
+- The unsigned-webhook attempts recorded tonight have no event type or source attribution beyond the stage and reason, so a real attack and your own testing look similar in the record.
+- Rate limiting is handled inbound from providers but there is no outbound rate limit or abuse throttle of your own on the AI functions. A signed-in user can call them repeatedly. Combined with the Test 1 paid-access gap, that is a cost exposure, not just an access one.
+
+## Partial
+
+- Fulfilment coverage is uneven across product families. Three checkout events processed and five audits exist, but the one-time orders table is still empty, so the newer order paths have never actually been exercised by a real event. They are untested rather than known-broken.
+- Function JWT settings are mixed, with most functions set to not verify at the platform edge and doing their own in-code check instead. That is the documented pattern here and each one I opened does check, but the guarantee rests on every function remembering to, with no shared enforcement.
+
+## Unknown until tested
+
+- Whether a real Stripe retry of a genuine event is a no-op end to end (the duplicate path is proven by code and unique constraint, not yet by a real replayed delivery).
+- Whether the newer product fulfilment paths write their order rows correctly under a real event.
+- Whether a provider outage on the email service surfaces anywhere you would notice within a day.
+
+## Exact tests required
+
+1. Replay one already-processed Stripe event from the dashboard and confirm the response is a duplicate short-circuit and no second order row or second email appears.
+2. Send a deliberately unsigned request to the webhook and confirm a 400 plus a new failure row, with nothing written downstream.
+3. Run one real checkout on each newer product path with the test promo and confirm the order row, the confirmation email, and the admin screen all agree.
+4. Force one email failure with a real-looking address and confirm it lands in the log and is recoverable from the admin screen without code.
+5. Call a paid AI function repeatedly as a free signed-in account and record what happens. This is both the rate-limit test and the paid-access test from Test 1.
+
+## Verified facts versus assumptions
+
+Verified from live records: signature rejection behaviour, idempotency rows, email send outcomes and their causes, empty nurture queue, retry ceiling, AI 429 and 402 handling. Assumed until a real replay and real orders exist: duplicate-safety under an actual Stripe retry, and correctness of the newer fulfilment paths.
+
+Ready for Test 3.
