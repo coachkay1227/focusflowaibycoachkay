@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { Sparkles, RefreshCw, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { readFunctionError } from "@/lib/function-error";
 
 const CACHE_KEY = "focusflow_weekly_insights";
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
