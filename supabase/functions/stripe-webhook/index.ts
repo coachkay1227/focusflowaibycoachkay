@@ -8,6 +8,43 @@ import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-
 
 const SOURCE = "stripe-webhook";
 
+/** Cold-start guard: proves the signature verifier can actually verify a payload
+ *  we signed ourselves. This exists because a synchronous constructEvent() call
+ *  silently rejected every real Stripe delivery — the failure was invisible
+ *  until a customer paid. Runs once per isolate. */
+let verifierChecked = false;
+async function assertVerifierHealthy(
+  stripe: Stripe,
+  supabase: ReturnType<typeof createClient>,
+  log: ReturnType<typeof createLogger>,
+) {
+  if (verifierChecked) return;
+  verifierChecked = true;
+  const probeSecret = "whsec_selfcheck_" + "0".repeat(24);
+  const payload = JSON.stringify({ id: "evt_selfcheck", type: "ping", data: { object: {} } });
+  try {
+    const ts = Math.floor(Date.now() / 1000);
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw", enc.encode(probeSecret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
+    );
+    const mac = await crypto.subtle.sign("HMAC", key, enc.encode(`${ts}.${payload}`));
+    const hex = [...new Uint8Array(mac)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    await stripe.webhooks.constructEventAsync(payload, `t=${ts},v1=${hex}`, probeSecret);
+    log.info("verifier_selfcheck_ok");
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    log.error("verifier_selfcheck_failed", { message });
+    await recordFailureAndMaybeAlert(supabase, log, {
+      source: SOURCE,
+      stage: "selfcheck",
+      reason: "verifier_unhealthy",
+      message,
+      context: { note: "Signature verification is broken; no payment can be fulfilled." },
+    }).catch(() => {});
+  }
+}
+
 const ok = (req: Request, body: Record<string, unknown> = { received: true }) =>
   new Response(JSON.stringify(body), {
     headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
