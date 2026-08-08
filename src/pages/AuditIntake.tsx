@@ -195,7 +195,7 @@ const AuditIntake = () => {
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <SEOHead title="AI Business Audit Intake: FocusFlow AI" description="Complete your 17-field intake. Custom audit generates in under 2 minutes." path="/audit/intake" noIndex />
+      <SEOHead title="AI Business Audit Intake: Coach Kay Elevates" description="Complete your 17-field intake. Custom audit generates in under 2 minutes." path="/audit/intake" noIndex />
       <div className="max-w-3xl mx-auto px-6 py-10">
         <header className="mb-8">
           <span className="font-mono-label text-primary tracking-[0.2em] text-xs">$47 AI BUSINESS AUDIT</span>

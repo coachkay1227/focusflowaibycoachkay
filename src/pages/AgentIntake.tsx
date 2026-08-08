@@ -186,7 +186,7 @@ const AgentIntake = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay bg-background text-foreground">
       <SEOHead
-        title="Agent Intake: FocusFlow AI"
+        title="Agent Intake: Coach Kay Elevates"
         description="Submit your agent intake form so Coach Kay can build your custom AI agent."
         path="/agent-intake"
         noIndex
@@ -203,7 +203,7 @@ const AgentIntake = () => {
           Back
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">FocusFlow</span> AI
+          <span className="text-primary">Coach Kay</span> Elevates
         </div>
         <div />
       </div>

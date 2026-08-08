@@ -64,7 +64,7 @@ const CoachKay = () => {
           "clarity coach Columbus Ohio",
           "transformation coaching",
           "mindset and AI strategy coaching",
-          "FocusFlow coach profile",
+          "Coach Kay Elevates profile",
         ]}
         jsonLd={[
           webPage("/coach-kay", "Coach Kay", "AboutPage"),
@@ -86,7 +86,7 @@ const CoachKay = () => {
         >
           <ArrowLeft className="h-4 w-4" /> Home
         </button>
-        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
+        <div className="font-heading text-lg font-light" role="img" aria-label="Coach Kay Elevates">
           <span aria-hidden="true" className="text-primary font-medium">Focus</span>
           <span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
         </div>
@@ -423,7 +423,7 @@ const CoachKay = () => {
                 </div>
               </div>
               <p className="mt-6 text-[11px] text-muted-foreground leading-relaxed border-t border-border/40 pt-4">
-                <strong className="text-muted-foreground/80">AI Disclosure:</strong> FocusFlow AI uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
+                <strong className="text-muted-foreground/80">AI Disclosure:</strong> Coach Kay Elevates uses large language models to generate coaching insights, clarity reports, and assessment results. All AI-generated content is for personal development and educational purposes only and does not constitute professional medical, mental-health, legal, financial, or tax advice. Coach Kay is a certified life coach, not a licensed therapist or clinician.
               </p>
             </div>
           </AnimatedSection>

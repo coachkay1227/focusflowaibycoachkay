@@ -85,7 +85,7 @@ const AgentResult = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="Your Agent Recommendation: FocusFlow AI"
+        title="Your Agent Recommendation: Coach Kay Elevates"
         description="Your personalized AI agent recommendation from Coach Kay. See exactly what to build and how much it costs."
         path="/agent-result"
         noIndex
@@ -103,7 +103,7 @@ const AgentResult = () => {
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
         <div className="font-heading text-lg font-light">
-          <span className="text-primary">FocusFlow</span> AI
+          <span className="text-primary">Coach Kay</span> Elevates
         </div>
         <MobileNav />
       </div>
