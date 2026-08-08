@@ -1,6 +1,13 @@
 # Finish the offer-sheet lock-in
 
-Three items remain from the approved plan. Nothing else gets touched.
+Four items remain. Nothing else gets touched.
+
+## 0. Unblock the dev server (do this first)
+
+The SEO contract check is failing and that stops the dev server from booting. The two routes added last turn are unclassified in `scripts/check-seo-regressions.ts`:
+
+- `/start-a-build` goes in INDEXABLE (it is a public lead-gen entry point).
+- `/admin/qr-codes` goes in ADMIN_EXEMPT.
 
 ## 1. Investment bands on the 12 apply-to-build offers
 
