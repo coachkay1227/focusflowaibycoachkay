@@ -141,7 +141,20 @@ const AuditIntake = () => {
         return;
       }
 
-      // Stash intake locally so AuditLanding can attach it after Stripe redirect.
+      // Persist the lead server-side BEFORE Stripe. If the buyer abandons
+      // checkout or finishes on another device, the intake is never lost.
+      const { data: leadRes, error: leadErr } = await supabase.functions.invoke("start-audit-intake", {
+        body: {
+          intake: payloadIntake,
+          email: parsed.data.email,
+          full_name: parsed.data.full_name,
+        },
+      });
+      if (leadErr) throw new Error("We couldn't save your answers. Please retry.");
+      const auditId = (leadRes as { audit_id?: string } | null)?.audit_id;
+      if (!auditId) throw new Error("We couldn't save your answers. Please retry.");
+
+      // Local copy is now only a redundant fallback for the return journey.
       const leadId = crypto.randomUUID();
       try {
         sessionStorage.setItem(
@@ -157,6 +170,7 @@ const AuditIntake = () => {
           customerEmail: parsed.data.email,
           fullName: parsed.data.full_name,
           leadId,
+          auditId,
           successPath: `/audit/landing?lead_id=${encodeURIComponent(leadId)}`,
           cancelPath: "/audit/intake?cancelled=1",
         },

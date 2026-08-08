@@ -41,6 +41,10 @@ project_id = "rarawrpajilqqlcxdzpj"
     verify_jwt = false
   [functions.complete-audit-intake]
     verify_jwt = false
+  [functions.start-audit-intake]
+    verify_jwt = false
+  [functions.verify-checkout-session]
+    verify_jwt = false
   [functions.create-checkout]
     verify_jwt = false
   [functions.update-autism-order]
