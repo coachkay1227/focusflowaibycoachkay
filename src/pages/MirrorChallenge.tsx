@@ -140,7 +140,7 @@ const MirrorChallenge = () => {
 
   // Load data from cloud on mount
   useEffect(() => {
-    getChallengeDataCloud(challengeType).then((loaded) => {
+    getChallengeDataCloud(challengeType, totalDays).then((loaded) => {
       if (loaded) {
         setData(loaded);
         const day = loaded.currentDay > totalDays ? totalDays : loaded.currentDay;
@@ -153,7 +153,10 @@ const MirrorChallenge = () => {
 
   useMouseGlow(containerRef);
 
-  const isCompleted = data.currentDay > totalDays;
+  // Completion is "every prompt answered", not "counter ran past the end".
+  const isCompleted = Array.from({ length: totalDays }, (_, i) => i + 1).every(
+    (d) => !!data.entries[d]
+  );
   const prompt = prompts[selectedDay - 1];
   const isDayUnlocked = selectedDay <= data.currentDay;
   const isDayCompleted = !!data.entries[selectedDay];
@@ -175,7 +178,8 @@ const MirrorChallenge = () => {
     const newData = {
       ...data,
       entries: { ...data.entries, [selectedDay]: journalText },
-      currentDay: selectedDay === data.currentDay ? data.currentDay + 1 : data.currentDay,
+      // currentDay stays calendar-derived. Answering early does not unlock tomorrow.
+      currentDay: data.currentDay,
     };
     setData(newData);
     saveChallengeDataCloud(challengeType, newData);
