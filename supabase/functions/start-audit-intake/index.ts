@@ -51,6 +51,8 @@ serve(async (req: Request) => {
         guest_name: name || null,
         intake,
         status: "pending_payment",
+        // Keeps smoke-test leads out of the real follow-up list.
+        is_test: /@example\.(com|org|net)$/i.test(email),
       })
       .select("id")
       .single();
