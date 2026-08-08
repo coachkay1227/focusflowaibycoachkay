@@ -609,3 +609,72 @@ function Field({ label, value, mono }: { label: string; value: string; mono?: bo
     </div>
   );
 }
+
+/**
+ * States the poller can be in, said plainly. The copy always tells the admin
+ * whether what they are looking at is moving on its own or frozen.
+ */
+function LiveIndicator({
+  state,
+  onPause,
+  onResume,
+}: {
+  state: LiveRefreshState;
+  onPause: () => void;
+  onResume: () => void;
+}) {
+  if (state === "idle") return null;
+
+  const copy: Record<Exclude<LiveRefreshState, "idle">, string> = {
+    polling: "Live, updating every 5s",
+    reconnecting: "Reconnecting, showing last known status",
+    "paused-hidden": "Paused while this tab is in the background",
+    "paused-manual": "Live updates off",
+    "paused-timeout": "Paused after 5 minutes of no change",
+    settled: "All steps settled, live updates off",
+  };
+
+  const isRunning = state === "polling" || state === "reconnecting";
+  const canResume = state === "paused-manual" || state === "paused-timeout";
+
+  return (
+    <div
+      className="flex items-center gap-2 text-xs text-muted-foreground"
+      role="status"
+      aria-live="polite"
+    >
+      <Radio
+        className={`h-3.5 w-3.5 ${
+          state === "polling"
+            ? "text-primary animate-pulse"
+            : state === "reconnecting"
+              ? "text-destructive"
+              : ""
+        }`}
+        aria-hidden
+      />
+      <span>{copy[state]}</span>
+      {isRunning && (
+        <Button variant="ghost" size="sm" className="h-7 px-2" onClick={onPause}>
+          <Pause className="h-3 w-3 mr-1" />
+          Pause
+        </Button>
+      )}
+      {canResume && (
+        <Button variant="ghost" size="sm" className="h-7 px-2" onClick={onResume}>
+          <Play className="h-3 w-3 mr-1" />
+          Resume
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function FieldUnused({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className={`mt-0.5 break-words ${mono ? "font-mono text-xs" : ""}`}>{value}</dd>
+    </div>
+  );
+}
