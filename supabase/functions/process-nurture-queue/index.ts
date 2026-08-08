@@ -32,7 +32,7 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-function json(body: unknown, status = 200): Response {
+function json(body: unknown, status = 200, corsHeaders: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
