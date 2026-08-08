@@ -654,7 +654,7 @@ export default function TruthAboutAI() {
   );
 }
 
-/*. Shared section shell, —, —, —, —, —, —, —, —, —, —, —, —, —, —, —, — */
+/* ===== Shared section shell ===== */
 function Section({
   label,
   title,

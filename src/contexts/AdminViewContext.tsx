@@ -51,7 +51,7 @@ export function AdminViewProvider({ children }: { children: ReactNode }) {
     <AdminViewContext.Provider value={{ userView, toggleView }}>
       {userView && (
         <div className="fixed top-0 inset-x-0 z-[9999] flex items-center justify-between gap-4 bg-amber-500 text-amber-950 px-4 py-1.5 text-xs font-medium">
-          <span>USER VIEW ACTIVE — access gates are visible as a regular user would see them</span>
+          <span>USER VIEW ACTIVE. Access gates are visible as a regular user would see them</span>
           <button
             onClick={toggleView}
             className="underline underline-offset-2 hover:no-underline shrink-0"
