@@ -277,12 +277,14 @@ const RentAnAgent = () => {
                 </ul>
                 <p className="mt-4 text-xs text-muted-foreground italic">{tier.best_for}</p>
                 <Button
-                  onClick={() => startCheckout(active.priceId, `Rent-an-Agent ${tier.name} (${founding ? "Founding" : "Standard"})`)}
-                  disabled={busyPriceId === active.priceId}
+                  onClick={() => navigate(`/agent-intake?offer=rent_${tier.key}`)}
                   className="mt-6 w-full bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {busyPriceId === active.priceId ? "Starting…" : `Subscribe — ${active.priceDisplay}`}
+                  Start my intake
                 </Button>
+                <p className="mt-2 text-[11px] text-center text-muted-foreground/80">
+                  {active.priceDisplay} once your build is scoped. You approve before you pay.
+                </p>
               </div>
             );
           })}
