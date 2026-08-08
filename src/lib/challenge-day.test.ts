@@ -40,7 +40,11 @@ describe("resolveChallengeDay", () => {
     expect(resolveChallengeDay(day(2026, 8, 1), { 0: "kickoff", 1: "a" }, 7, day(2026, 8, 2))).toBe(2);
   });
 
-  it("stays clamped to the duration", () => {
-    expect(resolveChallengeDay(day(2026, 8, 1), { 30: "x" }, 7, day(2026, 8, 2))).toBe(7);
+  it("ignores entries beyond the duration", () => {
+    expect(resolveChallengeDay(day(2026, 8, 1), { 30: "x" }, 7, day(2026, 8, 2))).toBe(2);
+  });
+
+  it("stays clamped to the duration once the calendar runs past it", () => {
+    expect(resolveChallengeDay(day(2026, 8, 1), { 7: "x" }, 7, day(2026, 9, 1))).toBe(7);
   });
 });
