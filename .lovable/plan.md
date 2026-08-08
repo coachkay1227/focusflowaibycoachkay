@@ -97,3 +97,56 @@ Read-only. 38 edge functions, the Stripe webhook, the GHL webhook, the email pip
 Verified from live records: signature rejection behaviour, idempotency rows, email send outcomes and their causes, empty nurture queue, retry ceiling, AI 429 and 402 handling. Assumed until a real replay and real orders exist: duplicate-safety under an actual Stripe retry, and correctness of the newer fulfilment paths.
 
 Ready for Test 3.
+
+---
+
+# Test 3 Findings: Offers, Products, Prices, Checkout, Webhooks, Purchases, Subscriptions, Entitlements, Delivery, Recovery
+
+Read-only. Evidence came from live Stripe reads, live database rows, webhook records, and the send log. Nothing was changed.
+
+## Verified end-to-end (backend evidence)
+
+- One product family is proven: the AI Business Audit. Three real live-mode checkout events are recorded, and all three produced an audit row marked paid with a generated report and a timestamp. Entry form to payment to fulfilment to report to email is real for that one path.
+- The success screen cannot lie. The post-checkout screen calls a server check that reads the real Stripe payment status and then looks for the actual fulfilment row across all five order tables before it says anything positive. A paid-but-unfulfilled session reports as pending, not success. This closes the success-page-only risk for the screen itself.
+- Checkout refuses unknown prices. Every price must be registered in the server price map or the session is never created, which prevents a broken or stale button from silently charging at the wrong mode.
+- Checkout stamps the buyer's user id into both the session metadata and the subscription metadata, so a subscription can be tied back to an account later.
+- Signature verification, duplicate-event blocking, and the price-tampering guard behave as recorded in Test 2 and still hold for these paths.
+- Subscription cancellation does not wipe manually elevated accounts. Only the subscription-tied tier is allowed to fall back to free; cohort, premium, and corporate are preserved.
+
+## Functional with gaps
+
+- Entitlement writing is unproven. Zero accounts currently hold any paid tier. Every paid tier in the system has been granted by code that has never actually run against a real event. The tier upgrade path is written and plausible, but no row in the database proves it works.
+- Price truth is checked against the codebase, not against Stripe. The link report resolves 33 referenced price IDs against the internal map and reports zero failures, but that only proves the app knows about them. It does not prove the price is still active in Stripe or that the amount matches the number on the page. The wrong-price and dead-price risks are therefore undetected by the current guard.
+- The admin link dashboard does read live Stripe (active flag, product active flag, amount), so the capability exists. It is just not wired into the automated guard, and nobody is required to look at it.
+
+## Partial
+
+- Fulfilment coverage is one path out of five. Orders tables for one-time products, agent builds, and social stories are all completely empty. The book order path has a single row from May that is still marked awaiting payment with a live session id, meaning that checkout was started and never settled and nothing has cleaned it up since. Those four families are untested, not proven broken.
+- Recovery is admin-side only. There are admin screens for orders, nurture, audits, webhook health, and payment links, and a fulfilment test harness with a full-discount promo code. A buyer has no self-service way to say "I paid and got nothing."
+- Subscription state has no reconciliation. Tier is written on the event and cleared on cancellation. There is no periodic comparison of Stripe's subscription list against stored tiers, so a missed event drifts silently and permanently.
+
+## Unknown until tested
+
+- Whether a paid subscription actually writes the correct tier and unlocks the correct surfaces.
+- Whether the four unexercised order families write their rows and send their confirmation emails under a real event.
+- Whether every live price ID is still active and priced as displayed.
+- Whether a payment made while not signed in reliably reconnects to the account created afterwards for anything other than the audit path.
+
+## Current user impact
+
+A buyer of the AI Business Audit gets what they paid for. A buyer of anything else is on a path no completed purchase has ever traversed, and a subscriber may pay and receive no unlocked access, with no automatic detection and no self-service recovery.
+
+## Exact tests required
+
+1. One real checkout per family (agent build, one-time product, social story, book) using the full-discount promo. Confirm order row, confirmation email, and admin screen agree.
+2. One real subscription checkout. Confirm the tier row is written, the paid surfaces unlock, then cancel and confirm the downgrade behaves and does not touch a manually elevated tier.
+3. Live price reconciliation for all referenced price IDs: active, product active, amount equal to the displayed price.
+4. Replay a processed event and confirm no second row and no second email.
+5. Abandon a checkout and confirm the pending row is visible and closable by an admin, since one has been stranded since May.
+
+## Verified facts versus assumptions
+
+Verified: three settled audit purchases with reports, the server-side success verification, price-map rejection at checkout, zero paid tiers in the database, four empty order tables, one stranded pending book order, live price reading available in the admin dashboard only.
+Assumed until a real purchase exists: tier granting, subscription lifecycle, and the four unexercised fulfilment families.
+
+Ready for Test 4.
