@@ -28,6 +28,30 @@ function generateToken(): string {
     .join('')
 }
 
+// RFC 2606 / RFC 6761 reserved names. These can never receive mail, and Resend
+// rejects them outright, so we never spend a send attempt on them.
+const RESERVED_EMAIL_DOMAINS = ['example.com', 'example.org', 'example.net']
+const RESERVED_EMAIL_TLDS = ['.test', '.invalid', '.localhost', '.example']
+
+export function isReservedTestRecipient(email: string): boolean {
+  const at = email.lastIndexOf('@')
+  if (at === -1) return false
+  const domain = email.slice(at + 1).toLowerCase().trim()
+  if (!domain) return false
+  return (
+    RESERVED_EMAIL_DOMAINS.includes(domain) ||
+    RESERVED_EMAIL_TLDS.some((tld) => domain === tld.slice(1) || domain.endsWith(tld))
+  )
+}
+
+// A 4xx from Resend (bad address, invalid payload) will fail identically on
+// every retry; 408/429 and 5xx are worth retrying. Recorded on the log row so
+// admin views and any future retry worker can tell the two apart.
+function classifyResendFailure(status: number): 'permanent' | 'retryable' {
+  if (status === 408 || status === 429) return 'retryable'
+  return status >= 400 && status < 500 ? 'permanent' : 'retryable'
+}
+
 // Auth: this function MUST only be invoked by server-side code holding the
 // service_role key. Direct calls from browsers (using the public anon key)
 // would allow anyone on the internet to send emails to arbitrary recipients.
