@@ -53,6 +53,7 @@ const NOINDEX: string[] = [
   "/auth",
   "/reset-password",
   "/onboarding",
+  "/start",
   "/dashboard",
   "/result",
   "/mirror-challenge",
