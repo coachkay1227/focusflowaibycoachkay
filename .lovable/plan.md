@@ -1,51 +1,72 @@
 ## Goal
-Clear the two remaining Lighthouse findings on the published site:
-1. `lighthouse_performance` — slow LCP
-2. `lighthouse_accessibility` — low text contrast
 
-Both are re-verified only against the published build, so we will land targeted source fixes, then publish.
+Two things, in order:
 
----
+1. **Audit first** — prove, with backend evidence, which revenue and journey paths actually work end-to-end. No code changes.
+2. **Then** re-point offers to the new lead generation page in Coach Kay's FOCUS App, once the subdomain exists.
 
-## 1. Performance / LCP fixes
-
-The homepage LCP candidate is the hero H1 (mobile) and the Coach Kay portrait (desktop). Both are gated by the render-blocking Google Fonts stylesheet.
-
-**index.html**
-- Make the Google Fonts stylesheet non-render-blocking using the standard `rel="preload" as="style" onload="this.rel='stylesheet'"` pattern (with a `<noscript>` fallback). This lets the H1 paint immediately with the system fallback while the web font loads (`display=swap` already set on the Google URL).
-- Add a dedicated `<link rel="preload" as="image" href="/src/assets/coach-kay.jpeg" fetchpriority="high" media="(min-width: 768px)">` so the desktop LCP image starts fetching before React boots. (Skip on mobile where hero is text.)
-- Fix the malformed `<meta name="theme-color">` block (line 14-18 has a line break inside the attribute name).
-- Remove the stray `G-XXXXXXXXXX` GA placeholder script — it's a dead 3rd-party request on every page load and inflates TBT.
-
-**src/pages/Index.tsx**
-- Confirm portrait `<img>` already has `fetchPriority="high"`, `loading="eager"`, width/height. No change needed beyond the preload above.
+Nothing below changes code, database objects, secrets, or provider settings.
 
 ---
 
-## 2. Contrast fixes
+## Part 1 — Evidence-based audit
 
-Failing rule targets muted / opacity-reduced text on the deep navy background. `--muted-foreground` is already `45 25% 70%` (passes AA), but many pages layer opacity on top (`/60`, `/50`, `/40`) which drops it below 4.5:1.
+Every item gets one classification, and the classification must come from a backend result (Stripe object, database row, function log, delivered email), never from a rendered screen or a "success" toast.
 
-**Sweep the following files** and replace opacity-attenuated muted/foreground text used for readable copy (paragraphs, labels, list items, form help text) with the plain token:
+**Classifications:** verified end-to-end · functional with gaps · partial · UI only · mocked · broken · missing · unknown
 
-- `text-muted-foreground/40|/50|/60` → `text-muted-foreground`
-- `text-foreground/50|/60` → `text-foreground/80` (kept slightly muted where designed, but above AA)
-- Keep `/70` and above as-is (already ≥ AA against navy).
+### Audit tracks
 
-Target files (already grepped, 6+ hits each first):
-`src/pages/Index.tsx`, `Assessment.tsx`, `PauseHub.tsx`, `MirrorChallenge.tsx`, `ClaritySession.tsx`, `AdminContent.tsx`, `Challenges.tsx`, `ResultScreen.tsx`, `Kiosk.tsx`, `Auth.tsx`, `CoachChat.tsx`, `TruthAboutAI.tsx`, `AiToolsDirectory.tsx`, `Sitemap.tsx`, `AgentIntake.tsx`, `ResetPassword.tsx`, `Dashboard.tsx`, `CollectiveAIBuildStudio.tsx`, `PauseHub.tsx`, `legal/LegalLayout.tsx`, `legal/Disclaimer.tsx`, `AdminNewsletter.tsx`, `AutismSocialStories.tsx`, `AuditReport.tsx`, `AuditLanding.tsx`, `StarterKit.tsx`, `Modules.tsx`, `RentAnAgent.tsx`, `AgentBuilder.tsx`, `Community.tsx`, `AdminDashboard.tsx`.
+**A. Money paths (highest impact)**
+For each live price ID in `PricingSection.tsx`, `offer-catalog.ts`, `build-studio-catalog.ts`, `autismCatalog.ts`, `book-store.ts`:
+- Confirm the price exists and is active in Stripe (read-only Stripe API).
+- Confirm it maps to a fulfillment branch in `_shared/stripe-config.ts`.
+- Confirm `stripe-webhook` has a handler that writes a row for that branch.
+- Test required: one real Stripe test-mode checkout per branch, then show the order row and the tier change it produced.
 
-Do the replacement via a scripted `sed` sweep restricted to those patterns, then spot-check the hero, pricing, and legal pages visually.
+**B. Journey paths**
+Homepage → offer card → checkout → success redirect → account → dashboard access. Also the public audit funnel: `/audit` → `/audit/intake` → checkout → `/auth` prefilled → report.
+- Test required: Playwright run against the live preview capturing the final URL, the created database row, and the function logs for each step.
+
+**C. Access control**
+Admin sees everything without paying; corporate tier does not become admin; free tier is correctly gated.
+- Test required: query `user_roles` / `user_access_levels` for real rows, then load a gated route as each tier and record what rendered.
+
+**D. Email**
+Every template referenced by `send-transactional-email` and the newsletter functions.
+- Test required: trigger a send and show the provider response ID, not just a 200 from the function.
+
+**E. Offer CTA inventory (feeds Part 2)**
+Produce one table of every offer CTA sitewide: page, offer name, price, current action (Stripe checkout, inquiry dialog, external booking link, dead), and intended action after the lead-page change. This is the artifact that tells us exactly what to re-point and what has no destination today.
+
+**F. Recent changes**
+Review the last commits touching `index.html`, contrast token sweep, security hardening, and payment-link guards for regressions the guards would not catch.
+
+### Output format
+
+One table, written to `docs/qa/production-audit.md` at build time:
+
+| Item | Classification | Evidence | Owner | Dependency | User impact today | Exact test to close it |
+|---|---|---|---|---|---|---|
+
+Ordered by user impact, not by effort.
 
 ---
 
-## 3. Verify & publish
+## Part 2 — The lead generation subdomain
 
-1. `bun run build` — confirm clean.
-2. Publish.
-3. Ask Lovable to re-run the SEO scan; mark both findings fixed once Lighthouse rescores.
+The lead page lives in a separate Lovable project, so it needs its own hostname on your domain.
+
+**How it works:** the FOCUS App project gets a subdomain of `coachkayai.life` (for example `focus.coachkayai.life` or `start.coachkayai.life`). In that project's Settings → Domains, you type the full subdomain into the connect-domain field. Because `coachkayai.life` is already connected to this project, the DNS record for the subdomain is added on the registrar side where that domain is managed — an A record for the subdomain name pointing at Lovable's IP, plus the verification TXT record Lovable shows you. The subdomain is independent of the root domain, so it does not disturb the live site.
+
+You do not need to purchase a second domain. If you have already purchased one, that works too and the same connect flow applies.
+
+**Once the hostname is live**, the re-pointing work is mechanical and driven by the Part 1E table: offers that should become lead-gen get their CTA swapped from Stripe checkout / inquiry dialog to a link at the new subdomain, with campaign parameters so we can attribute which offer sent the lead.
+
+---
 
 ## Technical notes
-- `display=swap` is already in the Google Fonts URL, so switching the stylesheet to non-blocking is safe — text renders in DM Sans / Cormorant fallback and swaps in without a layout shift beyond what we already accept.
-- The image preload is scoped with `media` so mobile doesn't pay for a desktop-only asset.
-- No component API changes; opacity-token sweep is purely presentational.
+
+- Audit uses read-only tools only: Stripe API reads, database SELECTs, edge function logs, Playwright against the running preview.
+- Playwright runs against the live app with a real signed-in session, so admin/tier checks reflect actual policy evaluation.
+- Nothing in Part 2 gets implemented until the subdomain resolves and you confirm which offers become lead-gen rather than direct checkout.
