@@ -1,383 +1,104 @@
-# Test 1 Findings: Auth, Roles, Admin Ownership, Protected Routes, Paid Access
+# Simplification review, then a phased execution plan
 
-> Running findings log. Test 1 and Test 2 recorded below. Nothing implemented yet, by your instruction.
->
-> Parked note for later: move Autism & Social Stories under the Books and Publishing family, and create a new AIOS page (the operating system) that links to the FocusFlow Command app for building your AI brain. Not part of these audits.
+Seven audits are done. Full findings are preserved at `/tmp/audit-findings-tests-1-7.md` and will be written into `docs/qa/` as the first documentation step of Phase 0.
 
-Read-only audit. No code, database, provider, or secret was changed. Findings recorded only, no fixes implemented yet (holding until all 5 tests are done).
+## First: where the plan was overbuilt
 
-## Verified end-to-end (backend evidence, not screens)
+Reading all seven audits together, most of what they surfaced collapses into **one root cause repeated in six places**, not thirty separate problems.
 
-- Account lifecycle wiring is sound. 7 auth users, 7 profiles, 7 access-level rows, 0 orphans on either table. The signup trigger is doing its job, so the orphaned-profile risk is not live today.
-- Row-level security holds against anonymous callers. Direct unauthenticated reads of user roles, access levels, profiles, admin audit log, and business audits all returned empty. Only the intentionally public booking and leadgen settings keys came back.
-- The admin role function cannot be executed anonymously at all (permission denied), so there is no anonymous role probe.
-- Admin status has a single source of truth: the roles table, read through the role-check function. No email allowlist, no tier escalation. Corporate tier does not grant admin.
-- The admin user-management backend re-checks admin server-side with a service client before doing anything, so a frontend bypass gets nothing.
-- Users cannot write their own tier or role. Insert, update, and delete are all blocked by policy on both tables. Tier changes can only come from the payment webhook running as service role.
-- Two confirmed admins exist (your two addresses), which removes single-owner lockout risk today.
+**The one root cause: fire-and-forget work in a worker that dies at response time.** Every email that "never sends" (`purchase-next-steps`, assessment results, starter kit), every null Clarity insight, and the false-success responses are the same bug: a promise created and not awaited, or a row written before the async result exists. Six symptoms, one fix pattern. Earlier plans treated them as six separate features.
 
-## Functional with gaps
+**Three things I am cutting outright:**
 
-- Paid access is enforced in the interface only. The access gate blurs locked content but still renders the real content into the page, and the AI functions (coach chat, clarity insight, pattern detect, weekly insights) check that you are signed in but never check your tier. A signed-in free user can reach paid AI output by calling those endpoints directly, and locked module content is present in the page source. This is the most material finding in Test 1.
-- The access gate is applied in only one place (the modules list). Program detail and other paid surfaces rely on their own logic, so gating is inconsistent.
-- There is no in-app way to grant or revoke admin. The admin backend can change tiers but never touches roles. Admin ownership is a manual database operation. Safe today, but recovery depends on backend access.
-- Two accounts are unconfirmed. Expected with email confirmation on, but worth confirming they are test accounts and not stuck buyers.
+1. **The new delivery-tracking table and second recovery function.** Already simplified once. Cutting further: `email_send_log` plus `audit_tokens` plus `business_audits.report` already answer every stage question. No migration, one function, one shared panel.
+2. **The AI evaluation-set harness.** Real, but it is a quality tool, not a launch blocker. It ships after money and delivery are proven, and when it does, it is 3 golden inputs in a vitest file, not a framework.
+3. **A fifth admin screen.** `/admin/orders`, `/admin/audits`, `/admin/nurture`, `/admin/nurture-queue` already exist. Everything new goes into `/admin/orders` as a filter and two row actions.
 
-## Partial
+**One thing I am adding, because it is cheap and prevents everything above from recurring:** CI already runs on every PR and does not run the test suite. Adding one step turns a red suite from invisible into blocking. That is a two-line change with the highest leverage in this entire plan.
 
-- Route protection is client-side only, which is normal for this stack, but it means the real security boundary is RLS and the function guards, not the route wrapper. That is fine where RLS covers the data and not fine where it does not (see paid access above).
-- The sign-in redirect has a 1.5 second hard fallback to the dashboard. It prevents a stranded user, but it can fire before the preference lookup finishes and send a buyer to the dashboard instead of their intended destination. No redirect loop observed.
-
-## Unknown until the remaining tests run
-
-- Whether Google sign-in completes cleanly end to end on the published domain, including return-to-intent preservation.
-- Whether password reset actually lands on the reset screen and changes the password rather than silently signing the user in.
-- Whether tier is written correctly by the payment webhook for each product, and whether it ever regresses a cohort or premium account.
-
-## Exact tests still required for this area
-
-1. Signed-in free account calls the paid AI endpoints directly and we inspect the response. Expected: refused. This is the test that proves or disproves the paid-access gap.
-2. Signed-in free account loads the modules page and we inspect the page payload for locked content.
-3. Non-admin signed-in account requests an admin route and an admin backend action. Expected: no admin data returned.
-4. Full Google sign-in from a protected route, then refresh and back navigation, confirming the session and the intended destination.
-5. Password reset from request through new-password submission, confirming the password actually changed.
-
-## Notes
-
-Nothing here is a claim based on how the code looks. Every verified item came from a live backend response or a direct database read. Everything I could not prove from the backend is filed as unknown.
-
-Ready for Test 2 when you are.
+**The ordering rule I am applying:** fix what silently loses a paying customer, then what costs money, then what protects the fixes, then quality. Nothing else.
 
 ---
 
-# Test 2 Findings: Edge Functions, External APIs, Webhooks, Validation, Idempotency, Rate Limits, Retries
+## Phase 0 — Green baseline (no product change)
 
-Read-only. 38 edge functions, the Stripe webhook, the GHL webhook, the email pipeline, and the nurture queue were inspected against live backend records and logs.
+Purpose: you cannot trust any later verification while the suite is red.
 
-## Verified end-to-end (backend evidence)
+1. Fix the 2 stale assertions in `src/pages/Start.test.tsx` (they assert bare booking URLs; `buildBookingUrl` correctly appends order proof). Compare parsed query params, not whole strings. **Test files only. No source change.**
+2. Add `bun run test` as a step in `.github/workflows/seo-regressions.yml`.
+3. Write the seven audits into `docs/qa/audit-tests-1-7.md`.
 
-- Stripe webhook signature verification is real and working. It uses the async verification variant required by this runtime, refuses a request with no signature header, and refuses a bad signature. Evidence: three recorded webhook failures, all of them rejected unsigned or badly signed attempts (missing signature header, no matching signature, unparseable header). No unsigned payload has ever been processed.
-- The webhook also self-checks its own verifier health before processing, and records a config failure if the signing secret is missing instead of falling through.
-- Idempotency is enforced at the database, not in memory. Every event id is inserted into the processed-events table first, and a duplicate insert short-circuits with a duplicate response. Three settled checkout events are recorded, all distinct. Duplicate side effects on retry are structurally prevented.
-- Only settled and complete sessions fulfil. Fully discounted sessions (100 percent off promo) are treated as settled on purpose, which is correct for your test promo code.
-- Price tampering has a guard: fulfilment compares against gross amount including any Stripe discount, so a legitimate promo cannot look like a tampered price.
-- The GHL webhook and the internal senders refuse callers that are not the service role, so they cannot be triggered from a browser.
-- Every admin-facing function re-checks admin server-side through the roles function, using a service client. No email fallback anywhere.
-- The nurture queue has real retry semantics: attempt counter increments per failure, the row stays pending for the next run, and it parks as failed after five attempts. Nothing is stuck: zero pending and zero failed nurture rows right now.
-- AI calls handle provider pressure explicitly: rate limiting returns a 429 with a retry message, and exhausted credits return a distinct 402 rather than a generic failure.
-
-## Functional with gaps
-
-- The email pipeline works, and the failures in the log are test artifacts, not a broken system. Of 52 send-log rows, the real failures are five rejected because the recipient was an example.com test address, and three older ones from a period when project email was disabled. Every real recipient shows a pending row followed by a sent row. Gap: those failures are only visible if someone opens the log. There is no alert when a real buyer email fails.
-- Failure visibility generally is passive. Webhook failures, dead-lettered emails, and parked nurture rows all land in tables with admin screens, but nothing pages you. An invisible error stays invisible until you look.
-- The unsigned-webhook attempts recorded tonight have no event type or source attribution beyond the stage and reason, so a real attack and your own testing look similar in the record.
-- Rate limiting is handled inbound from providers but there is no outbound rate limit or abuse throttle of your own on the AI functions. A signed-in user can call them repeatedly. Combined with the Test 1 paid-access gap, that is a cost exposure, not just an access one.
-
-## Partial
-
-- Fulfilment coverage is uneven across product families. Three checkout events processed and five audits exist, but the one-time orders table is still empty, so the newer order paths have never actually been exercised by a real event. They are untested rather than known-broken.
-- Function JWT settings are mixed, with most functions set to not verify at the platform edge and doing their own in-code check instead. That is the documented pattern here and each one I opened does check, but the guarantee rests on every function remembering to, with no shared enforcement.
-
-## Unknown until tested
-
-- Whether a real Stripe retry of a genuine event is a no-op end to end (the duplicate path is proven by code and unique constraint, not yet by a real replayed delivery).
-- Whether the newer product fulfilment paths write their order rows correctly under a real event.
-- Whether a provider outage on the email service surfaces anywhere you would notice within a day.
-
-## Exact tests required
-
-1. Replay one already-processed Stripe event from the dashboard and confirm the response is a duplicate short-circuit and no second order row or second email appears.
-2. Send a deliberately unsigned request to the webhook and confirm a 400 plus a new failure row, with nothing written downstream.
-3. Run one real checkout on each newer product path with the test promo and confirm the order row, the confirmation email, and the admin screen all agree.
-4. Force one email failure with a real-looking address and confirm it lands in the log and is recoverable from the admin screen without code.
-5. Call a paid AI function repeatedly as a free signed-in account and record what happens. This is both the rate-limit test and the paid-access test from Test 1.
-
-## Verified facts versus assumptions
-
-Verified from live records: signature rejection behaviour, idempotency rows, email send outcomes and their causes, empty nurture queue, retry ceiling, AI 429 and 402 handling. Assumed until a real replay and real orders exist: duplicate-safety under an actual Stripe retry, and correctness of the newer fulfilment paths.
-
-Ready for Test 3.
+**Your gate:** I show you `66 passed, 0 failed` and the workflow diff. Nothing ships until that is real.
+**Rollback:** revert one commit. Zero user-facing surface.
 
 ---
 
-# Test 3 Findings: Offers, Products, Prices, Checkout, Webhooks, Purchases, Subscriptions, Entitlements, Delivery, Recovery
+## Phase 1 — Stop losing paying customers (the un-awaited sends)
 
-Read-only. Evidence came from live Stripe reads, live database rows, webhook records, and the send log. Nothing was changed.
+The highest-impact phase. A buyer pays and receives nothing.
 
-## Verified end-to-end (backend evidence)
+Files: `supabase/functions/stripe-webhook/index.ts`, `supabase/functions/mac-elaborate/index.ts`, `supabase/functions/generate-starter-report/index.ts`, `supabase/functions/clarity-insight/index.ts`.
 
-- One product family is proven: the AI Business Audit. Three real live-mode checkout events are recorded, and all three produced an audit row marked paid with a generated report and a timestamp. Entry form to payment to fulfilment to report to email is real for that one path.
-- The success screen cannot lie. The post-checkout screen calls a server check that reads the real Stripe payment status and then looks for the actual fulfilment row across all five order tables before it says anything positive. A paid-but-unfulfilled session reports as pending, not success. This closes the success-page-only risk for the screen itself.
-- Checkout refuses unknown prices. Every price must be registered in the server price map or the session is never created, which prevents a broken or stale button from silently charging at the wrong mode.
-- Checkout stamps the buyer's user id into both the session metadata and the subscription metadata, so a subscription can be tied back to an account later.
-- Signature verification, duplicate-event blocking, and the price-tampering guard behave as recorded in Test 2 and still hold for these paths.
-- Subscription cancellation does not wipe manually elevated accounts. Only the subscription-tied tier is allowed to fall back to free; cohort, premium, and corporate are preserved.
+1. `await` every send and every generation whose result gets stored. Where the work is genuinely slow, use the platform's background-task primitive explicitly rather than a bare un-awaited promise.
+2. Stop returning 200 when the insert failed (`mac-elaborate`, starter kit). Return the real error; let the UI say so.
+3. Write the Clarity insight in the same statement that has the AI result, never before it.
+4. Fix nurture enrollment to cover the update path, not only insert, so buyers who filled intake before paying get enrolled.
+5. Stop the admin audit trail asserting an email was sent when no `email_send_log` row exists. The log is the source of truth, not the intent.
 
-## Functional with gaps
-
-- Entitlement writing is unproven. Zero accounts currently hold any paid tier. Every paid tier in the system has been granted by code that has never actually run against a real event. The tier upgrade path is written and plausible, but no row in the database proves it works.
-- Price truth is checked against the codebase, not against Stripe. The link report resolves 33 referenced price IDs against the internal map and reports zero failures, but that only proves the app knows about them. It does not prove the price is still active in Stripe or that the amount matches the number on the page. The wrong-price and dead-price risks are therefore undetected by the current guard.
-- The admin link dashboard does read live Stripe (active flag, product active flag, amount), so the capability exists. It is just not wired into the automated guard, and nobody is required to look at it.
-
-## Partial
-
-- Fulfilment coverage is one path out of five. Orders tables for one-time products, agent builds, and social stories are all completely empty. The book order path has a single row from May that is still marked awaiting payment with a live session id, meaning that checkout was started and never settled and nothing has cleaned it up since. Those four families are untested, not proven broken.
-- Recovery is admin-side only. There are admin screens for orders, nurture, audits, webhook health, and payment links, and a fulfilment test harness with a full-discount promo code. A buyer has no self-service way to say "I paid and got nothing."
-- Subscription state has no reconciliation. Tier is written on the event and cleared on cancellation. There is no periodic comparison of Stripe's subscription list against stored tiers, so a missed event drifts silently and permanently.
-
-## Unknown until tested
-
-- Whether a paid subscription actually writes the correct tier and unlocks the correct surfaces.
-- Whether the four unexercised order families write their rows and send their confirmation emails under a real event.
-- Whether every live price ID is still active and priced as displayed.
-- Whether a payment made while not signed in reliably reconnects to the account created afterwards for anything other than the audit path.
-
-## Current user impact
-
-A buyer of the AI Business Audit gets what they paid for. A buyer of anything else is on a path no completed purchase has ever traversed, and a subscriber may pay and receive no unlocked access, with no automatic detection and no self-service recovery.
-
-## Exact tests required
-
-1. One real checkout per family (agent build, one-time product, social story, book) using the full-discount promo. Confirm order row, confirmation email, and admin screen agree.
-2. One real subscription checkout. Confirm the tier row is written, the paid surfaces unlock, then cancel and confirm the downgrade behaves and does not touch a manually elevated tier.
-3. Live price reconciliation for all referenced price IDs: active, product active, amount equal to the displayed price.
-4. Replay a processed event and confirm no second row and no second email.
-5. Abandon a checkout and confirm the pending row is visible and closable by an admin, since one has been stranded since May.
-
-## Verified facts versus assumptions
-
-Verified: three settled audit purchases with reports, the server-side success verification, price-map rejection at checkout, zero paid tiers in the database, four empty order tables, one stranded pending book order, live price reading available in the admin dashboard only.
-Assumed until a real purchase exists: tier granting, subscription lifecycle, and the four unexercised fulfilment families.
-
-Ready for Test 4.
+**Your gate, and this is the part that matters:** we run one real `FFTEST100` audit purchase end to end. I show you, from the backend: the Stripe session, the `business_audits` row with a non-null report, the `audit_tokens` row, the `email_send_log` row with a provider message id, the three `nurture_touches` rows, and the email in your inbox. A rendered success screen proves nothing and I will not offer it as evidence.
+**Race condition guard:** each fix is idempotent on the session id, so a duplicate webhook cannot double-send.
+**Rollback:** per-function revert; each function is independent.
 
 ---
 
-# Test 4 Findings: Branded Templates, Sender Domain, Triggers, Lifecycle Journeys, Queues, Consent, Logs, Alerts
+## Phase 2 — Close the cost and access holes
 
-Read-only. Evidence came from the live domain status, the send log, the nurture queue, subscriber and consent tables, and a trace of the webhook code against what the log actually shows.
+1. Rate-limit the four unauthenticated AI generators (`mac-elaborate`, `generate-starter-report`, `clarity-insight`, `generate-business-audit` guest path): per-IP and per-email ceiling, counted from rows that already exist. No new table.
+2. Enforce tier server-side in the paid AI functions. Today `AccessGate` blurs in the browser and the function does not check. That is the one real security gap across all seven audits.
+3. Remove the unverified volume claims from the recommendation strings ("helped hundreds"). Voice-bible hard wall: no invented statistics.
 
-## Verified end-to-end (backend evidence)
-
-- The sender domain is real and verified. Mail sends from your own subdomain on your own domain, delegated to Lovable nameservers, and project email is enabled. Auth emails are on.
-- Delivery is genuinely happening for the audit journey. The log shows a matching sent row for every real recipient across intake confirmation, purchase confirmation, report ready, the clarity code result, the newsletter welcome, and the weekly draft. Sending works, and the branded templates render and deliver.
-- Failures are honestly recorded with the provider's own reason. The five failed rows are all the provider rejecting example.com test addresses, and the three dead-lettered rows are from a period when project email was switched off. Nothing is silently dropped.
-- Suppression and consent plumbing exists and is clean: zero suppressed addresses, nine unsubscribe tokens issued, five newsletter subscribers, six newsletter issues.
-- The send endpoint is server-only. It refuses any caller that is not the service role, so no browser can trigger a branded email.
-
-## Broken
-
-- The immediate post-purchase next-steps email has never sent. Zero rows exist in the send log for that template, across all three settled purchases, even though the template is registered and the send is wired into the webhook. This is the message that hands the buyer their booking link and first-challenge timeline, and no buyer has ever received it. Two hypotheses, both testable: the send is fired without being awaited, so the worker shuts down when the webhook returns its response and the call never completes; or the internal invoke is being rejected and the failure is swallowed by the attached catch, which only logs a warning. The zero-row evidence is consistent with either.
-- Worse, the admin audit trail records `next_steps_email_sent: true` unconditionally, at the moment the send is fired, not when it succeeds. So the admin record asserts an email was sent that the send log proves was never sent. This is the exact pattern of an interface claiming success before the backend is complete, and it is on the admin side, which is where you would go to check.
-
-## Functional with gaps
-
-- Lifecycle enrollment is inconsistent. Three audits were purchased. Only one nurture row exists in the whole queue, step one, already sent. The enrollment code sits on the branch that runs when the webhook creates a brand new audit row, so a buyer who filled in the intake form first and paid second updates an existing row and is never enrolled. Two of your three buyers got no day one, day three, or day seven follow-up.
-- Nothing alerts you. Failed sends, dead-lettered mail, missing enrollments, and the never-sent next-steps email all sit quietly in tables. The only way any of this surfaces is if someone opens an admin screen and reads it. There is a webhook failure alert template in the registry, but no evidence in the log that an alert has ever been sent.
-
-## Partial
-
-- Auth emails are enabled and configured, but zero auth rows exist in the send log. Signup, reset, magic link, and email change have no delivery evidence at all, and two accounts sit unconfirmed. Configured is not the same as proven.
-- Marketing lane is half-built. Subscribers, issues, welcome mail, and a draft flow all work, but no issue has been recorded as sent to the list, so the actual broadcast path is unexercised.
-
-## Current user impact
-
-A buyer today gets their confirmation and their report. They do not get the next-steps email, and unless they happened to be the one buyer created on the insert path, they get no follow-up sequence at all. From the buyer's side it looks like the relationship stops the moment the report lands. From your side, the admin trail says the next-steps email went out.
-
-## Exact tests required
-
-1. Run one full-discount purchase and then read the send log for the next-steps template. Expected: a pending row followed by a sent row. If nothing appears, the send is not surviving the webhook response, which identifies the failing boundary precisely.
-2. Run one purchase where the intake form was filled in first, then check whether three nurture rows appear. This proves or disproves the insert-only enrollment hypothesis.
-3. Trigger a password reset and a new signup and confirm auth rows appear in the log and mail lands in a real inbox.
-4. Force one failure with a real-looking address and confirm it is visible and re-sendable from the admin screen without touching code.
-5. Send one newsletter issue to a small real list and confirm sent counts, suppression handling, and the unsubscribe link resolving to a real page.
-
-## Verified facts versus assumptions
-
-Verified: domain verified and enabled, real deliveries for six templates, provider-attributed failure reasons, zero suppressions, one nurture row total, zero next-steps rows, zero auth rows, service-role-only send endpoint, admin metadata asserting the next-steps send unconditionally.
-Assumed until tested: the specific reason the next-steps send never completes, and that the insert-only branch is what starved the other two buyers of follow-up.
-
-Ready for Test 5.
----
-
-# Test 5 Findings: Forms, Questions, Validation, Scoring, Recommendations, Results, Persistence, Retakes, Safety
-
-Read-only. Evidence came from the live tables, the send log, and a trace of each assessment path from the first question to the stored row.
-
-## What exists
-
-Five separate assessment or form journeys: the Operator x Bottleneck Map (`/assessment`), the Clarity Check session (`/clarity`), the Starter Kit report (`/starter-kit`), the AI Business Audit intake (`/audit/intake`), and onboarding preferences. Each has its own question set, its own scoring, and its own storage table.
-
-## Verified end-to-end (backend evidence)
-
-- The Clarity Check saves for signed-in users. Ten stored sessions exist with real answers, and seven carry a stored AI insight. Answers plus insight land in the database, not just on screen.
-- The Starter Kit path is proven once. One stored report exists with a full generated report body, produced by a server call that validates the email before doing anything else.
-- The Operator x Bottleneck Map stores results for signed-in users. Two stored rows exist, both with the full AI insight and the three-letter code.
-- Scoring is deterministic and server-independent for the map and the track recommendation. Both are pure tally-and-rank logic with an explicit fallback when a tie or an empty answer set occurs, so the same answers always produce the same code and the same recommended path. No random branch, no silent default to a paid offer.
-- The audit intake form validates and persists before payment, and its email trail is real: intake confirmation, purchase confirmation, and report ready all have matching sent rows.
-
-## Broken
-
-- Assessment result emails have never been sent. Zero rows exist in the send log for the assessment result template and zero for the starter kit report template, across every completed assessment. Both sends are fired without being awaited inside the server function, which is the identical pattern already confirmed for the post-purchase next-steps email in Test 4. The user finishes the assessment, sees the report on screen, is told it is being emailed, and no email is ever produced.
-- The assessment can report success while nothing was saved. If the database insert fails, the server function logs the error and then deliberately returns a 200 with the full insight so the screen still renders. The user sees a complete result, and no row exists. This is a designed false success, and there is no retry, no queue, and no record that the submission was lost.
-- The Clarity Check save is fire-and-forget with no error check. Three of the ten stored sessions have no insight text at all, which is consistent with the row being written before the AI result arrives and never being updated. The user cannot tell the difference from the screen.
-
-## Functional with gaps
-
-- Every guest assessment path is unproven. Zero guest rows exist in the assessment table despite the email gate being live, while two lead rows exist from the same gate. So the gate captured the lead and the assessment result itself has no evidence of ever being stored for a not-signed-in visitor.
-- Retakes are unbounded and unlinked. Each completion inserts a new row with no attempt number and no link to the previous attempt, so a person's history is a flat list with no notion of a current result. The on-screen restart only clears local state.
-- There is no admin view for any assessment. The audit path has admin screens; the map, the Clarity Check, and the Starter Kit are visible only as counts on the analytics screen. Support cannot look up a person's answers, re-send a result, or recover a lost submission without direct database access.
-- Refresh and back navigation lose in-progress answers. Answers live in component state for the map, so a refresh mid-assessment starts over with no draft recovery.
-
-## Partial
-
-- Validation is thin and client-shaped. Required-field checks and an email shape check exist, and the server re-checks the email, but answer payloads are accepted as free-form objects with no server-side check that the submitted answers match the current question set. A stale or tampered payload would be stored and scored.
-- Sensitive-content handling is undefined. These questions collect burnout, identity, and life-transition disclosures. Stored rows are protected by row-level policies, but there is no retention window, no redaction, and no stated boundary about what appears in emails or webhooks. Assessment completions are forwarded to the external CRM webhook including the detected bottleneck.
-
-## Unsafe copy to fix (not a code defect)
-
-Two recommendation strings assert unverified volume claims about how many people have been helped, and a program line asserts a similar claim. Under your rules an unconfirmed number is omitted, not written. These are in the recommendation text a user reads immediately after an emotionally loaded assessment.
-
-## Current user impact
-
-A signed-in person who takes an assessment gets a correct on-screen result and, most of the time, a stored row. They never get the promised email. A not-signed-in person hands over their email, sees a result, and there is no evidence anything about them was stored beyond the lead capture. If the save fails, the screen still congratulates them. Nobody on your side can look any of it up.
-
-## Exact tests required
-
-1. Complete the map while signed in and then read the send log for the assessment result template. Expected: a pending row followed by a sent row. Nothing appearing confirms the un-awaited send is the failing boundary.
-2. Complete the map while signed out, submit the email gate, and confirm a guest row appears with the email and the insight attached.
-3. Force the insert to fail and confirm what the screen says. Today it says success.
-4. Complete a Clarity Check, then read the row and confirm the insight fields are populated, not null.
-5. Retake the same assessment twice and confirm which row is treated as current by the dashboard and by any email.
-6. Submit an answer payload that does not match the current question set and confirm whether it is rejected or stored and scored.
-7. Refresh mid-assessment and confirm whether progress survives.
-
-## Verified facts versus assumptions
-
-Verified: ten Clarity Check rows with three missing insights, two map rows, one starter kit row, zero guest assessment rows, zero send-log rows for both assessment result templates, the explicit 200-on-insert-failure branch, un-awaited email sends, unchecked save call, no per-record admin surface, deterministic scoring with defined fallbacks.
-Assumed until tested: that the un-awaited send is the sole reason the assessment emails never arrive, and that the three insight-less Clarity rows come from the save landing before the AI result.
-
-Tests 1 through 5 are complete. The remediation set is ready to be sequenced on your word.
+**Your gate:** I hit each generator past its ceiling and show the refusal; I call a paid function as a free-tier user and show the 403; I grep the strings clean.
+**Rollback:** each item is a separate commit.
 
 ---
 
-# Test 6 Findings: Model Calls, Prompts, Grounding, Retrieval, Structured Output, Safety, Cost, Tools, Agent Approvals
+## Phase 3 — Delivery visibility and recovery (the simplified version)
 
-Read-only. Evidence came from the live AI gateway request log, the function-level auth configuration, the stored AI output rows, and the shared model-call helper.
+1. `verify-checkout-session` returns a `stages` object: payment, order, access link, report, email. Every value read from a real row.
+2. One new function `fulfillment-recovery`, two modes: `cs_` session id is the buyer's proof, admin JWT plus `has_role` accepts a record id. Resends go to the address on the order, never a typed-in one. Capped at 3 per order per hour, counted from `email_send_log`.
+3. One shared `DeliveryStatusPanel`, used by `OrderSuccess.tsx` and `AuditReport.tsx`.
+4. `/admin/orders` gets a "needs attention" filter, stage badges, and two row actions. Both write `admin_audit_log`.
 
-## What exists
-
-Seven model call sites: the audit report, the assessment elaboration, the starter kit report, the clarity insight, the pattern detector, the weekly recap, and the newsletter drafter. Plus one streaming conversation surface, the coach chat. Every one of them calls the same gateway with the same single model, and every one routes its voice through the shared identity prompt built from your voice bible.
-
-## Verified end-to-end (backend evidence)
-
-- Model calls really happen and really succeed. Six gateway requests in the last seven days, every one a 200, all on the same model, ten to twelve seconds each, a consistent 3,813 tokens of prompt in and roughly 1,300 to 1,500 out per report. Cost per report is a fraction of a credit. There is no silent local stub anywhere in these paths.
-- Structured output is genuinely enforced, not prompted. Every report path forces a single named function call and returns only its parsed arguments. A response with no tool call, or with unparseable arguments, is rejected as an error rather than passed through as prose. This is the single strongest thing in the AI layer and it is what makes hallucinated free-text impossible in report bodies.
-- Grounded output is stored, not just displayed. The five audit reports, two assessment insights, one starter report, and seven clarity insights are all real rows carrying the model's structured payload. The output survives the request.
-- Provider failure is handled honestly and specifically. Rate limiting and credit exhaustion are surfaced as their own distinct errors with real user-facing text, and every other failure returns an error rather than an empty success. The screen says it could not generate the report.
-- The offer recommendation is constrained to a fixed catalog. The audit prompt lists the exact allowed offer identifiers and the schema requires one of them, so the model cannot invent an offer or a price. Recommendation routing is also independently re-derived from the stored value in application code.
-- Prompt injection is actively mitigated on the conversation surface. User-supplied session text interpolated into the system prompt is stripped of control characters, truncated, and capped at twenty answer entries. The chat itself rejects anything that is not a user or assistant turn, caps history at fifty messages, and caps each message at ten thousand characters. That is real defensive work, not decoration.
-- The key never reaches the browser. Every call is server-side and the secret is read from the function environment.
-
-## Broken
-
-- Nothing in the AI layer is currently broken in the sense of failing. Zero errors in the log window.
-
-## Functional with gaps
-
-- Four paid or semi-paid AI generators are callable by anyone with no sign-in and no rate limit. The assessment elaboration, the starter kit report, and the clarity insight all accept an unauthenticated request, treat authentication as optional enrichment, and then call the model. There is no per-address cap, no per-address cooldown, and no daily ceiling anywhere in the code. Today's volume is six calls a week so nothing has burned, but the exposure is a script away from being a credit bill. The audit generator is the exception and it is correct: it requires either the signed-in owner of the audit row or an unexpired single-use token.
-- Cost is observable but not governed. The gateway log shows exactly what each call cost. Nothing in the app reads that, caps it, alerts on it, or attributes it to a user. There is no budget and no admin cost view.
-- The output is grounded in the prompt, not in retrieval. There are no embeddings, no vector store, and no retrieval step anywhere. The catalog, the pricing rules, and the voice rules are pasted into the prompt as static text. That is a legitimate and simpler architecture at this scale, but it means the model's factual footing is only as current as the hardcoded prompt strings, and a catalog change in one file does not propagate to the others.
-- Prompt payloads are not retained. The gateway log records every request as redacted, so for any given stored report you can see the cost and the token count but you cannot see the prompt that produced it. There is no way to reconstruct why a specific report said what it said.
-
-## Partial
-
-- Safety review is prompt-level only. The identity prompt carries your banned-language and hard-wall rules, and the report schemas constrain shape, but no code validates that returned prose actually honors those rules. There is no post-generation check for banned phrasing, invented statistics, income claims, or price mentions. The rules are instructions to the model, not enforced constraints.
-- Injection defense is uneven across surfaces. The conversation surface sanitizes. The report generators interpolate the user's raw intake answers into the prompt with no equivalent stripping, so a hostile intake field is delivered to the model verbatim. The forced-schema output sharply limits the damage a successful injection could do, which is why this is a gap and not a break.
-- Model choice is pinned to a single preview-generation model, hardcoded in six separate places plus one shared default. There is no per-task model selection, no fallback model, and no single place to change it.
-
-## Missing
-
-- There are no evaluation sets. Not one golden input with an expected output for any of the seven generators. Every change to a prompt, a schema, or the catalog ships unverified against past behavior, and a regression in report quality would be invisible until a buyer complained.
-- There are no tools and no agent approvals. The single forced function call is a JSON shape, not an executable action, so nothing the model returns can act on the system. There is no tool overreach risk today because there is no tool surface. This is worth stating plainly because the roadmap includes an agent product, and that is the point where an approval gate stops being optional.
-- There is no admin view of AI activity. No screen shows generations, failures, costs, or model output per user.
-
-## Current user impact
-
-A person who reaches an AI surface gets real, grounded, schema-valid output within about twelve seconds, and it is stored. Nothing about the AI layer is currently failing them. The risk is on your side, not theirs: anyone can spend your credits without an account, nobody is checking whether the generated prose obeys your own voice rules, and nothing would catch a quality regression.
-
-## Exact tests required
-
-1. Call each unauthenticated generator repeatedly from a script with no session and count how many complete. Expected under a correct design: refusal after a small number. Expected today: all of them complete.
-2. Submit an intake field containing an explicit instruction to ignore prior instructions and reveal the system prompt, then read the stored report and confirm the schema held and no prompt text leaked.
-3. Run one identical input through each generator twice and compare the stored payloads for the drift that a missing evaluation set would hide.
-4. Force a provider rate limit and confirm the user sees the specific rate-limit message and no partial row is stored.
-5. Refresh mid-generation and confirm the request either completes and stores, or fails cleanly, with no half-written row.
-6. Attempt the audit generator with someone else's audit id and an expired token and confirm both are refused.
-7. Compare each hardcoded catalog prompt against the live price list and confirm no generator can quote a stale price.
-
-## Verified facts versus assumptions
-
-Verified: six successful gateway calls with real token and cost figures, one model across all call sites, forced single-tool structured output with rejection on malformed arguments, stored structured payloads for every generator, distinct 429 and 402 handling, catalog-constrained offer recommendation, sanitized and capped injection surface on the chat, owner-or-token gating on the audit generator, unauthenticated access with no rate limit on three generators, redacted payload retention, zero evaluation sets, zero executable tools.
-Assumed until tested: that the unauthenticated generators would in fact serve unlimited sequential requests, and that raw intake interpolation is exploitable only to the limited degree the forced schema allows.
-
-Tests 1 through 6 are complete. On your word I will sequence the remediation set, smallest safe boundary first: rate-limit the open generators, await the un-awaited sends, fix the insert-only nurture enrollment, stop the admin trail asserting sends that never happened, and add the first evaluation set.
+**Your gate:** on a real settled session, I break one stage deliberately, show the panel reporting it honestly, click recover, and show the new backend rows.
+**No migration. No new page.**
 
 ---
 
-# Test 7 Findings: Unit, Integration, Browser, Authorization, Payments, Email, AI, Failure, Mobile, Regression Testing
+## Phase 4 — Lock it in
 
-Read-only. Evidence came from the test files on disk, one real run of the suite, the CI workflow, and the guard scripts.
+1. One Playwright journey spec for the audit path that ends on a **backend assertion** (row exists, log row exists), not a visible element. Runs against a dedicated test identity with `is_test = true` on every row it writes.
+2. Pin `playwright.config.ts` with `baseURL` and `webServer` so local and CI agree.
+3. One vitest authorization matrix over the route table plus one anon-vs-owner read.
+4. Then, and only then, the 3-input AI evaluation set with voice hard-wall assertions.
 
-## Verified end-to-end (evidence)
+**Your gate:** CI red when I deliberately break a fix, green when I restore it. That is the only proof a regression test works.
 
-- Unit suite exists and runs: `vitest run` executed 9 files, 66 tests, 6.5s. Config `vitest.config.ts` (jsdom, setup at `src/test/setup.ts`, include `src/**/*.{test,spec}.{ts,tsx}`).
-- Pure-logic coverage is real, not render-only: `src/__tests__/nurture.test.ts`, `src/lib/__tests__/offer-routes.test.ts`, `src/lib/catalog-price-sync.test.ts`, `src/hooks/use-live-refresh.test.tsx`, `src/hooks/use-roles.test.tsx` assert behavior and outputs.
-- Webhook validation is unit-tested against hostile input: `supabase/functions/stripe-webhook/index_test.ts` covers metadata coercion, UUID rejection including `'; DROP TABLE book_orders;--`, and amount/eligibility mismatch. No live Stripe call, no charge.
-- Build-time guards run in CI on every PR (`.github/workflows/seo-regressions.yml`): SEO regressions, email-template references, role invariants, payment/audit link integrity, with the payment-link report uploaded as an artifact.
-- No live-charge or production-write risk in any existing automated test. Payment coverage is validation-level only.
+---
 
-## Broken (current, reproducible)
+## The five failure modes I am designing against
 
-- **2 failing unit tests, on main, right now.** `src/pages/Start.test.tsx` asserts bare booking hrefs (`https://booking.test/free-clarity`, `https://booking.test/paid-strategy`) but `buildBookingUrl` now appends verified order proof (`session_type`, `plan`, `order_ref`, `booking_proof`, utm). The tests are stale, the code is correct. Impact: the suite is red, so any future real regression is invisible in the noise. Owner: booking-proof change. Exact fix: assert with `toHaveAttribute("href", expect.stringContaining(...))` or compare parsed `URLSearchParams`, not the whole string.
-- **CI never runs the tests.** The only workflow runs the four scripts. `bun run test` (vitest) and Playwright are absent from CI. Impact: the red suite above shipped unnoticed; regression protection is opt-in local. This is the single highest-value gap in Test 7.
+| Risk | Prevention | Detection |
+|---|---|---|
+| Random edits / scope creep | One phase, one gate, nothing outside the named files | You approve each phase's file list before I start it |
+| Symptom patches | Phase 1 fixes the pattern in all six places at once, not the loudest one | The `FFTEST100` run exercises all six |
+| Race conditions | Every write idempotent on session id; no new background workers | Duplicate-webhook replay in the Phase 1 gate |
+| Swallowed errors | Phase 1 item 2 removes the false 200s; errors surface to the UI | The gate includes a forced insert failure |
+| Fake certainty | No phase closes on a screenshot or a toast | Every gate names the exact backend row I must show you |
 
-## Functional with gaps
+## Environment drift
 
-- **Browser/E2E is written but effectively unexecuted.** `tests/assessment-flows.spec.ts`, `tests/offer-card-symmetry.spec.ts`, `tests/admin-view-toggle.spec.ts` exist; `playwright.config.ts` is the unmodified Lovable default (no `baseURL`, no webServer, no projects). No CI job invokes Playwright. `admin-view-toggle.spec.ts` self-skips unless `ADMIN_EMAIL`/`ADMIN_PASSWORD` are set — they are not in CI, so it has never asserted anything there.
-- **Assessment E2E is largely render-assertion.** The specs prove the right header renders and no wrong-flow fallback occurs — real value against the fallback bug — but they stop at the CTA. No spec asserts a database row, an email log row, or a stored report. This is exactly the "tests that only render" risk: passing specs would not have caught the Test 4/Test 5 findings (emails never sent, false-success on insert failure).
-- **Edge-function smoke tests degrade to guards only.** `supabase/functions/admin-nurture/index_test.ts` always asserts 401/403; the lookup → preview → enqueue → resend path runs only when `NURTURE_SMOKE_ADMIN_TOKEN`, `NURTURE_SMOKE_QUERY`, `NURTURE_SMOKE_SEND=1` are present. It skips loudly rather than failing, so green means "guards work", never "fulfillment works".
+Two configuration items are yours, not mine, and I will hand you a one-page checklist rather than guess: the `verify_jwt` values for the 15 functions that rely on the deploy default, and the CI secrets if you ever want the credential-gated E2E to run rather than skip.
 
-## Missing (no coverage at all)
+## What I need from you now
 
-- Authorization matrix: no test asserts anon/free/paid/admin against the 27 protected routes or the RLS-denied reads. Test 1's paid-access gap is untested by construction.
-- Email: no test asserts an `email_send_log` row for any template. The templates only have a static reference check.
-- AI: no evaluation set, no golden inputs, no schema-conformance test on generator output.
-- Failure paths: no test for provider 429/402, insert failure, duplicate submit, refresh mid-generation, or back navigation.
-- Mobile: zero mobile-viewport specs.
-- Test data isolation: `is_test` exists on the order tables but no fixture uses it, and there is no seeded test account or teardown. Any future E2E against the live backend would pollute production data.
-
-## Five realistic failure scenarios for the testing layer itself
-
-1. **Tests that only render.** A green suite certifies a broken funnel (already demonstrated: Tests 4 and 5 found breaks the specs pass over). Prevention: every journey spec must end on a backend assertion (row exists, log row exists), not a rendered element.
-2. **Live charges.** A payments E2E that hits real Stripe checkout charges a real card. Prevention: assert on validation helpers and webhook fixtures only; if a checkout spec is ever added, restrict it to test-mode keys and the `FFTEST100` path, never a card form.
-3. **Production data pollution.** E2E writes real `business_audits`/`one_time_orders` rows and triggers real nurture emails. Prevention: one dedicated test identity, `is_test = true` on every written row, and every assertion and admin view filtered on it.
-4. **Environment drift.** Playwright config has no `baseURL`; local passes, CI cannot resolve the app. Prevention: pin `baseURL`/`webServer` in config, and require the same command in CI as locally.
-5. **Fake certainty.** Red tests stay red long enough to be ignored, or a skipped test reads as a pass. Prevention: make the suite a required PR check, and fail (not skip) when a credential-gated E2E is expected in CI.
-
-## Smallest safe implementation boundary (when approved, in this order)
-
-1. Fix the 2 stale `Start.test.tsx` assertions to compare parsed query params. No source change.
-2. Add `bun run test` as a step in the existing workflow so the suite is a required check. No new workflow.
-3. Pin `playwright.config.ts` with `baseURL` + `webServer`, then add one journey spec that ends on a real backend assertion for the AI Business Audit path against a dedicated test identity with `is_test = true`.
-4. Add the authorization matrix as a single vitest file over the route table plus one anon-vs-owner RLS read.
-5. Add the first AI evaluation set: 3 golden inputs, assert schema conformance and voice hard-walls (no income guarantee, no invented statistic, no em dash).
-
-Nothing above touches production behavior, secrets, or provider settings.
-
-## Verified facts versus assumptions
-
-Verified: 13 test files on disk; one real run with 64 passing and 2 failing; the 2 failures are stale booking-href assertions, not product bugs; CI runs four guard scripts and no test runner; Playwright config is the untouched default; the admin-view spec self-skips without credentials; no automated test can produce a live charge or a production write today.
-Assumed until tested: that the Playwright specs would pass if a `baseURL` were supplied, and that a dedicated `is_test` identity is sufficient isolation for the live backend.
-
-Tests 1 through 7 are complete. Say the word and I will start remediation at the smallest boundary: the 2 stale assertions, then wiring the suite into CI.
+Approve, and I start at Phase 0. Each phase ends with me showing backend evidence and waiting for your go before the next one. If a gate fails, we stop there and fix it, we do not move forward with a phase half-proven.
