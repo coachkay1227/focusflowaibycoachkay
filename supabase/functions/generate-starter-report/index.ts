@@ -133,6 +133,10 @@ serve(async (req) => {
           templateName: "starter-kit-report",
           recipientEmail: email,
           idempotencyKey: `starter-kit-${insert.data?.id ?? email}`,
+          metadata: {
+            source: "generate-starter-report",
+            starter_kit_report_id: insert.data?.id ?? null,
+          },
           templateData: {
             name,
             businessType,
