@@ -81,7 +81,7 @@ const Hermes = () => {
         </p>
         <div className="mt-7 inline-flex flex-col items-center gap-1">
           <span className="font-heading text-2xl text-foreground">{HERMES.priceDisplay}</span>
-          <span className="text-xs text-muted-foreground">{HERMES.turnaround}</span>
+          <span className="text-xs text-muted-foreground">{HERMES.priceNote}</span>
         </div>
         <div className="mt-7">
           <Button
