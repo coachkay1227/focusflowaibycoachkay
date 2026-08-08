@@ -173,7 +173,7 @@ export function useBuyerOnboarding(token?: string | null): BuyerOnboardingState 
           const { data } = await supabase.rpc("get_audit_by_token" as never, {
             p_token: token,
           } as never);
-          const row = Array.isArray(data) ? data[0] : data;
+          const row = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
           if (row) foundAudit = toAudit(row as Record<string, unknown>);
         }
 
