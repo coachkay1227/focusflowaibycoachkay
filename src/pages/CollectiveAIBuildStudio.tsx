@@ -306,7 +306,6 @@ const CollectiveAIBuildStudio = () => {
         {/* Offer grid */}
         <div className={`${getSymmetricGridClass(activeOffers.length)} gap-5 items-stretch`}>
           {activeOffers.map((o) => {
-            const tierLabel = BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.label ?? "";
             const isCheckout = Boolean(o.priceId);
             const busy = isCheckout && busyPriceId === o.priceId;
             return (
@@ -322,7 +321,7 @@ const CollectiveAIBuildStudio = () => {
                 primaryCta={
                   isCheckout
                     ? { label: busy ? "Starting…" : "Buy now", onClick: () => startCheckout(o) }
-                    : { label: "Apply to build", onClick: () => openApp(o, tierLabel) }
+                    : { label: "Get a scope and estimate", onClick: () => openApp(o) }
                 }
               />
             );
