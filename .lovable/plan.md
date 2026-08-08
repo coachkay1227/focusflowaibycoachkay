@@ -1,5 +1,9 @@
 # Test 1 Findings: Auth, Roles, Admin Ownership, Protected Routes, Paid Access
 
+> Running findings log. Test 1 and Test 2 recorded below. Nothing implemented yet, by your instruction.
+>
+> Parked note for later: move Autism & Social Stories under the Books and Publishing family, and create a new AIOS page (the operating system) that links to the FocusFlow Command app for building your AI brain. Not part of these audits.
+
 Read-only audit. No code, database, provider, or secret was changed. Findings recorded only, no fixes implemented yet (holding until all 5 tests are done).
 
 ## Verified end-to-end (backend evidence, not screens)
