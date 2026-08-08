@@ -232,6 +232,7 @@ export default function OrderSuccess() {
         customerEmail={verified?.customer_email ?? null}
         mode={verified?.mode ?? null}
         sessionId={sessionId}
+        orderSource={verified?.fulfilled_in ?? null}
       />
     </div>
   );

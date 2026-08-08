@@ -25,13 +25,15 @@ describe("NextStepsPanel booking tier", () => {
   it("offers the free clarity call for the $47 audit", () => {
     renderPanel({ amountSubtotalCents: 4700, amountTotalCents: 4700, mode: "payment" });
     const link = screen.getByRole("link", { name: /free 15-minute clarity call/i });
-    expect(link).toHaveAttribute("href", "https://booking.test/free-clarity");
+    expect(link.getAttribute("href")).toContain("https://booking.test/free-clarity?");
+    expect(link.getAttribute("href")).toContain("session_type=free_clarity");
   });
 
   it("offers the paid strategy call at $297 and above", () => {
     renderPanel({ amountSubtotalCents: 29700, amountTotalCents: 29700, mode: "payment" });
     const link = screen.getByRole("link", { name: /60-minute strategy session/i });
-    expect(link).toHaveAttribute("href", "https://booking.test/paid-strategy");
+    expect(link.getAttribute("href")).toContain("https://booking.test/paid-strategy?");
+    expect(link.getAttribute("href")).toContain("session_type=paid_strategy");
   });
 
   it("offers the paid strategy call for a $497 purchase", () => {

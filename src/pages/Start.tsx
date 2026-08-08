@@ -8,6 +8,7 @@ import { useBookingLinks } from "@/hooks/use-booking-links";
 import { useBuyerOnboarding } from "@/hooks/use-buyer-onboarding";
 import { offerRoute } from "@/lib/offer-routes";
 import { wantsStrategyCall } from "@/lib/booking-thresholds";
+import { buildBookingUrl } from "@/lib/booking-url";
 import { trackEvent } from "@/lib/analytics";
 
 const PILLARS = ["foundation", "opportunity", "create", "uplift", "support"] as const;
@@ -90,18 +91,27 @@ export default function Start() {
     }
 
     if (contact === "application") {
+      // Carry the verified purchase onto the booking so the session record
+      // proves which plan and call type it belongs to.
+      const bookingCtx = {
+        productName: purchase?.productName ?? nextMove?.offer_name ?? null,
+        orderRef: audit?.id ?? null,
+        orderSource: purchase?.source ?? (audit ? "business_audits" : null),
+        amountSubtotalCents: purchase?.amountCents ?? null,
+        placement: "start",
+      };
       return earnedPaidCall
         ? {
             kind: "paid_call",
             label: "Book your 60-minute strategy session",
-            href: paidStrategyUrl,
+            href: buildBookingUrl(paidStrategyUrl, { ...bookingCtx, sessionType: "paid_strategy" }),
             external: true,
             note: "We scope it together on the call. Pick a time that works for you.",
           }
         : {
             kind: "free_call",
             label: "Book your free 15-minute clarity call",
-            href: freeClarityUrl,
+            href: buildBookingUrl(freeClarityUrl, { ...bookingCtx, sessionType: "free_clarity" }),
             external: true,
             note: "No charge, no pitch. Bring the one thing you're stuck on.",
           };
@@ -114,7 +124,7 @@ export default function Start() {
       external: !!route.external,
       note: "You can start this on your own, today.",
     };
-  }, [recommendedSlug, purchase, nextMove, paidStrategyUrl, freeClarityUrl]);
+  }, [recommendedSlug, purchase, nextMove, audit, paidStrategyUrl, freeClarityUrl]);
 
   const handlePrimary = () => {
     void trackEvent("buyer_onboarding_cta", {
