@@ -222,7 +222,11 @@ export default function OrderSuccess() {
       <NextStepsPanel
         headline={headline}
         lede={lede}
-        productName={summary?.package_name ?? tierLabel}
+        productName={
+          summary?.package_name ??
+          tierLabel ??
+          (verified?.fulfilled_in ? FULFILLMENT_LABELS[verified.fulfilled_in] ?? null : null)
+        }
         amountSubtotalCents={verified?.amount_subtotal ?? verified?.amount_total ?? null}
         amountTotalCents={verified?.amount_total ?? null}
         customerEmail={verified?.customer_email ?? null}
