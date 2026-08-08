@@ -93,11 +93,18 @@ const CollectiveAIBuildStudio = () => {
 
   const [activeTier, setActiveTier] = useState<BuildStudioTierId>("quick_wins");
   const [busyPriceId, setBusyPriceId] = useState<string | null>(null);
-  const [appDialog, setAppDialog] = useState<{ open: boolean; projectType: string; tier: string }>({
-    open: false,
-    projectType: "",
-    tier: "",
-  });
+  const [params] = useSearchParams();
+
+  // A printed QR code or shared link can point at one exact offer. Open its
+  // tier and scroll it into view so the scan lands on the right card.
+  useEffect(() => {
+    const key = params.get("offer");
+    if (!key) return;
+    const tier = BUILD_STUDIO_TIERS.find((t) => t.offers.some((o) => o.key === key));
+    if (!tier) return;
+    setActiveTier(tier.id);
+    document.getElementById("what-we-build")?.scrollIntoView({ behavior: "smooth" });
+  }, [params]);
 
   const activeOffers: readonly BuildTierOffer[] = useMemo(() => {
     return BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.offers ?? [];
