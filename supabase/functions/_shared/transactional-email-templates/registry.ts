@@ -37,6 +37,7 @@ import { template as weeklyNewsletterIssue } from './weekly-newsletter-issue.tsx
 import { template as auditNurtureInsight } from './audit-nurture-insight.tsx'
 import { template as auditNurtureAccess } from './audit-nurture-access.tsx'
 import { template as auditNurtureBooking } from './audit-nurture-booking.tsx'
+import { template as purchaseNextSteps } from './purchase-next-steps.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-to-focusflow': welcomeToFocusflow,
@@ -67,4 +68,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'audit-nurture-insight': auditNurtureInsight,
   'audit-nurture-access': auditNurtureAccess,
   'audit-nurture-booking': auditNurtureBooking,
+  'purchase-next-steps': purchaseNextSteps,
 }
