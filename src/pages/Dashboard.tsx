@@ -197,6 +197,9 @@ const Dashboard = () => {
           <div className="text-center py-20 text-muted-foreground">Loading your journey...</div>
         ) : (
           <div className="space-y-12">
+            {/* Buyer onboarding nudge — hides itself once completed or dismissed */}
+            <BuyerStartCard />
+
             {/* Your Program (only renders for reset_30 / transformation_90 tiers) */}
             {!tierLoading && (tier === "reset_30" || tier === "transformation_90") && (
               <AnimatedSection delay={25}>
