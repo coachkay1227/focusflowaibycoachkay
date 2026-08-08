@@ -162,7 +162,8 @@ export default function Collective() {
           <span className="font-mono-label text-primary tracking-[0.28em] text-xs">WHO DELIVERS</span>
           <h2 className="font-heading text-3xl sm:text-4xl mt-3">The roles around your project</h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto text-sm">
-            Every Build Studio or Advisory engagement is staffed with the roles below. Coach Kay leads, scopes, and signs every SOW.
+            Every Build Studio or Advisory engagement is staffed with the roles below. Coach Kay scopes your
+            work and signs the SOW under Focus Flow AI LLC. Collective partners cover the rest of the build.
           </p>
         </AnimatedSection>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -187,7 +188,7 @@ export default function Collective() {
               </span>
             </div>
             <h2 className="font-heading text-2xl md:text-3xl text-foreground mb-5">
-              What the Collective ships
+              What gets shipped with Collective partners
             </h2>
             <ul className="grid sm:grid-cols-2 gap-3">
               {CAPABILITIES.map((c) => (
