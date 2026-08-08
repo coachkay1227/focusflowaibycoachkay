@@ -36,12 +36,12 @@ const PILLARS = [
   {
     icon: Crown,
     title: "Sovereignty",
-    body: "You keep the code. You keep the assets. You keep control. The Collective builds with you, not at you.",
+    body: "You keep the code. You keep the assets. You keep control. We build with you, not at you.",
   },
 ];
 
 const PROCESS = [
-  { step: "01", title: "Brief", body: "15-min call or written brief. We scope the build and lock the price." },
+  { step: "01", title: "Brief", body: "15-min call or written brief. We scope the build, then quote it in writing." },
   {
     step: "02",
     title: "Build",
