@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRoles } from "@/hooks/use-roles";
-import { SEOHead } from "@/components/SEOHead";
+import SEOHead from "@/components/SEOHead";
 import {
   PlayCircle,
   RefreshCw,
@@ -144,7 +144,7 @@ export default function AdminFulfillmentTest() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Fulfillment Test | Admin" noindex />
+        <SEOHead title="Fulfillment Test | Admin" noIndex />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <AdminNav />
 
