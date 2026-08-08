@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
@@ -16,7 +15,6 @@ import {
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
-import OfferCard from "@/components/offers/OfferCard";
 import MirrorReveal from "@/components/truth/MirrorReveal";
 import ToolPickCard from "@/components/truth/ToolPickCard";
 import { TOOL_PICKS } from "@/data/tool-picks";
@@ -162,57 +160,6 @@ const TRUST_PILLARS = [
   },
 ];
 
-const PATHS = [
-  {
-    eyebrow: "Personal",
-    title: "Reset your inner operating system",
-    tagline: "For the human who feels stuck, scattered, or quietly afraid of the future.",
-    features: [
-      "Daily clarity ritual + AI thinking partner",
-      "30 or 90-day structured reset",
-      "Direct coaching from Kay inside the app",
-      "Replaces journaling, therapy homework, and 5 productivity apps",
-    ],
-    price: "$97",
-    priceSuffix: "/ from",
-    primaryCta: { label: "Start the 30-day Personal Reset", to: "/programs/30-day-personal-reset" },
-    secondaryCta: { label: "Talk to Kay first", to: "/coach-kay" },
-  },
-  {
-    eyebrow: "Business",
-    title: "Make your business AI-native",
-    tagline: "For the founder or operator who's losing hours to manual work and time to faster competitors.",
-    features: [
-      "30-day business reset → systems audit + AI workflows",
-      "90-day full business transformation",
-      "Done-with-you OR done-for-you via the Build Studio",
-      "Real ROI tracking, not vanity automation",
-    ],
-    price: "$497",
-    priceSuffix: "/ from",
-    primaryCta: { label: "Start the 30-day Business Reset", to: "/programs/30-day-business-reset" },
-    secondaryCta: { label: "Have the Studio build it", to: "/build-studio" },
-    variant: "featured" as const,
-    badge: "Most chosen",
-  },
-  {
-    eyebrow: "Full Transformation",
-    title: "Rebuild your life AND business with AI",
-    tagline: "For the rare person who's done playing small, ready to integrate the personal and the strategic.",
-    features: [
-      "90-day Full AI Transformation curriculum",
-      "6-month Private Partnership with Kay",
-      "Custom AI agents, dashboards, and decision systems",
-      "Highest-touch, limited intake per quarter",
-    ],
-    price: "$2,997",
-    priceSuffix: "/ from",
-    primaryCta: { label: "Start 90-day Full Transformation", to: "/programs/90-day-full-ai-transformation" },
-    secondaryCta: { label: "Apply for the Partnership", to: "/programs/6-month-private-partnership" },
-    variant: "premium" as const,
-  },
-];
-
 const FAQ_LD = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -244,11 +191,6 @@ const ARTICLE_LD = {
 };
 
 export default function TruthAboutAI() {
-  const pathsRef = useRef<HTMLDivElement>(null);
-
-  const scrollToPaths = () =>
-    pathsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-
   return (
     <>
       <SEOHead
@@ -299,12 +241,12 @@ export default function TruthAboutAI() {
                 ))}
               </div>
               <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={scrollToPaths}
+                <Link
+                  to="/modules"
                   className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-7 py-3 text-sm font-medium tracking-wide hover:bg-primary/90 transition-colors"
                 >
                   Find your path <ArrowRight className="h-4 w-4" />
-                </button>
+                </Link>
                 <Link
                   to="/clarity"
                   className="inline-flex items-center gap-2 rounded-full border border-primary/40 text-primary px-7 py-3 text-sm font-medium tracking-wide hover:bg-primary/10 transition-colors"
@@ -601,24 +543,19 @@ export default function TruthAboutAI() {
             </Section>
           </AnimatedSection>
 
-          {/* THE THREE PATHS, conversion engine */}
+          {/* One contextual link to the canonical Transformation Paths catalog */}
           <AnimatedSection>
-            <div ref={pathsRef} className="scroll-mt-28">
-              <Section
-                label="Your next step"
-                title="Three paths. Pick the one that matches where you actually are."
+            <Section label="Your next step" title="Choose the support that fits where you are.">
+              <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-7">
+                Personal, business, and Full AI transformation offers now live in one place. Compare who each path is for, what is included, the duration, and the confirmed price before you choose.
+              </p>
+              <Link
+                to="/modules"
+                className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-7 py-3 text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-7">
-                  Personal, business, or full transformation. Each path is a real product with a
-                  real price. Start small or go deep, but start.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
-                  {PATHS.map((p) => (
-                    <OfferCard key={p.title} {...p} />
-                  ))}
-                </div>
-              </Section>
-            </div>
+                View Transformation Paths <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Section>
           </AnimatedSection>
 
           {/* FINAL CTA */}

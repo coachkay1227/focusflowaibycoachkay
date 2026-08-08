@@ -58,13 +58,13 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
       label,
       onClick: async () => {
         if (!user) {
-          try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, program.stripePriceId!); } catch { /* noop */ }
+          try { sessionStorage.setItem(PENDING_CHECKOUT_KEY, program.stripePriceId); } catch { /* noop */ }
           navigate(`/auth?next=${encodeURIComponent("/modules")}`);
           return;
         }
         setBuying(true);
         try {
-          await startProgramCheckout(program.stripePriceId!, {
+          await startProgramCheckout(program.stripePriceId, {
             title: program.title,
             price: program.price,
           });
@@ -119,12 +119,13 @@ export default function ProgramCard({ program, enrollment, onEnroll, enrolling }
       badge={badge}
       title={program.title}
       tagline={program.tagline}
-      features={program.tags.slice(0, 4)}
+      features={program.whatYouGet.slice(0, 4)}
       price={program.priceDisplay}
       priceSuffix={program.durationLabel}
       primaryCta={primaryCta}
       secondaryCta={secondaryCta}
       variant={program.isFeatured ? "featured" : "standard"}
+      footnote={`Best for: ${program.audience.join(", ")} · ${program.stripePriceId ? "Direct checkout" : "Conversation first"}`}
     />
   );
 }

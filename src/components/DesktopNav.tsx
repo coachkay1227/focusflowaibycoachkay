@@ -38,7 +38,7 @@ const workGroup: NavGroup = {
     { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot, desc: "A managed AI team on monthly retainer" },
     { label: "AI Build Studio", path: "/build-studio", icon: Wrench, desc: "Custom AI built end-to-end" },
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
-    { label: "Collective AI", path: "/collective", icon: Layers, desc: "The delivery team behind every build" },
+    { label: "AI Task Force", path: "/ai-task-force", icon: Layers, desc: "Independent partners for larger AI builds" },
     { label: "Business Audit", path: "/advisory", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
   ],
 };

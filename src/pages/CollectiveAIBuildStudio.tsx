@@ -246,8 +246,8 @@ const CollectiveAIBuildStudio = () => {
         <p className="mt-4 text-xs text-muted-foreground/80">
           You contract with Focus Flow AI LLC for Coach Kay's work. Larger scopes bring in partners
           from{" "}
-          <Link to="/collective" className="text-primary hover:underline">
-            Collective AI
+           <Link to="/ai-task-force" className="text-primary hover:underline">
+             AI Task Force
           </Link>
           , an independent company founded by John Moyler.
         </p>
