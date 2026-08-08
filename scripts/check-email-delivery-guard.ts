@@ -129,8 +129,39 @@ if (!existsSync(join(ROOT, RETRY_FN))) {
   if (!worker.includes("suppressed_emails")) {
     errors.push(`${RETRY_FN} must re-check suppression before each retry send.`);
   }
-  if (!worker.includes("email_delivery_retries")) {
-    errors.push(`${RETRY_FN} must authorize callers with a probe against email_delivery_retries.`);
+  // Authorization must stay with the shared helper. A table-read "probe" is not
+  // sound: PostgREST answers a blocked read with HTTP 200 and an empty array,
+  // so the public anon key passes it and the worker becomes a public send
+  // trigger.
+  if (!worker.includes("authorizeWorkerCaller")) {
+    errors.push(
+      `${RETRY_FN} must authorize callers with authorizeWorkerCaller from _shared/worker-auth.ts.`,
+    );
+  }
+}
+
+// 5. Every scheduled worker that can send email shares that same authorization.
+const WORKER_AUTH = "supabase/functions/_shared/worker-auth.ts";
+const SCHEDULED_SENDERS = [
+  RETRY_FN,
+  "supabase/functions/process-nurture-queue/index.ts",
+];
+if (!existsSync(join(ROOT, WORKER_AUTH))) {
+  errors.push(`${WORKER_AUTH} is missing. Scheduled senders would have no shared authorization.`);
+} else {
+  const auth = read(WORKER_AUTH);
+  if (!auth.includes("is_privileged_caller")) {
+    errors.push(`${WORKER_AUTH} must decide authorization with the is_privileged_caller RPC.`);
+  }
+  for (const rel of SCHEDULED_SENDERS) {
+    if (!existsSync(join(ROOT, rel))) continue;
+    const src = read(rel);
+    if (!src.includes("authorizeWorkerCaller")) {
+      errors.push(`${rel} must call authorizeWorkerCaller before doing any work.`);
+    }
+    if (/\.from\(["']\w+["']\)\s*\n?\s*\.select\(["']id["']\)\s*\n?\s*\.limit\(1\)/.test(src)) {
+      errors.push(`${rel} still uses a table-read authorization probe, which the anon key passes.`);
+    }
   }
 }
 
