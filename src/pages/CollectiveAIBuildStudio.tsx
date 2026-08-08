@@ -394,11 +394,9 @@ const CollectiveAIBuildStudio = () => {
               size="lg"
               variant="outline"
               className="border-primary/40 text-primary hover:bg-primary/10 px-8"
-              onClick={() =>
-                setAppDialog({ open: true, projectType: "Not sure yet, let's scope it", tier: "Discovery" })
-              }
+              onClick={() => navigate("/start-a-build")}
             >
-              Apply for a full build
+              Get a scope and estimate
             </Button>
           </div>
           <p className="mt-8 text-xs text-muted-foreground/80 max-w-xl mx-auto leading-relaxed">
@@ -412,12 +410,6 @@ const CollectiveAIBuildStudio = () => {
         </div>
       </section>
 
-      <BuildApplicationDialog
-        open={appDialog.open}
-        onOpenChange={(open) => setAppDialog((s) => ({ ...s, open }))}
-        projectType={appDialog.projectType}
-        tier={appDialog.tier}
-      />
     </div>
   );
 };
