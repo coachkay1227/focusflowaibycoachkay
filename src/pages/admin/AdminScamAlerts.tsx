@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Save, Trash2, X, ShieldAlert } from "lucide-react";
+import { Plus, Save, Trash2, X, ShieldAlert, RefreshCw, ExternalLink } from "lucide-react";
 
 type ThreatLevel = "red_flag" | "caution" | "watch" | "resolved";
 
@@ -21,12 +21,13 @@ interface ScamAlert {
   category: string;
   action_rules: string[];
   source_url: string | null;
+  source_feed: string | null;
   is_published: boolean;
   published_at: string | null;
   created_at: string;
 }
 
-const EMPTY: Omit<ScamAlert, "id" | "created_at"> = {
+const EMPTY: Omit<ScamAlert, "id" | "created_at" | "source_feed"> = {
   title: "",
   slug: "",
   summary: "",
@@ -53,6 +54,7 @@ export default function AdminScamAlerts() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<(typeof EMPTY & { id?: string }) | null>(null);
   const [saving, setSaving] = useState(false);
+  const [ingesting, setIngesting] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -72,6 +74,49 @@ export default function AdminScamAlerts() {
   }, []);
 
   const startNew = () => setEditing({ ...EMPTY });
+
+  // Manual trigger for the same worker pg_cron runs weekly. Drafts land
+  // unpublished, so this button can never put anything on the public hub.
+  const runIngestion = async () => {
+    setIngesting(true);
+    const { data, error } = await supabase.functions.invoke("ingest-scam-alerts", { body: {} });
+    setIngesting(false);
+    if (error) {
+      toast({ title: "Ingestion failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    const drafted = (data as { drafted?: number })?.drafted ?? 0;
+    toast({
+      title: drafted > 0 ? `${drafted} new draft${drafted === 1 ? "" : "s"} ready` : "No new alerts found",
+      description:
+        drafted > 0
+          ? "Review below, then publish the ones you want live."
+          : "The feeds had nothing new since the last run.",
+    });
+    load();
+  };
+
+  const publishNow = async (a: ScamAlert) => {
+    if (!a.source_url) {
+      toast({
+        title: "Source URL required to publish",
+        description: "Open Edit and add the source link first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const { error } = await supabase
+      .from("scam_alerts")
+      .update({ is_published: true, published_at: new Date().toISOString() })
+      .eq("id", a.id);
+    if (error) {
+      toast({ title: "Publish failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Published", description: "It is live on /pause-hub now." });
+    load();
+  };
+
   const startEdit = (a: ScamAlert) =>
     setEditing({
       id: a.id,
