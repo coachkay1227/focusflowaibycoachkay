@@ -105,6 +105,10 @@ const AdminDashboard = () => {
           <AdminNav />
         </div>
 
+        <div className="mt-6">
+          <WebhookHealthBanner />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {statCards.map((stat) => {
             const Icon = stat.icon;
