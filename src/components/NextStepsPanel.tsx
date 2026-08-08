@@ -5,6 +5,7 @@ import { useBookingLinks } from "@/hooks/use-booking-links";
 import { trackEvent } from "@/lib/analytics";
 import { wantsStrategyCall as earnsStrategyCall } from "@/lib/booking-thresholds";
 import { buildBookingUrl, bookingProofLine } from "@/lib/booking-url";
+import { logOrderNextStep } from "@/lib/order-next-step-log";
 
 export interface NextStepsPanelProps {
   /** Headline shown above the confirmation. */
@@ -86,6 +87,21 @@ export const NextStepsPanel = ({
       session_id: sessionId,
       product_name: productName,
       call_type: wantsStrategyCall ? "paid_strategy" : "free_clarity",
+    });
+    // Admin audit trail: which action was chosen, and exactly where it led.
+    const linkTarget = action === "book_call"
+      ? bookingUrl
+      : action === "start_challenge"
+        ? "/challenges"
+        : "/start";
+    logOrderNextStep({
+      action,
+      sessionId,
+      linkTarget,
+      sessionType: wantsStrategyCall ? "paid_strategy" : "free_clarity",
+      productName,
+      amountSubtotalCents: amountSubtotalCents ?? null,
+      placement: "order_success",
     });
   };
 
