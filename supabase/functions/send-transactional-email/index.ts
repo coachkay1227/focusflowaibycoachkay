@@ -441,9 +441,10 @@ Deno.serve(async (req: Request) => {
     if (!res.ok) {
       const errBody = await res.text()
       console.error('Resend send failed', { status: res.status, errBody, templateName, effectiveRecipient })
+      const failureClass = classifyResendFailure(res.status)
       await supabase.from('email_send_log').insert({
         message_id: messageId,
-        metadata: logMetadata,
+        metadata: { ...logMetadata, failure_class: failureClass, provider_status: res.status },
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -479,7 +480,7 @@ Deno.serve(async (req: Request) => {
     console.error('Resend send exception', { error: msg, templateName })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-      metadata: logMetadata,
+      metadata: { ...logMetadata, failure_class: 'retryable' },
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
