@@ -54,6 +54,15 @@ export const NO_TIER_PRODUCTS = new Set<string>([
   "prod_Ul02wVAYJg4pZ8", // Knowledge Base Add-on — Basic
   "prod_Ul02V28vWpeG2G", // Knowledge Base Add-on — Full
   "prod_Ul02SGrHmZUEvk", // Branded Agent Dashboard
+  // Autism Social Stories — one-time digital products (no tier change).
+  // The webhook normally exits early on the `autism_order_id` metadata; these
+  // entries are the safety net so a session missing that metadata still
+  // short-circuits cleanly instead of alerting as `unknown_product`.
+  "prod_UaNWqNYpqZBQXT", // Single Digital Social Story $47
+  "prod_UaNW5yZQXOa0RX", // Therapy Toolkit (3 Stories) $127
+  "prod_UaNX8uTPoHlGAe", // Premium Illustrated Social Story $297
+  "prod_UaNXHb9xWbVuZk", // Therapy Practice Bundle (5 Stories) $997
+  "prod_UaNYV7r0c9jb7Q", // Gift Wrap + Personalized Note $25 (add-on)
 ]);
 
 export const PRICE_MODE_MAP: Record<string, "subscription" | "payment"> = {
