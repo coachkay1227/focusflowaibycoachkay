@@ -28,6 +28,30 @@ function generateToken(): string {
     .join('')
 }
 
+// RFC 2606 / RFC 6761 reserved names. These can never receive mail, and Resend
+// rejects them outright, so we never spend a send attempt on them.
+const RESERVED_EMAIL_DOMAINS = ['example.com', 'example.org', 'example.net']
+const RESERVED_EMAIL_TLDS = ['.test', '.invalid', '.localhost', '.example']
+
+export function isReservedTestRecipient(email: string): boolean {
+  const at = email.lastIndexOf('@')
+  if (at === -1) return false
+  const domain = email.slice(at + 1).toLowerCase().trim()
+  if (!domain) return false
+  return (
+    RESERVED_EMAIL_DOMAINS.includes(domain) ||
+    RESERVED_EMAIL_TLDS.some((tld) => domain === tld.slice(1) || domain.endsWith(tld))
+  )
+}
+
+// A 4xx from Resend (bad address, invalid payload) will fail identically on
+// every retry; 408/429 and 5xx are worth retrying. Recorded on the log row so
+// admin views and any future retry worker can tell the two apart.
+function classifyResendFailure(status: number): 'permanent' | 'retryable' {
+  if (status === 408 || status === 429) return 'retryable'
+  return status >= 400 && status < 500 ? 'permanent' : 'retryable'
+}
+
 // Auth: this function MUST only be invoked by server-side code holding the
 // service_role key. Direct calls from browsers (using the public anon key)
 // would allow anyone on the internet to send emails to arbitrary recipients.
@@ -181,6 +205,26 @@ Deno.serve(async (req: Request) => {
   }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
+  // 2a. Reserved/undeliverable domains (RFC 2606 + RFC 6761). Resend rejects
+  // these with a 422 that can never succeed, so a real send attempt would
+  // write a false `failed` row. QA fixtures use these addresses, so short
+  // circuit here and log the attempt as suppressed instead.
+  if (isReservedTestRecipient(effectiveRecipient)) {
+    await supabase.from('email_send_log').insert({
+      message_id: messageId,
+      metadata: { ...logMetadata, suppression_reason: 'reserved_test_domain' },
+      template_name: templateName,
+      recipient_email: effectiveRecipient,
+      status: 'suppressed',
+    })
+
+    console.log('Email skipped: reserved test domain', { effectiveRecipient, templateName })
+    return new Response(
+      JSON.stringify({ success: true, sent: false, reason: 'reserved_test_domain' }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')
     .select('id')
@@ -397,9 +441,10 @@ Deno.serve(async (req: Request) => {
     if (!res.ok) {
       const errBody = await res.text()
       console.error('Resend send failed', { status: res.status, errBody, templateName, effectiveRecipient })
+      const failureClass = classifyResendFailure(res.status)
       await supabase.from('email_send_log').insert({
         message_id: messageId,
-        metadata: logMetadata,
+        metadata: { ...logMetadata, failure_class: failureClass, provider_status: res.status },
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -435,7 +480,7 @@ Deno.serve(async (req: Request) => {
     console.error('Resend send exception', { error: msg, templateName })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-      metadata: logMetadata,
+      metadata: { ...logMetadata, failure_class: 'retryable' },
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
