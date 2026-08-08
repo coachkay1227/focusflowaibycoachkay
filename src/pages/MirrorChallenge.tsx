@@ -11,6 +11,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Check, Lock, Trophy } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 import PillarBadge from "@/components/PillarBadge";
+import ChallengeKickoff, { emptyKickoff, type KickoffAnswers } from "@/components/challenge/ChallengeKickoff";
+
+// Kickoff answers are stored alongside daily entries under key 0.
+const KICKOFF_KEY = 0;
+
+function parseKickoff(raw?: string): KickoffAnswers {
+  if (!raw) return emptyKickoff;
+  try {
+    const parsed = JSON.parse(raw) as Partial<KickoffAnswers>;
+    return { ...emptyKickoff, ...parsed };
+  } catch {
+    return emptyKickoff;
+  }
+}
+
+function isKickoffDone(a: KickoffAnswers) {
+  return !!(a.why.trim() && a.cost.trim() && a.when.trim());
+}
 
 // Challenge prompt configs
 const challengePrompts: Record<string, { prompt: string }[]> = {
@@ -117,6 +135,7 @@ const MirrorChallenge = () => {
   const [selectedDay, setSelectedDay] = useState(1);
   const [journalText, setJournalText] = useState("");
   const [showCelebration, setShowCelebration] = useState(false);
+  const [skippedKickoff, setSkippedKickoff] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Load data from cloud on mount
@@ -138,6 +157,18 @@ const MirrorChallenge = () => {
   const prompt = prompts[selectedDay - 1];
   const isDayUnlocked = selectedDay <= data.currentDay;
   const isDayCompleted = !!data.entries[selectedDay];
+  const kickoff = parseKickoff(data.entries[KICKOFF_KEY]);
+  const hasStarted = Object.keys(data.entries).some((k) => Number(k) > 0);
+  const showKickoff = dataLoaded && !isCompleted && !hasStarted && !skippedKickoff && !isKickoffDone(kickoff);
+
+  const saveKickoff = (answers: KickoffAnswers) => {
+    const newData = {
+      ...data,
+      entries: { ...data.entries, [KICKOFF_KEY]: JSON.stringify(answers) },
+    };
+    setData(newData);
+    saveChallengeDataCloud(challengeType, newData);
+  };
 
   const handleSubmit = () => {
     if (!journalText.trim()) return;
@@ -244,6 +275,20 @@ const MirrorChallenge = () => {
           {renderDayTracker()}
         </AnimatedSection>
 
+        {showKickoff && (
+          <ChallengeKickoff
+            challengeTitle={challengeTitle}
+            totalDays={totalDays}
+            answers={kickoff}
+            onSaveStep={saveKickoff}
+            onComplete={(answers) => {
+              saveKickoff(answers);
+              updateChallengeStatus(challengeType, "in_progress");
+            }}
+            onSkip={() => setSkippedKickoff(true)}
+          />
+        )}
+
         {(showCelebration || isCompleted) && (
           <AnimatedSection className="text-center mb-12">
             <div className="animate-celebration">
@@ -273,9 +318,16 @@ const MirrorChallenge = () => {
           </AnimatedSection>
         )}
 
-        {!isCompleted && prompt && (
+        {!showKickoff && !isCompleted && prompt && (
           <AnimatedSection delay={300}>
             <div className="clarity-card rounded-lg border border-border bg-card/30 backdrop-blur-sm p-8">
+              {isKickoffDone(kickoff) && selectedDay === 1 && (
+                <div className="mb-6 border-l-2 border-primary/20 pl-3">
+                  <span className="font-mono-label text-primary">Your intention</span>
+                  <p className="text-muted-foreground text-sm mt-1 leading-relaxed">{kickoff.why}</p>
+                  <p className="text-muted-foreground/80 text-xs mt-1">Showing up: {kickoff.when}</p>
+                </div>
+              )}
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono-label text-primary">Day {selectedDay}</span>
                 {isDayCompleted && <span className="font-mono-label text-primary">· Completed</span>}
