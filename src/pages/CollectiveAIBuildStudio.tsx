@@ -132,8 +132,10 @@ const CollectiveAIBuildStudio = () => {
     }
   };
 
-  const openApp = (offer: BuildTierOffer, tierLabel: string) =>
-    setAppDialog({ open: true, projectType: offer.name, tier: tierLabel });
+  // Every non-checkout offer routes through the single guided inquiry, so a
+  // visitor never has to guess which of several forms is the right one.
+  const openApp = (offer: BuildTierOffer) =>
+    navigate(`/start-a-build?offer=${encodeURIComponent(offer.key)}`);
 
   const jsonLd = [
     webPage("/collective-ai-build-studio", "Collective AI Build Studio — From Idea to Live in Days", "CollectionPage"),
