@@ -29,6 +29,12 @@ serve(async (req: Request) => {
     const email = typeof body.email === "string" ? body.email.trim().slice(0, 320) : "";
     const name = typeof body.full_name === "string" ? body.full_name.trim().slice(0, 200) : "";
 
+    // Phone is optional. Keep digits and the usual separators only, and record
+    // a consent timestamp only when a real number came with an explicit opt-in.
+    const rawPhone = typeof body.phone === "string" ? body.phone.trim().slice(0, 30) : "";
+    const phone = /^[+()\-.\s0-9]{7,30}$/.test(rawPhone) ? rawPhone : null;
+    const smsConsent = body.sms_consent === true && phone !== null;
+
     if (!intake || !email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       return json({ error: "intake and a valid email are required" }, 400);
     }
@@ -51,6 +57,8 @@ serve(async (req: Request) => {
         guest_name: name || null,
         intake,
         status: "pending_payment",
+        phone,
+        sms_consent_at: smsConsent ? new Date().toISOString() : null,
         // Keeps smoke-test leads out of the real follow-up list.
         is_test: /@example\.(com|org|net)$/i.test(email),
       })
