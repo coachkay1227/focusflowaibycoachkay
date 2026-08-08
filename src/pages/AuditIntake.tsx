@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import SEOHead from "@/components/SEOHead";
+import { ConsentVerification } from "@/components/audit/ConsentVerification";
 
 const INDUSTRIES = [
   "Coaching/Consulting", "Course/Info Product", "Service-Based", "Creator/Influencer",
@@ -321,6 +322,14 @@ const AuditIntake = () => {
             </div>
             <RadioRow label="If outside help solved your bottleneck, what would feel doable to invest? *" value={data.budget_appetite} options={BUDGET} onChange={(v) => setData({ ...data, budget_appetite: v })} />
             <RadioRow label="What kind of support feels right? *" value={data.preferred_path} options={PATH} onChange={(v) => setData({ ...data, preferred_path: v })} />
+
+            <ConsentVerification
+              email={data.email}
+              phone={data.phone ?? ""}
+              smsConsent={data.sms_consent === true}
+              onChangeConsent={(next) => setData({ ...data, sms_consent: next })}
+              onEditContact={() => setStep(1)}
+            />
 
             {submitting ? (
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-8 text-center">

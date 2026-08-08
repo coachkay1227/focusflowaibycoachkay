@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRoles } from "@/hooks/use-roles";
+import { maskPhone } from "@/components/audit/ConsentVerification";
 
 interface AuditRow {
   id: string;
@@ -15,6 +16,8 @@ interface AuditRow {
   recommended_offer: string | null;
   intake: unknown;
   report: unknown;
+  phone: string | null;
+  sms_consent_at: string | null;
 }
 
 export default function AdminAudits() {
@@ -28,7 +31,7 @@ export default function AdminAudits() {
     setLoading(true);
     const { data, error } = await supabase
       .from("business_audits" as never)
-      .select("id, user_id, created_at, generated_at, recommended_offer, intake, report")
+      .select("id, user_id, created_at, generated_at, recommended_offer, intake, report, phone, sms_consent_at")
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) toast({ title: "Failed to load", description: error.message, variant: "destructive" });
@@ -65,6 +68,7 @@ export default function AdminAudits() {
                     <th className="text-left px-4 py-3">Status</th>
                     <th className="text-left px-4 py-3">Generated</th>
                     <th className="text-left px-4 py-3">Recommended Offer</th>
+                    <th className="text-left px-4 py-3">SMS Consent</th>
                     <th className="text-left px-4 py-3">Actions</th>
                   </tr>
                 </thead>
@@ -93,6 +97,25 @@ export default function AdminAudits() {
                           {a.generated_at ? new Date(a.generated_at).toLocaleDateString() : "—"}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground">{a.recommended_offer ?? "—"}</td>
+                        <td className="px-4 py-3">
+                          {a.sms_consent_at ? (
+                            <div className="flex flex-col gap-1">
+                              <Badge className="w-fit bg-primary/15 text-primary border-primary/30">opted in</Badge>
+                              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                {maskPhone(a.phone)} · {new Date(a.sms_consent_at).toLocaleString()}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col gap-1">
+                              <Badge className="w-fit bg-muted/30 text-muted-foreground border-border">email only</Badge>
+                              {a.phone && (
+                                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                  {maskPhone(a.phone)} · no consent on record
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </td>
                         <td className="px-4 py-3">
                           {hasReport && (
                             <Button
