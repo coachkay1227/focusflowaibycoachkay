@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar, Save, ExternalLink } from "lucide-react";
+import { invalidateLeadGenCache } from "@/lib/lead-gen";
 import {
   FALLBACK_FREE_CLARITY_URL,
   FALLBACK_PAID_STRATEGY_URL,
@@ -15,6 +16,7 @@ import {
 
 const FREE_KEY = "booking.free_clarity_url";
 const PAID_KEY = "booking.paid_strategy_url";
+const LEADGEN_KEY = "leadgen.offer_url";
 
 type Row = { key: string; value: string; updated_at: string };
 
@@ -23,8 +25,10 @@ export default function AdminBookingLinks() {
   const { toast } = useToast();
   const [free, setFree] = useState("");
   const [paid, setPaid] = useState("");
+  const [leadGen, setLeadGen] = useState("");
   const [freeUpdated, setFreeUpdated] = useState<string | null>(null);
   const [paidUpdated, setPaidUpdated] = useState<string | null>(null);
+  const [leadGenUpdated, setLeadGenUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -34,7 +38,7 @@ export default function AdminBookingLinks() {
       const { data, error } = await supabase
         .from("app_settings")
         .select("key,value,updated_at")
-        .in("key", [FREE_KEY, PAID_KEY]);
+        .in("key", [FREE_KEY, PAID_KEY, LEADGEN_KEY]);
       if (cancelled) return;
       if (error) {
         toast({ title: "Couldn't load settings", description: error.message, variant: "destructive" });
@@ -42,10 +46,13 @@ export default function AdminBookingLinks() {
       const rows = (data ?? []) as Row[];
       const f = rows.find((r) => r.key === FREE_KEY);
       const p = rows.find((r) => r.key === PAID_KEY);
+      const l = rows.find((r) => r.key === LEADGEN_KEY);
       setFree(f?.value ?? FALLBACK_FREE_CLARITY_URL);
       setPaid(p?.value ?? FALLBACK_PAID_STRATEGY_URL);
+      setLeadGen(l?.value ?? "");
       setFreeUpdated(f?.updated_at ?? null);
       setPaidUpdated(p?.updated_at ?? null);
+      setLeadGenUpdated(l?.updated_at ?? null);
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -58,10 +65,17 @@ export default function AdminBookingLinks() {
       toast({ title: "Invalid URL", description: "Both URLs must start with https://", variant: "destructive" });
       return;
     }
+    // Empty is valid for the lead-gen link: it means "keep direct checkout".
+    const leadGenValue = leadGen.trim();
+    if (leadGenValue && !validate(leadGenValue)) {
+      toast({ title: "Invalid lead-gen URL", description: "Leave it blank, or enter a URL starting with https://", variant: "destructive" });
+      return;
+    }
     setSaving(true);
     const rows = [
       { key: FREE_KEY, value: free.trim(), updated_by: user?.id ?? null },
       { key: PAID_KEY, value: paid.trim(), updated_by: user?.id ?? null },
+      { key: LEADGEN_KEY, value: leadGenValue, updated_by: user?.id ?? null },
     ];
     const { error } = await supabase.from("app_settings").upsert(rows, { onConflict: "key" });
     setSaving(false);
@@ -70,10 +84,12 @@ export default function AdminBookingLinks() {
       return;
     }
     invalidateBookingLinksCache();
-    toast({ title: "Booking links updated", description: "New URLs apply immediately across the site." });
+    invalidateLeadGenCache();
+    toast({ title: "Links updated", description: "New URLs apply immediately across the site." });
     const now = new Date().toISOString();
     setFreeUpdated(now);
     setPaidUpdated(now);
+    setLeadGenUpdated(now);
   };
 
   const fmt = (iso: string | null) =>
@@ -86,7 +102,7 @@ export default function AdminBookingLinks() {
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-light flex items-center gap-3">
             <Calendar className="h-7 w-7 text-primary" />
-            Booking Links
+            Booking &amp; Offer Links
           </h1>
           <p className="text-muted-foreground mt-2 max-w-2xl">
             Edit the two booking URLs used across the site, dashboard, and post-purchase emails.
@@ -111,6 +127,15 @@ export default function AdminBookingLinks() {
             value={paid}
             onChange={setPaid}
             updatedLabel={fmt(paidUpdated)}
+            disabled={loading || saving}
+          />
+          <BookingField
+            id="leadgen-url"
+            label="Lead-Gen Page (mid & high-ticket offers)"
+            description="Leave blank to keep direct Stripe checkout. Once set, every $297+ offer — transformation paths, Rent-an-Agent tiers, and Build Studio packages — sends visitors here instead of to checkout. The $47 AI Business Audit, Autism Social Stories, and the book store keep taking payment directly."
+            value={leadGen}
+            onChange={setLeadGen}
+            updatedLabel={fmt(leadGenUpdated)}
             disabled={loading || saving}
           />
 
