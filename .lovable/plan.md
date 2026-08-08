@@ -198,3 +198,63 @@ Verified: domain verified and enabled, real deliveries for six templates, provid
 Assumed until tested: the specific reason the next-steps send never completes, and that the insert-only branch is what starved the other two buyers of follow-up.
 
 Ready for Test 5.
+---
+
+# Test 5 Findings: Forms, Questions, Validation, Scoring, Recommendations, Results, Persistence, Retakes, Safety
+
+Read-only. Evidence came from the live tables, the send log, and a trace of each assessment path from the first question to the stored row.
+
+## What exists
+
+Five separate assessment or form journeys: the Operator x Bottleneck Map (`/assessment`), the Clarity Check session (`/clarity`), the Starter Kit report (`/starter-kit`), the AI Business Audit intake (`/audit/intake`), and onboarding preferences. Each has its own question set, its own scoring, and its own storage table.
+
+## Verified end-to-end (backend evidence)
+
+- The Clarity Check saves for signed-in users. Ten stored sessions exist with real answers, and seven carry a stored AI insight. Answers plus insight land in the database, not just on screen.
+- The Starter Kit path is proven once. One stored report exists with a full generated report body, produced by a server call that validates the email before doing anything else.
+- The Operator x Bottleneck Map stores results for signed-in users. Two stored rows exist, both with the full AI insight and the three-letter code.
+- Scoring is deterministic and server-independent for the map and the track recommendation. Both are pure tally-and-rank logic with an explicit fallback when a tie or an empty answer set occurs, so the same answers always produce the same code and the same recommended path. No random branch, no silent default to a paid offer.
+- The audit intake form validates and persists before payment, and its email trail is real: intake confirmation, purchase confirmation, and report ready all have matching sent rows.
+
+## Broken
+
+- Assessment result emails have never been sent. Zero rows exist in the send log for the assessment result template and zero for the starter kit report template, across every completed assessment. Both sends are fired without being awaited inside the server function, which is the identical pattern already confirmed for the post-purchase next-steps email in Test 4. The user finishes the assessment, sees the report on screen, is told it is being emailed, and no email is ever produced.
+- The assessment can report success while nothing was saved. If the database insert fails, the server function logs the error and then deliberately returns a 200 with the full insight so the screen still renders. The user sees a complete result, and no row exists. This is a designed false success, and there is no retry, no queue, and no record that the submission was lost.
+- The Clarity Check save is fire-and-forget with no error check. Three of the ten stored sessions have no insight text at all, which is consistent with the row being written before the AI result arrives and never being updated. The user cannot tell the difference from the screen.
+
+## Functional with gaps
+
+- Every guest assessment path is unproven. Zero guest rows exist in the assessment table despite the email gate being live, while two lead rows exist from the same gate. So the gate captured the lead and the assessment result itself has no evidence of ever being stored for a not-signed-in visitor.
+- Retakes are unbounded and unlinked. Each completion inserts a new row with no attempt number and no link to the previous attempt, so a person's history is a flat list with no notion of a current result. The on-screen restart only clears local state.
+- There is no admin view for any assessment. The audit path has admin screens; the map, the Clarity Check, and the Starter Kit are visible only as counts on the analytics screen. Support cannot look up a person's answers, re-send a result, or recover a lost submission without direct database access.
+- Refresh and back navigation lose in-progress answers. Answers live in component state for the map, so a refresh mid-assessment starts over with no draft recovery.
+
+## Partial
+
+- Validation is thin and client-shaped. Required-field checks and an email shape check exist, and the server re-checks the email, but answer payloads are accepted as free-form objects with no server-side check that the submitted answers match the current question set. A stale or tampered payload would be stored and scored.
+- Sensitive-content handling is undefined. These questions collect burnout, identity, and life-transition disclosures. Stored rows are protected by row-level policies, but there is no retention window, no redaction, and no stated boundary about what appears in emails or webhooks. Assessment completions are forwarded to the external CRM webhook including the detected bottleneck.
+
+## Unsafe copy to fix (not a code defect)
+
+Two recommendation strings assert unverified volume claims about how many people have been helped, and a program line asserts a similar claim. Under your rules an unconfirmed number is omitted, not written. These are in the recommendation text a user reads immediately after an emotionally loaded assessment.
+
+## Current user impact
+
+A signed-in person who takes an assessment gets a correct on-screen result and, most of the time, a stored row. They never get the promised email. A not-signed-in person hands over their email, sees a result, and there is no evidence anything about them was stored beyond the lead capture. If the save fails, the screen still congratulates them. Nobody on your side can look any of it up.
+
+## Exact tests required
+
+1. Complete the map while signed in and then read the send log for the assessment result template. Expected: a pending row followed by a sent row. Nothing appearing confirms the un-awaited send is the failing boundary.
+2. Complete the map while signed out, submit the email gate, and confirm a guest row appears with the email and the insight attached.
+3. Force the insert to fail and confirm what the screen says. Today it says success.
+4. Complete a Clarity Check, then read the row and confirm the insight fields are populated, not null.
+5. Retake the same assessment twice and confirm which row is treated as current by the dashboard and by any email.
+6. Submit an answer payload that does not match the current question set and confirm whether it is rejected or stored and scored.
+7. Refresh mid-assessment and confirm whether progress survives.
+
+## Verified facts versus assumptions
+
+Verified: ten Clarity Check rows with three missing insights, two map rows, one starter kit row, zero guest assessment rows, zero send-log rows for both assessment result templates, the explicit 200-on-insert-failure branch, un-awaited email sends, unchecked save call, no per-record admin surface, deterministic scoring with defined fallbacks.
+Assumed until tested: that the un-awaited send is the sole reason the assessment emails never arrive, and that the three insight-less Clarity rows come from the save landing before the AI result.
+
+Tests 1 through 5 are complete. The remediation set is ready to be sequenced on your word.
