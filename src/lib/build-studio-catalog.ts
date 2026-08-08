@@ -13,6 +13,12 @@ export interface BuildTierOffer {
   price: number;
   priceDisplay: string;
   turnaround: string;
+  /**
+   * True when priceDisplay/turnaround are estimate bands rather than a real
+   * checkout price. The card renders an explicit "estimate" qualifier and never
+   * shows an exact figure. Always paired with inquiryOnly.
+   */
+  estimate?: boolean;
   /** Present for Tier 1 / Tier 5 — drives direct Stripe checkout. */
   priceId?: string;
   /** Present for Tier 2 / Tier 3 — opens the qualification dialog. */
@@ -106,8 +112,9 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
     name: "Full Marketing Site",
     tagline: "5–8 page site with CMS, SEO, and analytics.",
     price: 2497,
-    priceDisplay: "$2,497",
-    turnaround: "2 weeks",
+    priceDisplay: "$2K – $4K",
+    turnaround: "About 2 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["5–8 polished pages", "CMS for blog/updates", "Technical SEO baseline", "Analytics + heatmaps"],
   },
@@ -116,8 +123,9 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
     name: "Lead-Gen Quiz Funnel",
     tagline: "AI-scored quiz that captures + qualifies leads.",
     price: 2497,
-    priceDisplay: "$2,497",
-    turnaround: "2 weeks",
+    priceDisplay: "$2K – $4K",
+    turnaround: "About 2 weeks",
+    estimate: true,
     inquiryOnly: true,
     highlighted: true,
     features: ["Custom quiz logic", "AI-scored results page", "CRM / email integration", "Conversion analytics"],
@@ -127,8 +135,9 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
     name: "E-Commerce Store",
     tagline: "Product catalog, Stripe checkout, customer portal.",
     price: 2997,
-    priceDisplay: "$2,997",
-    turnaround: "2 weeks",
+    priceDisplay: "$2K – $4K",
+    turnaround: "About 2 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["Up to 50 products", "Stripe + tax setup", "Order + customer portal", "Email confirmations"],
   },
@@ -137,8 +146,9 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
     name: "Client Portal / Dashboard",
     tagline: "Login-gated dashboard for your customers.",
     price: 3497,
-    priceDisplay: "$3,497",
-    turnaround: "2–3 weeks",
+    priceDisplay: "$3K – $5K",
+    turnaround: "2 to 3 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["Auth + roles", "Custom dashboards", "File uploads / downloads", "Admin controls"],
   },
@@ -147,8 +157,9 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
     name: "Course / Membership Platform",
     tagline: "Sell digital programs with drip content + community.",
     price: 3997,
-    priceDisplay: "$3,997",
-    turnaround: "3 weeks",
+    priceDisplay: "$3K – $5K",
+    turnaround: "About 3 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["Course modules + lessons", "Drip + progress tracking", "Stripe subscription billing", "Community area"],
   },
@@ -157,8 +168,9 @@ export const BUSINESS_BUILDS: BuildTierOffer[] = [
     name: "Internal Ops Dashboard",
     tagline: "CRM-lite for your team: pipelines, tasks, reporting.",
     price: 3997,
-    priceDisplay: "$3,997",
-    turnaround: "3 weeks",
+    priceDisplay: "$3K – $5K",
+    turnaround: "About 3 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["Pipelines + kanban", "Team auth + roles", "Integrations (GHL, Slack)", "Custom reports"],
   },
@@ -170,8 +182,9 @@ export const CUSTOM_AI_APPS: BuildTierOffer[] = [
     name: "AI Tool / SaaS MVP",
     tagline: "Production-ready MVP of your AI product idea.",
     price: 7997,
-    priceDisplay: "from $7,997",
-    turnaround: "3–4 weeks",
+    priceDisplay: "$8K+",
+    turnaround: "3 to 4 weeks",
+    estimate: true,
     inquiryOnly: true,
     highlighted: true,
     features: ["End-to-end product build", "Auth + billing + admin", "AI workflow integrations", "Launch-ready deploy"],
@@ -181,8 +194,9 @@ export const CUSTOM_AI_APPS: BuildTierOffer[] = [
     name: "Multi-Agent Workflow System",
     tagline: "Orchestrated AI agents that run real business workflows.",
     price: 9997,
-    priceDisplay: "$9,997",
-    turnaround: "4 weeks",
+    priceDisplay: "$10K+",
+    turnaround: "About 4 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["3+ specialized agents", "Orchestration + routing", "Stack integrations", "Monitoring dashboard"],
   },
@@ -191,8 +205,9 @@ export const CUSTOM_AI_APPS: BuildTierOffer[] = [
     name: "Industry-Specific AI Assistant",
     tagline: "Vertical AI for real estate, legal, healthcare intake, more.",
     price: 9997,
-    priceDisplay: "from $9,997",
-    turnaround: "4 weeks",
+    priceDisplay: "$10K+",
+    turnaround: "About 4 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["Vertical-specific prompts", "Compliance-aware copy", "CRM / EMR integration", "Voice or chat front-end"],
   },
@@ -201,8 +216,9 @@ export const CUSTOM_AI_APPS: BuildTierOffer[] = [
     name: "White-Label Coaching Platform",
     tagline: "Your own branded coaching app: modules, AI, billing.",
     price: 12997,
-    priceDisplay: "$12,997",
-    turnaround: "4 weeks",
+    priceDisplay: "$13K+",
+    turnaround: "About 4 weeks",
+    estimate: true,
     inquiryOnly: true,
     features: ["Custom branded UI", "Module / curriculum engine", "AI coach + assessments", "Stripe + admin"],
   },
@@ -254,8 +270,8 @@ export const CARE_PLANS: BuildTierOffer[] = [
 
 export const BUILD_STUDIO_TIERS = [
   { id: "quick_wins", label: "Quick Wins", price: "$297 – $797", offers: QUICK_WINS, inquiryOnly: false },
-  { id: "business", label: "Business Builds", price: "$2,497 – $3,997", offers: BUSINESS_BUILDS, inquiryOnly: true },
-  { id: "custom_ai", label: "Custom AI Apps", price: "$7,997 – $14,997", offers: CUSTOM_AI_APPS, inquiryOnly: true },
+  { id: "business", label: "Business Builds", price: "Bands from $2K", offers: BUSINESS_BUILDS, inquiryOnly: true },
+  { id: "custom_ai", label: "Custom AI Apps", price: "Bands from $8K", offers: CUSTOM_AI_APPS, inquiryOnly: true },
   { id: "care", label: "Care Plans", price: "$97 – $497/mo", offers: CARE_PLANS, inquiryOnly: false },
 ] as const;
 

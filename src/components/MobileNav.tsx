@@ -33,12 +33,12 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Transformation Paths", path: "/modules", icon: BookOpen },
       { label: "Books & AI Kits", path: "/store", icon: BookMarked },
+      { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart },
       { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot },
       { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
       { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
       { label: "Collective AI", path: "/collective", icon: Layers },
       { label: "Business Audit", path: "/advisory", icon: FileSearch },
-      { label: "Autism Social Stories", path: "/autism-social-stories", icon: Heart },
     ],
   },
   {

@@ -24,7 +24,7 @@ const CAPABILITIES = [
 const FAQS = [
   {
     q: "Is Collective AI a different company than Coach Kay Elevates?",
-    a: "No. Coach Kay leads Focus Flow AI LLC (DBA Coach Kay Elevates). Collective AI is the delivery team that Coach Kay assembles and leads for builds that require more than solo capacity. You contract with Focus Flow AI LLC; the collective ships the work alongside Kay.",
+    a: "Yes. Collective AI is its own company, founded by John Moyler. Coach Kay is an AI partner there, and she brings that build team in when a project needs more than solo capacity. Your coaching and your offers stay with Focus Flow AI LLC (DBA Coach Kay Elevates). Build work is delivered with Collective AI alongside Kay.",
   },
   {
     q: "When does the Collective get involved?",
@@ -107,12 +107,12 @@ export default function Collective() {
           style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
         >
           Coach Kay isn't alone. <br />
-          <span className="text-primary italic">She leads the Collective.</span>
+          <span className="text-primary italic">She builds with the Collective.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           For 1:1 coaching, you get Kay. For heavy builds, automations, and enterprise scopes,
-          you get Kay <em>and</em> the Collective AI delivery team: engineering, AI research,
-          design, and QA, assembled around your project.
+          you get Kay <em>and</em> Collective AI, a separate company founded by John Moyler where
+          Kay is an AI partner. Engineering, AI research, design, and QA, assembled around your project.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Link
@@ -148,10 +148,10 @@ export default function Collective() {
               high-touch, deeply human.
             </p>
             <p className="text-[15px] text-muted-foreground leading-[1.8]">
-              As <strong className="text-foreground/85">Operations Architect & Lead Developer at Collective AI</strong>,
-              she scopes and leads the team that ships the heavy builds: the dashboards,
-              the automations, the enterprise systems. Same standards. More capacity.
-              You're never trusting one person with a six-figure roadmap.
+              As <strong className="text-foreground/85">AI partner at Collective AI</strong>, the
+              company founded by John Moyler, she scopes your build and works with that team to ship
+              the heavy lifts: the dashboards, the automations, the enterprise systems. Same standards.
+              More capacity. You're never trusting one person with a six-figure roadmap.
             </p>
           </div>
         </AnimatedSection>
@@ -199,8 +199,9 @@ export default function Collective() {
               ))}
             </ul>
             <p className="mt-6 text-xs text-muted-foreground/80 leading-relaxed">
-              All work contracted under Focus Flow AI LLC (DBA Coach Kay Elevates).
-              Delivered with the Collective AI team. For institutional procurement,
+              Coaching and offers are contracted under Focus Flow AI LLC (DBA Coach Kay Elevates).
+              Build work is delivered with Collective AI, an independent company founded by John Moyler.
+              For institutional procurement,
               email{" "}
               <a href="mailto:hello@coachkayelevates.org" className="text-primary underline">
                 hello@coachkayelevates.org

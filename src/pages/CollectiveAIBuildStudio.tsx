@@ -54,7 +54,7 @@ const PROCESS = [
 const FAQS = [
   {
     q: "Is this really built with AI?",
-    a: "Yes. And that's the point. We use Lovable + AI agents to compress what agencies bill 4 months for into days. You get the same outcome at a fraction of the cost.",
+    a: "Yes. And that's the point. AI agents do the heavy lifting, so a build that would normally sit in a queue for months moves in days. Same outcome, far less overhead.",
   },
   {
     q: "Do I own the code?",
@@ -62,19 +62,19 @@ const FAQS = [
   },
   {
     q: "What if I want changes after launch?",
-    a: "Quick-Win tier comes with one round of revisions. Larger builds include two rounds. After that, add a Care plan or pay hourly.",
+    a: "Quick Wins include one round of revisions. Larger builds include two. After that, add a Care plan or book build time.",
   },
   {
     q: "Can I see examples before I buy?",
-    a: "Yes. Book a 15-minute scoping call (free for Tier 2+) and we'll walk through past builds and your specific use case.",
+    a: "Yes. Book a short scoping call and we'll walk through past builds and your specific use case.",
   },
   {
     q: "What's not included?",
     a: "Hosting fees (most builds use free or low-cost hosts), domain registration, paid integrations (Stripe, email provider, etc), and third-party API costs.",
   },
   {
-    q: "Refunds?",
-    a: "Tier 1 (Quick Wins): full refund before we start, 50% after first preview. Tier 2+ scoped via contract: half down, half on launch.",
+    q: "How do payment and terms work?",
+    a: "Quick Wins and Care plans check out directly at the price shown. Everything else is scoped first, and the payment schedule and terms live in the agreement we sign before any work starts. Nothing is charged until that scope is agreed.",
   },
 ];
 
@@ -230,15 +230,15 @@ const CollectiveAIBuildStudio = () => {
           <span className="text-primary italic">From launch to scale on autopilot.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          What agencies build in 4 months, the Collective ships in 14 days, because we build <em>with</em> AI, not
+          Builds that normally take months move in weeks here, because we build <em>with</em> AI, not
           around it. Landing pages, dashboards, lead-gen tools, AI apps, and the care plans that keep them growing.
         </p>
         <p className="mt-4 text-xs text-muted-foreground/80">
-          Delivered by the{" "}
+          Scoped by Coach Kay, delivered with{" "}
           <Link to="/collective" className="text-primary hover:underline">
-            Collective AI team
+            Collective AI
           </Link>{" "}
-          · Contracted under Focus Flow AI LLC
+          , an independent company founded by John Moyler. Contracted under Focus Flow AI LLC.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Button
@@ -321,6 +321,12 @@ const CollectiveAIBuildStudio = () => {
                 tagline={o.tagline}
                 features={[...o.features]}
                 price={o.priceDisplay}
+                priceSuffix={o.estimate ? "estimate" : undefined}
+                footnote={
+                  o.estimate
+                    ? "Estimate only. Final price and timeline are confirmed on a scoping call."
+                    : undefined
+                }
                 variant={o.highlighted ? "featured" : "standard"}
                 primaryCta={
                   isCheckout
