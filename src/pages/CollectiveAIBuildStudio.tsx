@@ -241,7 +241,7 @@ const CollectiveAIBuildStudio = () => {
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Builds that normally take months move in weeks here, because we build <em>with</em> AI, not
-          around it. Landing pages, dashboards, lead-gen tools, AI apps, and the care plans that keep them growing.
+          around it. Landing pages, dashboards, lead-gen tools, and custom AI apps.
         </p>
         <p className="mt-4 text-xs text-muted-foreground/80">
           You contract with Focus Flow AI LLC for Coach Kay's work. Larger scopes bring in partners
@@ -347,6 +347,28 @@ const CollectiveAIBuildStudio = () => {
               />
             );
           })}
+        </div>
+
+        {/* Care is an attachment to a build, not a tier of its own. */}
+        <div className="mt-8 rounded-xl border border-border/60 bg-card/30 p-6 text-center max-w-2xl mx-auto">
+          <h3 className="font-heading text-xl text-foreground">After launch: care plans</h3>
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            {ATTACHABLE_CARE_PLANS.map((p) => p.name).join(" and ")} keep your build running: updates,
+            monitoring, prompt tuning, and small edits. You'll see the plan that matches your build
+            right after it's delivered, so you're never paying for care before there's something to
+            care for.
+          </p>
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            Already have a site or an AI assistant someone else built? Care for those starts with a
+            short look at what's running.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-5 border-primary/40 text-primary hover:bg-primary/10"
+            onClick={() => navigate("/start-a-build?offer=care")}
+          >
+            Ask about care for an existing build
+          </Button>
         </div>
       </section>
 
