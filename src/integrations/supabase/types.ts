@@ -433,8 +433,10 @@ export type Database = {
           id: string
           intake: Json
           is_test: boolean
+          phone: string | null
           recommended_offer: string | null
           report: Json | null
+          sms_consent_at: string | null
           status: string
           stripe_session_id: string | null
           user_id: string | null
@@ -447,8 +449,10 @@ export type Database = {
           id?: string
           intake?: Json
           is_test?: boolean
+          phone?: string | null
           recommended_offer?: string | null
           report?: Json | null
+          sms_consent_at?: string | null
           status?: string
           stripe_session_id?: string | null
           user_id?: string | null
@@ -461,8 +465,10 @@ export type Database = {
           id?: string
           intake?: Json
           is_test?: boolean
+          phone?: string | null
           recommended_offer?: string | null
           report?: Json | null
+          sms_consent_at?: string | null
           status?: string
           stripe_session_id?: string | null
           user_id?: string | null
@@ -831,6 +837,62 @@ export type Database = {
         }
         Relationships: []
       }
+      nurture_touches: {
+        Row: {
+          attempts: number
+          audit_id: string
+          created_at: string
+          email: string
+          id: string
+          is_test: boolean
+          last_error: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          step: number
+          template_name: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          audit_id: string
+          created_at?: string
+          email: string
+          id?: string
+          is_test?: boolean
+          last_error?: string | null
+          scheduled_for: string
+          sent_at?: string | null
+          status?: string
+          step: number
+          template_name: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          audit_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_test?: boolean
+          last_error?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          step?: number
+          template_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nurture_touches_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "business_audits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       one_time_orders: {
         Row: {
           created_at: string
@@ -1179,8 +1241,10 @@ export type Database = {
           id: string
           intake: Json
           is_test: boolean
+          phone: string | null
           recommended_offer: string | null
           report: Json | null
+          sms_consent_at: string | null
           status: string
           stripe_session_id: string | null
           user_id: string | null
