@@ -171,7 +171,7 @@ export default function OrderSuccess() {
     return (
       <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
         <SEOHead
-          title="We Couldn't Confirm Your Payment — FocusFlow AI"
+          title="We Couldn't Confirm Your Payment"
           description="We could not confirm this payment. Reach out and we'll sort it out right away."
           path="/order-success"
           noIndex

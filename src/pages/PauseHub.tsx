@@ -247,7 +247,7 @@ export default function PauseHub() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="P.A.U.S.E. Check — AI Scams, Traps & Safety Alerts"
+        title="P.A.U.S.E. Check: AI Scams and Safety Alerts"
         description="Before you click, swipe, or pay — the P.A.U.S.E. Check tracks active AI scams, overhyped trends, and productivity traps targeting working families."
         path="/pause-hub"
         jsonLd={jsonLd}
