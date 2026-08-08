@@ -31,6 +31,9 @@ jobs:
       - name: Check email template references
         run: bun run scripts/check-email-templates.ts
 
+      - name: Check email delivery guard
+        run: bun run scripts/check-email-delivery-guard.ts
+
       - name: Check role invariants
         run: bun run scripts/check-role-invariants.ts
 
