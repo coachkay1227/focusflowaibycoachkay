@@ -1,5 +1,5 @@
 # Payment & Audit Link Report
-Generated: 2026-08-08T02:14:22.675Z
+Generated: 2026-08-08T02:26:27.450Z
 
 - Registered priceIds: **43**
 - Referenced priceIds (unique): **33**
@@ -9,12 +9,12 @@ Generated: 2026-08-08T02:14:22.675Z
 
 | Price ID | Resolved | File | Line | Status |
 | --- | --- | --- | --- | --- |
-| `price_1TbAaPBReje0oFcLts5JuE5a` | payment — 30-Day Personal Reset $297 | src/components/PricingSection.tsx | 48 | ok |
-| `price_1TbAguBReje0oFcL3Qh5pIiH` | payment — 30-Day Business Reset $497 | src/components/PricingSection.tsx | 62 | ok |
-| `price_1TbAhOBReje0oFcL87MVrKFy` | payment — 30-Day AI Reset $997 | src/components/PricingSection.tsx | 76 | ok |
-| `price_1TbAhtBReje0oFcLscEqWHEK` | payment — 90-Day Personal Transformation $997 | src/components/PricingSection.tsx | 95 | ok |
-| `price_1TbAiNBReje0oFcLrit7Ko5x` | payment — 90-Day Business Transformation $1,497 | src/components/PricingSection.tsx | 109 | ok |
-| `price_1TbAimBReje0oFcL4Uti8udD` | payment — 90-Day Full AI Transformation $2,497 | src/components/PricingSection.tsx | 123 | ok |
+| `price_1TbAaPBReje0oFcLts5JuE5a` | payment — 30-Day Personal Reset $297 | src/components/PricingSection.tsx | 49 | ok |
+| `price_1TbAguBReje0oFcL3Qh5pIiH` | payment — 30-Day Business Reset $497 | src/components/PricingSection.tsx | 63 | ok |
+| `price_1TbAhOBReje0oFcL87MVrKFy` | payment — 30-Day AI Reset $997 | src/components/PricingSection.tsx | 77 | ok |
+| `price_1TbAhtBReje0oFcLscEqWHEK` | payment — 90-Day Personal Transformation $997 | src/components/PricingSection.tsx | 96 | ok |
+| `price_1TbAiNBReje0oFcLrit7Ko5x` | payment — 90-Day Business Transformation $1,497 | src/components/PricingSection.tsx | 110 | ok |
+| `price_1TbAimBReje0oFcL4Uti8udD` | payment — 90-Day Full AI Transformation $2,497 | src/components/PricingSection.tsx | 124 | ok |
 | `price_1TbAaPBReje0oFcLts5JuE5a` | payment — 30-Day Personal Reset $297 | src/data/programs.ts | 2042 | ok |
 | `price_1TbAguBReje0oFcL3Qh5pIiH` | payment — 30-Day Business Reset $497 | src/data/programs.ts | 2060 | ok |
 | `price_1TbAhOBReje0oFcL87MVrKFy` | payment — 30-Day AI Reset $997 | src/data/programs.ts | 2078 | ok |
