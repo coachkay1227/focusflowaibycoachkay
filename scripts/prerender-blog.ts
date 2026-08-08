@@ -169,6 +169,7 @@ function patchHead(opts: {
   // Inject og:url + extras + JSON-LD before </head>
   const inject = [
     `<meta property="og:url" content="${escapeAttr(opts.canonical)}" />`,
+    `<link rel="canonical" href="${escapeAttr(opts.canonical)}" />`,
     opts.ogImageAlt ? `<meta property="og:image:alt" content="${escapeAttr(opts.ogImageAlt)}" />` : "",
     opts.extraMeta ?? "",
     ...opts.jsonLd.map(
