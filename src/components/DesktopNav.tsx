@@ -8,7 +8,7 @@ import {
   BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers,
   Sparkles, Rocket, ClipboardCheck, Flame,
   Library, ShieldAlert, MessageCircle, Eye, HelpCircle,
-  FileSearch, Heart,
+  FileSearch,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
