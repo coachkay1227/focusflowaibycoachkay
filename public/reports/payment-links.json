@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T02:14:22.675Z",
+  "generatedAt": "2026-08-08T02:26:27.450Z",
   "summary": {
     "priceIdsReferenced": 33,
     "priceIdsRegistered": 43,
@@ -11,7 +11,7 @@
       "type": "priceId",
       "value": "price_1TbAaPBReje0oFcLts5JuE5a",
       "file": "src/components/PricingSection.tsx",
-      "line": 48,
+      "line": 49,
       "resolvedTarget": "payment — 30-Day Personal Reset $297",
       "label": "30-Day Personal Reset $297",
       "status": "ok"
@@ -20,7 +20,7 @@
       "type": "priceId",
       "value": "price_1TbAguBReje0oFcL3Qh5pIiH",
       "file": "src/components/PricingSection.tsx",
-      "line": 62,
+      "line": 63,
       "resolvedTarget": "payment — 30-Day Business Reset $497",
       "label": "30-Day Business Reset $497",
       "status": "ok"
@@ -29,7 +29,7 @@
       "type": "priceId",
       "value": "price_1TbAhOBReje0oFcL87MVrKFy",
       "file": "src/components/PricingSection.tsx",
-      "line": 76,
+      "line": 77,
       "resolvedTarget": "payment — 30-Day AI Reset $997",
       "label": "30-Day AI Reset $997",
       "status": "ok"
@@ -38,7 +38,7 @@
       "type": "priceId",
       "value": "price_1TbAhtBReje0oFcLscEqWHEK",
       "file": "src/components/PricingSection.tsx",
-      "line": 95,
+      "line": 96,
       "resolvedTarget": "payment — 90-Day Personal Transformation $997",
       "label": "90-Day Personal Transformation $997",
       "status": "ok"
@@ -47,7 +47,7 @@
       "type": "priceId",
       "value": "price_1TbAiNBReje0oFcLrit7Ko5x",
       "file": "src/components/PricingSection.tsx",
-      "line": 109,
+      "line": 110,
       "resolvedTarget": "payment — 90-Day Business Transformation $1,497",
       "label": "90-Day Business Transformation $1,497",
       "status": "ok"
@@ -56,7 +56,7 @@
       "type": "priceId",
       "value": "price_1TbAimBReje0oFcL4Uti8udD",
       "file": "src/components/PricingSection.tsx",
-      "line": 123,
+      "line": 124,
       "resolvedTarget": "payment — 90-Day Full AI Transformation $2,497",
       "label": "90-Day Full AI Transformation $2,497",
       "status": "ok"

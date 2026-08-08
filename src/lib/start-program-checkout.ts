@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { trackCheckoutStart } from "@/lib/gtag";
+import { redirectToLeadGenIfConfigured } from "@/lib/lead-gen";
 
 export const PENDING_CHECKOUT_KEY = "pending_checkout_price";
 
@@ -9,6 +10,8 @@ export async function startProgramCheckout(
   priceId: string,
   opts: { title: string; price: number; successPath?: string; cancelPath?: string },
 ): Promise<void> {
+  // Mid/high-ticket offers route to the lead-gen page when one is configured.
+  if (await redirectToLeadGenIfConfigured()) return;
   trackCheckoutStart(opts.title, opts.price);
   const { data, error } = await supabase.functions.invoke("create-checkout", {
     body: {

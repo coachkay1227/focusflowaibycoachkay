@@ -21,6 +21,7 @@
 - [Program Catalog](mem://tech/program-catalog) — Dual-catalog structure and F.O.C.U.S. pillars
 - [Access Control](mem://auth/access-control-security) — user_access_levels table and privilege rules
 - [Monetization](mem://billing/monetization-strategy) — Stripe subscriptions and one-time payment logic
+- [Lead-Gen Routing](mem://features/lead-gen-routing) — leadgen.offer_url switch that reroutes $297+ CTAs off Stripe checkout
 - [Community](mem://features/community) — Skool FocusFlow Elevation Hub URL
 - [API Protection](mem://security/api-protection) — JWT rules for edge functions and unauth exceptions
 - [Clarity Score Logic](mem://features/clarity-score-logic) — Timezone-aware bucketing for streaks
