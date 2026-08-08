@@ -7,7 +7,7 @@ import BrandLogo from "@/components/BrandLogo";
 import {
   Menu, X, LayoutDashboard, User, LogOut, Sparkles, ChevronDown, Shield,
   Eye, MessageCircle, HelpCircle, BookOpen, BookMarked, Bot, Briefcase, Wrench, Users, Layers, ArrowRight,
-  Rocket, ClipboardCheck, Flame, Library, ShieldAlert, FileSearch, Heart,
+  Rocket, ClipboardCheck, Flame, Library, ShieldAlert, FileSearch,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -33,13 +33,11 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Transformation Paths", path: "/modules", icon: BookOpen },
       { label: "Books & AI Kits", path: "/store", icon: BookMarked },
-      { label: "Books: Autism Social Stories", path: "/autism-social-stories", icon: Heart },
       { label: "AI Agents & Automation", path: "/agents", icon: Bot },
-      { label: "Rent-an-Agent", path: "/rent-an-agent", icon: Bot },
       { label: "AI Build Studio", path: "/build-studio", icon: Wrench },
       { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
       { label: "AI Task Force", path: "/ai-task-force", icon: Layers },
-      { label: "Business Audit", path: "/advisory", icon: FileSearch },
+      { label: "Business Audit", path: "/audit/landing", icon: FileSearch },
     ],
   },
   {
