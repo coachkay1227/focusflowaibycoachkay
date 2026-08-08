@@ -184,6 +184,24 @@ export default function AdminNurture() {
     if (data) setResult(data);
   };
 
+  /**
+   * Same read as Refresh, but silent. Polling must not toast on every failed
+   * attempt, and must not clear a preview the admin is reading.
+   * Returns whether the read succeeded so the poller can back off.
+   */
+  const quietRefresh = useCallback(async (): Promise<boolean> => {
+    const auditId = result?.audit?.id;
+    if (!auditId) return true;
+    const { data, error } = await supabase.functions.invoke("admin-nurture", {
+      body: { action: "lookup", auditId },
+    });
+    if (error) return false;
+    const next = data as LookupResult;
+    if (!next?.found) return false;
+    setResult(next);
+    return true;
+  }, [result?.audit?.id]);
+
   const doPreview = async (step: number) => {
     const auditId = result?.audit?.id;
     if (!auditId) return;
