@@ -3,10 +3,10 @@ import { ArrowLeft, ArrowRight, Layers, Users, ShieldCheck, Cog, Sparkles, Exter
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
-import { webPage, breadcrumb, SITE_URL, ORG_ID, PERSON_ID } from "@/lib/seo-schema";
+import { webPage, breadcrumb, SITE_URL } from "@/lib/seo-schema";
 
 const ROLES = [
-  { icon: Cog, title: "Operations Architect", body: "Coach Kay. Scopes every build, owns the roadmap, signs the SOW." },
+  { icon: Cog, title: "Scope & Accountability", body: "Coach Kay. Scopes your build, owns the roadmap, signs the SOW under Focus Flow AI LLC." },
   { icon: Layers, title: "Lead Engineer", body: "Ships the system end-to-end: frontend, edge functions, integrations." },
   { icon: Sparkles, title: "AI Researcher", body: "Designs the prompt + model strategy. Keeps quality and cost in line." },
   { icon: Users, title: "Designer & QA", body: "Visual polish, accessibility, mobile parity, pre-launch hardening." },
@@ -52,10 +52,9 @@ export default function Collective() {
       "@id": `${SITE_URL}/collective#org`,
       name: "Collective AI",
       description:
-        "A multidisciplinary AI delivery team led by Coach Kay (Kenza Alaoui). Operations, engineering, AI research, and design, assembled for builds that require more than solo capacity.",
+        "An independent company founded by John Moyler. Independent operators across engineering, AI research, design, and QA who combine capacity for large builds and community-scale work. Coach Kay (Kenza Alaoui) is an AI partner there.",
       url: `${SITE_URL}/collective`,
-      parentOrganization: { "@id": ORG_ID },
-      founder: { "@id": PERSON_ID },
+      founder: { "@type": "Person", name: "John Moyler" },
     },
     {
       "@context": "https://schema.org",
