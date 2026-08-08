@@ -5,6 +5,8 @@
 //   2. Indexable routes that incorrectly set noIndex (or vice versa)
 //   3. Public/indexable routes missing from public/sitemap.xml
 //   4. The single <SEOHead> render in a page missing a `path={...}` prop
+//   5. Static titles longer than 60 chars (incl. brand suffix) or descriptions over 160
+//   6. Em dashes in page metadata (brand rule)
 //
 // Update INDEXABLE / NOINDEX / SKIP below when adding a new <Route> in src/App.tsx.
 
@@ -13,6 +15,39 @@ import { resolve } from "path";
 
 const APP_FILE = "src/App.tsx";
 const SITEMAP_FILE = "public/sitemap.xml";
+const TITLE_MAX = 60;
+const DESC_MAX = 160;
+const BRAND_SUFFIX = " | Coach Kay AI"; // mirrors src/components/SEOHead.tsx
+
+/** Length + brand-rule checks on the static title/description literals of a page. */
+function metadataIssues(src: string, routePath: string, file: string): string[] {
+  const out: string[] = [];
+  const tagRe = /<SEOHead\b([\s\S]*?)\/>/g;
+  let m: RegExpExecArray | null;
+  while ((m = tagRe.exec(src)) !== null) {
+    const attrs = m[1];
+    const title = attrs.match(/title="([^"]*)"/)?.[1];
+    const desc = attrs.match(/description="([^"]*)"/)?.[1];
+    if (title) {
+      const effective = /coach kay/i.test(title) ? title : title + BRAND_SUFFIX;
+      if (effective.length > TITLE_MAX) {
+        out.push(`Route "${routePath}" → ${file}: title is ${effective.length} chars (max ${TITLE_MAX}): "${effective}"`);
+      }
+      if (title.includes("\u2014")) {
+        out.push(`Route "${routePath}" → ${file}: title contains an em dash (brand rule).`);
+      }
+    }
+    if (desc) {
+      if (desc.length > DESC_MAX) {
+        out.push(`Route "${routePath}" → ${file}: description is ${desc.length} chars (max ${DESC_MAX}).`);
+      }
+      if (desc.includes("\u2014")) {
+        out.push(`Route "${routePath}" → ${file}: description contains an em dash (brand rule).`);
+      }
+    }
+  }
+  return out;
+}
 
 // Routes that MUST be indexable (SEOHead present, noIndex !== true, and listed in sitemap).
 // Dynamic params (`:slug`) are accepted — sitemap presence is checked against the static prefix.
@@ -284,6 +319,8 @@ function main() {
     if (noIndex === "unknown") {
       warnings.push(`Route "${r.path}" → ${file}: noIndex is a dynamic expression — verify manually.`);
     }
+
+    errors.push(...metadataIssues(src, r.path, file));
   }
 
   // Sitemap coverage for indexable routes.
