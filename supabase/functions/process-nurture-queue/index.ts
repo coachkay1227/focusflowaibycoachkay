@@ -50,7 +50,8 @@ interface TouchRow {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const cors = getCorsHeaders(req);
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
 
   const expected = Deno.env.get("NURTURE_CRON_SECRET") ?? "";
   const provided = req.headers.get("x-nurture-secret") ?? "";
@@ -67,7 +68,7 @@ Deno.serve(async (req) => {
 
   if (!bySecret && !byServiceRole) {
     console.warn("process-nurture-queue rejected unauthenticated call");
-    return json({ error: "Forbidden" }, 403);
+    return json({ error: "Forbidden" }, 403, cors);
   }
 
   const supabase = createClient(
