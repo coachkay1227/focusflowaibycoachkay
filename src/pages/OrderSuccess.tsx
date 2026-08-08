@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { NextStepsPanel } from "@/components/NextStepsPanel";
+import { DeliveryStatusPanel, type DeliveryStage } from "@/components/DeliveryStatusPanel";
 import { TIER_LABELS } from "@/lib/tier-constants";
 import type { AccessTier } from "@/hooks/use-access-level";
 
@@ -29,6 +30,10 @@ interface VerifyResult {
   mode?: string;
   /** Which fulfillment table holds the order, from the backend. */
   fulfilled_in?: string | null;
+  /** Per-stage delivery truth, every value read from a real row. */
+  stages?: DeliveryStage[];
+  complete?: boolean;
+  needs_attention?: boolean;
 }
 
 /** Human label for a purchase when no package name or tier is available.
@@ -50,6 +55,7 @@ export default function OrderSuccess() {
   const [mode, setMode] = useState<"loading" | "book" | "autism" | "non_book">("loading");
   const [verify, setVerify] = useState<VerifyState>(sessionId ? "checking" : "failed");
   const [verified, setVerified] = useState<VerifyResult | null>(null);
+  const [stages, setStages] = useState<DeliveryStage[] | null>(null);
   const attempts = useRef(0);
 
   // Step 1: verify the payment against Stripe and the fulfillment tables.
@@ -70,6 +76,7 @@ export default function OrderSuccess() {
           return setVerify("failed");
         }
         setVerified(res);
+        if (res.stages) setStages(res.stages);
         if (res.state === "confirmed") return setVerify("confirmed");
         if (res.state === "processing") {
           // Payment settled but the webhook has not landed yet — keep polling.
@@ -146,6 +153,14 @@ export default function OrderSuccess() {
               ? "Your payment went through. We're setting up your access now — this usually takes a few seconds. You can safely stay on this page."
               : "Checking with our payment processor. This only takes a moment."}
           </p>
+          {sessionId && stages && verify === "processing" && (
+            <DeliveryStatusPanel
+              sessionId={sessionId}
+              stages={stages}
+              onRecovered={setStages}
+              className="mt-8"
+            />
+          )}
         </div>
       </div>
     );
@@ -208,7 +223,7 @@ export default function OrderSuccess() {
         : "Your purchase is confirmed and your access is unlocked. Here's what to do now.";
 
   return (
-    <div className="min-h-dvh bg-background text-foreground flex items-center justify-center px-6 py-16">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col items-center justify-center px-6 py-16">
       <SEOHead
         title={
           isBookish
@@ -234,6 +249,14 @@ export default function OrderSuccess() {
         sessionId={sessionId}
         orderSource={verified?.fulfilled_in ?? null}
       />
+      {sessionId && stages && (
+        <DeliveryStatusPanel
+          sessionId={sessionId}
+          stages={stages}
+          onRecovered={setStages}
+          className="mt-8 w-full max-w-2xl"
+        />
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { offerRoute, SKOOL_URL } from "@/lib/offer-routes";
+import { DeliveryStatusPanel, type DeliveryStage } from "@/components/DeliveryStatusPanel";
 
 type Diagnostic = { score: number; note: string };
 type AuditReport = {
@@ -42,6 +43,24 @@ const AuditReport = () => {
   const { audit, loading, canAccess, claimToAccount } = useAuditAccess(id, token);
 
   const report = audit?.report as AuditReport | null | undefined;
+
+  // Per-stage delivery truth for this order, read from the backend. Shown when
+  // the report has not landed so the buyer sees what is actually missing and
+  // can re-trigger it instead of waiting on nothing.
+  const [stages, setStages] = useState<DeliveryStage[] | null>(null);
+  const auditSessionId = audit?.stripe_session_id ?? null;
+  useEffect(() => {
+    if (!auditSessionId || report) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.functions.invoke("verify-checkout-session", {
+        body: { session_id: auditSessionId },
+      });
+      const res = data as { stages?: DeliveryStage[] } | null;
+      if (!cancelled && res?.stages) setStages(res.stages);
+    })();
+    return () => { cancelled = true; };
+  }, [auditSessionId, report]);
 
   // If the audit is paid + intake saved but the report never generated
   // (e.g. buyer skipped the landing page), re-kick generation once via
@@ -126,6 +145,14 @@ const AuditReport = () => {
           <Button onClick={() => navigate(`/audit/intake/${audit.id}${token ? `?token=${encodeURIComponent(token)}` : ""}`)}>
             Complete My Intake
           </Button>
+        )}
+        {auditSessionId && stages && (
+          <DeliveryStatusPanel
+            sessionId={auditSessionId}
+            stages={stages}
+            onRecovered={setStages}
+            className="mt-8 w-full max-w-xl"
+          />
         )}
       </div>
     );

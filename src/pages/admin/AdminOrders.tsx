@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, Search, X } from "lucide-react";
+import { Download, Search, X, MailWarning, CheckCircle2, Loader2 } from "lucide-react";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { StatusBadge } from "@/components/store/StatusBadge";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,8 @@ interface OrderRow {
 }
 
 const STATUSES = ["pending_payment", "paid", "in_progress", "delivered", "cancelled"];
+const PAID_STATUSES = ["paid", "in_progress", "delivered"];
+const NEXT_STEPS_TEMPLATE = "purchase-next-steps";
 const CATEGORIES: Array<BookCategory | "all"> = [
   "all",
   "storybooks",
@@ -95,6 +97,11 @@ export default function AdminOrders() {
   const [page, setPage] = useState(1);
   const [drawer, setDrawer] = useState<OrderRow | null>(null);
   const [notes, setNotes] = useState("");
+  /** Stripe session ids that already have a SENT next-steps email, read from
+   *  email_send_log. The log is the source of truth, never the intent. */
+  const [deliveredSessions, setDeliveredSessions] = useState<Set<string>>(new Set());
+  const [needsAttentionOnly, setNeedsAttentionOnly] = useState(false);
+  const [recovering, setRecovering] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -112,6 +119,57 @@ export default function AdminOrders() {
   };
 
   useEffect(() => { load(); }, []);
+
+  // Delivery truth for the whole page in one query.
+  const loadDelivery = async () => {
+    const { data } = await supabase
+      .from("email_send_log")
+      .select("metadata, status")
+      .eq("template_name", NEXT_STEPS_TEMPLATE)
+      .eq("status", "sent")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    const ids = new Set<string>();
+    for (const row of data ?? []) {
+      const sid = (row.metadata as { session_id?: string } | null)?.session_id;
+      if (sid) ids.add(sid);
+    }
+    setDeliveredSessions(ids);
+  };
+
+  useEffect(() => { loadDelivery(); }, []);
+
+  /** A paid order whose next-steps email has no sent row needs attention. */
+  const needsAttention = (o: OrderRow) =>
+    PAID_STATUSES.includes(o.status) &&
+    !!o.stripe_session_id &&
+    !deliveredSessions.has(o.stripe_session_id);
+
+  const runRecovery = async (
+    o: OrderRow,
+    action: "resend_next_steps" | "reissue_access_link",
+  ) => {
+    if (!o.stripe_session_id) return;
+    setRecovering(`${o.id}:${action}`);
+    const { data, error } = await supabase.functions.invoke("fulfillment-recovery", {
+      body: { session_id: o.stripe_session_id, action },
+    });
+    const res = data as { ok?: boolean; error?: string; report_url?: string } | null;
+    if (error || !res?.ok) {
+      toast({
+        title: "Recovery failed",
+        description: res?.error || error?.message || "Nothing was sent.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: action === "resend_next_steps" ? "Next-steps email resent" : "Access link re-issued",
+        description: res.report_url ?? "Logged to the admin audit trail.",
+      });
+      await loadDelivery();
+    }
+    setRecovering(null);
+  };
 
   // Persist filters
   useEffect(() => {
@@ -146,9 +204,10 @@ export default function AdminOrders() {
       }
       if (from && new Date(o.created_at) < new Date(from)) return false;
       if (to && new Date(o.created_at) > new Date(`${to}T23:59:59`)) return false;
+      if (needsAttentionOnly && !needsAttention(o)) return false;
       return true;
     });
-  }, [orders, statusFilter, categoryFilter, search, from, to]);
+  }, [orders, statusFilter, categoryFilter, search, from, to, needsAttentionOnly, deliveredSessions]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -162,7 +221,8 @@ export default function AdminOrders() {
     categoryFilter !== "all" ||
     search !== "" ||
     from !== "" ||
-    to !== "";
+    to !== "" ||
+    needsAttentionOnly;
 
   const clearFilters = () => {
     setStatusFilter("all");
@@ -170,6 +230,7 @@ export default function AdminOrders() {
     setSearch("");
     setFrom("");
     setTo("");
+    setNeedsAttentionOnly(false);
   };
 
   const stats = useMemo(() => {
@@ -331,6 +392,14 @@ export default function AdminOrders() {
               <X className="h-3.5 w-3.5" /> Clear
             </Button>
           )}
+          <Button
+            onClick={() => setNeedsAttentionOnly((v) => !v)}
+            variant={needsAttentionOnly ? "default" : "outline"}
+            size="sm"
+            className="gap-1"
+          >
+            <MailWarning className="h-3.5 w-3.5" /> Needs attention
+          </Button>
           <div className="ml-auto text-xs text-muted-foreground">
             {filtered.length} of {orders.length}
           </div>
@@ -348,14 +417,15 @@ export default function AdminOrders() {
                   <th className="text-left px-4 py-3">Add-ons</th>
                   <th className="text-right px-4 py-3">Total</th>
                   <th className="text-left px-4 py-3">Status</th>
+                  <th className="text-left px-4 py-3">Delivery</th>
                   <th className="text-left px-4 py-3">Date</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">Loading…</td></tr>
+                  <tr><td colSpan={8} className="text-center py-10 text-muted-foreground">Loading…</td></tr>
                 ) : filtered.length === 0 ? (
-                  <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">No orders found.</td></tr>
+                  <tr><td colSpan={8} className="text-center py-10 text-muted-foreground">No orders found.</td></tr>
                 ) : (
                   paginated.map((o) => {
                     const addonCount = Array.isArray(o.addons) ? o.addons.length : 0;
@@ -387,6 +457,34 @@ export default function AdminOrders() {
                               <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                             ))}
                           </select>
+                        </td>
+                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          {!o.stripe_session_id || !PAID_STATUSES.includes(o.status) ? (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          ) : needsAttention(o) ? (
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] text-destructive">
+                                <MailWarning className="h-3 w-3" /> No email sent
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-7 px-2 text-[11px]"
+                                disabled={recovering === `${o.id}:resend_next_steps`}
+                                onClick={() => runRecovery(o, "resend_next_steps")}
+                              >
+                                {recovering === `${o.id}:resend_next_steps` ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  "Resend"
+                                )}
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] text-primary">
+                              <CheckCircle2 className="h-3 w-3" /> Delivered
+                            </span>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           {new Date(o.created_at).toLocaleDateString()}
