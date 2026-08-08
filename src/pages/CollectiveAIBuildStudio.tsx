@@ -253,9 +253,7 @@ const CollectiveAIBuildStudio = () => {
             size="lg"
             variant="outline"
             className="border-primary/40 text-primary hover:bg-primary/10 px-8"
-            onClick={() =>
-              setAppDialog({ open: true, projectType: "Not sure yet, let's scope it", tier: "Discovery" })
-            }
+            onClick={() => navigate("/start-a-build")}
           >
             Book a scoping call
           </Button>
