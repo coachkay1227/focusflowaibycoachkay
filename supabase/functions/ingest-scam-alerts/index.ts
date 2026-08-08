@@ -147,7 +147,7 @@ const DRAFT_SCHEMA = {
 } as const;
 
 const SYSTEM_PROMPT = composeSystemPrompt(
-  "email-body",
+  "scam-alert-draft",
   `ROLE: You are drafting an entry for the P.A.U.S.E. Check safety hub, a scam and hype alert feed for busy people who are new to AI.
 
 You are given one item from a government or agency feed. Rewrite it as a hub alert.
