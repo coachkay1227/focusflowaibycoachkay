@@ -7,7 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Save, Trash2, X, ShieldAlert, RefreshCw, ExternalLink } from "lucide-react";
+import {
+  Plus,
+  Save,
+  Trash2,
+  X,
+  ShieldAlert,
+  RefreshCw,
+  ExternalLink,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 
 type ThreatLevel = "red_flag" | "caution" | "watch" | "resolved";
 
