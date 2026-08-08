@@ -153,6 +153,14 @@ export default function OrderSuccess() {
               ? "Your payment went through. We're setting up your access now — this usually takes a few seconds. You can safely stay on this page."
               : "Checking with our payment processor. This only takes a moment."}
           </p>
+          {sessionId && stages && verify === "processing" && (
+            <DeliveryStatusPanel
+              sessionId={sessionId}
+              stages={stages}
+              onRecovered={setStages}
+              className="mt-8"
+            />
+          )}
         </div>
       </div>
     );
