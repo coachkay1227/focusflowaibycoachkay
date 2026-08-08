@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useBookingLinks } from "@/hooks/use-booking-links";
 import { trackEvent } from "@/lib/analytics";
 import { wantsStrategyCall as earnsStrategyCall } from "@/lib/booking-thresholds";
+import { buildBookingUrl, bookingProofLine } from "@/lib/booking-url";
 
 export interface NextStepsPanelProps {
   /** Headline shown above the confirmation. */
@@ -22,6 +23,10 @@ export interface NextStepsPanelProps {
   mode?: string | null;
   /** For analytics attribution. */
   sessionId?: string | null;
+  /** Which fulfillment record confirmed this purchase. */
+  orderSource?: string | null;
+  /** Buyer name, when the backend recorded one. */
+  customerName?: string | null;
 }
 
 const formatCents = (cents: number) =>
@@ -43,12 +48,31 @@ export const NextStepsPanel = ({
   customerEmail,
   mode,
   sessionId,
+  orderSource,
+  customerName,
 }: NextStepsPanelProps) => {
   const { freeClarityUrl, paidStrategyUrl } = useBookingLinks();
 
   const wantsStrategyCall = earnsStrategyCall({ amountSubtotalCents, mode });
 
-  const bookingUrl = wantsStrategyCall ? paidStrategyUrl : freeClarityUrl;
+  // Carry the verified order onto the booking so the session record proves
+  // which plan and call type it belongs to.
+  const bookingContext = {
+    sessionType: wantsStrategyCall ? ("paid_strategy" as const) : ("free_clarity" as const),
+    productName,
+    orderRef: sessionId,
+    orderSource,
+    amountSubtotalCents,
+    amountTotalCents,
+    mode,
+    email: customerEmail,
+    name: customerName,
+    placement: "order_success",
+  };
+  const bookingUrl = buildBookingUrl(
+    wantsStrategyCall ? paidStrategyUrl : freeClarityUrl,
+    bookingContext,
+  );
   const bookingLabel = wantsStrategyCall
     ? "Book your 60-minute strategy session"
     : "Book your free 15-minute clarity call";
@@ -141,6 +165,9 @@ export const NextStepsPanel = ({
               {bookingLabel}
             </a>
           </Button>
+          <p className="mt-3 text-xs text-muted-foreground break-words">
+            Booked as: {bookingProofLine(bookingContext)}
+          </p>
         </div>
 
         <div className="rounded-lg border border-border/60 bg-card/50 p-6 flex flex-col">
