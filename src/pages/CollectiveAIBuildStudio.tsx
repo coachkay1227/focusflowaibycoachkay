@@ -36,12 +36,12 @@ const PILLARS = [
   {
     icon: Crown,
     title: "Sovereignty",
-    body: "You keep the code. You keep the assets. You keep control. The Collective builds with you, not at you.",
+    body: "You keep the code. You keep the assets. You keep control. We build with you, not at you.",
   },
 ];
 
 const PROCESS = [
-  { step: "01", title: "Brief", body: "15-min call or written brief. We scope the build and lock the price." },
+  { step: "01", title: "Brief", body: "15-min call or written brief. We scope the build, then quote it in writing." },
   {
     step: "02",
     title: "Build",
@@ -120,7 +120,7 @@ const CollectiveAIBuildStudio = () => {
         body: {
           priceId: offer.priceId,
           successPath: `/order-success?tier=${encodeURIComponent(offer.name)}`,
-          cancelPath: "/collective-ai-build-studio?checkout=cancelled",
+          cancelPath: "/build-studio?checkout=cancelled",
         },
       });
       if (error) throw error;
@@ -144,36 +144,39 @@ const CollectiveAIBuildStudio = () => {
     navigate(`/start-a-build?offer=${encodeURIComponent(offer.key)}`);
 
   const jsonLd = [
-    webPage("/collective-ai-build-studio", "Collective AI Build Studio — From Idea to Live in Days", "CollectionPage"),
+    webPage("/build-studio", "Collective AI Build Studio: From Idea to Live in Days", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
-        { name: "Collective AI Build Studio", path: "/collective-ai-build-studio" },
+        { name: "Collective AI Build Studio", path: "/build-studio" },
       ],
-      "/collective-ai-build-studio",
+      "/build-studio",
     ),
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      "@id": `${SITE_URL}/collective-ai-build-studio#service`,
+      "@id": `${SITE_URL}/build-studio#service`,
       name: "Collective AI Build Studio",
       description:
-        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. From $297 one-time to $14,997 custom builds, plus recurring care plans.",
+        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. Quick Wins from $297, care plans from $97/mo, and larger builds quoted after a scoping call.",
       provider: { "@id": ORG_ID },
       areaServed: "Global",
+      // Only instant-checkout offers publish a price. Apply-to-build offers are
+      // estimate bands scoped on a call, so they never emit an exact figure.
       offers: [...QUICK_WINS, ...CARE_PLANS, ...BUSINESS_BUILDS, ...CUSTOM_AI_APPS].map((o) => ({
         "@type": "Offer",
         name: o.name,
-        price: o.price.toFixed(2),
-        priceCurrency: "USD",
+        ...(o.estimate || !o.priceId
+          ? { description: `${o.priceDisplay} estimate. Final scope confirmed on a call.` }
+          : { price: o.price.toFixed(2), priceCurrency: "USD" }),
         availability: "https://schema.org/InStock",
-        url: `${SITE_URL}/collective-ai-build-studio`,
+        url: `${SITE_URL}/build-studio`,
       })),
     },
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "@id": `${SITE_URL}/collective-ai-build-studio#faq`,
+      "@id": `${SITE_URL}/build-studio#faq`,
       mainEntity: FAQS.map((f) => ({
         "@type": "Question",
         name: f.q,
@@ -185,8 +188,8 @@ const CollectiveAIBuildStudio = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Collective AI Build Studio — From Idea to Live in Days"
-        description="Custom AI builds delivered end-to-end by Coach Kay's Collective AI team. From idea to live AI system in days. Web apps, automations, agents, and more."
+        title="Collective AI Build Studio: From Idea to Live in Days"
+        description="Custom AI builds scoped by Coach Kay and delivered with Collective AI partners. From idea to live AI system in days. Web apps, automations, agents, and more."
         path="/build-studio"
         keywords={[
           "AI build studio",
@@ -194,7 +197,7 @@ const CollectiveAIBuildStudio = () => {
           "business automation development",
           "AI workflow implementation",
           "rapid MVP development with AI",
-          "Collective AI build team",
+          "Collective AI partner builds",
         ]}
         jsonLd={jsonLd}
       />
@@ -220,7 +223,7 @@ const CollectiveAIBuildStudio = () => {
       {/* HERO */}
       <section className="relative z-10 px-6 sm:px-10 pt-16 pb-12 max-w-5xl mx-auto text-center">
         <span className="font-mono-label text-primary tracking-[0.28em] text-xs">
-          COLLECTIVE AI BUILD STUDIO · LED BY COACH KAY
+          COLLECTIVE AI BUILD STUDIO · SCOPED BY COACH KAY
         </span>
         <h1
           className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
@@ -234,11 +237,12 @@ const CollectiveAIBuildStudio = () => {
           around it. Landing pages, dashboards, lead-gen tools, AI apps, and the care plans that keep them growing.
         </p>
         <p className="mt-4 text-xs text-muted-foreground/80">
-          Scoped by Coach Kay, delivered with{" "}
+          You contract with Focus Flow AI LLC for Coach Kay's work. Larger scopes bring in partners
+          from{" "}
           <Link to="/collective" className="text-primary hover:underline">
             Collective AI
-          </Link>{" "}
-          , an independent company founded by John Moyler. Contracted under Focus Flow AI LLC.
+          </Link>
+          , an independent company founded by John Moyler.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Button
