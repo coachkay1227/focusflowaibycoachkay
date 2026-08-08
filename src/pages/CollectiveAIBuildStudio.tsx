@@ -158,14 +158,17 @@ const CollectiveAIBuildStudio = () => {
       "@id": `${SITE_URL}/build-studio#service`,
       name: "Collective AI Build Studio",
       description:
-        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. From $297 one-time to $14,997 custom builds, plus recurring care plans.",
+        "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. Quick Wins from $297, care plans from $97/mo, and larger builds quoted after a scoping call.",
       provider: { "@id": ORG_ID },
       areaServed: "Global",
+      // Only instant-checkout offers publish a price. Apply-to-build offers are
+      // estimate bands scoped on a call, so they never emit an exact figure.
       offers: [...QUICK_WINS, ...CARE_PLANS, ...BUSINESS_BUILDS, ...CUSTOM_AI_APPS].map((o) => ({
         "@type": "Offer",
         name: o.name,
-        price: o.price.toFixed(2),
-        priceCurrency: "USD",
+        ...(o.estimate || !o.priceId
+          ? { description: `${o.priceDisplay} estimate. Final scope confirmed on a call.` }
+          : { price: o.price.toFixed(2), priceCurrency: "USD" }),
         availability: "https://schema.org/InStock",
         url: `${SITE_URL}/build-studio`,
       })),
