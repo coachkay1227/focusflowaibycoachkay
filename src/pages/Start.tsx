@@ -148,7 +148,7 @@ export default function Start() {
   const firstAction = report?.seven_day_plan?.[0] ?? null;
 
   return (
-    <div className="min-h-dvh bg-background px-5 py-12 sm:py-16">
+    <div className="min-h-dvh bg-background px-5 pt-28 pb-16 sm:pt-32">
       <SEOHead
         title="Start Here"
         description="Your results, your recommended next move, and one step to take now."
