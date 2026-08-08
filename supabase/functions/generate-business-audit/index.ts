@@ -337,6 +337,17 @@ serve(async (req) => {
     }
     if (!hasAccess) return json(403, { error: "Access denied" });
 
+    // Regeneration ceiling per audit owner (admins excluded so support work is
+    // never blocked).
+    if (!isAdminUser) {
+      const limit = await enforceRateLimit("generate-business-audit", req, {
+        userId: authedUserId,
+        client: supabase,
+        rule: { perHour: 5, perDay: 12 },
+      });
+      if (!limit.allowed) return rateLimitResponse(limit, cors);
+    }
+
     // Persist intake immediately so a generation failure doesn't lose data.
     const { error: intakeErr } = await supabase
       .from("business_audits")
