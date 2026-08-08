@@ -38,7 +38,7 @@ const FAQS = [
 
 export default function Collective() {
   const jsonLd = [
-    webPage("/collective", "Collective AI — The Team Behind Coach Kay's Builds", "AboutPage"),
+    webPage("/collective", "Collective AI: The Partner Network Behind Bigger Builds", "AboutPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -71,15 +71,15 @@ export default function Collective() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Collective AI — The Team Behind Coach Kay's Builds"
-        description="Collective AI is the multidisciplinary delivery team Coach Kay leads for enterprise builds, automation, and AI systems. Solo coaching by Kay. Heavy lifts delivered with the collective."
+        title="Collective AI: The Partner Network Behind Bigger Builds"
+        description="Collective AI is an independent company founded by John Moyler. Coach Kay is an AI partner there. Solo coaching stays with Coach Kay. Heavy build scopes bring in Collective partners."
         path="/collective"
         keywords={[
-          "Collective AI team",
+          "Collective AI partner network",
           "AI development team Columbus",
           "enterprise AI delivery",
           "automation engineering team",
-          "Coach Kay collective",
+          "Coach Kay AI partner",
           "AI systems implementation team",
         ]}
         jsonLd={jsonLd}
@@ -99,14 +99,14 @@ export default function Collective() {
       {/* HERO */}
       <section className="relative z-10 px-6 sm:px-10 pt-12 pb-10 max-w-5xl mx-auto text-center">
         <span className="font-mono-label text-primary tracking-[0.28em] text-xs">
-          THE COLLECTIVE · DELIVERY TEAM
+          COLLECTIVE AI · INDEPENDENT PARTNER NETWORK
         </span>
         <h1
           className="font-heading text-4xl sm:text-6xl font-light leading-tight mt-6"
           style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
         >
           Coach Kay isn't alone. <br />
-          <span className="text-primary italic">She builds with the Collective.</span>
+          <span className="text-primary italic">She builds with Collective AI partners.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           For 1:1 coaching, you get Kay. For heavy builds, automations, and enterprise scopes,
