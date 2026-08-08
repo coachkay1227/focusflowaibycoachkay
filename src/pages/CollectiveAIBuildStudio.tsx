@@ -1,11 +1,10 @@
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Zap, Cog, Crown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
-import BuildApplicationDialog from "@/components/build-studio/BuildApplicationDialog";
 import OfferCard from "@/components/offers/OfferCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -93,11 +92,18 @@ const CollectiveAIBuildStudio = () => {
 
   const [activeTier, setActiveTier] = useState<BuildStudioTierId>("quick_wins");
   const [busyPriceId, setBusyPriceId] = useState<string | null>(null);
-  const [appDialog, setAppDialog] = useState<{ open: boolean; projectType: string; tier: string }>({
-    open: false,
-    projectType: "",
-    tier: "",
-  });
+  const [params] = useSearchParams();
+
+  // A printed QR code or shared link can point at one exact offer. Open its
+  // tier and scroll it into view so the scan lands on the right card.
+  useEffect(() => {
+    const key = params.get("offer");
+    if (!key) return;
+    const tier = BUILD_STUDIO_TIERS.find((t) => t.offers.some((o) => o.key === key));
+    if (!tier) return;
+    setActiveTier(tier.id);
+    document.getElementById("what-we-build")?.scrollIntoView({ behavior: "smooth" });
+  }, [params]);
 
   const activeOffers: readonly BuildTierOffer[] = useMemo(() => {
     return BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.offers ?? [];
@@ -132,8 +138,10 @@ const CollectiveAIBuildStudio = () => {
     }
   };
 
-  const openApp = (offer: BuildTierOffer, tierLabel: string) =>
-    setAppDialog({ open: true, projectType: offer.name, tier: tierLabel });
+  // Every non-checkout offer routes through the single guided inquiry, so a
+  // visitor never has to guess which of several forms is the right one.
+  const openApp = (offer: BuildTierOffer) =>
+    navigate(`/start-a-build?offer=${encodeURIComponent(offer.key)}`);
 
   const jsonLd = [
     webPage("/collective-ai-build-studio", "Collective AI Build Studio — From Idea to Live in Days", "CollectionPage"),
@@ -244,9 +252,7 @@ const CollectiveAIBuildStudio = () => {
             size="lg"
             variant="outline"
             className="border-primary/40 text-primary hover:bg-primary/10 px-8"
-            onClick={() =>
-              setAppDialog({ open: true, projectType: "Not sure yet, let's scope it", tier: "Discovery" })
-            }
+            onClick={() => navigate("/start-a-build")}
           >
             Book a scoping call
           </Button>
@@ -304,7 +310,6 @@ const CollectiveAIBuildStudio = () => {
         {/* Offer grid */}
         <div className={`${getSymmetricGridClass(activeOffers.length)} gap-5 items-stretch`}>
           {activeOffers.map((o) => {
-            const tierLabel = BUILD_STUDIO_TIERS.find((t) => t.id === activeTier)?.label ?? "";
             const isCheckout = Boolean(o.priceId);
             const busy = isCheckout && busyPriceId === o.priceId;
             return (
@@ -320,7 +325,7 @@ const CollectiveAIBuildStudio = () => {
                 primaryCta={
                   isCheckout
                     ? { label: busy ? "Starting…" : "Buy now", onClick: () => startCheckout(o) }
-                    : { label: "Apply to build", onClick: () => openApp(o, tierLabel) }
+                    : { label: "Get a scope and estimate", onClick: () => openApp(o) }
                 }
               />
             );
@@ -388,11 +393,9 @@ const CollectiveAIBuildStudio = () => {
               size="lg"
               variant="outline"
               className="border-primary/40 text-primary hover:bg-primary/10 px-8"
-              onClick={() =>
-                setAppDialog({ open: true, projectType: "Not sure yet, let's scope it", tier: "Discovery" })
-              }
+              onClick={() => navigate("/start-a-build")}
             >
-              Apply for a full build
+              Get a scope and estimate
             </Button>
           </div>
           <p className="mt-8 text-xs text-muted-foreground/80 max-w-xl mx-auto leading-relaxed">
@@ -406,12 +409,6 @@ const CollectiveAIBuildStudio = () => {
         </div>
       </section>
 
-      <BuildApplicationDialog
-        open={appDialog.open}
-        onOpenChange={(open) => setAppDialog((s) => ({ ...s, open }))}
-        projectType={appDialog.projectType}
-        tier={appDialog.tier}
-      />
     </div>
   );
 };

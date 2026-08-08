@@ -14,6 +14,7 @@
 - [Animation Constraints](mem://style/animation-constraints) — Pure CSS rules for animations
 - [Architecture](mem://tech/architecture) — Overview of hybrid storage and AI model usage
 - [Clarity Session](mem://features/clarity-session) — One-question UI and AI insight generation
+- [Shareable Offer Links](mem://features/shareable-offer-links) — Permanent QR slug registry, /admin/qr-codes, single /start-a-build inquiry
 - [Decision Mode](mem://features/decision-mode) — Feature detecting 'stuck' language to present clear options
 - [Clarity Score](mem://features/clarity-score) — 0-100 progression system and user levels
 - [Enrollment System](mem://features/enrollment-system) — Dashboard tracking and error handling rules

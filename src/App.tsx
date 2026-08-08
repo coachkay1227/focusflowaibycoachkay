@@ -66,6 +66,8 @@ const AdminPaymentLinks = lazy(() => import("./pages/admin/AdminPaymentLinks.tsx
 const AdminFulfillmentTest = lazy(() => import("./pages/admin/AdminFulfillmentTest.tsx"));
 const AdminNurture = lazy(() => import("./pages/admin/AdminNurture.tsx"));
 const AdminNurtureQueue = lazy(() => import("./pages/admin/AdminNurtureQueue.tsx"));
+const AdminQrCodes = lazy(() => import("./pages/admin/AdminQrCodes.tsx"));
+const StartABuild = lazy(() => import("./pages/StartABuild.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
@@ -137,6 +139,7 @@ const App = () => (
             <Route path="/rent-an-agent" element={<Suspense fallback={<PageSkeleton />}><RentAnAgent /></Suspense>} />
             <Route path="/advisory" element={<Suspense fallback={<PageSkeleton />}><Advisory /></Suspense>} />
             <Route path="/build-studio" element={<Suspense fallback={<PageSkeleton />}><CollectiveAIBuildStudio /></Suspense>} />
+            <Route path="/start-a-build" element={<Suspense fallback={<PageSkeleton />}><StartABuild /></Suspense>} />
             <Route path="/truth" element={<Suspense fallback={<PageSkeleton />}><TruthAboutAI /></Suspense>} />
             <Route path="/collective" element={<Suspense fallback={<PageSkeleton />}><Collective /></Suspense>} />
             <Route path="/pause-hub" element={<Suspense fallback={<PageSkeleton />}><PauseHub /></Suspense>} />
@@ -163,6 +166,7 @@ const App = () => (
             <Route path="/admin/booking-links" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminBookingLinks /></Suspense></ProtectedRoute>} />
             <Route path="/admin/audit-log" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAuditLog /></Suspense></ProtectedRoute>} />
             <Route path="/admin/payment-links" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminPaymentLinks /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/qr-codes" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminQrCodes /></Suspense></ProtectedRoute>} />
             <Route path="/admin/fulfillment-test" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminFulfillmentTest /></Suspense></ProtectedRoute>} />
             <Route path="/admin/nurture" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurture /></Suspense></ProtectedRoute>} />
             <Route path="/admin/nurture-queue" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurtureQueue /></Suspense></ProtectedRoute>} />
