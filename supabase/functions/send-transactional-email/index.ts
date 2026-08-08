@@ -206,7 +206,6 @@ Deno.serve(async (req: Request) => {
     await supabase.from('email_send_log').insert({
       message_id: messageId,
     metadata: logMetadata,
-      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -241,7 +240,6 @@ Deno.serve(async (req: Request) => {
     await supabase.from('email_send_log').insert({
       message_id: messageId,
     metadata: logMetadata,
-      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
@@ -276,8 +274,6 @@ Deno.serve(async (req: Request) => {
       await supabase.from('email_send_log').insert({
         message_id: messageId,
     metadata: logMetadata,
-        metadata: logMetadata,
-      metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -308,8 +304,6 @@ Deno.serve(async (req: Request) => {
       await supabase.from('email_send_log').insert({
         message_id: messageId,
     metadata: logMetadata,
-        metadata: logMetadata,
-      metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -333,7 +327,6 @@ Deno.serve(async (req: Request) => {
     await supabase.from('email_send_log').insert({
       message_id: messageId,
     metadata: logMetadata,
-      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -407,8 +400,6 @@ Deno.serve(async (req: Request) => {
       await supabase.from('email_send_log').insert({
         message_id: messageId,
     metadata: logMetadata,
-        metadata: logMetadata,
-      metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -424,7 +415,6 @@ Deno.serve(async (req: Request) => {
     await supabase.from('email_send_log').insert({
       message_id: messageId,
     metadata: logMetadata,
-      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'sent',
@@ -446,7 +436,6 @@ Deno.serve(async (req: Request) => {
     await supabase.from('email_send_log').insert({
       message_id: messageId,
     metadata: logMetadata,
-      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
