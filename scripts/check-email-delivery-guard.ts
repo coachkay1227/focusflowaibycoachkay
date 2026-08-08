@@ -19,6 +19,8 @@ import { join } from "node:path";
 const ROOT = process.cwd();
 const SHARED = "supabase/functions/_shared/reserved-recipients.ts";
 const SEND_FN = "supabase/functions/send-transactional-email/index.ts";
+const RETRY_POLICY = "supabase/functions/_shared/email-retry.ts";
+const RETRY_FN = "supabase/functions/retry-failed-emails/index.ts";
 
 const errors: string[] = [];
 const read = (rel: string) => readFileSync(join(ROOT, rel), "utf8");
@@ -82,6 +84,53 @@ if (!existsSync(join(ROOT, SEND_FN))) {
     errors.push(
       `${SEND_FN}: provider failures must record failure_class so a bad address is not mistaken for an outage.`,
     );
+  }
+
+  // 3. Every failed retryable send must be queued for automatic recovery.
+  if (!src.includes("_shared/email-retry.ts")) {
+    errors.push(`${SEND_FN} must import the retry policy from ${RETRY_POLICY}.`);
+  }
+  const failBlocks = src.split("status: 'failed'").slice(1);
+  const providerFailBlocks = failBlocks.filter((b) => b.includes("enqueueDeliveryRetry"));
+  if (!src.includes("enqueueDeliveryRetry(")) {
+    errors.push(
+      `${SEND_FN} no longer queues failed sends for retry. A provider outage would silently drop reports.`,
+    );
+  } else if (providerFailBlocks.length < 2) {
+    errors.push(
+      `${SEND_FN}: both provider failure paths (non-OK response and thrown exception) must call enqueueDeliveryRetry.`,
+    );
+  }
+}
+
+// 4. The retry policy and worker must exist, and the cap must stay finite.
+if (!existsSync(join(ROOT, RETRY_POLICY))) {
+  errors.push(`${RETRY_POLICY} is missing. The backoff schedule and cap live there and are unit tested.`);
+} else {
+  const policy = read(RETRY_POLICY);
+  if (/from\s+["'](npm:|https:)/.test(policy)) {
+    errors.push(`${RETRY_POLICY} must not use npm:/https: imports - Vitest imports it directly.`);
+  }
+  if (!/MAX_RETRY_ATTEMPTS/.test(policy) || !/RETRY_BACKOFF_MS/.test(policy)) {
+    errors.push(`${RETRY_POLICY} must export RETRY_BACKOFF_MS and MAX_RETRY_ATTEMPTS.`);
+  }
+}
+
+if (!existsSync(join(ROOT, RETRY_FN))) {
+  errors.push(`${RETRY_FN} is missing. Nothing would ever drain email_delivery_retries.`);
+} else {
+  const worker = read(RETRY_FN);
+  if (!worker.includes("nextRetryAt")) {
+    errors.push(`${RETRY_FN} must use the shared backoff schedule, not its own timings.`);
+  }
+  if (!worker.includes('"exhausted"') && !worker.includes("'exhausted'")) {
+    errors.push(`${RETRY_FN} must mark rows exhausted at the cap instead of retrying forever.`);
+  }
+  if (!worker.includes("suppressed_emails")) {
+    errors.push(`${RETRY_FN} must re-check suppression before each retry send.`);
+  }
+  if (!worker.includes("email_delivery_retries")) {
+    errors.push(`${RETRY_FN} must authorize callers with a probe against email_delivery_retries.`);
   }
 }
 
