@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
-import BuildApplicationDialog from "@/components/build-studio/BuildApplicationDialog";
 import OfferCard from "@/components/offers/OfferCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
