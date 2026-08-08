@@ -53,7 +53,7 @@ const STATIC_OFFERS: ShareableOffer[] = [
   { slug: "challenges", label: "Challenges", group: "Programs", path: "/challenges", directPurchase: false },
 
   // Positioning.
-  { slug: "ai_task_force", label: "AI Task Force", group: "Positioning", path: "/ai-task-force", directPurchase: false },
+  { slug: "ai_task_force", label: "The Collective (AI task force)", group: "Positioning", path: "/collective", directPurchase: false },
   { slug: "start_a_build", label: "Start a build (inquiry)", group: "Positioning", path: "/start-a-build", directPurchase: false },
 ];
 
