@@ -150,3 +150,51 @@ Verified: three settled audit purchases with reports, the server-side success ve
 Assumed until a real purchase exists: tier granting, subscription lifecycle, and the four unexercised fulfilment families.
 
 Ready for Test 4.
+
+---
+
+# Test 4 Findings: Branded Templates, Sender Domain, Triggers, Lifecycle Journeys, Queues, Consent, Logs, Alerts
+
+Read-only. Evidence came from the live domain status, the send log, the nurture queue, subscriber and consent tables, and a trace of the webhook code against what the log actually shows.
+
+## Verified end-to-end (backend evidence)
+
+- The sender domain is real and verified. Mail sends from your own subdomain on your own domain, delegated to Lovable nameservers, and project email is enabled. Auth emails are on.
+- Delivery is genuinely happening for the audit journey. The log shows a matching sent row for every real recipient across intake confirmation, purchase confirmation, report ready, the clarity code result, the newsletter welcome, and the weekly draft. Sending works, and the branded templates render and deliver.
+- Failures are honestly recorded with the provider's own reason. The five failed rows are all the provider rejecting example.com test addresses, and the three dead-lettered rows are from a period when project email was switched off. Nothing is silently dropped.
+- Suppression and consent plumbing exists and is clean: zero suppressed addresses, nine unsubscribe tokens issued, five newsletter subscribers, six newsletter issues.
+- The send endpoint is server-only. It refuses any caller that is not the service role, so no browser can trigger a branded email.
+
+## Broken
+
+- The immediate post-purchase next-steps email has never sent. Zero rows exist in the send log for that template, across all three settled purchases, even though the template is registered and the send is wired into the webhook. This is the message that hands the buyer their booking link and first-challenge timeline, and no buyer has ever received it. Two hypotheses, both testable: the send is fired without being awaited, so the worker shuts down when the webhook returns its response and the call never completes; or the internal invoke is being rejected and the failure is swallowed by the attached catch, which only logs a warning. The zero-row evidence is consistent with either.
+- Worse, the admin audit trail records `next_steps_email_sent: true` unconditionally, at the moment the send is fired, not when it succeeds. So the admin record asserts an email was sent that the send log proves was never sent. This is the exact pattern of an interface claiming success before the backend is complete, and it is on the admin side, which is where you would go to check.
+
+## Functional with gaps
+
+- Lifecycle enrollment is inconsistent. Three audits were purchased. Only one nurture row exists in the whole queue, step one, already sent. The enrollment code sits on the branch that runs when the webhook creates a brand new audit row, so a buyer who filled in the intake form first and paid second updates an existing row and is never enrolled. Two of your three buyers got no day one, day three, or day seven follow-up.
+- Nothing alerts you. Failed sends, dead-lettered mail, missing enrollments, and the never-sent next-steps email all sit quietly in tables. The only way any of this surfaces is if someone opens an admin screen and reads it. There is a webhook failure alert template in the registry, but no evidence in the log that an alert has ever been sent.
+
+## Partial
+
+- Auth emails are enabled and configured, but zero auth rows exist in the send log. Signup, reset, magic link, and email change have no delivery evidence at all, and two accounts sit unconfirmed. Configured is not the same as proven.
+- Marketing lane is half-built. Subscribers, issues, welcome mail, and a draft flow all work, but no issue has been recorded as sent to the list, so the actual broadcast path is unexercised.
+
+## Current user impact
+
+A buyer today gets their confirmation and their report. They do not get the next-steps email, and unless they happened to be the one buyer created on the insert path, they get no follow-up sequence at all. From the buyer's side it looks like the relationship stops the moment the report lands. From your side, the admin trail says the next-steps email went out.
+
+## Exact tests required
+
+1. Run one full-discount purchase and then read the send log for the next-steps template. Expected: a pending row followed by a sent row. If nothing appears, the send is not surviving the webhook response, which identifies the failing boundary precisely.
+2. Run one purchase where the intake form was filled in first, then check whether three nurture rows appear. This proves or disproves the insert-only enrollment hypothesis.
+3. Trigger a password reset and a new signup and confirm auth rows appear in the log and mail lands in a real inbox.
+4. Force one failure with a real-looking address and confirm it is visible and re-sendable from the admin screen without touching code.
+5. Send one newsletter issue to a small real list and confirm sent counts, suppression handling, and the unsubscribe link resolving to a real page.
+
+## Verified facts versus assumptions
+
+Verified: domain verified and enabled, real deliveries for six templates, provider-attributed failure reasons, zero suppressions, one nurture row total, zero next-steps rows, zero auth rows, service-role-only send endpoint, admin metadata asserting the next-steps send unconditionally.
+Assumed until tested: the specific reason the next-steps send never completes, and that the insert-only branch is what starved the other two buyers of follow-up.
+
+Ready for Test 5.
