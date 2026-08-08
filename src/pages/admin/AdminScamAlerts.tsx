@@ -67,6 +67,12 @@ export default function AdminScamAlerts() {
   const [ingesting, setIngesting] = useState(false);
   const drafts = alerts.filter((a) => !a.is_published);
   const live = alerts.filter((a) => a.is_published);
+  // Newest draft's creation time doubles as "when did the worker last run",
+  // so the queue can prove the job is firing without opening logs.
+  const lastIngestion = drafts.reduce<string | null>(
+    (newest, a) => (!newest || a.created_at > newest ? a.created_at : newest),
+    null,
+  );
 
   const load = async () => {
     const { data, error } = await supabase
@@ -366,7 +372,14 @@ export default function AdminScamAlerts() {
                   </span>
                 </h2>
                 <p className="text-xs text-muted-foreground mb-3">
-                  Not visible to anyone until you publish. Check the source before you do.
+                  Not visible to anyone until you publish. Open one to read the whole thing, check
+                  the source, then publish.
+                  {lastIngestion && (
+                    <>
+                      {" "}
+                      Last pull: {new Date(lastIngestion).toLocaleString()}.
+                    </>
+                  )}
                 </p>
                 <div className="space-y-3">
                   {drafts.map((a) => (
