@@ -210,7 +210,7 @@ const Index = () => {
                 src={coachKayPortrait}
                 alt="Coach Kay — Master Certified Life Coach"
                 loading="eager"
-                fetchPriority="high"
+                {...{ fetchpriority: "high" }}
                 decoding="async"
                 width={1200}
                 height={1500}
