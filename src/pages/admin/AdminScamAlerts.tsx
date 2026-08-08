@@ -218,11 +218,22 @@ export default function AdminScamAlerts() {
             </p>
           </div>
           {!editing && (
-            <Button onClick={startNew} className="gap-2">
-              <Plus className="h-4 w-4" /> New alert
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={runIngestion} disabled={ingesting} className="gap-2">
+                <RefreshCw className={`h-4 w-4 ${ingesting ? "animate-spin" : ""}`} />
+                {ingesting ? "Pulling feeds..." : "Run ingestion now"}
+              </Button>
+              <Button onClick={startNew} className="gap-2">
+                <Plus className="h-4 w-4" /> New alert
+              </Button>
+            </div>
           )}
         </div>
+
+        <p className="text-xs text-muted-foreground -mt-3 mb-6">
+          Alerts are drafted automatically each week from public FTC and CISA feeds. Drafts stay
+          private until you publish them.
+        </p>
 
         {editing && (
           <div className="rounded-xl border border-border bg-card p-6 mb-8 space-y-4">
