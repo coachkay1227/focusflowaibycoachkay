@@ -27,7 +27,19 @@ interface VerifyResult {
   amount_subtotal?: number | null;
   customer_email?: string | null;
   mode?: string;
+  /** Which fulfillment table holds the order, from the backend. */
+  fulfilled_in?: string | null;
 }
+
+/** Human label for a purchase when no package name or tier is available.
+ *  Derived from the fulfillment table the backend actually found. */
+const FULFILLMENT_LABELS: Record<string, string> = {
+  business_audits: "AI Business Audit",
+  one_time_orders: "One-Time Purchase",
+  agent_orders: "Agent Build",
+  book_orders: "Book Package",
+  autism_orders: "Social Story Package",
+};
 
 export default function OrderSuccess() {
   const [params] = useSearchParams();
