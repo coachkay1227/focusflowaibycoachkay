@@ -66,6 +66,8 @@ const AdminPaymentLinks = lazy(() => import("./pages/admin/AdminPaymentLinks.tsx
 const AdminFulfillmentTest = lazy(() => import("./pages/admin/AdminFulfillmentTest.tsx"));
 const AdminNurture = lazy(() => import("./pages/admin/AdminNurture.tsx"));
 const AdminNurtureQueue = lazy(() => import("./pages/admin/AdminNurtureQueue.tsx"));
+const AdminQrCodes = lazy(() => import("./pages/admin/AdminQrCodes.tsx"));
+const StartABuild = lazy(() => import("./pages/StartABuild.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
