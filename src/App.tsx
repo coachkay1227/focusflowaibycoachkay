@@ -64,6 +64,7 @@ const AdminBookingLinks = lazy(() => import("./pages/admin/AdminBookingLinks.tsx
 const AdminAuditLog = lazy(() => import("./pages/admin/AdminAuditLog.tsx"));
 const AdminPaymentLinks = lazy(() => import("./pages/admin/AdminPaymentLinks.tsx"));
 const AdminFulfillmentTest = lazy(() => import("./pages/admin/AdminFulfillmentTest.tsx"));
+const AdminNurture = lazy(() => import("./pages/admin/AdminNurture.tsx"));
 const AuditIntake = lazy(() => import("./pages/AuditIntake.tsx"));
 const AuditReport = lazy(() => import("./pages/AuditReport.tsx"));
 const AuditLanding = lazy(() => import("./pages/AuditLanding.tsx"));
@@ -162,6 +163,7 @@ const App = () => (
             <Route path="/admin/audit-log" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminAuditLog /></Suspense></ProtectedRoute>} />
             <Route path="/admin/payment-links" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminPaymentLinks /></Suspense></ProtectedRoute>} />
             <Route path="/admin/fulfillment-test" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminFulfillmentTest /></Suspense></ProtectedRoute>} />
+            <Route path="/admin/nurture" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><AdminNurture /></Suspense></ProtectedRoute>} />
             <Route path="/email-preview" element={<ProtectedRoute requireAdmin><Suspense fallback={<PageSkeleton />}><EmailPreview /></Suspense></ProtectedRoute>} />
             <Route path="/sitemap" element={<Suspense fallback={<PageSkeleton />}><Sitemap /></Suspense>} />
             <Route path="/faq" element={<Suspense fallback={<PageSkeleton />}><Faq /></Suspense>} />
