@@ -34,7 +34,7 @@ const Blog = () => {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs uppercase tracking-[0.2em] mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              The FocusFlow Journal
+              The Coach Kay Elevates Journal
             </div>
             <h1 className="font-serif text-5xl md:text-7xl text-cream leading-[1.05] mb-6">
               AI systems for real{" "}

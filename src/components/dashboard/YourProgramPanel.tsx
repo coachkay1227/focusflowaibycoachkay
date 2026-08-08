@@ -23,7 +23,7 @@ function buildPrograms(bookingUrl: string): Partial<Record<AccessTier, ProgramCo
     includes: [
       "Daily clarity session + prompt (30 days)",
       "Access to all foundation modules in the F.O.C.U.S. catalog",
-      "FocusFlow Elevation Hub community access",
+      "Focus Flow Elevation Hub community access",
       "Email check-ins on days 1, 7, 14, and 30",
     ],
     primary: { label: "Join the community", href: COMMUNITY_URL, external: true },
@@ -37,7 +37,7 @@ function buildPrograms(bookingUrl: string): Partial<Record<AccessTier, ProgramCo
       "Three 60-minute 1:1 sessions with Coach Kay",
       "Full access to F.O.C.U.S. modules + daily clarity sessions",
       "Weekly accountability check-ins",
-      "FocusFlow Elevation Hub community access",
+      "Focus Flow Elevation Hub community access",
     ],
     primary: { label: "Book your 1:1 session", href: bookingUrl, external: true },
   },

@@ -66,9 +66,9 @@ export default function AiToolsDirectory() {
         <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
-        <div className="font-heading text-lg font-light" role="img" aria-label="FocusFlow AI">
-          <span aria-hidden className="text-primary font-medium">Focus</span>
-          <span aria-hidden className="text-foreground font-light">Flow AI</span>
+        <div className="font-heading text-lg font-light" role="img" aria-label="Coach Kay Elevates">
+          <span aria-hidden className="text-primary font-medium">Coach Kay</span>
+          <span aria-hidden className="text-foreground font-light"> Elevates</span>
         </div>
         <MobileNav />
       </header>
