@@ -65,16 +65,12 @@ export const NextStepsPanel = ({
     : "No charge, no pitch. Bring the one thing you're stuck on.";
 
   const track = (action: "book_call" | "start_challenge") => {
-    void trackEvent(
-      "post_purchase_next_step",
-      {
-        action,
-        session_id: sessionId,
-        product_name: productName,
-        call_type: wantsStrategyCall ? "paid_strategy" : "free_clarity",
-      },
-      "conversion",
-    );
+    void trackEvent("post_purchase_next_step", {
+      action,
+      session_id: sessionId,
+      product_name: productName,
+      call_type: wantsStrategyCall ? "paid_strategy" : "free_clarity",
+    });
   };
 
   const confirmed: { label: string; value: string }[] = [];
