@@ -101,6 +101,30 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_call_events: {
+        Row: {
+          authenticated: boolean
+          created_at: string
+          function_name: string
+          id: string
+          identity_key: string
+        }
+        Insert: {
+          authenticated?: boolean
+          created_at?: string
+          function_name: string
+          id?: string
+          identity_key: string
+        }
+        Update: {
+          authenticated?: boolean
+          created_at?: string
+          function_name?: string
+          id?: string
+          identity_key?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
