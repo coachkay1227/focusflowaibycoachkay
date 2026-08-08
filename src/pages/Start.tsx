@@ -183,7 +183,7 @@ export default function Start() {
     <div className="min-h-dvh bg-background px-5 pt-28 pb-16 sm:pt-32">
       <SEOHead
         title="Start Here: Your Next AI Move"
-        description="Find your starting point with FocusFlow AI. See your recommended next move and take one clear step today."
+        description="Find your starting point with Coach Kay Elevates. See your recommended next move and take one clear step today."
         path="/start"
       />
 
