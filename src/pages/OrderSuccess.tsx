@@ -162,7 +162,7 @@ export default function OrderSuccess() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Button asChild variant="outline" className="border-primary/40 text-primary hover:bg-primary/10">
-              <Link to="/pricing">Back to Pricing</Link>
+              <Link to="/modules">Back to Offers</Link>
             </Button>
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
               <a href="mailto:hello@coachkayelevates.org">Contact Coach Kay</a>
