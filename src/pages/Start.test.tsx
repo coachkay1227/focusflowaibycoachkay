@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn(async () => {}) }));
 
@@ -67,9 +68,11 @@ const AUDIT_WITH_REPORT = {
 
 const renderStart = () =>
   render(
-    <MemoryRouter>
-      <Start />
-    </MemoryRouter>,
+    <HelmetProvider>
+      <MemoryRouter>
+        <Start />
+      </MemoryRouter>
+    </HelmetProvider>,
   );
 
 const next = async () => {
