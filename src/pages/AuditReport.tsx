@@ -250,8 +250,8 @@ const AuditReport = () => {
                     <span className="font-heading text-foreground">{pillarLabels[k]}</span>
                     <span className="text-primary">{d.score}/10</span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-[#0D1B2A] overflow-hidden">
-                    <div className="h-full bg-[#C9A84C]" style={{ width: `${pct}%` }} />
+                  <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">{d.note}</p>
                 </div>
@@ -308,7 +308,7 @@ const AuditReport = () => {
                   <div className="font-heading">{p.use_case}</div>
                   <button onClick={() => copyPrompt(p.prompt)} className="text-xs text-primary hover:underline no-print">Copy</button>
                 </div>
-                <pre className="mt-2 whitespace-pre-wrap text-xs text-foreground/90 font-mono bg-[#0D1B2A]/40 rounded p-3">{p.prompt}</pre>
+                <pre className="mt-2 whitespace-pre-wrap text-xs text-foreground/90 font-mono bg-secondary/40 rounded p-3">{p.prompt}</pre>
               </div>
             ))}
           </div>

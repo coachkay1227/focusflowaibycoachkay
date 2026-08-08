@@ -184,7 +184,7 @@ export default function ClaudeAcceleratorPage() {
       {/* WHAT USERS SEE */}
       {/* ═════════════════════════════════════════════════ */}
 
-      <main className="min-h-screen bg-black text-white">
+      <main className="min-h-screen bg-background text-foreground">
         
         {/* ─── HERO SECTION ─── */}
         <section className="relative py-20 px-6 text-center">
@@ -332,7 +332,7 @@ export default function ClaudeAcceleratorPage() {
             </p>
             <a 
               href="https://TheClaudeAIBusinessAccelerator.eventbrite.com"
-              className="inline-block px-10 py-5 bg-white text-black rounded-lg text-xl font-bold hover:scale-105 transition-transform"
+              className="inline-block px-10 py-5 bg-primary text-primary-foreground rounded-lg text-xl font-bold hover:scale-105 transition-transform"
             >
               Register Free on Eventbrite →
             </a>

@@ -137,7 +137,7 @@ const ExitIntentPopup = () => {
       <div
         className="relative w-full max-w-md rounded-xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
         style={{
-          background: "#111827",
+          background: "hsl(var(--card))",
           border: "1.5px solid hsl(var(--primary) / 0.6)",
         }}
       >
