@@ -131,6 +131,8 @@ serve(async (req) => {
     const sig = req.headers.get("stripe-signature");
     const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
 
+    await assertVerifierHealthy(stripe, supabaseClient, log);
+
     let event: Stripe.Event;
 
     if (!webhookSecret) {
