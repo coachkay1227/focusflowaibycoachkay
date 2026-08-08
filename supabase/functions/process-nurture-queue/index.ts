@@ -94,7 +94,7 @@ Deno.serve(async (req) => {
 
     const touches = (due ?? []) as TouchRow[];
     summary.claimed = touches.length;
-    if (touches.length === 0) return json({ ok: true, ...summary });
+    if (touches.length === 0) return json({ ok: true, ...summary }, 200, cors);
 
     const bookingLinks = await getBookingLinks(supabase);
 
@@ -245,9 +245,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    return json({ ok: true, ...summary });
+    return json({ ok: true, ...summary }, 200, cors);
   } catch (err) {
     console.error("process-nurture-queue error", err);
-    return json({ error: "Unable to process nurture queue" }, 500);
+    return json({ error: "Unable to process nurture queue" }, 500, cors);
   }
 });
