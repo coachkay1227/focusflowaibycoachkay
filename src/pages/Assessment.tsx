@@ -431,9 +431,13 @@ const Assessment = () => {
       }
     } catch (err) {
       console.error("mac-elaborate failed", err);
+      const { message, rateLimited } = await readFunctionError(
+        err,
+        "Please try again in a moment.",
+      );
       toast({
-        title: "Couldn't generate your report",
-        description: "Please try again in a moment.",
+        title: rateLimited ? "Take a breath" : "Couldn't generate your report",
+        description: message,
         variant: "destructive",
       });
     } finally {
