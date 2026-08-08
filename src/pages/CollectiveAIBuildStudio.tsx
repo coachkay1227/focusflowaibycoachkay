@@ -120,7 +120,7 @@ const CollectiveAIBuildStudio = () => {
         body: {
           priceId: offer.priceId,
           successPath: `/order-success?tier=${encodeURIComponent(offer.name)}`,
-          cancelPath: "/collective-ai-build-studio?checkout=cancelled",
+          cancelPath: "/build-studio?checkout=cancelled",
         },
       });
       if (error) throw error;
@@ -144,18 +144,18 @@ const CollectiveAIBuildStudio = () => {
     navigate(`/start-a-build?offer=${encodeURIComponent(offer.key)}`);
 
   const jsonLd = [
-    webPage("/collective-ai-build-studio", "Collective AI Build Studio — From Idea to Live in Days", "CollectionPage"),
+    webPage("/build-studio", "Collective AI Build Studio: From Idea to Live in Days", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
-        { name: "Collective AI Build Studio", path: "/collective-ai-build-studio" },
+        { name: "Collective AI Build Studio", path: "/build-studio" },
       ],
-      "/collective-ai-build-studio",
+      "/build-studio",
     ),
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      "@id": `${SITE_URL}/collective-ai-build-studio#service`,
+      "@id": `${SITE_URL}/build-studio#service`,
       name: "Collective AI Build Studio",
       description:
         "AI-powered build studio. Landing pages, dashboards, lead-gen tools, and custom AI apps shipped in days, not months. From $297 one-time to $14,997 custom builds, plus recurring care plans.",
@@ -167,13 +167,13 @@ const CollectiveAIBuildStudio = () => {
         price: o.price.toFixed(2),
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
-        url: `${SITE_URL}/collective-ai-build-studio`,
+        url: `${SITE_URL}/build-studio`,
       })),
     },
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "@id": `${SITE_URL}/collective-ai-build-studio#faq`,
+      "@id": `${SITE_URL}/build-studio#faq`,
       mainEntity: FAQS.map((f) => ({
         "@type": "Question",
         name: f.q,
