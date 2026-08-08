@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
-import { Check, CalendarDays, Trophy, Mail, Unlock } from "lucide-react";
+import { ArrowRight, Check, CalendarDays, Trophy, Mail, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookingLinks } from "@/hooks/use-booking-links";
 import { trackEvent } from "@/lib/analytics";
-
-/** Purchases at or above this pre-discount amount get the paid 60-minute
- *  strategy call; smaller one-off buys (the $47 audit) get the free
- *  15-minute clarity call. */
-const STRATEGY_CALL_THRESHOLD_CENTS = 29700;
+import { wantsStrategyCall as earnsStrategyCall } from "@/lib/booking-thresholds";
 
 export interface NextStepsPanelProps {
   /** Headline shown above the confirmation. */
@@ -50,11 +46,7 @@ export const NextStepsPanel = ({
 }: NextStepsPanelProps) => {
   const { freeClarityUrl, paidStrategyUrl } = useBookingLinks();
 
-  const isSubscription = mode === "subscription";
-  const wantsStrategyCall =
-    isSubscription ||
-    (typeof amountSubtotalCents === "number" &&
-      amountSubtotalCents >= STRATEGY_CALL_THRESHOLD_CENTS);
+  const wantsStrategyCall = earnsStrategyCall({ amountSubtotalCents, mode });
 
   const bookingUrl = wantsStrategyCall ? paidStrategyUrl : freeClarityUrl;
   const bookingLabel = wantsStrategyCall
@@ -64,7 +56,7 @@ export const NextStepsPanel = ({
     ? "A separately booked paid session — pick a time that works for you."
     : "No charge, no pitch. Bring the one thing you're stuck on.";
 
-  const track = (action: "book_call" | "start_challenge") => {
+  const track = (action: "book_call" | "start_challenge" | "start_here") => {
     void trackEvent("post_purchase_next_step", {
       action,
       session_id: sessionId,
@@ -113,7 +105,24 @@ export const NextStepsPanel = ({
         </div>
       )}
 
-      <h2 className="font-heading text-2xl text-foreground mb-2">What to do now</h2>
+      <div className="rounded-lg border border-primary/40 bg-card/50 p-6 mb-10 text-left">
+        <h2 className="font-heading text-xl text-foreground mb-2">Start here</h2>
+        <p className="text-sm text-muted-foreground mb-5">
+          Two minutes: your results, the one offer that fits you next, and a single step to
+          take.
+        </p>
+        <Button
+          asChild
+          className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
+          onClick={() => track("start_here")}
+        >
+          <Link to="/start">
+            Show me my next step <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
+      </div>
+
+      <h2 className="font-heading text-2xl text-foreground mb-2">Or jump straight in</h2>
       <p className="text-muted-foreground text-sm mb-6">
         Pick either one. You don't have to wait for anyone.
       </p>

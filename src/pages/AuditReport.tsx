@@ -11,8 +11,7 @@ import { reportToPlaintext } from "@/lib/report-to-plaintext";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-
-const SKOOL_URL = "https://www.skool.com/focusflow-elevation-hub";
+import { offerRoute, SKOOL_URL } from "@/lib/offer-routes";
 
 type Diagnostic = { score: number; note: string };
 type AuditReport = {
@@ -29,50 +28,9 @@ type AuditReport = {
   all_pathways_note: string;
 };
 
-function ctaRoute(slug: string): { href: string; external?: boolean; opening_soon?: boolean; label?: string } {
-  switch (slug) {
-    // Door 1 — Transformation lane → /modules
-    case "transform_30_personal": return { href: "/modules" };
-    case "transform_30_business": return { href: "/modules" };
-    case "transform_30_ai": return { href: "/modules" };
-    case "transform_90_personal": return { href: "/modules" };
-    case "transform_90_business": return { href: "/modules" };
-    case "transform_90_ai": return { href: "/modules" };
-    case "transform_6mo_partnership": return { href: "/modules" };
-    // Door 2 — Rent-an-Agent
-    case "rent_agent_starter": return { href: "/rent-an-agent#starter" };
-    case "rent_agent_pro": return { href: "/rent-an-agent#pro" };
-    case "rent_agent_dreamteam": return { href: "/rent-an-agent#dreamteam" };
-    case "rent_agent_enterprise": return { href: "/rent-an-agent#enterprise" };
-    // Door 2 — Lead Engine (lives inside /rent-an-agent)
-    case "lead_engine_essentials": return { href: "/rent-an-agent#lead-engine-essentials" };
-    case "lead_engine_pro": return { href: "/rent-an-agent#lead-engine-pro" };
-    case "lead_engine_growth": return { href: "/rent-an-agent#lead-engine-growth" };
-    case "lead_engine_scale": return { href: "/rent-an-agent#lead-engine-scale" };
-    case "lead_engine_enterprise": return { href: "/rent-an-agent#lead-engine-enterprise" };
-    // Door 3 — Advisory
-    case "advisory_strategy_intensive": return { href: "/advisory#strategy-intensive" };
-    case "advisory_executive": return { href: "/advisory#executive" };
-    case "advisory_speaking": return { href: "/advisory#speaking" };
-    case "advisory_corporate": return { href: "/advisory#corporate" };
-    case "advisory_university": return { href: "/advisory#university" };
-    case "group_programs": return { href: "/advisory#group-programs" };
-    // Door 4 — Studio (books) lives in /store
-    case "studio_mini_story": return { href: "/store#mini-story" };
-    case "studio_storybook_pro": return { href: "/store#storybook-pro" };
-    case "studio_other": return { href: "/store" };
-    // Build Studio — Phase 3.5, opening soon (renders inline waitlist UI)
-    case "build_studio_landing":
-    case "build_studio_site":
-    case "build_studio_dashboard":
-      return { href: "#", opening_soon: true, label: "Opening soon, get notified" };
-    // Community / free
-    case "focus_flow_elevation_hub":
-      return { href: SKOOL_URL, external: true, label: "Forward Focus Elevation Community · Free Access" };
-    default:
-      return { href: "/store" };
-  }
-}
+// Destinations for the recommended offer live in one shared table so the
+// report and the /start onboarding flow can never disagree.
+const ctaRoute = offerRoute;
 
 const AuditReport = () => {
   const { id } = useParams<{ id: string }>();

@@ -17,6 +17,7 @@ import ClarityScoreCard from "@/components/ClarityScoreCard";
 import WeeklyInsights from "@/components/WeeklyInsights";
 import MobileNav from "@/components/MobileNav";
 import YourProgramPanel from "@/components/dashboard/YourProgramPanel";
+import { BuyerStartCard } from "@/components/BuyerStartCard";
 import CurriculumSection from "@/components/dashboard/CurriculumSection";
 import { useAccessLevel } from "@/hooks/use-access-level";
 import { useSubscription } from "@/hooks/use-subscription";
@@ -197,6 +198,9 @@ const Dashboard = () => {
           <div className="text-center py-20 text-muted-foreground">Loading your journey...</div>
         ) : (
           <div className="space-y-12">
+            {/* Buyer onboarding nudge — hides itself once completed or dismissed */}
+            <BuyerStartCard />
+
             {/* Your Program (only renders for reset_30 / transformation_90 tiers) */}
             {!tierLoading && (tier === "reset_30" || tier === "transformation_90") && (
               <AnimatedSection delay={25}>

@@ -16,6 +16,7 @@ const Community = lazy(() => import("./pages/Community.tsx"));
 const Auth = lazy(() => import("./pages/Auth.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
+const Start = lazy(() => import("./pages/Start.tsx"));
 const EmailPreview = lazy(() => import("./pages/EmailPreview.tsx"));
 const Sitemap = lazy(() => import("./pages/Sitemap.tsx"));
 const Faq = lazy(() => import("./pages/Faq.tsx"));
@@ -105,6 +106,7 @@ const App = () => (
             <Route path="/auth" element={<Suspense fallback={<PageSkeleton />}><Auth /></Suspense>} />
             <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
             <Route path="/onboarding" element={<Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense>} />
+            <Route path="/start" element={<Suspense fallback={<PageSkeleton />}><Start /></Suspense>} />
             <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Dashboard /></Suspense></ProtectedRoute>} />
             <Route path="/clarity" element={<Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense>} />
             <Route path="/clarity/:moduleId" element={<Suspense fallback={<PageSkeleton />}><ClaritySession /></Suspense>} />

@@ -1125,6 +1125,7 @@ export type Database = {
       }
       user_preferences: {
         Row: {
+          buyer_onboarding_completed_at: string | null
           coaching_style: string | null
           created_at: string | null
           id: string
@@ -1134,6 +1135,7 @@ export type Database = {
           selected_modules: string[] | null
         }
         Insert: {
+          buyer_onboarding_completed_at?: string | null
           coaching_style?: string | null
           created_at?: string | null
           id: string
@@ -1143,6 +1145,7 @@ export type Database = {
           selected_modules?: string[] | null
         }
         Update: {
+          buyer_onboarding_completed_at?: string | null
           coaching_style?: string | null
           created_at?: string | null
           id?: string
