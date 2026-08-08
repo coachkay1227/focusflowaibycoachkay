@@ -175,7 +175,7 @@ export default function AdminNurture() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Nurture Sequences | Admin" description="Preview, queue, and re-send audit nurture emails." noIndex />
+      <SEOHead title="Nurture Sequences | Admin" description="Preview, queue, and re-send audit nurture emails." path="/admin/nurture" noIndex />
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <AdminNav />
 
