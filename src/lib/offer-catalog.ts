@@ -57,7 +57,7 @@ export const RENT_AGENT_TIERS: RentAgentTier[] = [
     features: [
       "Up to 3 specialized agents",
       "Sales, support & content workflows",
-      "GHL / CRM connection",
+      "Connected to your CRM and pipeline",
       "Monthly strategy call",
       "Priority response queue",
     ],
@@ -89,11 +89,12 @@ export const RENT_AGENT_TIERS: RentAgentTier[] = [
   },
 ];
 
+/** Inquiry-only. MasterOffer.pdf governs: Enterprise carries NO public price.
+ *  Do not reintroduce a number here or in structured data. */
 export const RENT_AGENT_ENTERPRISE = {
   name: "Enterprise",
   tagline: "Custom enterprise support and dedicated routing.",
-  priceFrom: 1997,
-  priceDisplay: "from $1,997/mo (Founding) · $2,997/mo (Standard)",
+  priceDisplay: "By application",
   features: [
     "Custom-scoped agent fleet",
     "Dedicated success engineer",
@@ -103,32 +104,34 @@ export const RENT_AGENT_ENTERPRISE = {
   best_for: "Institutional buyers, workforce partners, and corporate ecosystems.",
 };
 
-/** AI Lead Engine tiers — inquiry-only until per-account GHL provisioning is automated. */
+/** AI Lead Engine — five tiers, all inquiry-only. Pricing per MasterOffer.pdf. */
 export const LEAD_ENGINE_TIERS = [
   {
+    key: "essentials",
     name: "Essentials",
     headline: "Stop guessing who to call. Get a weekly list of pre-qualified, intent-scored leads.",
-    price: "$697/mo intro · $997/mo standard",
+    price: "from $697/mo",
     setup: "+ $1,500 one-time setup",
     timeline: "Live in 7 days",
     bullets: [
       "Up to 500 enriched leads / month matched to your ICP",
       "Intent + fit scoring (0–100) with reasoning per lead",
       "Verified email + direct phone + LinkedIn URL per record",
-      "Weekly CSV drop into HubSpot, GHL, or Pipedrive",
+      "Weekly list drop straight into your CRM",
       "Monthly scoring tune-up call",
     ],
     best_for: "Founders doing outbound themselves who want a smarter list, not a bigger one.",
   },
   {
+    key: "pro",
     name: "Pro",
     headline: "Replace your outbound SDR with a system that sends, follows up, and books.",
-    price: "$1,997/mo",
+    price: "$1,497/mo",
     setup: "+ $2,500 one-time setup",
     timeline: "Live in 14 days",
     bullets: [
       "Everything in Essentials",
-      "Dedicated GHL sub-account, fully provisioned + branded",
+      "Your own fully provisioned outreach workspace, branded to you",
       "3-channel sequence: email + LinkedIn + SMS, 8-touch cadence",
       "AI-personalized first lines on every send",
       "Reply detection auto-routes meetings to your calendar",
@@ -138,9 +141,26 @@ export const LEAD_ENGINE_TIERS = [
     highlighted: true,
   },
   {
+    key: "growth",
+    name: "Growth",
+    headline: "Done-for-you follow-up and reporting, so no lead goes cold on your watch.",
+    price: "$2,497/mo",
+    setup: "+ $3,500 one-time setup",
+    timeline: "Live in 14 days",
+    bullets: [
+      "Everything in Pro",
+      "Done-for-you follow-up across every channel",
+      "Weekly pipeline reporting you can hand to your team",
+      "Nurture tracks for leads not ready yet",
+      "Bi-weekly review call",
+    ],
+    best_for: "Scaling agencies and teams who need follow-up handled, not just started.",
+  },
+  {
+    key: "scale",
     name: "Scale",
     headline: "Run a full outbound floor: voice, social, inbox, without headcount.",
-    price: "$3,497/mo",
+    price: "$2,997/mo",
     setup: "+ $5,000 one-time setup",
     timeline: "Live in 21 days",
     bullets: [
@@ -156,9 +176,11 @@ export const LEAD_ENGINE_TIERS = [
 ] as const;
 
 export const LEAD_ENGINE_ENTERPRISE = {
+  key: "enterprise",
   name: "Lead Engine — Enterprise",
   headline: "Custom-built outbound infrastructure for multi-brand, multi-region, or regulated GTM.",
-  priceDisplay: "By application",
+  priceDisplay: "$4,997/mo",
+  setup: "+ setup, scoped on the call",
   bullets: [
     "Custom-scoped agent fleet across channels",
     "Dedicated success engineer + solutions architect",
@@ -168,6 +190,158 @@ export const LEAD_ENGINE_ENTERPRISE = {
   ],
   best_for: "Multi-brand operators, agencies, and regulated industries.",
 } as const;
+
+// ============================================================
+// Standalone agent builds — the quick-win rung of the ladder.
+// Platform names never appear here; these are outcomes.
+// The AI Brain is the only one with open checkout: it is a
+// foundation, not a build, so there is nothing to scope first.
+// ============================================================
+
+export interface AgentBuildOffer {
+  key: string;
+  name: string;
+  tagline: string;
+  priceDisplay: string;
+  turnaround: string;
+  features: string[];
+  /** Set when the buyer can pay immediately. */
+  priceId?: string;
+  price?: number;
+  /** True when an intake must be completed before any money changes hands. */
+  intakeRequired?: boolean;
+  addOn?: string;
+  highlighted?: boolean;
+  required?: boolean;
+}
+
+export const AGENT_BUILDS: AgentBuildOffer[] = [
+  {
+    key: "ai_brain",
+    name: "AI Brain",
+    tagline: "The knowledge base every agent draws from. Your voice, offers, process, decisions.",
+    priceDisplay: "$197",
+    price: 197,
+    priceId: "price_1U2HOqBReje0oFcLyJ5Ymk5L",
+    turnaround: "Built in about 72 hours",
+    required: true,
+    features: [
+      "Your business structured so any agent can use it",
+      "Voice, offers, process, and decision rules captured",
+      "Reused by every agent you ever add",
+      "Required with any agent build",
+    ],
+    addOn: "Additional brains $97 each.",
+  },
+  {
+    key: "instant_agent",
+    name: "Instant Agent",
+    tagline: "One trained assistant, live and answering in about 72 hours.",
+    priceDisplay: "from $297",
+    turnaround: "Most clients live in about 72 hours",
+    intakeRequired: true,
+    highlighted: true,
+    features: [
+      "One agent built around a single job you are tired of doing",
+      "Trained on your AI Brain, so it sounds like you",
+      "Delivered ready to use, no setup left to you",
+      "One 30-minute teaching session included",
+    ],
+    addOn: "Additional agents $197 each.",
+  },
+  {
+    key: "knowledge_agent",
+    name: "Knowledge Agent",
+    tagline: "An agent that knows your business cold and answers like your best team member.",
+    priceDisplay: "from $397",
+    turnaround: "Live in about a week",
+    intakeRequired: true,
+    features: [
+      "Trained on your documents, offers, and policies",
+      "Answers customer and internal questions in your voice",
+      "Managed for you from $97 to $197/mo",
+      "One 30-minute teaching session included",
+    ],
+    addOn: "Additional agents $297 each.",
+  },
+  {
+    key: "full_system_agent",
+    name: "Full-System Agent",
+    tagline: "Connected to your CRM, calendar, and pipeline. Conversation and voice capable.",
+    priceDisplay: "from $750",
+    turnaround: "Live in about two weeks",
+    intakeRequired: true,
+    features: [
+      "Wired into your CRM, calendar, and pipeline",
+      "Handles conversations by text or by phone",
+      "Books, routes, and follows up without you",
+      "Managed for you at $297/mo",
+    ],
+  },
+];
+
+/** Hermes — the premium capstone. From $5,000, always scoped on a call. */
+export const HERMES = {
+  key: "hermes",
+  name: "Hermes",
+  tagline: "An autonomous agent system that works toward outcomes, not just conversations.",
+  priceDisplay: "From $5,000",
+  priceNote: "Custom-scoped above that. Always scoped on a call, never open checkout.",
+  features: [
+    "Works toward an outcome you define, not a script it follows",
+    "Runs multi-step work across your systems without a prompt each time",
+    "Built on your AI Brain so every decision stays in your voice",
+    "Monitoring, guardrails, and a human review loop you control",
+    "Scoped, built, and tuned directly with Coach Kay's team",
+  ],
+  best_for: "Organizations ready for agents that pursue outcomes, not just answer questions.",
+} as const;
+
+/** The public ladder, low to high. Drives the /agents hub. */
+export const AGENT_LADDER = [
+  {
+    key: "audit",
+    step: "Diagnose",
+    name: "AI Business Audit",
+    priceDisplay: "$47",
+    body: "Find out what an agent can actually take off your plate before you spend anything else.",
+    cta: { label: "Get the $47 audit", to: "/audit/intake" },
+    instant: true,
+  },
+  {
+    key: "builds",
+    step: "Prove it",
+    name: "Agent Builds",
+    priceDisplay: "$197 – $750+",
+    body: "The AI Brain plus your first agents. The smallest thing that proves the system works in your business.",
+    cta: { label: "See agent builds", to: "/agents/builds" },
+  },
+  {
+    key: "rent",
+    step: "Run it",
+    name: "Rent-an-Agent",
+    priceDisplay: "from $297/mo",
+    body: "A managed AI team on retainer. We build it, host it, and keep it working while you live your life.",
+    cta: { label: "See retainer tiers", to: "/rent-an-agent" },
+    highlighted: true,
+  },
+  {
+    key: "lead_engine",
+    step: "Fill the pipeline",
+    name: "AI Lead Engine",
+    priceDisplay: "from $697/mo",
+    body: "Outbound that finds, scores, contacts, and books. Your pipeline stops depending on your energy.",
+    cta: { label: "See Lead Engine", to: "/agents/lead-engine" },
+  },
+  {
+    key: "hermes",
+    step: "Go autonomous",
+    name: "Hermes",
+    priceDisplay: "from $5,000",
+    body: "Autonomous agent systems that pursue outcomes on their own. Scoped on a call.",
+    cta: { label: "Explore Hermes", to: "/agents/hermes" },
+  },
+] as const;
 
 /** Low-ticket entry offers — direct Stripe Checkout (one-time payments). */
 export const ENTRY_OFFERS = {
@@ -224,7 +398,7 @@ export const ADVISORY_LANES = [
     bullets: [
       "Keynotes (30 / 45 / 60 min)",
       "Half-day & full-day workshops",
-      "Hands-on Claude / GPT labs",
+      "Hands-on build labs",
     ],
   },
   {
