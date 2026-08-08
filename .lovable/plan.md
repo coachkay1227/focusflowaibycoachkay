@@ -49,6 +49,17 @@ Consequence: every genuine `checkout.session.completed` Stripe sends is rejected
 
 ## Fix plan (phased, smallest safe boundary first)
 
+**Phase 0 — Unblock the dev server (immediate, one line).**
+The `/admin/fulfillment-test` route added in the previous turn is not classified in the SEO contract, so the pre-dev guard fails and the dev server will not start:
+
+```text
+[seo-check] FAILED:
+  - Route "/admin/fulfillment-test" (AdminFulfillmentTest) is not classified in
+    scripts/check-seo-regressions.ts. Add it to INDEXABLE, NOINDEX, or ADMIN_EXEMPT.
+```
+
+Fix: add the route to `ADMIN_EXEMPT` in `scripts/check-seo-regressions.ts`, matching every other admin route. Nothing else changes; the guard working as designed is what caught it.
+
 **Phase 1 — Unblock revenue (one line, fully reversible).**
 Change line 116 to `await stripe.webhooks.constructEventAsync(body, sig, webhookSecret)`. No other logic touched. Rollback is reverting one line. Proof required: a locally signed payload verifies, and the deployed function accepts a real Stripe delivery.
 
