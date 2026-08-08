@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import ReportView from "@/components/reports/ReportView";
 import PillarStrip from "@/components/PillarStrip";
 import PillarBadge from "@/components/PillarBadge";
+import { readFunctionError } from "@/lib/function-error";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Operator × Bottleneck Map
