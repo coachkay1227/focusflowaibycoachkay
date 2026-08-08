@@ -65,6 +65,10 @@ export default function Start() {
       amountSubtotalCents: purchase?.amountCents ?? null,
     });
 
+    // No recommendation yet (report still generating, or a non-audit purchase):
+    // the useful next step is a conversation, not a guessed offer page.
+    const contact = recommendedSlug ? route.contact : "application";
+
     if (route.opening_soon) {
       return {
         kind: "waitlist",
@@ -75,7 +79,7 @@ export default function Start() {
       };
     }
 
-    if (route.contact === "community") {
+    if (contact === "community") {
       return {
         kind: "community",
         label: route.label ?? "Join the community",
@@ -85,7 +89,7 @@ export default function Start() {
       };
     }
 
-    if (route.contact === "application") {
+    if (contact === "application") {
       return earnedPaidCall
         ? {
             kind: "paid_call",
