@@ -428,8 +428,13 @@ function AlertRow({
   onDelete: (id: string) => void;
   onPublish?: (a: ScamAlert) => void;
 }) {
+  // Drafts open expanded by default: the whole point of the queue is reading
+  // what the worker wrote before it carries her name.
+  const [open, setOpen] = useState(!a.is_published);
+  const rules = Array.isArray(a.action_rules) ? a.action_rules.filter(Boolean) : [];
   return (
-    <div className="rounded-lg border border-border bg-card p-4 flex items-start gap-4">
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="flex items-start gap-4">
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider mb-1">
           <span
@@ -451,14 +456,34 @@ function AlertRow({
           )}
           {a.source_feed && <span className="text-muted-foreground/70">via {a.source_feed}</span>}
         </div>
-        <h3 className="font-medium truncate">{a.title}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2">{a.summary}</p>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="flex items-start gap-2 text-left w-full group"
+          aria-expanded={open}
+        >
+          {open ? (
+            <ChevronDown className="h-4 w-4 mt-1 shrink-0 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 mt-1 shrink-0 text-muted-foreground" />
+          )}
+          <span className="min-w-0">
+            <span className="block font-medium group-hover:text-primary transition-colors">
+              {a.title}
+            </span>
+            <span
+              className={`block text-sm text-muted-foreground ${open ? "" : "line-clamp-2"}`}
+            >
+              {a.summary}
+            </span>
+          </span>
+        </button>
         {a.source_url && (
           <a
             href={a.source_url}
             target="_blank"
             rel="noreferrer noopener"
-            className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            className="mt-2 ml-6 inline-flex items-center gap-1 text-xs text-primary hover:underline"
           >
             <ExternalLink className="h-3 w-3" /> Check the source
           </a>
@@ -482,6 +507,53 @@ function AlertRow({
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
+      </div>
+
+      {open && (
+        <div className="mt-4 ml-6 pt-4 border-t border-border space-y-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+              What it says
+            </p>
+            {a.body?.trim() ? (
+              <div className="text-sm leading-relaxed space-y-3">
+                {a.body
+                  .split(/\n{2,}/)
+                  .map((p) => p.trim())
+                  .filter(Boolean)
+                  .map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No body text. Open Edit and write one before publishing.
+              </p>
+            )}
+          </div>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+              What to do
+            </p>
+            {rules.length > 0 ? (
+              <ol className="text-sm space-y-1 list-decimal list-inside">
+                {rules.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ol>
+            ) : (
+              <p className="text-sm text-muted-foreground">No action rules yet.</p>
+            )}
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Slug: <span className="font-mono">{a.slug}</span>
+            {" · "}Drafted {new Date(a.created_at).toLocaleString()}
+            {a.published_at && ` · Published ${new Date(a.published_at).toLocaleString()}`}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
