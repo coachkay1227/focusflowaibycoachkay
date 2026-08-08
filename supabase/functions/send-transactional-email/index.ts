@@ -205,7 +205,7 @@ Deno.serve(async (req: Request) => {
     // Log the suppressed attempt
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -239,7 +239,7 @@ Deno.serve(async (req: Request) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
@@ -273,7 +273,7 @@ Deno.serve(async (req: Request) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
-    metadata: logMetadata,
+        metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -303,7 +303,7 @@ Deno.serve(async (req: Request) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
-    metadata: logMetadata,
+        metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -326,7 +326,7 @@ Deno.serve(async (req: Request) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -399,7 +399,7 @@ Deno.serve(async (req: Request) => {
       console.error('Resend send failed', { status: res.status, errBody, templateName, effectiveRecipient })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
-    metadata: logMetadata,
+        metadata: logMetadata,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -414,7 +414,7 @@ Deno.serve(async (req: Request) => {
     const result = await res.json().catch(() => ({}))
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'sent',
@@ -435,7 +435,7 @@ Deno.serve(async (req: Request) => {
     console.error('Resend send exception', { error: msg, templateName })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
-    metadata: logMetadata,
+      metadata: logMetadata,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
