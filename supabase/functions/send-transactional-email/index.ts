@@ -181,6 +181,26 @@ Deno.serve(async (req: Request) => {
   }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
+  // 2a. Reserved/undeliverable domains (RFC 2606 + RFC 6761). Resend rejects
+  // these with a 422 that can never succeed, so a real send attempt would
+  // write a false `failed` row. QA fixtures use these addresses, so short
+  // circuit here and log the attempt as suppressed instead.
+  if (isReservedTestRecipient(effectiveRecipient)) {
+    await supabase.from('email_send_log').insert({
+      message_id: messageId,
+      metadata: { ...logMetadata, suppression_reason: 'reserved_test_domain' },
+      template_name: templateName,
+      recipient_email: effectiveRecipient,
+      status: 'suppressed',
+    })
+
+    console.log('Email skipped: reserved test domain', { effectiveRecipient, templateName })
+    return new Response(
+      JSON.stringify({ success: true, sent: false, reason: 'reserved_test_domain' }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')
     .select('id')
