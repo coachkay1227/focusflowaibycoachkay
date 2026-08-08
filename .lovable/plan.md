@@ -322,3 +322,62 @@ Verified: six successful gateway calls with real token and cost figures, one mod
 Assumed until tested: that the unauthenticated generators would in fact serve unlimited sequential requests, and that raw intake interpolation is exploitable only to the limited degree the forced schema allows.
 
 Tests 1 through 6 are complete. On your word I will sequence the remediation set, smallest safe boundary first: rate-limit the open generators, await the un-awaited sends, fix the insert-only nurture enrollment, stop the admin trail asserting sends that never happened, and add the first evaluation set.
+
+---
+
+# Test 7 Findings: Unit, Integration, Browser, Authorization, Payments, Email, AI, Failure, Mobile, Regression Testing
+
+Read-only. Evidence came from the test files on disk, one real run of the suite, the CI workflow, and the guard scripts.
+
+## Verified end-to-end (evidence)
+
+- Unit suite exists and runs: `vitest run` executed 9 files, 66 tests, 6.5s. Config `vitest.config.ts` (jsdom, setup at `src/test/setup.ts`, include `src/**/*.{test,spec}.{ts,tsx}`).
+- Pure-logic coverage is real, not render-only: `src/__tests__/nurture.test.ts`, `src/lib/__tests__/offer-routes.test.ts`, `src/lib/catalog-price-sync.test.ts`, `src/hooks/use-live-refresh.test.tsx`, `src/hooks/use-roles.test.tsx` assert behavior and outputs.
+- Webhook validation is unit-tested against hostile input: `supabase/functions/stripe-webhook/index_test.ts` covers metadata coercion, UUID rejection including `'; DROP TABLE book_orders;--`, and amount/eligibility mismatch. No live Stripe call, no charge.
+- Build-time guards run in CI on every PR (`.github/workflows/seo-regressions.yml`): SEO regressions, email-template references, role invariants, payment/audit link integrity, with the payment-link report uploaded as an artifact.
+- No live-charge or production-write risk in any existing automated test. Payment coverage is validation-level only.
+
+## Broken (current, reproducible)
+
+- **2 failing unit tests, on main, right now.** `src/pages/Start.test.tsx` asserts bare booking hrefs (`https://booking.test/free-clarity`, `https://booking.test/paid-strategy`) but `buildBookingUrl` now appends verified order proof (`session_type`, `plan`, `order_ref`, `booking_proof`, utm). The tests are stale, the code is correct. Impact: the suite is red, so any future real regression is invisible in the noise. Owner: booking-proof change. Exact fix: assert with `toHaveAttribute("href", expect.stringContaining(...))` or compare parsed `URLSearchParams`, not the whole string.
+- **CI never runs the tests.** The only workflow runs the four scripts. `bun run test` (vitest) and Playwright are absent from CI. Impact: the red suite above shipped unnoticed; regression protection is opt-in local. This is the single highest-value gap in Test 7.
+
+## Functional with gaps
+
+- **Browser/E2E is written but effectively unexecuted.** `tests/assessment-flows.spec.ts`, `tests/offer-card-symmetry.spec.ts`, `tests/admin-view-toggle.spec.ts` exist; `playwright.config.ts` is the unmodified Lovable default (no `baseURL`, no webServer, no projects). No CI job invokes Playwright. `admin-view-toggle.spec.ts` self-skips unless `ADMIN_EMAIL`/`ADMIN_PASSWORD` are set — they are not in CI, so it has never asserted anything there.
+- **Assessment E2E is largely render-assertion.** The specs prove the right header renders and no wrong-flow fallback occurs — real value against the fallback bug — but they stop at the CTA. No spec asserts a database row, an email log row, or a stored report. This is exactly the "tests that only render" risk: passing specs would not have caught the Test 4/Test 5 findings (emails never sent, false-success on insert failure).
+- **Edge-function smoke tests degrade to guards only.** `supabase/functions/admin-nurture/index_test.ts` always asserts 401/403; the lookup → preview → enqueue → resend path runs only when `NURTURE_SMOKE_ADMIN_TOKEN`, `NURTURE_SMOKE_QUERY`, `NURTURE_SMOKE_SEND=1` are present. It skips loudly rather than failing, so green means "guards work", never "fulfillment works".
+
+## Missing (no coverage at all)
+
+- Authorization matrix: no test asserts anon/free/paid/admin against the 27 protected routes or the RLS-denied reads. Test 1's paid-access gap is untested by construction.
+- Email: no test asserts an `email_send_log` row for any template. The templates only have a static reference check.
+- AI: no evaluation set, no golden inputs, no schema-conformance test on generator output.
+- Failure paths: no test for provider 429/402, insert failure, duplicate submit, refresh mid-generation, or back navigation.
+- Mobile: zero mobile-viewport specs.
+- Test data isolation: `is_test` exists on the order tables but no fixture uses it, and there is no seeded test account or teardown. Any future E2E against the live backend would pollute production data.
+
+## Five realistic failure scenarios for the testing layer itself
+
+1. **Tests that only render.** A green suite certifies a broken funnel (already demonstrated: Tests 4 and 5 found breaks the specs pass over). Prevention: every journey spec must end on a backend assertion (row exists, log row exists), not a rendered element.
+2. **Live charges.** A payments E2E that hits real Stripe checkout charges a real card. Prevention: assert on validation helpers and webhook fixtures only; if a checkout spec is ever added, restrict it to test-mode keys and the `FFTEST100` path, never a card form.
+3. **Production data pollution.** E2E writes real `business_audits`/`one_time_orders` rows and triggers real nurture emails. Prevention: one dedicated test identity, `is_test = true` on every written row, and every assertion and admin view filtered on it.
+4. **Environment drift.** Playwright config has no `baseURL`; local passes, CI cannot resolve the app. Prevention: pin `baseURL`/`webServer` in config, and require the same command in CI as locally.
+5. **Fake certainty.** Red tests stay red long enough to be ignored, or a skipped test reads as a pass. Prevention: make the suite a required PR check, and fail (not skip) when a credential-gated E2E is expected in CI.
+
+## Smallest safe implementation boundary (when approved, in this order)
+
+1. Fix the 2 stale `Start.test.tsx` assertions to compare parsed query params. No source change.
+2. Add `bun run test` as a step in the existing workflow so the suite is a required check. No new workflow.
+3. Pin `playwright.config.ts` with `baseURL` + `webServer`, then add one journey spec that ends on a real backend assertion for the AI Business Audit path against a dedicated test identity with `is_test = true`.
+4. Add the authorization matrix as a single vitest file over the route table plus one anon-vs-owner RLS read.
+5. Add the first AI evaluation set: 3 golden inputs, assert schema conformance and voice hard-walls (no income guarantee, no invented statistic, no em dash).
+
+Nothing above touches production behavior, secrets, or provider settings.
+
+## Verified facts versus assumptions
+
+Verified: 13 test files on disk; one real run with 64 passing and 2 failing; the 2 failures are stale booking-href assertions, not product bugs; CI runs four guard scripts and no test runner; Playwright config is the untouched default; the admin-view spec self-skips without credentials; no automated test can produce a live charge or a production write today.
+Assumed until tested: that the Playwright specs would pass if a `baseURL` were supplied, and that a dedicated `is_test` identity is sufficient isolation for the live backend.
+
+Tests 1 through 7 are complete. Say the word and I will start remediation at the smallest boundary: the 2 stale assertions, then wiring the suite into CI.
