@@ -108,15 +108,17 @@ serve(async (req: Request) => {
       });
     }
 
-    // Fire-and-forget: email + GHL webhook. Recipient is either the verified
-    // authed user OR the guest_email captured by our own email gate. We never
-    // send to a free-form client-supplied email when an auth user is present.
+    // Email + GHL webhook. AWAITED: an un-awaited invoke is cancelled when the
+    // worker shuts down after the response, which is why these never sent.
+    // Recipient is either the verified authed user OR the guest_email captured
+    // by our own email gate. We never send to a free-form client-supplied
+    // email when an auth user is present.
     const recipientEmail = authedUser?.email ?? guestEmail;
     const recipientName = authedUser?.name ?? guestName ?? undefined;
     if (recipientEmail) {
       const insightData = result.data as { truth?: string; pattern?: string; action?: string };
-      supabase.functions
-        .invoke("send-transactional-email", {
+      const settled = await Promise.allSettled([
+        supabase.functions.invoke("send-transactional-email", {
           body: {
             templateName: "clarity-code-result",
             recipientEmail,
@@ -128,10 +130,8 @@ serve(async (req: Request) => {
               action: (insightData.action ?? "").slice(0, 4000),
             },
           },
-        })
-        .catch((e: unknown) => console.warn("clarity-insight email enqueue failed:", e));
-      supabase.functions
-        .invoke("ghl-webhook", {
+        }),
+        supabase.functions.invoke("ghl-webhook", {
           body: {
             event: "clarity_session_complete",
             payload: {
@@ -141,8 +141,11 @@ serve(async (req: Request) => {
               guest: !authedUser,
             },
           },
-        })
-        .catch((e: unknown) => console.warn("clarity-insight ghl webhook failed:", e));
+        }),
+      ]);
+      settled.forEach((s) => {
+        if (s.status === "rejected") console.warn("clarity-insight outbound failed:", s.reason);
+      });
     }
 
     return new Response(JSON.stringify(result.data), {

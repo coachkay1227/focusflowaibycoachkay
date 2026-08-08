@@ -110,7 +110,12 @@ serve(async (req) => {
 
     if (insert.error) {
       console.error("starter-kit insert error:", insert.error);
-      return json(200, { id: null, report: result.data });
+      return json(200, {
+        id: null,
+        report: result.data,
+        persisted: false,
+        warning: "Your report was generated but could not be saved. Save or screenshot it before leaving.",
+      });
     }
 
     // Send report email to user + fire GHL (best-effort, fire-and-forget).
@@ -142,7 +147,7 @@ serve(async (req) => {
       }),
     ]);
 
-    return json(200, { id: insert.data?.id ?? null, report: result.data });
+    return json(200, { id: insert.data?.id ?? null, report: result.data, persisted: true });
   } catch (e) {
     console.error("generate-starter-report error:", e);
     return json(500, { error: "Internal server error" });
