@@ -151,6 +151,8 @@ export default function AdminNurtureQueue() {
           </Button>
         </header>
 
+        <DeliveryRetriesPanel />
+
         <div className="grid gap-4 md:grid-cols-3 mb-6">
           {perStep.map((s) => (
             <div key={s.step} className="rounded-lg border border-border bg-card/40 p-4">
