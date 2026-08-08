@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
 import OfferInquiryDialog from "@/components/offers/OfferInquiryDialog";
+import { redirectToLeadGenIfConfigured } from "@/lib/lead-gen";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
