@@ -448,6 +448,26 @@ export default function AdminNurture() {
           <p className="text-sm text-muted-foreground">
             Rendered with this buyer's real data. Goes to {preview?.recipient ?? "no address on file"}.
           </p>
+          {preview !== null && audit && (
+            touches.some((t) => t.step === preview.step) ? (
+              <p className="text-sm text-muted-foreground">
+                Day {preview.step} is already in the queue
+                {(() => {
+                  const t = touches.find((x) => x.step === preview.step)!;
+                  return t.status === "sent"
+                    ? `, sent ${fmt(t.sent_at)}.`
+                    : ` as ${t.status}, scheduled ${fmt(t.scheduled_for)}.`;
+                })()}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Day {preview.step} is not queued yet. {missingStepReason(
+                  { step: preview.step, templateName: preview.templateName, requiresReport: preview.requiresReport },
+                  audit,
+                ).effect}
+              </p>
+            )
+          )}
           {preview?.requiresReport && !preview?.hasReport && (
             <p className="text-sm text-destructive">
               This step needs a generated report. The worker holds it until one exists.
