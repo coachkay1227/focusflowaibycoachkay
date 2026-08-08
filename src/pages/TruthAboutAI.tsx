@@ -276,7 +276,7 @@ export default function TruthAboutAI() {
                 </p>
               </blockquote>
               <p className="text-[15px] text-muted-foreground leading-[1.8] font-light mb-4">
-                My job, whether I'm with a Fortune-500 board or a single mom rebuilding her life, is to give you the clarity to make smart decisions. That's what this page is.
+                My job, whether I'm with an organizational leader or a working parent rebuilding her life, is to give you the clarity to make smart decisions. That's what this page is.
               </p>
             </Section>
           </AnimatedSection>

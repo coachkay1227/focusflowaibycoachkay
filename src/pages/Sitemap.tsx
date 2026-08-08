@@ -26,7 +26,7 @@ const serviceLinks = [
 
 const companyLinks = [
   { path: "/coach-kay", label: "Meet Coach Kay" },
-  { path: "/collective", label: "Collective AI, the team behind every build" },
+  { path: "/ai-task-force", label: "AI Task Force, independent partners for larger builds" },
   { path: "/truth", label: "The Truth About AI, no hype, no fear" },
   { path: "/faq", label: "FAQ, every question answered" },
   { path: "/auth", label: "Sign In / Sign Up" },

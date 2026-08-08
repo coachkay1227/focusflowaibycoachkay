@@ -378,7 +378,7 @@ const COMMERCIAL_ROUTES = [
   "/clarity",
   "/ai-tools",
   "/pause-hub",
-  "/collective",
+  "/ai-task-force",
   "/community",
   "/methodology",
   "/privacy",

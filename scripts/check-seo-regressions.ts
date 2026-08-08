@@ -75,7 +75,7 @@ const INDEXABLE: string[] = [
   "/truth",
   "/autism-social-stories",
   "/faq",
-  "/collective",
+  "/ai-task-force",
   "/pause-hub",
   "/ai-tools",
   "/blog",

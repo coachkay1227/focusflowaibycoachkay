@@ -196,7 +196,7 @@ const CollectiveAIBuildStudio = () => {
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
         title="Build Studio: From Idea to Live AI in Days"
-        description="Custom AI builds scoped by Coach Kay and delivered with Collective AI partners. From idea to live AI system in days. Web apps, automations, agents, and more."
+        description="Custom AI builds scoped by Coach Kay, with AI Task Force partners added when larger work needs more capacity. Web apps, automations, agents, and dashboards."
         path="/build-studio"
         keywords={[
           "AI build studio",
@@ -204,7 +204,7 @@ const CollectiveAIBuildStudio = () => {
           "business automation development",
           "AI workflow implementation",
           "rapid MVP development with AI",
-          "Collective AI partner builds",
+          "AI Task Force partner builds",
         ]}
         jsonLd={jsonLd}
       />
