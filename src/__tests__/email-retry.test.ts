@@ -6,6 +6,7 @@ import {
   nextRetryAt,
   retryDecisionFor,
   RETRYABLE_TEMPLATES,
+  sourceRefFromMetadata,
 } from "../../supabase/functions/_shared/email-retry";
 
 const BASE = new Date("2026-01-01T00:00:00.000Z");
@@ -42,10 +43,51 @@ describe("retry eligibility", () => {
     expect(RETRYABLE_TEMPLATES["starter-kit-report"].sourceTable).toBe("starter_kit_reports");
   });
 
+  it("covers the purchase and next-steps emails", () => {
+    expect(RETRYABLE_TEMPLATES["audit-purchase-confirmation"]).toEqual({
+      sourceTable: "business_audits",
+      metadataKey: "audit_id",
+      refColumn: "source_id",
+    });
+    expect(RETRYABLE_TEMPLATES["purchase-next-steps"]).toEqual({
+      sourceTable: "one_time_orders",
+      metadataKey: "session_id",
+      refColumn: "source_ref",
+    });
+  });
+
   it("does not retry templates with no known source row", () => {
-    for (const name of ["purchase-next-steps", "audit-day-1", "welcome", ""]) {
+    for (const name of ["audit-day-1", "welcome", "weekly-newsletter-issue", ""]) {
       expect(isRetryableTemplate(name)).toBe(false);
     }
+  });
+});
+
+describe("source reference extraction", () => {
+  it("routes a stripe session into the text column", () => {
+    expect(sourceRefFromMetadata("purchase-next-steps", { session_id: "cs_test_123" })).toEqual({
+      column: "source_ref",
+      value: "cs_test_123",
+    });
+  });
+
+  it("routes uuid sources into source_id", () => {
+    expect(sourceRefFromMetadata("audit-purchase-confirmation", { audit_id: "abc" })).toEqual({
+      column: "source_id",
+      value: "abc",
+    });
+    expect(sourceRefFromMetadata("starter-kit-report", { starter_kit_report_id: "xyz" })).toEqual({
+      column: "source_id",
+      value: "xyz",
+    });
+  });
+
+  it("returns null when the reference is missing, blank or the wrong type", () => {
+    expect(sourceRefFromMetadata("purchase-next-steps", {})).toBeNull();
+    expect(sourceRefFromMetadata("purchase-next-steps", { session_id: "  " })).toBeNull();
+    expect(sourceRefFromMetadata("purchase-next-steps", { session_id: 12 })).toBeNull();
+    expect(sourceRefFromMetadata("welcome", { session_id: "cs_1" })).toBeNull();
+    expect(sourceRefFromMetadata("purchase-next-steps", null)).toBeNull();
   });
 });
 
@@ -64,8 +106,13 @@ describe("retry decision", () => {
     });
   });
 
+  it("queues the purchase and next-steps emails too", () => {
+    expect(retryDecisionFor("purchase-next-steps", "retryable").status).toBe("pending");
+    expect(retryDecisionFor("audit-purchase-confirmation", "retryable").status).toBe("pending");
+  });
+
   it("ignores templates that cannot be rebuilt", () => {
-    expect(retryDecisionFor("purchase-next-steps", "retryable").enqueue).toBe(false);
-    expect(retryDecisionFor("purchase-next-steps", "permanent").enqueue).toBe(false);
+    expect(retryDecisionFor("weekly-newsletter-issue", "retryable").enqueue).toBe(false);
+    expect(retryDecisionFor("weekly-newsletter-issue", "permanent").enqueue).toBe(false);
   });
 });
