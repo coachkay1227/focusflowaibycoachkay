@@ -113,7 +113,11 @@ serve(async (req) => {
     }
 
     try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+      // MUST be the async variant: the Deno runtime only exposes SubtleCrypto,
+      // and the synchronous constructEvent() throws
+      // "SubtleCryptoProvider cannot be used in a synchronous context",
+      // which silently rejected every real Stripe delivery with 400.
+      event = await stripe.webhooks.constructEventAsync(body, sig, webhookSecret);
     } catch (e) {
       await fail("signature", "signature_verification_failed", {
         message: e instanceof Error ? e.message : String(e),
