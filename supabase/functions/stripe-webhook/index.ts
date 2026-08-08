@@ -407,24 +407,57 @@ serve(async (req) => {
             return ok(req, { received: true, audit_created: false, audit_id: existing.id });
           }
 
-          const { data: inserted, error: insertErr } = await supabaseClient
-            .from("business_audits")
-            .insert({
-              user_id: auditUserId && UUID_RE.test(auditUserId) ? auditUserId : null,
-              guest_email: customerEmail || null,
-              guest_name: customerName,
-              stripe_session_id: session.id,
-              intake: {},
-            })
-            .select("id")
-            .single();
+          // Preferred path: the lead was persisted pre-payment by
+          // start-audit-intake, so the intake already lives in the row.
+          // Flip that same row to paid instead of creating an empty one.
+          const preAuditId = readMetaString(session.metadata, "audit_id");
+          let inserted: { id: string } | null = null;
+          if (preAuditId && UUID_RE.test(preAuditId)) {
+            const { data: claimed, error: claimErr } = await supabaseClient
+              .from("business_audits")
+              .update({
+                stripe_session_id: session.id,
+                status: "paid",
+                ...(customerEmail ? { guest_email: customerEmail } : {}),
+                ...(customerName ? { guest_name: customerName } : {}),
+                ...(auditUserId && UUID_RE.test(auditUserId) ? { user_id: auditUserId } : {}),
+              })
+              .eq("id", preAuditId)
+              .is("stripe_session_id", null)
+              .select("id")
+              .maybeSingle();
+            if (claimErr) {
+              await fail("audit", "audit_claim_failed", {
+                message: claimErr.message,
+                context: { session_id: session.id, audit_id: preAuditId },
+              });
+            }
+            inserted = claimed ?? null;
+          }
 
-          if (insertErr || !inserted?.id) {
-            await fail("audit", "audit_insert_failed", {
-              message: insertErr?.message,
-              context: { session_id: session.id },
-            });
-            return ok(req, { received: true, ignored: "audit_insert_failed" });
+          // Fallback: no pre-payment lead (legacy link, Payment Link, etc.).
+          if (!inserted?.id) {
+            const { data: created, error: insertErr } = await supabaseClient
+              .from("business_audits")
+              .insert({
+                user_id: auditUserId && UUID_RE.test(auditUserId) ? auditUserId : null,
+                guest_email: customerEmail || null,
+                guest_name: customerName,
+                stripe_session_id: session.id,
+                intake: {},
+                status: "paid",
+              })
+              .select("id")
+              .single();
+
+            if (insertErr || !created?.id) {
+              await fail("audit", "audit_insert_failed", {
+                message: insertErr?.message,
+                context: { session_id: session.id },
+              });
+              return ok(req, { received: true, ignored: "audit_insert_failed" });
+            }
+            inserted = created;
           }
 
           const token = `aud_${crypto.randomUUID().replace(/-/g, "")}${crypto.randomUUID().replace(/-/g, "")}`;
