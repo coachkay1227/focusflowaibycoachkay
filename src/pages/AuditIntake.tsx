@@ -28,6 +28,10 @@ const PATH = ["DIY with guidance", "Done-with-me coaching", "Done-for-me service
 const intakeSchema = z.object({
   full_name: z.string().trim().min(1, "Full name is required").max(200),
   email: z.string().trim().email("Valid email required").max(255),
+  // Optional throughout. Texting is a convenience, never a condition of
+  // buying, so an empty phone must always validate.
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  sms_consent: z.boolean().default(false),
   business_name: z.string().trim().min(1).max(200),
   website: z.string().trim().max(500).optional().or(z.literal("")),
   industry: z.enum(INDUSTRIES as [string, ...string[]]),
@@ -52,7 +56,7 @@ const intakeSchema = z.object({
 type IntakeState = z.input<typeof intakeSchema>;
 
 const defaultState: IntakeState = {
-  full_name: "", email: "",
+  full_name: "", email: "", phone: "", sms_consent: false,
   business_name: "", website: "", industry: "Coaching/Consulting",
   stage: "Idea", monthly_revenue: "$0", team_size: "Solo",
   current_tools: [], current_tools_other: "",
@@ -148,6 +152,9 @@ const AuditIntake = () => {
           intake: payloadIntake,
           email: parsed.data.email,
           full_name: parsed.data.full_name,
+          // Consent is only honoured when a number was actually given.
+          phone: parsed.data.phone || null,
+          sms_consent: parsed.data.sms_consent === true && !!parsed.data.phone,
         },
       });
       if (leadErr) throw new Error("We couldn't save your answers. Please retry.");
@@ -215,6 +222,28 @@ const AuditIntake = () => {
               <Label>Email *</Label>
               <Input type="email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} placeholder="you@business.com" />
               <p className="text-xs text-muted-foreground mt-1">We'll send your audit + receipt here.</p>
+            </div>
+            <div>
+              <Label>Mobile number (optional)</Label>
+              <Input
+                type="tel"
+                value={data.phone ?? ""}
+                onChange={(e) => setData({ ...data, phone: e.target.value })}
+                placeholder="(555) 123-4567"
+              />
+              <label className="mt-3 flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+                  checked={data.sms_consent === true}
+                  onChange={(e) => setData({ ...data, sms_consent: e.target.checked })}
+                />
+                <span>
+                  Text me when my audit is ready and for my follow-up steps. Message rates may
+                  apply. Reply STOP any time. Leave this unchecked and you'll still get everything
+                  by email.
+                </span>
+              </label>
             </div>
             <div>
               <Label>Business name *</Label>

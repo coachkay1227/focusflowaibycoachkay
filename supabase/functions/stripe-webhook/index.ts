@@ -5,6 +5,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { PRODUCT_TIER_MAP, NO_TIER_PRODUCTS, PROTECTED_TIERS, TRANSFORMATION_PROGRAM_MAP, AGENT_BUILD_PRODUCTS, BUILD_STUDIO_PRODUCTS, ADVISORY_PRODUCTS } from "../_shared/stripe-config.ts";
 import { readMetaString, UUID_RE } from "./validation.ts";
 import { createLogger, recordFailureAndMaybeAlert } from "../_shared/structured-log.ts";
+import { planTouches } from "../_shared/nurture.ts";
 
 const SOURCE = "stripe-webhook";
 
@@ -540,6 +541,31 @@ serve(async (req) => {
               });
             } catch (e) {
               await fail("email", "audit_confirm_email_failed", {
+                message: e instanceof Error ? e.message : String(e),
+                context: { audit_id: inserted.id },
+              });
+            }
+          }
+
+          // GHL: fire purchase event for the audit (best-effort, fire-and-forget)
+          // Enroll the buyer in the three fulfillment follow-ups (day 1 insight,
+          // day 3 access, day 7 booking). The unique (audit_id, step) constraint
+          // makes a replayed webhook a no-op rather than a duplicate schedule.
+          // Fulfillment-test purchases are flagged is_test so the worker skips them.
+          if (customerEmail) {
+            try {
+              const isE2ETest = readMetaString(session.metadata, "e2e_test") === "true";
+              const touches = planTouches(inserted.id, customerEmail, { isTest: isE2ETest });
+              if (touches.length > 0) {
+                const { error: nurtureErr } = await supabaseClient
+                  .from("nurture_touches")
+                  .upsert(touches, { onConflict: "audit_id,step", ignoreDuplicates: true });
+                if (nurtureErr) throw nurtureErr;
+              }
+            } catch (e) {
+              // Nurture is additive. A scheduling failure must never block
+              // the purchase from being reported as fulfilled.
+              await fail("audit", "audit_nurture_enroll_failed", {
                 message: e instanceof Error ? e.message : String(e),
                 context: { audit_id: inserted.id },
               });
