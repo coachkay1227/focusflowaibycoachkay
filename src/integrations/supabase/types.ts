@@ -1342,6 +1342,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_privileged_caller: { Args: never; Returns: boolean }
     }
     Enums: {
       access_tier:
