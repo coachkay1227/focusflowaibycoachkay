@@ -1,57 +1,51 @@
-# Post-purchase delivery tracking, retry, and recovery
+# Simplify the unshipped plan, then run the final backend audit
 
-Right now the confirmation screen only knows two things: is the payment settled, and did an order row appear. If the AI report stalls or the confirmation email never lands, the buyer sees a spinner that eventually stops and has no way out except emailing you. This adds a visible delivery checklist, a buyer-triggered resend, and an admin screen where you can fix any order yourself.
+## Part 1: The pending plan is heavier than it needs to be
 
-## What the buyer sees
+The only plan written and not yet built is the post-purchase delivery tracking, retry, and recovery plan. It works, but three pieces of it buy very little and cost real surface area.
 
-On the confirmation screen, instead of one spinner, a short checklist of the real stages:
+Cut these:
 
-```text
-Payment confirmed          done
-Order recorded             done
-Access link created        done
-Your report                still writing
-Confirmation email         sent to you@example.com
-```
+1. **The new `fulfillment_recovery_log` table.** Its two jobs are the resend rate limit and the admin history. `email_send_log` already records every send with template, recipient, status, and timestamp, and `admin_audit_log` already records admin actions. Count recent rows in `email_send_log` for the rate limit and read `admin_audit_log` for the history. One less table, one less migration, one less set of policies.
 
-Each line reflects backend state, never an assumption. While a stage is pending it says so plainly. If the report or email is still not there after about 30 seconds of polling, the screen stops spinning and shows:
+2. **Two recovery functions.** `resend-fulfillment` (buyer) and `recover-fulfillment` (admin) do the same work with different callers. Make it one function with two modes: no token means the Stripe session id is the proof, an admin JWT means a record id is accepted. Same code path, half the deploy surface.
 
-- "Resend my access link" - re-sends the confirmation email to the address on the order (never to a typed-in address), and re-kicks report generation if the report is missing.
-- "Read the full report" once the report exists.
-- The direct contact line, kept as the last resort.
+3. **The second admin screen.** `/admin/delivery-status` overlaps `/admin/nurture-queue`, `/admin/orders`, and `/admin/audits` heavily. Add a "needs attention" filter and the stage badges plus the two retry buttons to the existing `/admin/orders` screen instead of building a fifth place to look.
 
-The same status block and resend button appear on the audit report page when the report has not generated yet, so a buyer who returns from their email also has a way forward.
+Keep as written: the buyer-facing stage checklist, the `stages` object returned from `verify-checkout-session`, on-demand retries only (no background worker), the email always going to the address on the order, and the shared status panel used by both the confirmation screen and the report page.
 
-Retries happen only when someone asks: the buyer clicking resend, or you clicking retry in admin. No background worker.
+Net effect: no migration, one new edge function instead of two, one new component instead of a component plus a page. Same buyer outcome.
 
-Guardrails: the checkout session id in the URL is the proof of purchase, and the email always goes to the address stored on the order, so a shared link can never redirect access. Resends are capped (3 per order per hour) so a repeatedly clicked button cannot spam an inbox.
+## Part 2: The final backend audit
 
-## What you see
+Read-only first, fixes second, so nothing changes before you see the findings.
 
-New admin screen at `/admin/delivery-status`, linked from the admin dashboard:
+### Confirmed already
 
-- Recent purchases across all five fulfillment tables (audits, one-time orders, agent builds, books, social stories), newest first.
-- Per row: buyer email, product, when it was paid, and a stage badge for order row / access link / report / confirmation email.
-- Filters for "needs attention" (any stage missing) and a date range, plus search by email or session id.
-- Per row actions: Retry report generation, Resend access link. Both write to the existing admin audit log so every manual recovery is traceable.
+- The database linter reports 5 warnings, all the same class: `SECURITY DEFINER` functions that anon or signed-in users can still execute. One anon-callable, four signed-in-callable.
+- There are 41 edge functions but only 26 have an explicit `verify_jwt` line in the function config. `admin-nurture`, `process-nurture-queue`, `log-order-next-step`, `manage-users`, and others rely on the deploy default.
+- There are no storage buckets in this project, so the storage upload and download checks in your list do not apply. Nothing to test there.
+
+### What the audit will check
+
+**Connection and error handling.** Confirm the frontend client reads its URL and publishable key from the environment and that a failed backend call surfaces a message rather than a blank screen. Spot check the highest-traffic pages for unhandled promise rejections.
+
+**Auth.** Sign in with email and password and with Google against the live preview, confirm the session lands on the dashboard, confirm admin sees everything without payment, and confirm a normal signed-in user does not.
+
+**RLS and grants.** For all 32 public tables, verify RLS is on, every table has at least one policy, and the grants match what the policies allow. Two specific things to look at: tables marked as having only a single policy (`audit_tokens`, `processed_stripe_events`, `webhook_alert_state`, `webhook_failures`) and any table where anon holds a grant it does not need.
+
+**SECURITY DEFINER exposure.** For each of the 6 database functions, decide who genuinely needs to call it from the API: `get_audit_by_token` and `claim_audit_token` are part of the public audit funnel and stay callable, `get_user_tier` and `has_role` are read by policies and server code and can have API execute revoked, `handle_new_user` and `update_updated_at_column` are triggers and should never be callable. That closes the 5 linter warnings without weakening the funnel.
+
+**Edge function behavior.** Document each function's trigger, auth model, and side effects in one table, then flag any function whose declared `verify_jwt` disagrees with the guard actually written in its code. That mismatch is the real risk, not the count.
+
+**Quotas and cost.** Review the slowest queries and the largest tables, confirm the nurture worker's batch size and cron cadence are not doing redundant work, and confirm no function is being invoked on a loop.
+
+### Deliverable
+
+One report at `docs/qa/final-backend-audit.md` with a status per item: verified, needs a fix, or not applicable. Anything needing a fix gets listed with the exact change, and nothing gets applied until you say go.
 
 ## Technical notes
 
-Status reporting
-- Extend `verify-checkout-session` to return a `stages` object: `payment`, `order`, `access_link`, `report`, `email`. It already resolves the fulfillment table and record id. Add: `audit_tokens` presence for `access_link`, `business_audits.report != null` for `report`, and a latest-status-per-`message_id` lookup in `email_send_log` for the confirmation template tied to that record.
-- For non-audit products, `report` is reported as not applicable rather than pending, so a book order never looks stuck.
-- Keep polling in `OrderSuccess.tsx` but drive the UI from `stages`; cap at roughly 12 attempts with backoff, then switch to the recovery view instead of the current hard "failed" screen when payment is settled.
-
-Recovery
-- New public edge function `resend-fulfillment`: validates the `cs_` session id against Stripe, requires a settled payment, resolves the fulfillment row, then (a) reuses the existing `audit_tokens` row or creates one, (b) invokes `generate-business-audit` when the audit has intake but no report, (c) re-invokes `send-transactional-email` for the product's confirmation template with a fresh idempotency key so the queue actually sends again. Returns the updated stages.
-- New admin edge function `recover-fulfillment`: JWT verified, `has_role(auth.uid(), 'admin')` enforced in code, accepts a record id plus action, performs the same steps, and writes an `admin_audit_log` entry.
-- New table `fulfillment_recovery_log` (session id, record id, kind, actor, created_at) with grants, RLS restricted to service role writes and admin reads. Powers the resend rate limit and the admin history.
-
-Frontend
-- New `src/components/DeliveryStatusPanel.tsx` used by both `OrderSuccess.tsx` and `AuditReport.tsx`, with stage rows and the resend button.
-- New `src/pages/admin/AdminDeliveryStatus.tsx`, route registered in `App.tsx` and classified as admin-exempt in the SEO check script, plus a card on the admin dashboard.
-
-Verification
-- Unit tests for the stage-derivation helper (audit vs non-audit, missing token, missing report, email dlq) and the rate limiter.
-- Playwright pass over the confirmation screen against a real settled test session, checking the checklist renders and the recovery view appears when the report is absent.
-- Production build plus the existing role invariant and payment link guards.
+- Audit steps use the linter, schema reads, direct read-only queries, function log reads, and a Playwright pass against the live preview for the auth flows.
+- The only write in Part 2 is the report file. The `SECURITY DEFINER` grant changes and any RLS corrections are proposed in the report and applied as a separate migration after your approval.
+- Part 1 changes nothing on its own. It rewrites the pending delivery-tracking plan so that when you approve the build, it is the smaller version.
