@@ -1,6 +1,7 @@
 import type { ClarityAnswers } from "./clarity-engine";
 import type { Json } from "@/integrations/supabase/types";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveChallengeDay } from "./challenge-day";
 
 export interface SessionRecord {
   id: string;
@@ -133,9 +134,20 @@ export async function hasHistoryCloud(): Promise<boolean> {
   return (count ?? 0) > 0 || hasHistory();
 }
 
-export async function getChallengeDataCloud(challengeType: string) {
+/**
+ * Reads challenge progress. When `durationDays` is supplied, the returned
+ * `currentDay` is derived from the stored `started_at` anchor instead of the
+ * stored click counter, so the day matches the calendar on every device.
+ */
+export async function getChallengeDataCloud(challengeType: string, durationDays?: number) {
   const userId = await getAuthUserId();
-  if (!userId) return getChallengeData(challengeType);
+  if (!userId) {
+    const local = getChallengeData(challengeType);
+    if (!local) return local;
+    return durationDays
+      ? { ...local, currentDay: resolveChallengeDay(local.startedAt, local.entries, durationDays) }
+      : local;
+  }
 
   const { data, error } = await supabase
     .from("challenge_progress")
@@ -143,12 +155,23 @@ export async function getChallengeDataCloud(challengeType: string) {
     .eq("challenge_type", challengeType)
     .maybeSingle();
 
-  if (error || !data) return getChallengeData(challengeType);
+  if (error || !data) {
+    const local = getChallengeData(challengeType);
+    if (!local) return local;
+    return durationDays
+      ? { ...local, currentDay: resolveChallengeDay(local.startedAt, local.entries, durationDays) }
+      : local;
+  }
+
+  const entries = (data.entries ?? {}) as Record<number, string>;
+  const startedAt = data.started_at ? new Date(data.started_at).getTime() : Date.now();
 
   return {
-    entries: data.entries as Record<number, string>,
-    currentDay: data.current_day,
-    startedAt: new Date(data.started_at!).getTime(),
+    entries,
+    currentDay: durationDays
+      ? resolveChallengeDay(startedAt, entries, durationDays)
+      : (data.current_day ?? 1),
+    startedAt,
   };
 }
 
