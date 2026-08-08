@@ -13,6 +13,7 @@ import { trackEvent } from "@/lib/analytics";
 import ReportView from "@/components/reports/ReportView";
 import PillarBadge from "@/components/PillarBadge";
 import PillarStrip from "@/components/PillarStrip";
+import { readFunctionError } from "@/lib/function-error";
 
 const BUSINESS_TYPES = [
   "Coaching/Consulting",
@@ -84,9 +85,13 @@ const StarterKit = () => {
       }
       void trackEvent("starter_kit_submitted", { email: cleanEmail, business_type: businessType }, "ai");
     } catch (err) {
+      const { message, rateLimited } = await readFunctionError(
+        err,
+        "Please try again in a moment.",
+      );
       toast({
-        title: "Couldn't generate your report",
-        description: "Please try again in a moment.",
+        title: rateLimited ? "Take a breath" : "Couldn't generate your report",
+        description: message,
         variant: "destructive",
       });
     } finally {

@@ -21,6 +21,7 @@ import { trackCta } from "@/lib/analytics";
 import PillarBadge from "@/components/PillarBadge";
 import PillarStrip from "@/components/PillarStrip";
 import { useBookingLinks } from "@/hooks/use-booking-links";
+import { readFunctionError } from "@/lib/function-error";
 
 interface InsightResult {
   truth: string;
@@ -89,6 +90,12 @@ const ResultScreen = () => {
       });
 
       if (error || data?.error) {
+        if (error) {
+          const { message, rateLimited } = await readFunctionError(error, "");
+          if (rateLimited) {
+            toast({ title: "Take a breath", description: message });
+          }
+        }
         insightData = generateInsight(answers);
       } else {
         insightData = data as InsightResult;
