@@ -10,6 +10,7 @@ import OfferCard from "@/components/offers/OfferCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { redirectToLeadGenIfConfigured } from "@/lib/lead-gen";
 import {
   BUILD_STUDIO_TIERS,
   QUICK_WINS,
@@ -104,6 +105,9 @@ const CollectiveAIBuildStudio = () => {
 
   const startCheckout = async (offer: BuildTierOffer) => {
     if (!offer.priceId) return;
+    // Build Studio packages are mid/high-ticket — defer to the lead-gen page
+    // when one is configured.
+    if (await redirectToLeadGenIfConfigured()) return;
     setBusyPriceId(offer.priceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
