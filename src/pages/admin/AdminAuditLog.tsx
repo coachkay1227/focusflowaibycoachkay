@@ -20,6 +20,12 @@ interface AuditRow {
 
 const PAGE_SIZE = 50;
 
+/**
+ * Actions written by the system rather than by an admin. Listed explicitly so
+ * they are always filterable, even on a page that happens not to contain one.
+ */
+const ORDER_ACTIONS = ["order_fulfillment_verified", "order_next_step_chosen"];
+
 export default function AdminAuditLog() {
   const { isAdmin, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
@@ -65,7 +71,10 @@ export default function AdminAuditLog() {
 
   useEffect(() => { load(); }, [page, actionFilter, tableFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const actions = useMemo(() => Array.from(new Set(rows.map((r) => r.action))).sort(), [rows]);
+  const actions = useMemo(
+    () => Array.from(new Set([...ORDER_ACTIONS, ...rows.map((r) => r.action)])).sort(),
+    [rows]
+  );
   const tables = useMemo(
     () => Array.from(new Set(rows.map((r) => r.target_table).filter(Boolean) as string[])).sort(),
     [rows]
