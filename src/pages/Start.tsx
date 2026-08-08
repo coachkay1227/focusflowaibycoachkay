@@ -182,10 +182,9 @@ export default function Start() {
   return (
     <div className="min-h-dvh bg-background px-5 pt-28 pb-16 sm:pt-32">
       <SEOHead
-        title="Start Here"
-        description="Your results, your recommended next move, and one step to take now."
+        title="Start Here: Your Next AI Move"
+        description="Find your starting point with FocusFlow AI. See your recommended next move and take one clear step today."
         path="/start"
-        noIndex
       />
 
       <div className="mx-auto w-full max-w-2xl">
@@ -211,7 +210,7 @@ export default function Start() {
           </div>
         </div>
 
-        {/* Step 1 — what we found */}
+        {/* Step 1, what we found */}
         {step === 1 && (
           <section className="animate-in fade-in duration-300">
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-3">
@@ -328,7 +327,7 @@ export default function Start() {
           </section>
         )}
 
-        {/* Step 2 — recommended next move */}
+        {/* Step 2, recommended next move */}
         {step === 2 && (
           <section className="animate-in fade-in duration-300">
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-3">
@@ -412,7 +411,7 @@ export default function Start() {
           </section>
         )}
 
-        {/* Step 3 — one button */}
+        {/* Step 3, one button */}
         {step === 3 && (
           <section className="animate-in fade-in duration-300">
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-3">

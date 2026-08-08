@@ -158,7 +158,7 @@ export default function AdminFulfillmentTest() {
           <p className="text-muted-foreground text-sm">
             Runs a real $47 AI Business Audit purchase with the FFTEST100 promo (100% off, so you pay
             nothing) and reports the actual backend result of every fulfillment stage. Nothing here is
-            simulated — each row reads the live Stripe or database record.
+            simulated, each row reads the live Stripe or database record.
           </p>
         </header>
 

@@ -4,7 +4,7 @@ import SEOHead from "@/components/SEOHead";
 const RefundPolicy = () => (
   <>
     <SEOHead
-      title="Refund & Cancellation Policy — FocusFlow AI"
+      title="Refund & Cancellation Policy: FocusFlow AI"
       description="Refund windows and cancellation terms for FocusFlow AI programs."
       path="/refund-policy"
     />
@@ -17,14 +17,14 @@ const RefundPolicy = () => (
   >
     <p>
       We want every client to feel confident saying yes. Our refund windows are designed to
-      protect that — while respecting the fact that coaching delivers value the moment you do the
+      protect that, while respecting the fact that coaching delivers value the moment you do the
       work. All refund requests should be sent to{" "}
       <a href="mailto:hello@coachkayelevates.org" className="text-primary">hello@coachkayelevates.org</a>.
     </p>
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">Free offerings</h2>
     <p>
-      The Clarity Check, AI Coach free tier, Starter Kit, and Community access are free — no
+      The Clarity Check, AI Coach free tier, Starter Kit, and Community access are free, no
       refund applies.
     </p>
 
@@ -65,7 +65,7 @@ const RefundPolicy = () => (
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">Chargebacks</h2>
     <p>
-      Please reach out to us first — we genuinely want to make it right. Initiating a chargeback
+      Please reach out to us first, we genuinely want to make it right. Initiating a chargeback
       before contacting us may result in immediate suspension of access while the dispute is
       reviewed.
     </p>

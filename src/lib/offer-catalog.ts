@@ -1,5 +1,5 @@
 // ============================================================
-// FocusFlow — Paid Offer Catalog (Rent-an-Agent + Advisory)
+// FocusFlow. Paid Offer Catalog (Rent-an-Agent + Advisory)
 // Single source of truth for the new offer landing pages.
 // Stripe price IDs live here so /rent-an-agent and /advisory
 // can post them to create-checkout without re-encoding pricing.
@@ -104,7 +104,7 @@ export const RENT_AGENT_ENTERPRISE = {
   best_for: "Institutional buyers, workforce partners, and corporate ecosystems.",
 };
 
-/** AI Lead Engine — five tiers, all inquiry-only. Pricing per MasterOffer.pdf. */
+/** AI Lead Engine, five tiers, all inquiry-only. Pricing per MasterOffer.pdf. */
 export const LEAD_ENGINE_TIERS = [
   {
     key: "essentials",
@@ -177,7 +177,7 @@ export const LEAD_ENGINE_TIERS = [
 
 export const LEAD_ENGINE_ENTERPRISE = {
   key: "enterprise",
-  name: "Lead Engine — Enterprise",
+  name: "Lead Engine. Enterprise",
   headline: "Custom-built outbound infrastructure for multi-brand, multi-region, or regulated GTM.",
   priceDisplay: "$4,997/mo",
   setup: "+ setup, scoped on the call",
@@ -192,7 +192,7 @@ export const LEAD_ENGINE_ENTERPRISE = {
 } as const;
 
 // ============================================================
-// Standalone agent builds — the quick-win rung of the ladder.
+// Standalone agent builds, the quick-win rung of the ladder.
 // Platform names never appear here; these are outcomes.
 // The AI Brain is the only one with open checkout: it is a
 // foundation, not a build, so there is nothing to scope first.
@@ -280,7 +280,7 @@ export const AGENT_BUILDS: AgentBuildOffer[] = [
   },
 ];
 
-/** Hermes — the premium capstone. From $5,000, always scoped on a call. */
+/** Hermes, the premium capstone. From $5,000, always scoped on a call. */
 export const HERMES = {
   key: "hermes",
   name: "Hermes",
@@ -343,7 +343,7 @@ export const AGENT_LADDER = [
   },
 ] as const;
 
-/** Low-ticket entry offers — direct Stripe Checkout (one-time payments). */
+/** Low-ticket entry offers, direct Stripe Checkout (one-time payments). */
 export const ENTRY_OFFERS = {
   audit: {
     name: "AI Business Audit",
@@ -375,7 +375,7 @@ export const ENTRY_OFFERS = {
   },
 } as const;
 
-/** High-ticket / scoped advisory lanes — inquiry-only. */
+/** High-ticket / scoped advisory lanes, inquiry-only. */
 export const ADVISORY_LANES = [
   {
     key: "executive",

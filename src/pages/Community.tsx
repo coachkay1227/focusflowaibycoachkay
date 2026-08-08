@@ -42,7 +42,7 @@ const Community = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="FocusFlow Elevation Hub — Community"
+        title="FocusFlow Elevation Hub: Community"
         description="Join the FocusFlow Elevation Hub on Skool. Connect with 98+ elevation seekers, coaching modules, weekly group sessions, and 24/7 community support."
         path="/community"
         jsonLd={[

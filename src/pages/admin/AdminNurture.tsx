@@ -95,7 +95,7 @@ const statusTone: Record<string, string> = {
   failed: "bg-destructive/15 text-destructive",
 };
 
-const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
+const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : ", ");
 
 const DAY_MS = 86_400_000;
 
@@ -313,10 +313,10 @@ export default function AdminNurture() {
                 {audit.linked_user && <Badge variant="outline">Account linked</Badge>}
               </div>
               <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-2 text-sm">
-                <Field label="Email" value={audit.email ?? "— none on file —"} />
+                <Field label="Email" value={audit.email ?? ", none on file, "} />
                 <Field label="Audit status" value={audit.status} />
                 <Field label="Audit ID" value={audit.id} mono />
-                <Field label="Stripe session" value={audit.stripe_session_id ?? "—"} mono />
+                <Field label="Stripe session" value={audit.stripe_session_id ?? ", "} mono />
                 <Field label="Purchased" value={fmt(audit.created_at)} />
                 <Field label="Report generated" value={fmt(audit.generated_at)} />
                 <Field

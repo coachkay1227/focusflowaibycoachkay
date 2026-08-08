@@ -1,5 +1,5 @@
 /**
- * FocusFlow AI — Transactional Email Templates
+ * FocusFlow AI. Transactional Email Templates
  *
  * These templates produce self-contained HTML emails styled with inline CSS.
  * Email body backgrounds are white (#ffffff) per best-practice; brand accent
@@ -176,7 +176,7 @@ export function challengeReminderEmail(data: ChallengeReminderData): string {
     ${ctaButton("Complete Today's Reflection", data.challengeUrl)}
 
     <p style="margin:0;font-size:13px;color:${BRAND.footerText};text-align:center;line-height:1.5;">
-      "The mirror doesn't judge. It just shows you what's real." — Coach Kay
+      "The mirror doesn't judge. It just shows you what's real.". Coach Kay
     </p>`;
 
   return baseWrapper(content);

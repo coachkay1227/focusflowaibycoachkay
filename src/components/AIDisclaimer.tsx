@@ -28,7 +28,7 @@ export function AIDisclaimer({
       </p>
       <p className="mt-2">
         This output is generated with AI assistance using the answers you provided.
-        It is intended for reflection and decision support — not a diagnosis,
+        It is intended for reflection and decision support, not a diagnosis,
         clinical evaluation, legal opinion, or financial guarantee.
         {clinical
           ? " If you are in crisis or considering harm to yourself or others, contact a licensed professional or call your local emergency line immediately."

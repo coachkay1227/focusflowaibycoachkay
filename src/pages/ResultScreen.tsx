@@ -194,7 +194,7 @@ const ResultScreen = () => {
     return getProgramBySlug(trackResult.recommendedProgramSlugs[0]);
   }, [trackResult]);
 
-  // Phase-aware primary offer — matches the track recommendation instead of always showing the same program
+  // Phase-aware primary offer, matches the track recommendation instead of always showing the same program
   const primaryOffer = useMemo(() => {
     if (!trackResult) return getProgramBySlug("30-day-personal-reset");
     const slug = programsForPhase(trackResult.likelyPhase)[0] ?? "30-day-personal-reset";
@@ -207,7 +207,7 @@ const ResultScreen = () => {
     return `${type.replace("-", " ").replace(/\b\w/g, (c) => c.toUpperCase())} Challenge`;
   }, [trackResult]);
 
-  // Mirror the user's own words back at them — premium clarity tools always do this.
+  // Mirror the user's own words back at them, premium clarity tools always do this.
   const mirroredAnswers = useMemo(() => {
     if (!answers) return [];
     const items: { label: string; value: string }[] = [];
@@ -225,7 +225,7 @@ const ResultScreen = () => {
         await (navigator as Navigator).share({ title: "Clarity Check by Coach Kay", text, url });
         return;
       } catch {
-        // user dismissed — fall through to copy
+        // user dismissed, fall through to copy
       }
     }
     try {
@@ -250,7 +250,7 @@ const ResultScreen = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
-      <SEOHead title="Your Clarity Report — FocusFlow AI" description="Review your personalized clarity insights, patterns, and action steps from your session with Coach Kay." path="/result" noIndex />
+      <SEOHead title="Your Clarity Report: FocusFlow AI" description="Review your personalized clarity insights, patterns, and action steps from your session with Coach Kay." path="/result" noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
@@ -300,7 +300,7 @@ const ResultScreen = () => {
             </div>
           </AnimatedSection>
 
-          {/* "What you told me" — mirror the user's own words */}
+          {/* "What you told me", mirror the user's own words */}
           {mirroredAnswers.length > 0 && (
             <AnimatedSection delay={50} className="mb-10">
               <div className="clarity-card rounded-lg border border-border bg-card/20 backdrop-blur-sm p-6 md:p-8">
@@ -560,7 +560,7 @@ const ResultScreen = () => {
               This pattern won't change on its own. Here's where to start.
             </p>
 
-            {/* Primary CTA — phase-matched program offer */}
+            {/* Primary CTA, phase-matched program offer */}
             <Button
               onClick={() => {
                 trackCta("apply_primary_offer", "personal", { moduleId, offer: primaryOffer?.slug });
@@ -623,7 +623,7 @@ const ResultScreen = () => {
             </div>
           </AnimatedSection>
 
-          {/* Share block — turn the result into a referral moment */}
+          {/* Share block, turn the result into a referral moment */}
           <AnimatedSection delay={1350} className="mt-12">
             <div className="clarity-card rounded-lg border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8 text-center">
               <Share2 className="h-6 w-6 text-primary mx-auto mb-3" />

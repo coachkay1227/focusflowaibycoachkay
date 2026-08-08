@@ -130,14 +130,14 @@ const ExitIntentPopup = () => {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Before you go — get your free AI readiness score"
+      aria-label="Before you go, get your free AI readiness score"
       className="fixed inset-0 z-[70] flex items-center justify-center px-4"
       style={{ background: "rgba(0,0,0,0.70)", backdropFilter: "blur(4px)" }}
     >
       <div
         className="relative w-full max-w-md rounded-xl p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
         style={{
-          background: "#111827",
+          background: "hsl(var(--card))",
           border: "1.5px solid hsl(var(--primary) / 0.6)",
         }}
       >

@@ -13,9 +13,9 @@ export interface DirectoryTool {
   name: string;
   blurb: string;
   category: DirCategory;
-  /** Direct public signup / homepage URL — always set. */
+  /** Direct public signup / homepage URL, always set. */
   signup_url: string;
-  /** Coach Kay's affiliate URL when available — overrides signup_url on the CTA. */
+  /** Coach Kay's affiliate URL when available, overrides signup_url on the CTA. */
   affiliate_url?: string;
   /** True when Coach Kay plans to register an affiliate but hasn't dropped the link yet. */
   affiliate_pending?: boolean;

@@ -94,7 +94,7 @@ const RadioRow = ({ label, value, options, onChange }: {
 const AuditIntake = () => {
   const navigate = useNavigate();
   // Attach mode: buyer already paid (arrived via magic link) but their intake
-  // was never captured — /audit/intake/:id?token=aud_... skips payment and
+  // was never captured, /audit/intake/:id?token=aud_... skips payment and
   // attaches the intake to the existing paid audit.
   const { id: attachAuditId } = useParams();
   const [searchParams] = useSearchParams();
@@ -134,14 +134,14 @@ const AuditIntake = () => {
       };
 
       if (attachMode) {
-        // Already paid — attach intake to the existing audit and kick off generation.
+        // Already paid, attach intake to the existing audit and kick off generation.
         const { data: res, error } = await supabase.functions.invoke("complete-audit-intake", {
           body: { audit_id: attachAuditId, token: attachToken, intake: payloadIntake },
         });
         if (error) throw error;
         const payload = res as { ok?: boolean } | null;
         if (!payload?.ok) throw new Error("Could not attach your intake. Check your magic link and retry.");
-        toast.success("Intake saved — generating your audit now.");
+        toast.success("Intake saved, generating your audit now.");
         navigate(`/audit/report/${attachAuditId}?token=${encodeURIComponent(attachToken)}`);
         return;
       }
@@ -195,7 +195,7 @@ const AuditIntake = () => {
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <SEOHead title="AI Business Audit Intake — FocusFlow AI" description="Complete your 17-field intake. Custom audit generates in under 2 minutes." path="/audit/intake" noIndex />
+      <SEOHead title="AI Business Audit Intake: FocusFlow AI" description="Complete your 17-field intake. Custom audit generates in under 2 minutes." path="/audit/intake" noIndex />
       <div className="max-w-3xl mx-auto px-6 py-10">
         <header className="mb-8">
           <span className="font-mono-label text-primary tracking-[0.2em] text-xs">$47 AI BUSINESS AUDIT</span>
@@ -204,7 +204,7 @@ const AuditIntake = () => {
           </h1>
           <p className="text-muted-foreground mt-2">
             {attachMode
-              ? `Step ${step} of 3 · ~5–7 minutes · Your audit is paid — complete this to generate your report`
+              ? `Step ${step} of 3 · ~5–7 minutes · Your audit is paid, complete this to generate your report`
               : `Step ${step} of 3 · ~5–7 minutes · Pay $47 after intake`}
           </p>
           <div className="mt-4 h-2 w-full rounded-full bg-card/40 overflow-hidden">

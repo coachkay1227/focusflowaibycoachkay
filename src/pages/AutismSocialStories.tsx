@@ -43,7 +43,7 @@ function AutismOfferCard({
         primaryCta={
           pkg.inquiryOnly
             ? { label: "Request Scope", onClick: () => onInquiry(pkg) }
-            : { label: `Buy Now — ${pkg.priceLabel}`, onClick: () => onBuy(pkg.slug, giftWrap) }
+            : { label: `Buy Now, ${pkg.priceLabel}`, onClick: () => onBuy(pkg.slug, giftWrap) }
         }
         footnote={
           showGiftWrap ? (
@@ -76,14 +76,14 @@ export default function AutismSocialStories() {
     setIntakeOpen(true);
   };
   const openInquiry = (pkg: AutismDisplayPackage) => {
-    setInquiryLane(`Autism & Social Stories — ${pkg.name}`);
+    setInquiryLane(`Autism & Social Stories, ${pkg.name}`);
     setInquiryOpen(true);
   };
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="Autism & Social Stories — Coach Kay Elevates"
+        title="Autism & Social Stories: Coach Kay Elevates"
         description="AI-personalized social stories for autism families. Customized by behavior, communication style, and learning goals. HSA/FSA reimbursement eligible."
         path="/autism-social-stories"
         jsonLd={[
@@ -100,7 +100,7 @@ export default function AutismSocialStories() {
             "/autism-social-stories"
           ),
           serviceSchema({
-            name: "Autism & Social Stories — AI-Personalized",
+            name: "Autism & Social Stories. AI-Personalized",
             description: "AI-personalized social stories for autism families. Customized by behavior, communication style, and learning goals. HSA/FSA reimbursement eligible.",
             url: `${SITE_URL}/autism-social-stories`,
             price: 47,

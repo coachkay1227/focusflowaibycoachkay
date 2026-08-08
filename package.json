@@ -13,7 +13,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prerender": "npx -y tsx scripts/prerender-blog.ts",
+    "prebuild": "npx -y tsx scripts/generate-sitemap.ts && npx -y tsx scripts/check-seo-regressions.ts",
+    "postbuild": "npx -y tsx scripts/prerender-blog.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

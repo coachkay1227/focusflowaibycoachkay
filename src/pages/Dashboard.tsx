@@ -26,7 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const AUDIT_OFFER_NAMES: Record<string, string> = {
-  // Door 1 — Transformation
+  // Door 1. Transformation
   transform_30_personal: "30-Day Personal Reset",
   transform_30_business: "30-Day Business Reset",
   transform_30_ai: "30-Day AI Reset",
@@ -34,7 +34,7 @@ const AUDIT_OFFER_NAMES: Record<string, string> = {
   transform_90_business: "90-Day Business Transformation",
   transform_90_ai: "90-Day Full AI Transformation",
   transform_6mo_partnership: "6-Month Private Partnership",
-  // Door 2 — Build For Me
+  // Door 2. Build For Me
   rent_agent_starter: "Rent-an-Agent Starter",
   rent_agent_pro: "Rent-an-Agent Pro",
   rent_agent_dreamteam: "Rent-an-Agent Dream Team",
@@ -44,18 +44,18 @@ const AUDIT_OFFER_NAMES: Record<string, string> = {
   lead_engine_growth: "Lead Engine Growth",
   lead_engine_scale: "Lead Engine Scale",
   lead_engine_enterprise: "Lead Engine Enterprise",
-  // Door 3 — Advisory
+  // Door 3. Advisory
   advisory_strategy_intensive: "AI Strategy Intensive",
   advisory_executive: "Executive Advisory",
   advisory_speaking: "Speaking & Workshops",
   advisory_corporate: "Corporate, EAP & Workforce Learning",
   advisory_university: "AI University Roadmap",
   group_programs: "Group Programs",
-  // Door 4 — Studio
+  // Door 4. Studio
   studio_mini_story: "Mini-Story Starter",
   studio_storybook_pro: "The Storybook Pro",
   studio_other: "Publishing Studio",
-  // Build Studio (Phase 3.5 — opening soon)
+  // Build Studio (Phase 3.5, opening soon)
   build_studio_landing: "Build Studio: Landing Page (Opening Soon)",
   build_studio_site: "Build Studio: Business Site (Opening Soon)",
   build_studio_dashboard: "Build Studio: Dashboard (Opening Soon)",
@@ -97,7 +97,7 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
-    // Handle Stripe checkout success redirect — poll rapidly for tier upgrade
+    // Handle Stripe checkout success redirect, poll rapidly for tier upgrade
     const params = new URLSearchParams(window.location.search);
     if (params.get("checkout") === "success" || params.get("welcome") === "program") {
       const isWelcome = params.get("welcome") === "program";
@@ -105,7 +105,7 @@ const Dashboard = () => {
         title: isWelcome ? "You're in!" : "Welcome aboard!",
         description: isWelcome
           ? "Your program is now active. Scroll down to see what's included and your next step."
-          : "Payment confirmed — syncing your access now.",
+          : "Payment confirmed, syncing your access now.",
       });
       window.history.replaceState({}, "", "/dashboard");
       // Poll every 5 s for up to 60 s so the tier badge updates promptly
@@ -132,7 +132,7 @@ const Dashboard = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
-      <SEOHead title="Dashboard — FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" noIndex />
+      <SEOHead title="Dashboard: FocusFlow AI" description="Track your clarity journey. View your score, enrolled modules, challenge progress, and personalized weekly insights." path="/dashboard" noIndex />
       <div className="mouse-glow" />
       <FloatingOrbs />
 
@@ -142,7 +142,7 @@ const Dashboard = () => {
           type="button"
           onClick={() => navigate("/")}
           className="font-heading text-xl font-light cursor-pointer bg-transparent border-0 p-0"
-          aria-label="FocusFlow AI — go to home"
+          aria-label="FocusFlow AI, go to home"
         >
           <span aria-hidden="true" className="text-primary font-medium">Focus</span><span aria-hidden="true" className="text-foreground font-light">Flow AI</span>
         </button>
@@ -198,7 +198,7 @@ const Dashboard = () => {
           <div className="text-center py-20 text-muted-foreground">Loading your journey...</div>
         ) : (
           <div className="space-y-12">
-            {/* Buyer onboarding nudge — hides itself once completed or dismissed */}
+            {/* Buyer onboarding nudge, hides itself once completed or dismissed */}
             <BuyerStartCard />
 
             {/* Your Program (only renders for reset_30 / transformation_90 tiers) */}
@@ -208,7 +208,7 @@ const Dashboard = () => {
               </AnimatedSection>
             )}
 
-            {/* F.O.C.U.S. Curriculum — visible to paid tiers */}
+            {/* F.O.C.U.S. Curriculum, visible to paid tiers */}
             {!tierLoading && (tier === "reset_30" || tier === "transformation_90" || tier === "premium" || tier === "corporate") && (
               <AnimatedSection delay={50}>
                 <CurriculumSection />
@@ -372,8 +372,8 @@ const Dashboard = () => {
                         !a.intake ||
                         (typeof a.intake === "object" && Object.keys(a.intake as object).length === 0);
                       const offerName = a.recommended_offer
-                        ? AUDIT_OFFER_NAMES[a.recommended_offer] ?? "—"
-                        : "—";
+                        ? AUDIT_OFFER_NAMES[a.recommended_offer] ?? ", "
+                        : ", ";
                       let label: string;
                       if (hasReport) {
                         label = `Audit from ${new Date(a.generated_at ?? a.created_at).toLocaleDateString()}`;

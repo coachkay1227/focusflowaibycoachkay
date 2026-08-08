@@ -54,7 +54,7 @@ const Advisory = () => {
   const jsonLd = [
     webPage("/advisory", "Advisory, Events & Premium Education", "CollectionPage"),
     serviceSchema({
-      name: "Fractional AI Advisory — Coach Kay",
+      name: "Fractional AI Advisory. Coach Kay",
       description: "Fractional AI advisory and strategic partnership with Coach Kay. For leaders, founders, and organizations ready to integrate AI into their business at scale.",
       url: `${SITE_URL}/advisory`,
       idSuffix: "fractional-ai-advisory",
@@ -106,7 +106,7 @@ const Advisory = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Advisory, Speaking & Cohorts — Coach Kay"
+        title="Advisory, Speaking & Cohorts: Coach Kay"
         description="Fractional AI advisory and strategic partnership with Coach Kay. For leaders, founders, and organizations ready to integrate AI into their business at scale."
         path="/advisory"
         keywords={[
@@ -155,7 +155,7 @@ const Advisory = () => {
         </p>
       </section>
 
-      {/* STRATEGY INTENSIVE — direct checkout */}
+      {/* STRATEGY INTENSIVE, direct checkout */}
       <section className="relative z-10 px-6 sm:px-10 pb-10 max-w-4xl mx-auto">
         <AnimatedSection>
           <div className="rounded-2xl border border-primary/40 bg-primary/5 backdrop-blur-sm p-8 sm:p-10">
@@ -195,7 +195,7 @@ const Advisory = () => {
         </AnimatedSection>
       </section>
 
-      {/* OTHER LANES — inquiry */}
+      {/* OTHER LANES, inquiry */}
       <section className="relative z-10 px-6 sm:px-10 pb-16 max-w-7xl mx-auto">
         <AnimatedSection className="text-center mb-10">
           <span className="font-mono-label text-primary tracking-[0.28em] text-xs">SCOPED ENGAGEMENTS</span>
@@ -265,7 +265,7 @@ const Advisory = () => {
         </div>
       </section>
 
-      {/* WHO DELIVERS — Collective AI trust strip */}
+      {/* WHO DELIVERS. Collective AI trust strip */}
       <section className="relative z-10 px-6 sm:px-10 pb-20 max-w-4xl mx-auto">
         <div className="rounded-2xl border border-primary/25 bg-primary/[0.04] p-7 md:p-9">
           <div className="flex items-center gap-3 mb-3">

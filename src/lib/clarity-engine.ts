@@ -68,7 +68,7 @@ function findBestMatch(
   for (const key of keys) {
     if (lower.includes(key)) return map[key];
   }
-  // Deterministic fallback — same answers always yield the same insight.
+  // Deterministic fallback, same answers always yield the same insight.
   const idx = cyrb53(fallbackSeed) % keys.length;
   return map[keys[idx]];
 }

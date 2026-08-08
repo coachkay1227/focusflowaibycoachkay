@@ -86,6 +86,47 @@ const SiteFooter = () => {
         </div>
 
         {/* 3 link columns */}
+        {/* Ecosystem cross-links: three separate properties, one family */}
+        <div className="border-t border-border/40 pt-8">
+          <h3 className="font-mono text-[11px] text-primary/70 tracking-[0.18em] uppercase mb-4">
+            The ecosystem
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-border/60 p-4">
+              <p className="text-sm font-medium text-foreground">FocusFlow AI</p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                You are here. Paid AI builds, agents, and advisory.
+              </p>
+            </div>
+            <a
+              href="https://coachkayelevates.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 transition-colors"
+            >
+              <p className="text-sm font-medium text-foreground inline-flex items-center gap-1.5">
+                Coach Kay Elevates <ExternalLink className="h-3 w-3 text-primary" />
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                The coaching home. Sessions, speaking, and the human work behind the tech.
+              </p>
+            </a>
+            <a
+              href="https://the-diagnostic-coachkayai-life.lovable.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 transition-colors"
+            >
+              <p className="text-sm font-medium text-foreground inline-flex items-center gap-1.5">
+                The F.O.C.U.S. Diagnostic <ExternalLink className="h-3 w-3 text-primary" />
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                See where your foundation is strong and where you are carrying too much alone.
+              </p>
+            </a>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 py-10">
           {cols.map((col) => (
             <div key={col.title}>
@@ -136,7 +177,7 @@ const SiteFooter = () => {
         {/* Disclaimer */}
         <div className="border-t border-border/30 pt-6 space-y-4">
           <p className="text-[11px] text-muted-foreground max-w-3xl mx-auto text-center leading-relaxed">
-            FocusFlow AI provides AI-powered coaching, education, and productivity tools — not a
+            FocusFlow AI provides AI-powered coaching, education, and productivity tools, not a
             substitute for licensed medical, mental-health, legal, financial, or tax advice.
             AI-generated insights are for personal development only. Results vary.{" "}
             <Link to="/disclaimer" className="text-primary/70 hover:text-primary underline underline-offset-2">

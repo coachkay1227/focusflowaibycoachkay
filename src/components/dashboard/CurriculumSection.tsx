@@ -18,7 +18,7 @@ export default function CurriculumSection() {
           Your Program Modules
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
-          {modules.length} modules across all five pillars — work through them at your pace.
+          {modules.length} modules across all five pillars, work through them at your pace.
         </p>
       </div>
 

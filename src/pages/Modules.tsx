@@ -133,7 +133,7 @@ const Modules = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="AI Transformation Programs — FocusFlow by Coach Kay"
+        title="AI Transformation Programs: FocusFlow by Coach Kay"
         description="AI-powered transformation programs by Coach Kay. Personal clarity, business growth, and full AI integration paths. Free and paid programs starting at $27/month."
         path="/modules"
         keywords={[
@@ -275,7 +275,7 @@ const Modules = () => {
           <PillarStrip />
         </div>
 
-        {/* Plans — anchor target for AccessGate "View Plans" CTA */}
+        {/* Plans, anchor target for AccessGate "View Plans" CTA */}
         <section id="plans" className="scroll-mt-24 mt-16">
           <PricingSection />
         </section>

@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 interface OfferInquiryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Marketing lane (e.g. "Rent-an-Agent — Enterprise", "AI Lead Engine — Pro"). */
+  /** Marketing lane (e.g. "Rent-an-Agent. Enterprise", "AI Lead Engine. Pro"). */
   lane: string;
   /** Brief context line shown in the dialog header. */
   context?: string;

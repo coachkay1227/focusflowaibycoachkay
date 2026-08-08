@@ -29,10 +29,10 @@ const TIMELINE_OPTIONS = [
  *  Derived from the catalog so a new offer cannot go missing here. */
 const OFFER_LABELS: Record<string, string> = {
   ...Object.fromEntries(AGENT_BUILDS.map((b) => [b.key, b.name])),
-  ...Object.fromEntries(RENT_AGENT_TIERS.map((t) => [`rent_${t.key}`, `Rent-an-Agent — ${t.name}`])),
-  rent_enterprise: `Rent-an-Agent — ${RENT_AGENT_ENTERPRISE.name}`,
+  ...Object.fromEntries(RENT_AGENT_TIERS.map((t) => [`rent_${t.key}`, `Rent-an-Agent, ${t.name}`])),
+  rent_enterprise: `Rent-an-Agent, ${RENT_AGENT_ENTERPRISE.name}`,
   ...Object.fromEntries(
-    LEAD_ENGINE_TIERS.map((t) => [`lead_engine_${t.key}`, `AI Lead Engine — ${t.name}`]),
+    LEAD_ENGINE_TIERS.map((t) => [`lead_engine_${t.key}`, `AI Lead Engine, ${t.name}`]),
   ),
   [`lead_engine_${LEAD_ENGINE_ENTERPRISE.key}`]: LEAD_ENGINE_ENTERPRISE.name,
   [HERMES.key]: HERMES.name,
@@ -58,7 +58,7 @@ const AgentIntake = () => {
   const [guestEmail, setGuestEmail] = useState('');
 
   // We infer whether this is an agency build from agentList having content
-  // (the field is shown if user types something — it's optional/conditional)
+  // (the field is shown if user types something, it's optional/conditional)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,7 +186,7 @@ const AgentIntake = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay bg-background text-foreground">
       <SEOHead
-        title="Agent Intake — FocusFlow AI"
+        title="Agent Intake: FocusFlow AI"
         description="Submit your agent intake form so Coach Kay can build your custom AI agent."
         path="/agent-intake"
         noIndex
@@ -280,7 +280,7 @@ const AgentIntake = () => {
             </p>
           </div>
 
-          {/* Agency build — agent list */}
+          {/* Agency build, agent list */}
           <div>
             <Label htmlFor="agent-list" className="text-foreground/90">
               For multi-agent builds: list each agent and its purpose <span className="text-muted-foreground text-sm">(optional)</span>

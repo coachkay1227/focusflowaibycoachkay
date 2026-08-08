@@ -55,8 +55,8 @@ const CoachKay = () => {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="Meet Coach Kay — AI & Life Transformation Coach | FocusFlow AI"
-        description="Meet Coach Kay — Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum through AI-powered coaching."
+        title="Meet Coach Kay: AI and Life Transformation Coach"
+        description="Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum with AI."
         path="/coach-kay"
         keywords={[
           "Coach Kay",
@@ -104,7 +104,7 @@ const CoachKay = () => {
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/20 blur-lg" />
                 <img
                   src={coachKayImg}
-                  alt="Coach Kay — Kenza Alaoui Ismaili, AI & Life Transformation Coach"
+                  alt="Coach Kay. Kenza Alaoui Ismaili, AI & Life Transformation Coach"
                   className="relative rounded-2xl object-cover shadow-2xl w-full"
                   loading="eager"
                   {...{ fetchpriority: "high" }}
@@ -119,7 +119,7 @@ const CoachKay = () => {
                 Meet Your Coach
               </p>
               <h1 className="mb-4 font-heading text-4xl font-bold leading-tight md:text-5xl">
-                Meet Coach Kay — AI &amp; Life Transformation Coach
+                Meet Coach Kay. AI &amp; Life Transformation Coach
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
                 Kenza Alaoui Ismaili · AI &amp; Life Transformation Coach
@@ -152,7 +152,7 @@ const CoachKay = () => {
         </div>
       </section>
 
-      {/* TWO HATS — Collective AI positioning */}
+      {/* TWO HATS. Collective AI positioning */}
       <section id="two-hats" className="py-12 md:py-16 bg-secondary/10">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <AnimatedSection>
@@ -204,7 +204,7 @@ const CoachKay = () => {
                 COED partner serving working families across Central Ohio with
                 cohort-based learning, live sessions, and pilot programs for
                 organizations. <strong>Forward Focus Elevation</strong> is her
-                separate nonprofit, providing trauma-informed, income-based
+                fiscally sponsored community lane, providing trauma-informed, income-based
                 support for justice-impacted families and crime victims and
                 survivors.
               </p>
@@ -292,7 +292,7 @@ const CoachKay = () => {
         </div>
       </section>
 
-      {/* Where this work lives — two brands */}
+      {/* Where this work lives, two brands */}
       <section className="bg-secondary/20 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <AnimatedSection>
@@ -345,7 +345,7 @@ const CoachKay = () => {
                     <Heart className="h-5 w-5 text-primary" />
                   </div>
                   <span className="font-mono-label text-primary tracking-[0.2em] text-[10px]">
-                    NONPROFIT · JUSTICE-IMPACTED FAMILIES
+                    FISCALLY SPONSORED · JUSTICE-IMPACTED FAMILIES
                   </span>
                 </div>
                 <h3 className="font-heading text-2xl mb-2">Forward Focus Elevation</h3>
@@ -373,7 +373,8 @@ const CoachKay = () => {
             </AnimatedSection>
           </div>
           <p className="mt-8 text-center text-xs text-muted-foreground/70 max-w-2xl mx-auto">
-            Forward Focus Elevation is a separate nonprofit entity. Donations and
+            Forward Focus Elevation is a fiscally sponsored program, not a 501(c)(3).
+            Donations and
             program participation are governed by that organization's own terms
             and privacy policy. Coach Kay Elevates is a for-profit woman-owned
             business.

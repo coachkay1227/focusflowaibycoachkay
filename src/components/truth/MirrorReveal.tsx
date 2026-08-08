@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * MirrorReveal — Phase 4 "wow moment" on /truth.
+ * MirrorReveal. Phase 4 "wow moment" on /truth.
  * Pure CSS + IntersectionObserver. No libraries.
  * Scroll-triggers a typewriter reveal of a single signature line,
  * then a soft cascade of supporting copy.

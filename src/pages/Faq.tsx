@@ -7,7 +7,7 @@ import { FAQ_LANES, faqPageSchema } from "@/data/faqs";
 import { breadcrumb, webPage, SITE_URL } from "@/lib/seo-schema";
 
 /**
- * Master FAQ index — one section per lane, each with its own
+ * Master FAQ index, one section per lane, each with its own
  * FAQPage JSON-LD block (Google supports multiple FAQPage entities
  * on a single URL when they describe distinct topical groupings).
  */
@@ -29,8 +29,8 @@ const Faq = () => {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="FAQ — Coaching, AI Agents, Advisory & Studio | FocusFlow AI"
-        description="Answers about Coach Kay's clarity coaching, Rent-an-Agent subscriptions, advisory engagements, AI Business Audit, autism social stories, and the publishing studio."
+        title="FAQ: Coaching, AI Agents, Advisory, Studio"
+        description="Answers about Coach Kay's clarity coaching, Rent-an-Agent, advisory, the $47 AI Business Audit, autism social stories, and the publishing studio."
         path="/faq"
         keywords={[
           "FocusFlow FAQ",

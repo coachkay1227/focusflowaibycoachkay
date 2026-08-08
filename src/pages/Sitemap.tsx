@@ -5,30 +5,30 @@ import { ArrowLeft } from "lucide-react";
 import { getPublicPrograms, getBackendPrograms, PUBLIC_PATHS, type PublicPath } from "@/data/programs";
 
 const freeToolLinks = [
-  { path: "/clarity", label: "Clarity Session — 1-question AI insight in 90 seconds" },
-  { path: "/starter-kit", label: "AI Starter Kit — your free first step" },
-  { path: "/assessment", label: "Free Assessment — find your AI readiness score" },
-  { path: "/challenges", label: "30-Day Challenges — daily prompts to build the habit" },
-  { path: "/ai-tools", label: "AI Tools Directory — 63 vetted tools, scored & reviewed" },
-  { path: "/pause-hub", label: "Pause Hub: Scam Watch — live AI scam & threat alerts" },
-  { path: "/community", label: "FocusFlow Elevation Hub — free Skool community" },
+  { path: "/clarity", label: "Clarity Session. 1-question AI insight in 90 seconds" },
+  { path: "/starter-kit", label: "AI Starter Kit, your free first step" },
+  { path: "/assessment", label: "Free Assessment, find your AI readiness score" },
+  { path: "/challenges", label: "30-Day Challenges, daily prompts to build the habit" },
+  { path: "/ai-tools", label: "AI Tools Directory. 63 vetted tools, scored & reviewed" },
+  { path: "/pause-hub", label: "Pause Hub: Scam Watch, live AI scam & threat alerts" },
+  { path: "/community", label: "FocusFlow Elevation Hub, free Skool community" },
 ];
 
 const serviceLinks = [
-  { path: "/audit/landing", label: "AI Business Audit ($47) — 8-section diagnosis in 24 hours" },
-  { path: "/modules", label: "Transformation Paths — personal, business & AI programs" },
-  { path: "/store", label: "Books & AI Kits — self-paced tools, templates & guides" },
-  { path: "/rent-an-agent", label: "Rent-an-Agent — done-with-you AI agents on your stack" },
-  { path: "/build-studio", label: "AI Build Studio — custom AI built end-to-end" },
-  { path: "/advisory", label: "Advisory & Partnership — fractional AI strategy for leaders" },
-  { path: "/autism-social-stories", label: "Autism Social Stories — AI-personalized stories for families" },
+  { path: "/audit/landing", label: "AI Business Audit ($47). 8-section diagnosis in 24 hours" },
+  { path: "/modules", label: "Transformation Paths, personal, business & AI programs" },
+  { path: "/store", label: "Books & AI Kits, self-paced tools, templates & guides" },
+  { path: "/rent-an-agent", label: "Rent-an-Agent, done-with-you AI agents on your stack" },
+  { path: "/build-studio", label: "AI Build Studio, custom AI built end-to-end" },
+  { path: "/advisory", label: "Advisory & Partnership, fractional AI strategy for leaders" },
+  { path: "/autism-social-stories", label: "Autism Social Stories. AI-personalized stories for families" },
 ];
 
 const companyLinks = [
   { path: "/coach-kay", label: "Meet Coach Kay" },
-  { path: "/collective", label: "Collective AI — the team behind every build" },
-  { path: "/truth", label: "The Truth About AI — no hype, no fear" },
-  { path: "/faq", label: "FAQ — every question answered" },
+  { path: "/collective", label: "Collective AI, the team behind every build" },
+  { path: "/truth", label: "The Truth About AI, no hype, no fear" },
+  { path: "/faq", label: "FAQ, every question answered" },
   { path: "/auth", label: "Sign In / Sign Up" },
   { path: "/dashboard", label: "Dashboard (authenticated)" },
 ];
@@ -47,7 +47,7 @@ const Sitemap = () => (
     <FloatingOrbs />
     <SEOHead
       noIndex
-      title="Sitemap — FocusFlow AI"
+      title="Sitemap: FocusFlow AI"
       description="Browse all pages and programs on FocusFlow AI, your clarity coaching platform by Coach Kay."
       path="/sitemap"
     />

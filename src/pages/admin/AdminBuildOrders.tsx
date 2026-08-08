@@ -124,7 +124,7 @@ export default function AdminBuildOrders() {
                         {new Date(o.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">
-                        <p className="font-medium">{o.guest_name || "—"}</p>
+                        <p className="font-medium">{o.guest_name || ", "}</p>
                         <p className="text-muted-foreground text-xs">{o.guest_email || "signed-in user"}</p>
                       </td>
                       <td className="px-4 py-3">{o.product_name}</td>

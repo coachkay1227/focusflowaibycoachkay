@@ -21,7 +21,7 @@ interface Offer {
   features?: string[];
   description: string;
   cta: string;
-  priceId?: string;       // Stripe price id — present on buy-now offers
+  priceId?: string;       // Stripe price id, present on buy-now offers
   bookingUrl?: string;    // present on the Partnership offer
 }
 
@@ -45,7 +45,7 @@ const GROUPS: Group[] = [
           "Daily structure + accountability rhythm",
         ],
         description: "",
-        cta: "Start Personal Reset — $297",
+        cta: "Start Personal Reset, $297",
         priceId: "price_1TbAaPBReje0oFcLts5JuE5a",
       },
       {
@@ -59,7 +59,7 @@ const GROUPS: Group[] = [
           "Private strategy + accountability",
         ],
         description: "",
-        cta: "Start Business Reset — $497",
+        cta: "Start Business Reset, $497",
         priceId: "price_1TbAguBReje0oFcL3Qh5pIiH",
       },
       {
@@ -73,7 +73,7 @@ const GROUPS: Group[] = [
           "Private guidance from Coach Kay",
         ],
         description: "",
-        cta: "Start AI Reset — $997",
+        cta: "Start AI Reset, $997",
         priceId: "price_1TbAhOBReje0oFcL87MVrKFy",
       },
     ],
@@ -92,7 +92,7 @@ const GROUPS: Group[] = [
           "Best for committed personal evolution",
         ],
         description: "",
-        cta: "Start Personal Transformation — $997",
+        cta: "Start Personal Transformation, $997",
         priceId: "price_1TbAhtBReje0oFcLscEqWHEK",
       },
       {
@@ -106,7 +106,7 @@ const GROUPS: Group[] = [
           "Built for entrepreneurs and operators",
         ],
         description: "",
-        cta: "Start Business Transformation — $1,497",
+        cta: "Start Business Transformation, $1,497",
         priceId: "price_1TbAiNBReje0oFcLrit7Ko5x",
       },
       {
@@ -120,7 +120,7 @@ const GROUPS: Group[] = [
           "Highest-touch 90-day container",
         ],
         description: "",
-        cta: "Start Full AI Transformation — $2,497",
+        cta: "Start Full AI Transformation, $2,497",
         priceId: "price_1TbAimBReje0oFcL4Uti8udD",
       },
     ],
@@ -140,7 +140,7 @@ const GROUPS: Group[] = [
         ],
         description: "",
         cta: "Book Discovery Call",
-        bookingUrl: "PARTNERSHIP", // sentinel — resolved at runtime from useBookingLinks
+        bookingUrl: "PARTNERSHIP", // sentinel, resolved at runtime from useBookingLinks
       },
     ],
   },

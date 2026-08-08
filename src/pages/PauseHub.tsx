@@ -143,7 +143,7 @@ export default function PauseHub() {
     };
   }, [fetchAlerts]);
 
-  // Realtime subscription — new published alerts slide in live.
+  // Realtime subscription, new published alerts slide in live.
   useEffect(() => {
     const channel = supabase
       .channel("scam_alerts_feed")
@@ -222,7 +222,7 @@ export default function PauseHub() {
     });
 
   const jsonLd = [
-    webPage("/pause-hub", "P.A.U.S.E. Check — AI Scam & Safety Hub", "CollectionPage"),
+    webPage("/pause-hub", "P.A.U.S.E. Check. AI Scam & Safety Hub", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -247,8 +247,8 @@ export default function PauseHub() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="P.A.U.S.E. Check — AI Scams, Traps & Safety Alerts"
-        description="Before you click, swipe, or pay — the P.A.U.S.E. Check tracks active AI scams, overhyped trends, and productivity traps targeting working families."
+        title="P.A.U.S.E. Check: AI Scams and Safety Alerts"
+        description="Before you click, swipe, or pay, the P.A.U.S.E. Check tracks active AI scams, overhyped trends, and productivity traps targeting working families."
         path="/pause-hub"
         jsonLd={jsonLd}
       />

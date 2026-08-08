@@ -26,7 +26,7 @@ export const STRIPE_TIERS: Partial<Record<AccessTier, TierConfig[]>> = {
     { price_id: "price_1Tb3wwBReje0oFcLLlE6CDGO", product_id: "prod_UI3bP0P7W0fAiZ", name: "Rent-an-Agent · Dream Team (Founding)", price: 997, interval: "month" },
     { price_id: "price_1Tb40yBReje0oFcLIciRVQSD", product_id: "prod_UI3beYm5zLDjDR", name: "Rent-an-Agent · Dream Team", price: 1497, interval: "month" },
   ],
-  // LEGACY — these price IDs are NOT sold publicly anymore. They remain
+  // LEGACY, these price IDs are NOT sold publicly anymore. They remain
   // in Stripe and in this map so historical customers, webhook idempotency,
   // and the customer portal continue to work. The new public offers
   // (30-/90-Day Resets + 6-Month Partnership) route through ApplyNowDialog.

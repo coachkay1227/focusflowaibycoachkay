@@ -9,7 +9,7 @@ export interface ToolPick {
 }
 
 /**
- * Coach Kay's actual stack. Affiliate flags are honest — flip per tool.
+ * Coach Kay's actual stack. Affiliate flags are honest, flip per tool.
  * Edit this file to add/remove tools; the Truth page renders them automatically.
  */
 export const TOOL_PICKS: ToolPick[] = [

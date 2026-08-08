@@ -166,7 +166,7 @@ export default function AdminAuditLog() {
                         {new Date(r.created_at).toLocaleString()}
                       </td>
                       <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                        {r.admin_id ? r.admin_id.slice(0, 8) + "…" : "—"}
+                        {r.admin_id ? r.admin_id.slice(0, 8) + "…" : ", "}
                       </td>
                       <td className="px-4 py-3">
                         <Badge className="bg-primary/15 text-primary border-primary/30">{r.action}</Badge>
@@ -177,11 +177,11 @@ export default function AdminAuditLog() {
                             {r.target_table}
                             {r.target_id ? ` / ${r.target_id.slice(0, 8)}…` : ""}
                           </span>
-                        ) : "—"}
+                        ) : ", "}
                       </td>
                       <td className="px-4 py-3">
                         <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-all max-w-md">
-                          {r.metadata ? JSON.stringify(r.metadata, null, 2) : "—"}
+                          {r.metadata ? JSON.stringify(r.metadata, null, 2) : ", "}
                         </pre>
                       </td>
                     </tr>

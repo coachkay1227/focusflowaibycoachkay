@@ -48,7 +48,7 @@ type Filter = "all" | "active" | "inactive" | "expiring" | "failures";
 const DAY_MS = 86_400_000;
 
 function formatMoney(amount?: number | null, currency?: string) {
-  if (amount == null || !currency) return "—";
+  if (amount == null || !currency) return ", ";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency.toUpperCase(),
@@ -333,7 +333,7 @@ export default function AdminPaymentLinks() {
                       {row.label ? <div className="text-muted-foreground text-xs mt-1">{row.label}</div> : null}
                     </td>
                     <td className="p-3">
-                      <div>{s?.productName ?? "—"}</div>
+                      <div>{s?.productName ?? ", "}</div>
                       <div className="text-xs text-muted-foreground">{row.resolved ?? ""}</div>
                     </td>
                     <td className="p-3">
@@ -363,7 +363,7 @@ export default function AdminPaymentLinks() {
                     <td className={`p-3 ${expTone}`}>
                       {s?.expiresAt
                         ? `${new Date(s.expiresAt).toLocaleDateString()} (${expDays! >= 0 ? "in " + expDays + "d" : Math.abs(expDays!) + "d ago"})`
-                        : "—"}
+                        : ", "}
                     </td>
                     <td className="p-3 text-xs text-muted-foreground">
                       {row.refs.slice(0, 3).map((r, i) => (

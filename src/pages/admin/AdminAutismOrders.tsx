@@ -114,8 +114,8 @@ export default function AdminAutismOrders() {
                         <div className="text-xs text-muted-foreground">{o.client_email}</div>
                       </td>
                       <td className="px-4 py-3 text-xs">
-                        <div className="text-foreground">{o.child_first_name ?? "—"}</div>
-                        <div className="text-muted-foreground">{o.scenario_focus ?? "—"}</div>
+                        <div className="text-foreground">{o.child_first_name ?? ", "}</div>
+                        <div className="text-muted-foreground">{o.scenario_focus ?? ", "}</div>
                       </td>
                       <td className="px-4 py-3 text-foreground">{o.package_name}</td>
                       <td className="px-4 py-3 text-right text-primary font-medium">{formatUSD(o.order_total)}</td>

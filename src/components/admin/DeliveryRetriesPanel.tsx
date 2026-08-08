@@ -26,7 +26,7 @@ const tone: Record<string, string> = {
   parked: "bg-secondary text-secondary-foreground",
 };
 
-const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
+const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : ", ");
 
 /**
  * Emails that failed on the provider's side and are being retried on a widening
@@ -160,7 +160,7 @@ export function DeliveryRetriesPanel() {
                     {r.attempts} of {r.max_attempts}
                   </td>
                   <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
-                    {r.status === "pending" ? fmt(r.next_attempt_at) : "—"}
+                    {r.status === "pending" ? fmt(r.next_attempt_at) : ", "}
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex flex-wrap gap-2">

@@ -7,7 +7,9 @@ import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 const BASE_URL = "https://coachkayai.life";
-const TODAY = new Date().toISOString().slice(0, 10);
+// No <lastmod> is emitted: the project has no page-specific "last significant
+// change" timestamp to publish. A build-date stamp would tell crawlers every
+// page changed on every deploy, which is worse than omitting the field.
 
 interface SitemapEntry {
   path: string;
@@ -22,6 +24,7 @@ interface SitemapEntry {
 // intentionally excluded — they're noindex utility/private pages.
 const staticEntries: SitemapEntry[] = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
+  { path: "/start", priority: "0.8", changefreq: "weekly" },
   { path: "/events/claude-ai-business-accelerator-june-2026", priority: "0.9", changefreq: "weekly" },
   { path: "/modules", priority: "0.9", changefreq: "weekly" },
   { path: "/coach-kay", priority: "0.8", changefreq: "monthly" },
@@ -106,13 +109,12 @@ function extractBlogSlugs(): string[] {
 }
 
 function buildEntries(): SitemapEntry[] {
-  const entries: SitemapEntry[] = staticEntries.map((e) => ({ ...e, lastmod: TODAY }));
+  const entries: SitemapEntry[] = staticEntries.map((e) => ({ ...e }));
 
   for (const id of extractClarityModuleIds()) {
     if (RETIRED_CLARITY_IDS.has(id)) continue;
     entries.push({
       path: `/clarity/${id}`,
-      lastmod: TODAY,
       changefreq: "monthly",
       priority: "0.7",
     });
@@ -121,7 +123,6 @@ function buildEntries(): SitemapEntry[] {
   for (const slug of extractPublicProgramSlugs()) {
     entries.push({
       path: `/programs/${slug}`,
-      lastmod: TODAY,
       changefreq: "monthly",
       priority: "0.8",
     });
@@ -130,7 +131,6 @@ function buildEntries(): SitemapEntry[] {
   for (const slug of extractBlogSlugs()) {
     entries.push({
       path: `/blog/${slug}`,
-      lastmod: TODAY,
       changefreq: "monthly",
       priority: "0.7",
     });

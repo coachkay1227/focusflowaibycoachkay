@@ -91,7 +91,7 @@ export function DeliveryStatusPanel({
             </span>
             <span className="text-sm">
               <span className="text-foreground">{s.label}</span>
-              <span className="text-muted-foreground"> — {s.detail}</span>
+              <span className="text-muted-foreground">, {s.detail}</span>
             </span>
           </li>
         ))}

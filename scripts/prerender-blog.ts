@@ -169,6 +169,7 @@ function patchHead(opts: {
   // Inject og:url + extras + JSON-LD before </head>
   const inject = [
     `<meta property="og:url" content="${escapeAttr(opts.canonical)}" />`,
+    `<link rel="canonical" href="${escapeAttr(opts.canonical)}" />`,
     opts.ogImageAlt ? `<meta property="og:image:alt" content="${escapeAttr(opts.ogImageAlt)}" />` : "",
     opts.extraMeta ?? "",
     ...opts.jsonLd.map(
@@ -331,4 +332,142 @@ for (const post of POSTS) {
   writeRoute(`/blog/${post.slug}`, html);
 }
 
-console.log(`[prerender-blog] done — ${POSTS.length + 1} pages prerendered.`);
+// ---------- Commercial routes ----------
+// Static routes get prerendered from the title/description literals in their
+// page component's <SEOHead/>, so the crawlable head stays in sync with the app
+// without a second copy of the copy.
+
+const MAX_PRERENDER_PAGES = 200; // publish-output safety cap
+
+// Routes whose <SEOHead/> builds title/description at runtime. Their crawlable
+// default lives here.
+const META_OVERRIDES: Record<string, { title: string; description: string }> = {
+  "/clarity": {
+    title: "Free Clarity Check: Find Your Next Move",
+    description:
+      "Answer a few honest questions and get personalized insight into your patterns, your blockers, and the next clear action to take.",
+  },
+  "/ai-tools": {
+    title: "AI Tools Directory: Coach Kay's Working Stack",
+    description:
+      "Vetted AI tools scored and reviewed by Coach Kay. Curated by a Master Certified Coach. Practical, honest, no affiliate fluff.",
+  },
+};
+
+const COMMERCIAL_ROUTES = [
+  "/",
+  "/start",
+  "/coach-kay",
+  "/agents",
+  "/agents/builds",
+  "/agents/lead-engine",
+  "/agents/hermes",
+  "/rent-an-agent",
+  "/agent-builder",
+  "/build-studio",
+  "/start-a-build",
+  "/advisory",
+  "/store",
+  "/autism-social-stories",
+  "/truth",
+  "/starter-kit",
+  "/modules",
+  "/faq",
+  "/assessment",
+  "/challenges",
+  "/clarity",
+  "/ai-tools",
+  "/pause-hub",
+  "/collective",
+  "/community",
+  "/methodology",
+  "/privacy",
+  "/terms",
+  "/disclaimer",
+  "/refund-policy",
+];
+
+const appSrc = readFileSync(resolve("src/App.tsx"), "utf8");
+
+function componentForRoute(routePath: string): string | null {
+  const re = new RegExp(
+    `<Route\\s+path="${routePath.replace(/\//g, "\\/")}"\\s+element=\\{([\\s\\S]*?)\\}\\s*\\/>`,
+  );
+  const m = appSrc.match(re);
+  if (!m) return null;
+  const wrappers = new Set(["Suspense", "ProtectedRoute", "ErrorBoundary", "PageSkeleton", "Navigate"]);
+  const compRe = /<([A-Z][A-Za-z0-9_]*)\b/g;
+  let cm: RegExpExecArray | null;
+  while ((cm = compRe.exec(m[1])) !== null) if (!wrappers.has(cm[1])) return cm[1];
+  return null;
+}
+
+function fileForComponent(name: string): string | null {
+  const lazyM = appSrc.match(
+    new RegExp(`const\\s+${name}\\s*=\\s*lazy\\(\\(\\)\\s*=>\\s*import\\(["']([^"']+)["']\\)`),
+  );
+  const importM = appSrc.match(new RegExp(`import\\s+${name}\\s+from\\s+["']([^"']+)["']`));
+  const rel = lazyM?.[1] ?? importM?.[1];
+  if (!rel) return null;
+  const cleaned = rel.replace(/^\.\//, "");
+  for (const c of [resolve("src", cleaned), resolve("src", cleaned + ".tsx"), resolve("src", cleaned + ".ts")]) {
+    if (existsSync(c)) return c;
+  }
+  return null;
+}
+
+/** Pull the static title/description of the <SEOHead/> whose path matches. */
+function metaForRoute(file: string, routePath: string): { title: string; description: string } | null {
+  const src = readFileSync(file, "utf8");
+  const tagRe = /<SEOHead\b([\s\S]*?)\/>/g;
+  let m: RegExpExecArray | null;
+  let fallback: { title: string; description: string } | null = null;
+  while ((m = tagRe.exec(src)) !== null) {
+    const attrs = m[1];
+    const title = attrs.match(/title="([^"]*)"/)?.[1];
+    const description = attrs.match(/description="([^"]*)"/)?.[1];
+    if (!title || !description) continue;
+    const path = attrs.match(/path="([^"]*)"/)?.[1];
+    if (path === routePath) return { title, description };
+    fallback ??= { title, description };
+  }
+  return fallback;
+}
+
+// Mirrors the brand-suffix rule in src/components/SEOHead.tsx.
+const withBrand = (t: string) => (/coach kay/i.test(t) ? t : `${t} | Coach Kay AI`);
+
+let commercialCount = 0;
+for (const routePath of COMMERCIAL_ROUTES) {
+  if (POSTS.length + 1 + commercialCount >= MAX_PRERENDER_PAGES) {
+    console.warn(`[prerender] hit MAX_PRERENDER_PAGES (${MAX_PRERENDER_PAGES}) — stopping.`);
+    break;
+  }
+  const comp = componentForRoute(routePath);
+  const file = comp ? fileForComponent(comp) : null;
+  const meta = META_OVERRIDES[routePath] ?? (file ? metaForRoute(file, routePath) : null);
+  if (!meta) {
+    console.warn(`[prerender] no static metadata for ${routePath} — skipped.`);
+    continue;
+  }
+  const canonical = routePath === "/" ? `${SITE}/` : `${SITE}${routePath}`;
+  const html = patchHead({
+    title: withBrand(meta.title),
+    description: meta.description,
+    canonical,
+    ogType: "website",
+    ogImage: `${SITE}/og-image.png`,
+    jsonLd: [],
+  });
+  if (routePath === "/") {
+    writeFileSync(SHELL, html);
+    console.log(`[prerender] wrote index.html (home)`);
+  } else {
+    writeRoute(routePath, html);
+  }
+  commercialCount++;
+}
+
+console.log(
+  `[prerender] done — ${POSTS.length + 1} blog pages + ${commercialCount} commercial pages prerendered.`,
+);

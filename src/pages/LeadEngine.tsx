@@ -9,7 +9,7 @@ import { webPage, breadcrumb, serviceSchema, SITE_URL, ORG_ID } from "@/lib/seo-
 
 const LeadEngine = () => {
   const jsonLd = [
-    webPage("/agents/lead-engine", "AI Lead Engine — Outbound Systems", "CollectionPage"),
+    webPage("/agents/lead-engine", "AI Lead Engine. Outbound Systems", "CollectionPage"),
     serviceSchema({
       name: "AI Lead Engine",
       description:
@@ -36,7 +36,7 @@ const LeadEngine = () => {
         position: i + 1,
         item: {
           "@type": "Service",
-          name: tier.name.startsWith("Lead Engine") ? tier.name : `AI Lead Engine — ${tier.name}`,
+          name: tier.name.startsWith("Lead Engine") ? tier.name : `AI Lead Engine, ${tier.name}`,
           description: tier.headline,
           provider: { "@id": ORG_ID },
           url: `${SITE_URL}/agents/lead-engine`,
@@ -48,8 +48,8 @@ const LeadEngine = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="AI Lead Engine: Outbound That Books Its Own Meetings"
-        description="Enriched, intent-scored leads plus multi-channel outreach, voice qualification, and auto-booking. Built and run by Coach Kay's team so your pipeline stops depending on your energy."
+        title="AI Lead Engine: Outbound That Books Meetings"
+        description="Enriched, intent-scored leads plus multi-channel outreach, voice qualification, and auto-booking. Built and run by Coach Kay's team."
         path="/agents/lead-engine"
         keywords={[
           "AI lead generation system",

@@ -118,7 +118,7 @@ const CollectiveAIBuildStudio = () => {
 
   const startCheckout = async (offer: BuildTierOffer) => {
     if (!offer.priceId) return;
-    // Build Studio packages are mid/high-ticket — defer to the lead-gen page
+    // Build Studio packages are mid/high-ticket, defer to the lead-gen page
     // when one is configured.
     if (await redirectToLeadGenIfConfigured()) return;
     setBusyPriceId(offer.priceId);
@@ -151,7 +151,7 @@ const CollectiveAIBuildStudio = () => {
     navigate(`/start-a-build?offer=${encodeURIComponent(offer.key)}`);
 
   const jsonLd = [
-    webPage("/build-studio", "Collective AI Build Studio: From Idea to Live in Days", "CollectionPage"),
+    webPage("/build-studio", "Build Studio: From Idea to Live AI in Days", "CollectionPage"),
     breadcrumb(
       [
         { name: "Home", path: "/" },
@@ -195,7 +195,7 @@ const CollectiveAIBuildStudio = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-background text-foreground">
       <SEOHead
-        title="Collective AI Build Studio: From Idea to Live in Days"
+        title="Build Studio: From Idea to Live AI in Days"
         description="Custom AI builds scoped by Coach Kay and delivered with Collective AI partners. From idea to live AI system in days. Web apps, automations, agents, and more."
         path="/build-studio"
         keywords={[
@@ -285,7 +285,7 @@ const CollectiveAIBuildStudio = () => {
         </div>
       </section>
 
-      {/* WHAT WE BUILD — TIER TABS */}
+      {/* WHAT WE BUILD. TIER TABS */}
       <section id="what-we-build" className="relative z-10 px-6 sm:px-10 pb-20 max-w-7xl mx-auto">
         <AnimatedSection className="text-center mb-10">
           <span className="font-mono-label text-primary tracking-[0.28em] text-xs">WHAT WE BUILD</span>

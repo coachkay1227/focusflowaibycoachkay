@@ -60,7 +60,7 @@ const deliveryTone: Record<string, string> = {
   complained: "bg-destructive/15 text-destructive",
 };
 
-const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
+const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : ", ");
 
 const DAY_OPTIONS = [7, 30, 90];
 const STATUS_OPTIONS = ["all", "pending", "sent", "skipped", "failed"];

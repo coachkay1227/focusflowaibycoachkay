@@ -33,7 +33,7 @@ const ProgramDetail = () => {
   const program = slug ? getProgramBySlug(slug) : undefined;
   const replacement = program ? getReplacementOffer(program) : undefined;
 
-  // Per-lead-magnet routing — never route to a generic clarity fallback
+  // Per-lead-magnet routing, never route to a generic clarity fallback
   const leadMagnetTarget = (slug?: string): string => {
     switch (slug) {
       case "mac-type-assessment":
@@ -114,7 +114,7 @@ const ProgramDetail = () => {
   return (
     <div className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title={`${program.title} — FocusFlow AI`}
+        title={`${program.title}. FocusFlow AI`}
         description={program.tagline}
         path={`/programs/${program.slug}`}
         jsonLd={jsonLd}
@@ -213,7 +213,7 @@ const ProgramDetail = () => {
           ))}
         </div>
 
-        {/* Try Free Clarity Check — shown for paid non-assessment programs */}
+        {/* Try Free Clarity Check, shown for paid non-assessment programs */}
         {program.accessTier !== "free" && program.type !== "assessment" && (
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
@@ -277,7 +277,7 @@ const ProgramDetail = () => {
                   className="gap-2"
                 >
                   <CreditCard className="h-4 w-4" />
-                  {buying ? "Opening checkout…" : `Buy now — ${program.priceDisplay}`}
+                  {buying ? "Opening checkout…" : `Buy now, ${program.priceDisplay}`}
                 </Button>
               ) : isPublicOffer ? (
                 <Button onClick={() => setApplyOpen(true)} className="gap-2">
@@ -316,7 +316,7 @@ const ProgramDetail = () => {
                       <CreditCard className="h-4 w-4" />
                       {(() => {
                         const tc = STRIPE_TIERS[program.accessTier as keyof typeof STRIPE_TIERS]?.[0];
-                        return tc ? (tc.interval === "month" ? `Subscribe — $${tc.price}/mo` : `Purchase — $${tc.price}`) : "Get Access";
+                        return tc ? (tc.interval === "month" ? `Subscribe, $${tc.price}/mo` : `Purchase, $${tc.price}`) : "Get Access";
                       })()}
                     </Button>
                   ) : (

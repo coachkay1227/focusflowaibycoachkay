@@ -26,7 +26,7 @@ interface SingleOption { value: string; label: string; desc: string; }
 const QUESTIONS = [
   {
     step: 1,
-    label: 'STEP 01 — PURPOSE',
+    label: 'STEP 01. PURPOSE',
     question: 'What do you need your AI agent to handle?',
     subtitle: 'Select all that apply. You can choose more than one.',
     type: 'multi' as const,
@@ -34,47 +34,47 @@ const QUESTIONS = [
   },
   {
     step: 2,
-    label: 'STEP 02 — SCALE',
+    label: 'STEP 02. SCALE',
     question: 'How many AI agents are you looking to build?',
     subtitle: 'This determines your pricing tier.',
     type: 'single' as const,
     options: [
       { value: '1', label: 'Just one', desc: 'One focused agent for my biggest bottleneck' },
-      { value: '2-3', label: '2 to 3 agents', desc: 'A small team — bundle pricing applies' },
-      { value: '4+', label: '4 or more', desc: 'A full agency build — includes branded dashboard' },
+      { value: '2-3', label: '2 to 3 agents', desc: 'A small team, bundle pricing applies' },
+      { value: '4+', label: '4 or more', desc: 'A full agency build, includes branded dashboard' },
     ] as SingleOption[],
   },
   {
     step: 3,
-    label: 'STEP 03 — COMMUNICATION',
+    label: 'STEP 03. COMMUNICATION',
     question: 'Does your agent need to have real-time human-like conversations?',
     subtitle: 'This determines which platform is right for your use case.',
     type: 'single' as const,
     options: [
-      { value: 'yes', label: 'Yes — calls, texts, or live chat', desc: 'Needs to respond instantly like a human assistant' },
-      { value: 'no', label: 'No — background or async tasks', desc: 'Runs tasks, responds to messages, works behind the scenes' },
+      { value: 'yes', label: 'Yes, calls, texts, or live chat', desc: 'Needs to respond instantly like a human assistant' },
+      { value: 'no', label: 'No, background or async tasks', desc: 'Runs tasks, responds to messages, works behind the scenes' },
     ] as SingleOption[],
   },
   {
     step: 4,
-    label: 'STEP 04 — KNOWLEDGE',
+    label: 'STEP 04. KNOWLEDGE',
     question: 'Do you have business documents to train it on?',
     subtitle: 'SOPs, brand guides, FAQs, process docs.',
     type: 'single' as const,
     options: [
-      { value: 'yes', label: 'Yes — SOPs, guides, brand docs', desc: 'I have materials to give it context about my business' },
-      { value: 'no', label: 'Not yet', desc: 'Starting from scratch — we\'ll build the knowledge base together' },
+      { value: 'yes', label: 'Yes. SOPs, guides, brand docs', desc: 'I have materials to give it context about my business' },
+      { value: 'no', label: 'Not yet', desc: 'Starting from scratch, we\'ll build the knowledge base together' },
     ] as SingleOption[],
   },
   {
     step: 5,
-    label: 'STEP 05 — OWNERSHIP',
+    label: 'STEP 05. OWNERSHIP',
     question: 'How do you want to own your agent?',
     subtitle: 'One-time build or ongoing managed plan.',
     type: 'single' as const,
     options: [
-      { value: 'own', label: 'I want to own all the files', desc: 'One-time payment — you get everything and self-manage' },
-      { value: 'hosted', label: 'Maintain it for me', desc: 'Monthly plan — Coach Kay keeps the API live and updated' },
+      { value: 'own', label: 'I want to own all the files', desc: 'One-time payment, you get everything and self-manage' },
+      { value: 'hosted', label: 'Maintain it for me', desc: 'Monthly plan. Coach Kay keeps the API live and updated' },
     ] as SingleOption[],
   },
 ] as const;
@@ -133,7 +133,7 @@ const AgentBuilder = () => {
     if (currentStep < TOTAL_STEPS - 1) {
       animateToStep(currentStep + 1);
     } else {
-      // Final step — compute and navigate
+      // Final step, compute and navigate
       const answers: AgentAnswers = {
         tasks: selectedTasks,
         agentCount: agentCount as AgentAnswers['agentCount'],
@@ -176,7 +176,7 @@ const AgentBuilder = () => {
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
-        title="Build My Agent — FocusFlow AI"
+        title="Build My Agent: FocusFlow AI"
         description="Take the 5-minute AI agent assessment and get an exact recommendation for what to build, which platform fits your use case, and how much it costs."
         path="/agent-builder"
       />
@@ -214,7 +214,7 @@ const AgentBuilder = () => {
           }`}
           style={{ willChange: 'transform, opacity' }}
         >
-          <h1 className="sr-only">Agent Builder — FocusFlow AI</h1>
+          <h1 className="sr-only">Agent Builder. FocusFlow AI</h1>
           <span className="font-mono-label text-primary tracking-[0.2em]">
             {question.label}
           </span>

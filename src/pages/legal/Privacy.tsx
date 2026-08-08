@@ -4,7 +4,7 @@ import SEOHead from "@/components/SEOHead";
 const Privacy = () => (
   <>
     <SEOHead
-      title="Privacy Policy — FocusFlow AI"
+      title="Privacy Policy: FocusFlow AI"
       description="How FocusFlow AI by Coach Kay collects, uses, and protects your information."
       path="/privacy"
     />
@@ -25,7 +25,7 @@ const Privacy = () => (
     <ul className="list-disc pl-6 space-y-2">
       <li><strong>Account information:</strong> name, email, password (hashed, never stored in plain text), and optional profile details.</li>
       <li><strong>Clarity Check answers:</strong> the responses you submit so we can generate your personalized insight.</li>
-      <li><strong>Payment information:</strong> handled entirely by Stripe — we never see or store your card number.</li>
+      <li><strong>Payment information:</strong> handled entirely by Stripe, we never see or store your card number.</li>
       <li><strong>Usage data:</strong> pages viewed, features used, device/browser metadata, and analytics events.</li>
       <li><strong>Communications:</strong> emails you send us and our coaching/email replies.</li>
     </ul>
@@ -36,7 +36,7 @@ const Privacy = () => (
       <li>To send transactional emails (results, receipts, welcome sequences, password resets).</li>
       <li>To improve our coaching content, prompts, and product experience.</li>
       <li>To comply with legal obligations and prevent fraud or abuse.</li>
-      <li>With your opt-in consent, to send occasional marketing — you can unsubscribe at any time.</li>
+      <li>With your opt-in consent, to send occasional marketing, you can unsubscribe at any time.</li>
     </ul>
 
     <h2 className="font-heading text-2xl font-light text-primary pt-4">3. Who we share it with</h2>

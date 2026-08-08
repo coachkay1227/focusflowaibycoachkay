@@ -41,7 +41,7 @@ const AuditLanding = () => {
         }
         return;
       }
-      // Webhook may not have inserted the row yet — retry a few times.
+      // Webhook may not have inserted the row yet, retry a few times.
       if (attempts < 6) {
         setTimeout(tick, 1500);
       } else {
@@ -64,7 +64,7 @@ const AuditLanding = () => {
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
-      <SEOHead title="AI Business Audit — Ready to Begin" description="Your AI Business Audit is ready. Check your email or sign in to continue." path="/audit/landing" noIndex />
+      <SEOHead title="AI Business Audit: Ready to Begin" description="Your AI Business Audit is ready. Check your email or sign in to continue." path="/audit/landing" noIndex />
       <BrandLogo size="md" />
       <span className="font-mono-label text-primary tracking-[0.2em] text-xs mt-6">PAYMENT CONFIRMED</span>
       <h1 className="font-heading text-3xl md:text-4xl text-primary mt-3 mb-2">Your audit is being prepared</h1>
