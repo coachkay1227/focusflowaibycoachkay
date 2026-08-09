@@ -1,44 +1,70 @@
-# Fix the /advisory engagement section and who-delivers block
+# Rebuild /advisory as one converting path: entry, one offer, one form
 
-Three corrections on `/advisory`. Nothing about checkout, payments, or the $497 Strategy Intensive changes.
+The page currently shows five priced cards with five buttons. That splits attention five ways on the page that carries your highest-ticket work. The fix is the structure you named: one entry point, one core offer, one form.
 
-## 1. AI University Roadmap Tracks becomes a pointer to the Task Force
+## New page order
 
-That track was converted into the Cbus AI Task Force (with government and public-sector added), so it stops being a scoped offer with its own "Request Scope" button.
+```text
+1. Hero               Bring Coach Kay into the room
+2. ENTRY              $47 AI Business Audit  (low-risk first step)
+3. THE OFFER          AI Strategy Intensive, $497, direct checkout
+4. WHAT SCOPES LOOK LIKE   one strip, no buttons, no per-item prices
+5. THE FORM           one inquiry box with a format dropdown
+6. WHO DELIVERS        corrected attribution
+7. FAQ
+```
 
-The card stays on the page, retitled to name the Task Force, with copy that says the roadmap tracks now live inside that program and that it includes government and public-sector readiness. Its button becomes a link to `/ai-task-force` instead of opening the inquiry dialog. No price line on that card.
+## Entry (step 2)
 
-## 2. One inquiry box with a booking-format dropdown
+The $47 AI Business Audit moves up from the bottom of the page to directly under the hero. It is the only thing on the page a cold visitor can buy without talking to you. Copy names who it's for and what they walk out with, then one button to `/audit/intake`.
 
-Replace the five separate "Request Scope" buttons with a single inquiry section at the bottom of "Choose the right format". One button opens one dialog. Inside the dialog, a required dropdown picks the format:
+## The one offer (step 3)
+
+The $497 AI Strategy Intensive stays the single headline offer with direct checkout. It keeps its bullets and its price, and it is the only price shown besides the audit.
+
+## What scopes look like (step 4)
+
+The five lanes stop being cards with buttons and prices. They become one compact strip that tells a visitor the work exists, with no competing calls to action:
+
+- Executive advisory retainers
+- Keynotes, workshops, and team trainings
+- Corporate, EAP, and workforce learning
+- Transformation cohorts and the Summit
+- Cbus AI Task Force (the former AI University roadmap tracks, now including government and public sector) links to `/ai-task-force`
+
+One honest pricing line under the strip: scoped engagements start at $500, and final scope is set on a call. No `$500/hr`, `From $750`, `Custom scope`, or `Consumer to institutional` labels anywhere.
+
+## The one form (step 5)
+
+A single inquiry box, on the page itself rather than hidden behind five dialogs. Fields: name, email, organization, a required format dropdown, and goals / team size / timeline.
+
+Dropdown options:
 
 - Executive advisory retainer
-- Single day (workshop or training)
+- One day (workshop or training)
 - Keynote or single session
 - Multi-session series
-- Corporate, EAP or workforce program
+- Corporate, EAP, or workforce program
 - Transformation cohort
 - Not sure yet, help me pick
 
-The dialog collects name, email, organization, and goals/team size/timeline, and submits through the existing inquiry path so it lands in email and the CRM the same way every other offer inquiry does. The selected format is included in the submission so it is visible in the notification.
+It submits through the existing inquiry path so it reaches your email and CRM exactly like every other offer inquiry, with the chosen format carried in the notification. Success state confirms Coach Kay reviews every inquiry personally.
 
-Pricing on this section reduces to one honest line: engagements start at $500 and final scope is set on a call. The per-card price lines (`$500/hr`, `From $750`, `Custom scope`, `Consumer to institutional`) come off the cards so there is one number on the page, not five.
+## Who delivers (step 6)
 
-## 3. Correct the WHO DELIVERS block
-
-Right now it says the AI Task Force is an independent company founded by John Moyler. That is wrong and mixes the two entities. The corrected block reads:
+The current block wrongly says the AI Task Force is an independent company founded by John Moyler. Corrected:
 
 - Advisory is led by Coach Kay.
-- For larger training, cohort, and enterprise scopes, she brings in partner capacity across engineering, AI research, design, and QA.
-- That partner capacity comes through Collective AI, the separate enterprise founded by John Moyler, where Coach Kay serves as an AI partner.
+- For larger training, cohort, and enterprise scopes she brings in partner capacity across engineering, AI research, design, and QA.
+- That capacity comes through Collective AI, the separate enterprise founded by John Moyler, where Coach Kay serves as an AI partner.
 - The Cbus AI Task Force is her own Columbus program, not that company.
 
-The block links to `/collective` for the partner company and to `/ai-task-force` for the Columbus program, labeled so a visitor can tell them apart.
+Links to `/collective` and `/ai-task-force`, labeled so the two are unmistakable.
 
 ## Technical notes
 
-- `src/lib/offer-catalog.ts`: rework the `ADVISORY_LANES` entries (drop `price` display strings, replace the `university` lane with the Task Force pointer including a route field).
-- `src/pages/Advisory.tsx`: single inquiry CTA, one starting-price line, corrected WHO DELIVERS block with both links, and the ItemList JSON-LD updated to match the new lanes.
-- `src/components/offers/OfferInquiryDialog.tsx`: add an optional required `formats` prop rendering a shadcn `Select`, appended to the submitted message and lane label.
-- No new tables, no schema change, no new edge function. Existing `apply-now` handler already carries the lane and message.
-- Verify: typecheck, unit tests, build, then open `/advisory` and submit one inquiry to confirm the row and notification carry the chosen format.
+- `src/pages/Advisory.tsx`: reorder sections, promote the audit CTA, collapse the lane grid into a no-CTA strip, embed the inquiry form inline, correct the who-delivers block, and update the ItemList JSON-LD so it lists the audit and the intensive as the offers with prices and the rest as unpriced services.
+- `src/lib/offer-catalog.ts`: drop the `price` display strings from `ADVISORY_LANES`, replace the `university` lane with the Task Force entry carrying a route to `/ai-task-force`.
+- `src/components/offers/OfferInquiryDialog.tsx`: extract the form body so the same fields render inline on this page, and add the required format `Select`.
+- No schema change, no new edge function, no payment logic change. The `apply-now` path already carries lane and message.
+- Verify: typecheck, unit tests, production build, then load `/advisory` and submit one inquiry to confirm the format lands in the notification.
