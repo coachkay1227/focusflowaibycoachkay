@@ -137,6 +137,11 @@ function patchHead(opts: {
     /<meta\s+property="og:type"[^>]*\/?>/i,
     `<meta property="og:type" content="${opts.ogType}" />`,
   );
+  // og:url (self-referencing baseline exists in the shell, swap it per route)
+  html = html.replace(
+    /<meta\s+property="og:url"[^>]*\/?>/i,
+    `<meta property="og:url" content="${escapeAttr(opts.canonical)}" />`,
+  );
   // og:image
   html = html.replace(
     /<meta\s+property="og:image"[^>]*\/?>/i,
@@ -168,8 +173,12 @@ function patchHead(opts: {
 
   // Inject og:url + extras + JSON-LD before </head>
   const inject = [
-    `<meta property="og:url" content="${escapeAttr(opts.canonical)}" />`,
-    `<link rel="canonical" href="${escapeAttr(opts.canonical)}" />`,
+    ...(/<meta\s+property="og:url"/i.test(html)
+      ? []
+      : [`<meta property="og:url" content="${escapeAttr(opts.canonical)}" />`]),
+    ...(/<link\s+rel="canonical"/i.test(html)
+      ? []
+      : [`<link rel="canonical" href="${escapeAttr(opts.canonical)}" />`]),
     opts.ogImageAlt ? `<meta property="og:image:alt" content="${escapeAttr(opts.ogImageAlt)}" />` : "",
     opts.extraMeta ?? "",
     ...opts.jsonLd.map(
