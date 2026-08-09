@@ -96,6 +96,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://coachkayai.life/collective</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://coachkayai.life/pause-hub</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
