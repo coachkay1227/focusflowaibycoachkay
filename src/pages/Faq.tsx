@@ -29,7 +29,7 @@ const Faq = () => {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="FAQ: Coaching, AI Agents, Advisory, Studio"
+        title="FAQ: AI Coaching and Agent Systems"
         description="Answers about Coach Kay's clarity coaching, Rent-an-Agent, advisory, the $47 AI Business Audit, autism social stories, and the publishing studio."
         path="/faq"
         keywords={[

@@ -550,12 +550,12 @@ const Assessment = () => {
             <span className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">
               {current.label}
             </span>
-            <h1
+            <h2
               className="font-heading text-3xl md:text-4xl font-light mt-3 leading-tight"
               style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.12)" }}
             >
               {current.question}
-            </h1>
+            </h2>
             <p className="text-muted-foreground mt-2">{current.subtitle}</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
@@ -599,12 +599,12 @@ const Assessment = () => {
             <span className="font-mono-label text-[11px] tracking-[0.2em] text-primary/80">
               YOUR OPERATOR × BOTTLENECK MAP
             </span>
-            <h1
+            <h2
               className="font-heading text-4xl md:text-6xl font-light mt-3 text-primary leading-tight"
               style={{ textShadow: "0 0 50px hsl(var(--primary) / 0.25)" }}
             >
               {comboHeadline}
-            </h1>
+            </h2>
             <p className="text-muted-foreground mt-4 text-base">
               {MIND_LABELS[result.mind]} · {ACTION_LABELS[result.action]} ·{" "}
               {CHARACTER_LABELS[result.character]}

@@ -167,7 +167,7 @@ const Modules = () => {
             className="font-heading text-3xl md:text-5xl font-light mt-4"
             style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.15)" }}
           >
-            Personal · Business · Full AI
+            Transformation Paths: Personal, Business, and Full AI
           </h1>
           <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-sm md:text-base">
             Start with a free clarity entry, then choose the 30-day reset, 90-day transformation, or private partnership that fits where you are right now.
