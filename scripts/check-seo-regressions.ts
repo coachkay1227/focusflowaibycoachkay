@@ -76,6 +76,7 @@ const INDEXABLE: string[] = [
   "/autism-social-stories",
   "/faq",
   "/ai-task-force",
+  "/collective",
   "/pause-hub",
   "/ai-tools",
   "/blog",
@@ -146,6 +147,7 @@ const ADMIN_EXEMPT = new Set<string>([
   "/admin/payment-links",
   "/admin/fulfillment-test",
   "/admin/qr-codes",
+  "/admin/task-force",
   "/email-preview",
 ]);
 
