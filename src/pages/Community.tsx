@@ -101,7 +101,7 @@ const Community = () => {
               </div>
               <div>
                 <h3 className="font-heading text-lg font-light">Coach Kay</h3>
-                <p className="text-xs text-muted-foreground">Life Transformation Coach</p>
+                <p className="text-xs text-muted-foreground">AI Transformation Coach</p>
               </div>
             </div>
             <p className="text-foreground/80 leading-relaxed text-sm mb-4">

@@ -34,7 +34,7 @@ const BrandLogo = ({ size = "md", withTagline = false, className, to = "/" }: Br
       </span>
       {withTagline && (
         <span className="text-muted-foreground text-xs font-body tracking-wide">
-          AI & Life Transformation
+          AI Transformation Coach
         </span>
       )}
     </Link>
