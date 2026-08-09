@@ -514,6 +514,7 @@ const Assessment = () => {
       <FloatingOrbs />
 
       <div className="relative z-10 max-w-3xl mx-auto px-6 pt-10 pb-24">
+        <h1 className="sr-only">Business Clarity Assessment</h1>
         <div className="flex items-center justify-between mb-8">
           <button
             onClick={goBack}
