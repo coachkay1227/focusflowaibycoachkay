@@ -55,14 +55,14 @@ const CoachKay = () => {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SEOHead
-        title="Meet Coach Kay: AI and Life Transformation Coach"
+        title="Meet Coach Kay: AI Transformation Coach"
         description="Master Certified Life Coach and AI integration strategist. Helping entrepreneurs and professionals gain clarity, focus, and momentum with AI."
         path="/coach-kay"
         keywords={[
           "Coach Kay",
-          "AI life coach",
+          "AI transformation coach",
           "clarity coach Columbus Ohio",
-          "transformation coaching",
+          "AI transformation coaching",
           "mindset and AI strategy coaching",
           "Coach Kay Elevates profile",
         ]}
@@ -104,7 +104,7 @@ const CoachKay = () => {
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/20 blur-lg" />
                 <img
                   src={coachKayImg}
-                  alt="Coach Kay. Kenza Alaoui Ismaili, AI & Life Transformation Coach"
+                  alt="Coach Kay. Kenza Alaoui Ismaili, AI Transformation Coach"
                   className="relative rounded-2xl object-cover shadow-2xl w-full"
                   loading="eager"
                   {...{ fetchpriority: "high" }}
@@ -119,10 +119,10 @@ const CoachKay = () => {
                 Meet Your Coach
               </p>
               <h1 className="mb-4 font-heading text-4xl font-bold leading-tight md:text-5xl">
-                Meet Coach Kay. AI &amp; Life Transformation Coach
+                Meet Coach Kay. AI Transformation Coach
               </h1>
               <p className="mb-2 text-lg text-muted-foreground">
-                Kenza Alaoui Ismaili · AI &amp; Life Transformation Coach
+                Kenza Alaoui Ismaili · AI Transformation Coach
               </p>
               <p className="mb-6 text-foreground/80 leading-relaxed">
                 Warm but direct. Emotionally intelligent. Pattern-aware. Coach Kay
