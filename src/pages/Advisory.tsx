@@ -5,13 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import MobileNav from "@/components/MobileNav";
@@ -333,18 +326,20 @@ const Advisory = () => {
                 <form onSubmit={submitInquiry} className="mt-6 space-y-4">
                   <div>
                     <Label htmlFor="adv-format">What are you booking? *</Label>
-                    <Select value={format} onValueChange={setFormat}>
-                      <SelectTrigger id="adv-format" className="border-border">
-                        <SelectValue placeholder="Choose a format" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ADVISORY_FORMATS.map((f) => (
-                          <SelectItem key={f} value={f}>
-                            {f}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <select
+                      id="adv-format"
+                      value={format}
+                      onChange={(e) => setFormat(e.target.value)}
+                      required
+                      className="mt-1 flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+                    >
+                      <option value="">Choose a format</option>
+                      {ADVISORY_FORMATS.map((f) => (
+                        <option key={f} value={f}>
+                          {f}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
