@@ -152,40 +152,56 @@ const StarterKit = () => {
             <p className="text-muted-foreground text-sm mb-5">
               Four quick fields. Coach Kay generates your report instantly, no waiting, no downloads.
             </p>
-            <div className="space-y-3">
-              <Input
-                type="text"
-                placeholder="First name (optional)"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-background/50 border-border"
-              />
-              <Input
-                type="email"
-                required
-                placeholder="you@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-background/50 border-border"
-              />
-              <select
-                required
-                value={businessType}
-                onChange={(e) => setBusinessType(e.target.value)}
-                className="w-full h-10 rounded-md border border-border bg-background/50 px-3 text-sm text-foreground"
-              >
-                <option value="" disabled>What kind of work do you do?</option>
-                {BUSINESS_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-              <Textarea
-                required
-                value={bottleneck}
-                onChange={(e) => setBottleneck(e.target.value)}
-                placeholder="What's the one thing slowing you down right now? (time, leads, content, systems, clarity…)"
-                className="bg-background/50 border-border min-h-[110px] resize-none"
-              />
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="starter-name" className="text-sm font-medium">Name</label>
+                <Input
+                  id="starter-name"
+                  type="text"
+                  placeholder="First name (optional)"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-2 bg-background/50 border-border"
+                />
+              </div>
+              <div>
+                <label htmlFor="starter-email" className="text-sm font-medium">Email <span aria-hidden="true">*</span></label>
+                <Input
+                  id="starter-email"
+                  type="email"
+                  required
+                  placeholder="you@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-2 bg-background/50 border-border"
+                />
+              </div>
+              <div>
+                <label htmlFor="starter-business-type" className="text-sm font-medium">What kind of work do you do? <span aria-hidden="true">*</span></label>
+                <select
+                  id="starter-business-type"
+                  required
+                  value={businessType}
+                  onChange={(e) => setBusinessType(e.target.value)}
+                  className="mt-2 w-full h-10 rounded-md border border-border bg-background/50 px-3 text-sm text-foreground"
+                >
+                  <option value="" disabled>Select your business type</option>
+                  {BUSINESS_TYPES.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="starter-bottleneck" className="text-sm font-medium">What's the one thing slowing you down? <span aria-hidden="true">*</span></label>
+                <Textarea
+                  id="starter-bottleneck"
+                  required
+                  value={bottleneck}
+                  onChange={(e) => setBottleneck(e.target.value)}
+                  placeholder="time, leads, content, systems, clarity…"
+                  className="mt-2 bg-background/50 border-border min-h-[110px] resize-none"
+                />
+              </div>
             </div>
             <Button
               type="submit"
