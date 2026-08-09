@@ -375,66 +375,49 @@ export const ENTRY_OFFERS = {
   },
 } as const;
 
-/** High-ticket / scoped advisory lanes, inquiry-only. */
+/** Scoped advisory work. Described on /advisory with no per-lane prices
+ *  and no per-lane calls to action. One inquiry form covers all of them. */
 export const ADVISORY_LANES = [
   {
     key: "executive",
-    name: "Executive Advisory",
-    price: "$500/hr",
+    name: "Executive advisory retainers",
     description:
-      "Structured executive advisory retainers for founders making consequential decisions about AI adoption, leadership, and growth strategy.",
-    bullets: [
-      "Monthly retainer or per-hour engagement",
-      "Direct line to Coach Kay",
-      "Decision frameworks + documentation",
-    ],
+      "A direct line to Coach Kay for founders making consequential decisions about AI adoption, leadership, and growth.",
   },
   {
     key: "speaking",
-    name: "Speaking, Workshops & Team Trainings",
-    price: "From $750",
+    name: "Keynotes, workshops, and team trainings",
     description:
-      "Engaging, practical sessions that upskill teams and audiences on AI literacy, clarity coaching, and workforce readiness.",
-    bullets: [
-      "Keynotes (30 / 45 / 60 min)",
-      "Half-day & full-day workshops",
-      "Hands-on build labs",
-    ],
+      "Practical sessions that move teams and audiences from AI anxiety to AI fluency. One day, a series, or a single keynote.",
   },
   {
     key: "corporate",
-    name: "Corporate, EAP & Workforce Learning",
-    price: "Custom scope",
+    name: "Corporate, EAP, and workforce learning",
     description:
-      "Wellness-aligned AI learning experiences, institutional capability building, and organizational workforce readiness, delivered through structured corporate scopes.",
-    bullets: [
-      "Cohort design for 20 – 500+ learners",
-      "EAP integration & wellbeing alignment",
-      "Executive sponsor reporting",
-    ],
+      "Wellness-aligned AI learning for organizations, built around real workforce readiness and reported back to your executive sponsor.",
   },
   {
     key: "cohorts",
-    name: "Transformation Cohorts & The Collective AI Summit",
-    price: "Consumer to institutional",
+    name: "Transformation cohorts and the Summit",
     description:
-      "Intensive multi-week accelerators and the flagship Collective AI Summit, for groups, organizations, and ecosystem partners.",
-    bullets: [
-      "8 – 12 week guided cohorts",
-      "Quarterly Collective AI Summit",
-      "Promo / Standard / VIP variations",
-    ],
+      "Multi-week guided accelerators for groups and organizations, plus the flagship Collective AI Summit.",
   },
   {
-    key: "university",
-    name: "AI University Roadmap Tracks",
-    price: "Custom / Roadmap pricing",
+    key: "taskforce",
+    name: "Cbus AI Task Force",
     description:
-      "Premium educational pathways for specialists building lasting AI fluency: sequenced tracks across foundation, application, and authority.",
-    bullets: [
-      "Sequenced multi-track curriculum",
-      "Capstone authority projects",
-      "Cohort & private options",
-    ],
+      "The Columbus program that grew out of the AI University roadmap tracks, now including government and public sector readiness.",
+    route: "/ai-task-force",
   },
+] as const;
+
+/** Options for the single advisory inquiry form. */
+export const ADVISORY_FORMATS = [
+  "Executive advisory retainer",
+  "One day (workshop or training)",
+  "Keynote or single session",
+  "Multi-session series",
+  "Corporate, EAP, or workforce program",
+  "Transformation cohort",
+  "Not sure yet, help me pick",
 ] as const;
