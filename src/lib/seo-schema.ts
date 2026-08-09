@@ -224,7 +224,6 @@ export const globalGraph = () => {
         },
         image: `${SITE_URL}/og-image.png`,
         url: SITE_URL,
-        telephone: "+1-614-XXX-XXXX",
         priceRange: "$$",
         address: {
           "@type": "PostalAddress",
