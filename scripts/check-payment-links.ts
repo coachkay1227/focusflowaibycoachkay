@@ -21,7 +21,7 @@
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, sep } from "node:path";
 
 const ROOT = process.cwd();
 const SRC_DIR = join(ROOT, "src");
@@ -50,7 +50,7 @@ type LinkRecord = {
 const records: LinkRecord[] = [];
 
 function walk(dir: string, out: string[] = []): string[] {
-  for (const entry of readdirSync(dir)) {
+  for (const entry of readdirSync(dir).sort()) {
     const full = join(dir, entry);
     const s = statSync(full);
     if (s.isDirectory()) {
@@ -63,6 +63,10 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+function projectPath(path: string): string {
+  return relative(ROOT, path).split(sep).join("/");
+}
+
 function readSafe(path: string): string {
   try { return readFileSync(path, "utf8"); } catch { return ""; }
 }
@@ -70,7 +74,7 @@ function readSafe(path: string): string {
 // ─── 1. Every priceId is registered in PRICE_MODE_MAP ──────────────────────
 const stripeConfigSrc = readSafe(STRIPE_CONFIG);
 if (!stripeConfigSrc) {
-  fail("stripe-config", `Cannot read ${relative(ROOT, STRIPE_CONFIG)}`);
+  fail("stripe-config", `Cannot read ${projectPath(STRIPE_CONFIG)}`);
 }
 const registeredPrices = new Set(stripeConfigSrc.match(PRICE_ID_RE) ?? []);
 
@@ -92,12 +96,12 @@ for (const file of files) {
     if (!matches) continue;
     for (const id of matches) {
       if (!referencedPrices.has(id)) referencedPrices.set(id, []);
-      referencedPrices.get(id)!.push(relative(ROOT, file));
+      referencedPrices.get(id)!.push(projectPath(file));
       const meta = priceMeta.get(id);
       records.push({
         type: "priceId",
         value: id,
-        file: relative(ROOT, file),
+        file: projectPath(file),
         line: i + 1,
         resolvedTarget: meta ? `${meta.mode}${meta.label ? " — " + meta.label : ""}` : undefined,
         label: meta?.label,
@@ -124,13 +128,13 @@ for (const file of walk(SRC_DIR)) {
     if (!hits) continue;
     fail(
       "direct-buy-link",
-      `${relative(ROOT, file)}:${i + 1} contains direct payment link(s): ${hits.join(", ")}`,
+      `${projectPath(file)}:${i + 1} contains direct payment link(s): ${hits.join(", ")}`,
     );
     for (const h of hits) {
       records.push({
         type: "stripe_url",
         value: h,
-        file: relative(ROOT, file),
+        file: projectPath(file),
         line: i + 1,
         resolvedTarget: "external Stripe checkout (BLOCKED)",
         status: "direct_stripe_url",

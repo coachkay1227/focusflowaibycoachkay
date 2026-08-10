@@ -202,7 +202,7 @@ const AdminAnalytics = () => {
                       outerRadius={90}
                       paddingAngle={4}
                       dataKey="count"
-                      label={(props: any) => `${props.tier}: ${props.count}`}
+                      label={(props) => `${String(props.tier)}: ${String(props.count)}`}
                     >
                       {tierStats.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

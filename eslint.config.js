@@ -23,4 +23,19 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    // Supabase Edge Functions run in Deno and the JSX files here are email
+    // renderers, not browser Fast Refresh modules. Keep browser lint rules
+    // strict without misclassifying the server runtime.
+    files: ["supabase/functions/**/*.{ts,tsx}"],
+    languageOptions: {
+      globals: globals.worker,
+    },
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-control-regex": "off",
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );

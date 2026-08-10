@@ -112,19 +112,17 @@ const SiteFooter = () => {
                 The coaching home. Sessions, speaking, and the human work behind the tech.
               </p>
             </a>
-            <a
-              href="https://the-diagnostic-coachkayai-life.lovable.app"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/assessment"
               className="group rounded-xl border border-border/60 p-4 hover:border-primary/40 transition-colors"
             >
               <p className="text-sm font-medium text-foreground inline-flex items-center gap-1.5">
-                The F.O.C.U.S. Diagnostic <ExternalLink className="h-3 w-3 text-primary" />
+                The F.O.C.U.S. Diagnostic <ArrowRight className="h-3 w-3 text-primary" />
               </p>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
                 See where your foundation is strong and where you are carrying too much alone.
               </p>
-            </a>
+            </Link>
           </div>
         </div>
 
