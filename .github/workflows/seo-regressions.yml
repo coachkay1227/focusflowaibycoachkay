@@ -12,33 +12,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 24
+          cache: npm
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Run SEO regression checks
         run: |
-          bun run seo:check 2>&1 | tee seo-results.txt
+          npm run seo:check 2>&1 | tee seo-results.txt
           exit ${PIPESTATUS[0]}
 
       - name: Run unit test suite
-        run: bun run test
+        run: npm test
 
       - name: Check email template references
-        run: bun run scripts/check-email-templates.ts
+        run: npx tsx scripts/check-email-templates.ts
 
       - name: Check email delivery guard
-        run: bun run scripts/check-email-delivery-guard.ts
+        run: npx tsx scripts/check-email-delivery-guard.ts
 
       - name: Check role invariants
-        run: bun run scripts/check-role-invariants.ts
+        run: npx tsx scripts/check-role-invariants.ts
 
       - name: Check payment & audit link integrity
-        run: bun run scripts/check-payment-links.ts
+        run: npx tsx scripts/check-payment-links.ts
 
       - name: Upload payment link report
         if: always()
@@ -49,7 +50,7 @@ jobs:
 
       - name: Generate HTML summary
         if: always()
-        run: bun run scripts/seo-results-to-html.ts seo-results.txt seo-results.html
+        run: npx tsx scripts/seo-results-to-html.ts seo-results.txt seo-results.html
 
       - name: Upload SEO regression results
         if: always()
