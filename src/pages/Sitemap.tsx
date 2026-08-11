@@ -15,7 +15,7 @@ const freeToolLinks = [
 ];
 
 const serviceLinks = [
-  { path: "/audit/landing", label: "AI Business Audit ($47). 8-section diagnosis in 24 hours" },
+  { path: "/audit", label: "AI Business Audit ($47). 8-section diagnosis in 24 hours" },
   { path: "/modules", label: "Transformation Paths, personal, business & AI programs" },
   { path: "/store", label: "Books & AI Kits, self-paced tools, templates & guides" },
   { path: "/rent-an-agent", label: "Rent-an-Agent, done-with-you AI agents on your stack" },

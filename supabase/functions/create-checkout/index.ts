@@ -8,6 +8,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { PRICE_MODE_MAP } from "../_shared/stripe-config.ts";
 
+const AUDIT_PRICE_ID = "price_1Tb41PBReje0oFcLMlvzjQQa";
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
@@ -84,6 +87,31 @@ serve(async (req: Request) => {
       throw new Error(`Invalid priceId: ${priceId}. Not a recognized product price.`);
     }
 
+    // The audit intake is persisted before checkout. Require that exact row
+    // and bind Stripe's idempotency key to it so retries return the same
+    // Checkout Session instead of creating a second charge opportunity.
+    let safeAuditId: string | null = null;
+    if (priceId === AUDIT_PRICE_ID) {
+      safeAuditId = typeof auditId === "string" && UUID_RE.test(auditId) ? auditId : null;
+      if (!safeAuditId) throw new Error("A saved audit intake is required before checkout");
+
+      const { data: pendingAudit, error: auditErr } = await supabaseClient
+        .from("business_audits")
+        .select("id, guest_email, status")
+        .eq("id", safeAuditId)
+        .maybeSingle();
+      if (auditErr || !pendingAudit?.id || pendingAudit.status !== "pending_payment") {
+        throw new Error("This audit is already paid or is no longer available for checkout");
+      }
+      if (
+        pendingAudit.guest_email &&
+        emailToUse &&
+        pendingAudit.guest_email.toLowerCase() !== String(emailToUse).toLowerCase()
+      ) {
+        throw new Error("The checkout email does not match the saved audit intake");
+      }
+    }
+
     // @ts-ignore -- Deno global is provided at edge runtime.
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("Stripe secret key not configured");
@@ -114,7 +142,7 @@ serve(async (req: Request) => {
         supabase_user_id: userId || "",
         ...(typeof fullName === "string" && fullName ? { full_name: fullName.slice(0, 200) } : {}),
         ...(typeof leadId === "string" && leadId ? { lead_id: leadId.slice(0, 100) } : {}),
-        ...(typeof auditId === "string" && auditId ? { audit_id: auditId.slice(0, 100) } : {}),
+        ...(safeAuditId ? { audit_id: safeAuditId } : {}),
       },
       ...(mode === "subscription" && {
         subscription_data: {
@@ -126,7 +154,7 @@ serve(async (req: Request) => {
         },
       }),
       allow_promotion_codes: true,
-    });
+    }, safeAuditId ? { idempotencyKey: `audit-checkout-${safeAuditId}` } : undefined);
 
     logStep("Checkout session created", { sessionId: session.id });
     return new Response(JSON.stringify({ url: session.url }), {

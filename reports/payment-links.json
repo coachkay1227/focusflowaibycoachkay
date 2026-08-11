@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T09:29:08.661Z",
+  "generatedAt": "2026-08-11T12:54:45.823Z",
   "summary": {
     "priceIdsReferenced": 34,
     "priceIdsRegistered": 44,
@@ -371,7 +371,7 @@
       "type": "priceId",
       "value": "price_1Tb41PBReje0oFcLMlvzjQQa",
       "file": "src/pages/AuditIntake.tsx",
-      "line": 177,
+      "line": 187,
       "resolvedTarget": "payment — AI Business Audit $47",
       "label": "AI Business Audit $47",
       "status": "ok"
@@ -424,6 +424,15 @@
     {
       "type": "priceId",
       "value": "price_1Tb41PBReje0oFcLMlvzjQQa",
+      "file": "supabase/functions/create-checkout/index.ts",
+      "line": 11,
+      "resolvedTarget": "payment — AI Business Audit $47",
+      "label": "AI Business Audit $47",
+      "status": "ok"
+    },
+    {
+      "type": "priceId",
+      "value": "price_1Tb41PBReje0oFcLMlvzjQQa",
       "file": "supabase/functions/run-audit-fulfillment-test/index.ts",
       "line": 21,
       "resolvedTarget": "payment — AI Business Audit $47",
@@ -434,7 +443,7 @@
       "type": "audit_entry",
       "value": "src/pages/AuditLanding.tsx",
       "file": "src/pages/AuditLanding.tsx",
-      "resolvedTarget": "no audit CTA",
+      "resolvedTarget": "/audit/intake",
       "status": "ok"
     },
     {
@@ -449,6 +458,13 @@
       "value": "src/pages/Advisory.tsx",
       "file": "src/pages/Advisory.tsx",
       "resolvedTarget": "/audit/intake",
+      "status": "ok"
+    },
+    {
+      "type": "route_definition",
+      "value": "/audit",
+      "file": "src/App.tsx",
+      "resolvedTarget": "Navigate",
       "status": "ok"
     },
     {

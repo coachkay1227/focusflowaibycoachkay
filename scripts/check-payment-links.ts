@@ -32,7 +32,7 @@ const REPORTS_DIR = join(ROOT, "reports");
 
 const PRICE_ID_RE = /price_1[A-Za-z0-9]{20,}/g;
 const BUY_LINK_RE = /https?:\/\/buy\.stripe\.com\/[A-Za-z0-9_-]+/g;
-const AUDIT_FUNNEL_ROUTES = ["/audit/intake", "/audit/landing", "/audit/report", "/auth"];
+const AUDIT_FUNNEL_ROUTES = ["/audit", "/audit/intake", "/audit/landing", "/audit/report", "/auth"];
 
 type Failure = { rule: string; detail: string };
 const failures: Failure[] = [];
@@ -177,8 +177,48 @@ for (const rel of AUDIT_ENTRY_FILES) {
   }
 }
 
+// Public discovery links must enter the intake route. /audit/landing is the
+// Stripe return target and may only render after a verified session id.
+const PUBLIC_AUDIT_START_FILES = [
+  "src/components/DesktopNav.tsx",
+  "src/components/MobileNav.tsx",
+  "src/components/ChatWidget.tsx",
+  "src/pages/AiToolsDirectory.tsx",
+  "src/data/faqs.ts",
+  "src/pages/Sitemap.tsx",
+];
+const publicLandingLink = /(?:route|path|to|href)\s*(?:=|:)\s*["']\/audit\/landing["']/;
+for (const rel of PUBLIC_AUDIT_START_FILES) {
+  const src = readSafe(join(ROOT, rel));
+  if (publicLandingLink.test(src)) {
+    fail("audit-post-payment-entry", `${rel} sends an unpaid visitor to /audit/landing`);
+  }
+}
+
+const auditLandingSrc = readSafe(join(ROOT, "src/pages/AuditLanding.tsx"));
+if (!auditLandingSrc.includes('if (!sessionId) return <Navigate to="/audit/intake" replace />;')) {
+  fail("audit-fake-confirmation", "AuditLanding must redirect direct visitors to /audit/intake");
+}
+
+const createCheckoutSrc = readSafe(join(ROOT, "supabase/functions/create-checkout/index.ts"));
+if (!createCheckoutSrc.includes("idempotencyKey: `audit-checkout-${safeAuditId}`")) {
+  fail("audit-double-checkout", "Audit checkout must use the saved audit id as Stripe's idempotency key");
+}
+
+const auditIntakeSrc = readSafe(join(ROOT, "src/pages/AuditIntake.tsx"));
+const completeAuditSrc = readSafe(join(ROOT, "supabase/functions/complete-audit-intake/index.ts"));
+if (!auditIntakeSrc.includes("const attachMode = !!targetAuditId;")) {
+  fail("audit-resume-checkout", "An existing audit id must always use attach mode, never checkout");
+}
+if (!completeAuditSrc.includes('.eq("user_id", ownerId)') || !completeAuditSrc.includes('.neq("status", "pending_payment")')) {
+  fail("audit-resume-authorization", "Dashboard recovery must require the authenticated owner of a paid audit");
+}
+
 // ─── 4. Audit funnel routes exist in App.tsx ───────────────────────────────
 const appSrc = readSafe(APP_TSX);
+if (!/path=["']\/audit["']/.test(appSrc)) {
+  fail("missing-route", "App.tsx has no exact /audit entry route");
+}
 for (const route of AUDIT_FUNNEL_ROUTES) {
   // Route defined as path="/audit/intake" etc. — allow trailing slash or param.
   const re = new RegExp(`path=["']${route.replace(/\//g, "\\/")}(\\/|["'])`);

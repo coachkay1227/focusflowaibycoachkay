@@ -1,11 +1,11 @@
 # Payment & Audit Link Report
-Generated: 2026-08-10T09:29:08.661Z
+Generated: 2026-08-11T12:54:45.823Z
 
 - Registered priceIds: **44**
 - Referenced priceIds (unique): **34**
 - Failures: **0**
 
-## Price IDs (47 references)
+## Price IDs (48 references)
 
 | Price ID | Resolved | File | Line | Status |
 | --- | --- | --- | --- | --- |
@@ -49,19 +49,20 @@ Generated: 2026-08-10T09:29:08.661Z
 | `price_1THkx7BReje0oFcLRrF38PA8` | payment — 30-Day F.O.C.U.S. $297 | src/lib/stripe-tiers.ts | 44 | ok |
 | `price_1THlFpBReje0oFcLuNY16veh` | payment — 30-Day Intensive $497 | src/lib/stripe-tiers.ts | 51 | ok |
 | `price_1THlGgBReje0oFcLu5PGmZih` | payment — 12-Week Mastery $1997 | src/lib/stripe-tiers.ts | 58 | ok |
-| `price_1Tb41PBReje0oFcLMlvzjQQa` | payment — AI Business Audit $47 | src/pages/AuditIntake.tsx | 177 | ok |
+| `price_1Tb41PBReje0oFcLMlvzjQQa` | payment — AI Business Audit $47 | src/pages/AuditIntake.tsx | 187 | ok |
 | `price_1TbCl2BReje0oFcL5Fg4hh6H` | payment — Autism Single Digital Social Story $47 | supabase/functions/_shared/autism-catalog.ts | 25 | ok |
 | `price_1TbClUBReje0oFcLW7LtYO75` | payment — Autism Therapy Toolkit (3 Stories) $127 | supabase/functions/_shared/autism-catalog.ts | 31 | ok |
 | `price_1TbCmCBReje0oFcLcedSOHi6` | payment — Autism Premium Illustrated Social Story $297 | supabase/functions/_shared/autism-catalog.ts | 37 | ok |
 | `price_1TbCmqBReje0oFcLt06k0wdp` | payment — Autism Therapy Practice Bundle (5 Stories) $997 | supabase/functions/_shared/autism-catalog.ts | 44 | ok |
 | `price_1TbCnGBReje0oFcLRN9Mx1ND` | payment — Autism Gift Wrap + Personalized Note $25 (add-on) | supabase/functions/_shared/autism-catalog.ts | 66 | ok |
+| `price_1Tb41PBReje0oFcLMlvzjQQa` | payment — AI Business Audit $47 | supabase/functions/create-checkout/index.ts | 11 | ok |
 | `price_1Tb41PBReje0oFcLMlvzjQQa` | payment — AI Business Audit $47 | supabase/functions/run-audit-fulfillment-test/index.ts | 21 | ok |
 
 ## Audit Funnel Entry Points
 
 | File | Resolves To | Status |
 | --- | --- | --- |
-| src/pages/AuditLanding.tsx | no audit CTA | ok |
+| src/pages/AuditLanding.tsx | /audit/intake | ok |
 | src/pages/RentAnAgent.tsx | /audit/intake | ok |
 | src/pages/Advisory.tsx | /audit/intake | ok |
 
@@ -69,6 +70,7 @@ Generated: 2026-08-10T09:29:08.661Z
 
 | Route | Component | Status |
 | --- | --- | --- |
+| /audit | Navigate | ok |
 | /audit/intake | Suspense | ok |
 | /audit/landing | Suspense | ok |
 | /audit/report | Suspense | ok |

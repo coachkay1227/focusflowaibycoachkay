@@ -47,7 +47,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
       { label: "How long until I get my audit?", followUp: "Your intake takes about 5 minutes. Once you submit it, the AI generates your report, most people see it within minutes.", route: '/audit/intake' },
       { label: "What's actually in the audit?", followUp: "17 questions mapped across 12 business vectors: tools, time, revenue, bottlenecks, AI readiness. You'll get a clear action list + where AI fits your stack.", route: null },
       { label: "Start my intake now", followUp: "Let's go. Your results are waiting.", route: '/audit/intake' },
-      { label: "I haven't paid yet, how do I get one?", followUp: "It's $47 one-time. Includes your full AI business audit + a 90-day magic link to access your results anytime.", route: '/audit/landing' }
+      { label: "I haven't paid yet, how do I get one?", followUp: "It's $47 one-time. Includes your full AI business audit + a 90-day magic link to access your results anytime.", route: '/audit' }
     ]
   },
   '/modules': {
@@ -82,7 +82,7 @@ const PAGE_CONTEXT_MAP: Record<string, PageContext> = {
     options: [
       { label: "I'm stuck and don't know why", followUp: "That's exactly what the Clarity Session is for. 90 seconds, one question, AI insight. No signup needed.", route: '/clarity' },
       { label: "I want to use AI but don't know how", followUp: "Start with the free AI Starter Kit, built for exactly that moment.", route: '/starter-kit' },
-      { label: "I run a business and need real help", followUp: "Two options: Get the $47 AI Business Audit (know exactly where AI fits your stack), or book the $497 Strategy Intensive for 1:1 with Coach Kay.", route: '/audit/landing' },
+      { label: "I run a business and need real help", followUp: "Two options: Get the $47 AI Business Audit (know exactly where AI fits your stack), or book the $497 Strategy Intensive for 1:1 with Coach Kay.", route: '/audit' },
       { label: "I want to see what Coach Kay does", followUp: "You're in the right place. The best way to get it? Try a free Clarity Session first, takes 90 seconds.", route: '/clarity' }
     ]
   }

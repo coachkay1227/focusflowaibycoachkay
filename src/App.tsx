@@ -157,6 +157,7 @@ const App = () => (
             <Route path="/ai-tools" element={<Suspense fallback={<PageSkeleton />}><AiToolsDirectory /></Suspense>} />
             <Route path="/ai-tools-directory" element={<Navigate to="/ai-tools" replace />} />
             <Route path="/order-success" element={<Suspense fallback={<PageSkeleton />}><OrderSuccess /></Suspense>} />
+            <Route path="/audit" element={<Navigate to="/audit/intake" replace />} />
             <Route path="/audit/landing" element={<Suspense fallback={<PageSkeleton />}><AuditLanding /></Suspense>} />
             <Route path="/audit/intake" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
             <Route path="/audit/intake/:id" element={<Suspense fallback={<PageSkeleton />}><AuditIntake /></Suspense>} />
