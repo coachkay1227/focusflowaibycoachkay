@@ -187,7 +187,7 @@ export default function AiToolsDirectory() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
-              to="/audit/landing"
+              to="/audit"
               className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium tracking-wide hover:opacity-90 transition-opacity"
             >
               Run the AI Business Audit

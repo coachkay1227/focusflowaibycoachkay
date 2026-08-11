@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
@@ -14,10 +14,7 @@ const AuditLanding = () => {
   const [next, setNext] = useState<{ auditId: string; token: string | null; email: string | null } | null>(null);
 
   useEffect(() => {
-    if (!sessionId) {
-      setStatus("error");
-      return;
-    }
+    if (!sessionId) return;
     let cancelled = false;
     let attempts = 0;
     let intake: unknown = null;
@@ -61,6 +58,10 @@ const AuditLanding = () => {
     qs.set("message", "audit-ready");
     navigate(`/auth?${qs.toString()}`);
   };
+
+  // This page is only Stripe's verified return target. A visitor who opens it
+  // directly has not paid and must never see payment-confirmed language.
+  if (!sessionId) return <Navigate to="/audit/intake" replace />;
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">

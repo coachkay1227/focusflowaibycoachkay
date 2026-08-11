@@ -76,7 +76,9 @@ function extractClarityModuleIds(): string[] {
   const body = src.slice(arrayStart);
   const ids: string[] = [];
   // Match `  {\n    id: "..."` — two-space indent identifies module-level entries (vs nested question ids).
-  const re = /\n {2}\{\n {4}id:\s*"([^"]+)"/g;
+  // Accept both LF and CRLF so Windows builds do not silently drop every
+  // dynamic clarity URL from the sitemap.
+  const re = /\r?\n {2}\{\r?\n {4}id:\s*"([^"]+)"/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(body)) !== null) ids.push(m[1]);
   return ids;

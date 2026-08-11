@@ -1,4 +1,4 @@
-#!/usr/bin/env -S bun run
+#!/usr/bin/env -S npx tsx
 /**
  * Role invariant check (CI).
  *
@@ -9,10 +9,14 @@
  *   2. has_role(uid, 'admin') is TRUE iff a matching user_roles row exists.
  *   3. The has_role() function definition references public.user_roles.
  *
- * Requires PG* env vars (managed Lovable Cloud psql access).
+ * With a PostgreSQL connection, validates both live data and the deployed
+ * function. Without one (for example, pull-request CI), validates the latest
+ * authoritative migration so the security contract is still enforced.
  * Exits non-zero on any violation so CI fails loudly.
  */
 import { spawnSync } from "node:child_process";
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 
 function psql(sql: string): string {
   const res = spawnSync("psql", ["-At", "-c", sql], { encoding: "utf8" });
@@ -24,6 +28,67 @@ function psql(sql: string): string {
 }
 
 const failures: string[] = [];
+
+function validateHasRoleDefinition(definition: string, source: string): void {
+  if (!/\b(?:public\.)?user_roles\b/i.test(definition)) {
+    failures.push(`${source} no longer references public.user_roles.`);
+  }
+
+  if (/\b(?:tier|access_level|corporate)\b/i.test(definition)) {
+    failures.push(
+      `${source} appears to reference tier/access_level/corporate — ` +
+        "admin must come from user_roles ONLY.",
+    );
+  }
+}
+
+function validateLatestMigration(): void {
+  const migrationsDirectory = join(process.cwd(), "supabase", "migrations");
+  const functionPattern =
+    /create\s+or\s+replace\s+function\s+public\.has_role\b[\s\S]*?\$(?:function)?\$\s*;/i;
+  const candidates = readdirSync(migrationsDirectory)
+    .filter((file) => file.endsWith(".sql"))
+    .sort()
+    .map((file) => ({
+      file,
+      sql: readFileSync(join(migrationsDirectory, file), "utf8"),
+    }))
+    .filter(({ sql }) => /create\s+or\s+replace\s+function\s+public\.has_role\b/i.test(sql));
+
+  const latest = candidates.at(-1);
+  if (!latest) {
+    failures.push("No public.has_role() migration was found.");
+    return;
+  }
+
+  const definition = latest.sql.match(functionPattern)?.[0];
+  if (!definition) {
+    failures.push(`Could not parse public.has_role() in ${latest.file}.`);
+    return;
+  }
+
+  validateHasRoleDefinition(definition, `Latest public.has_role() migration (${latest.file})`);
+}
+
+const hasLiveDatabase = Boolean(
+  process.env.DATABASE_URL || process.env.PGHOST || process.env.PGHOSTADDR,
+);
+
+if (!hasLiveDatabase) {
+  validateLatestMigration();
+
+  if (failures.length > 0) {
+    console.error("❌ Role invariant check FAILED:\n");
+    for (const failure of failures) console.error("  - " + failure);
+    process.exit(1);
+  }
+
+  console.log(
+    "✅ Role invariant migration check passed. " +
+      "Live row validation skipped because no PostgreSQL connection was configured.",
+  );
+  process.exit(0);
+}
 
 // 1. No corporate-tier user holds an admin role row.
 const corpAdmins = psql(`
@@ -39,15 +104,13 @@ if (corpAdmins !== "0") {
   );
 }
 
-// 2. has_role() must agree with user_roles for every admin row.
+// 2. has_role() must agree with user_roles for every admin row. The service
+// role condition in has_role() allows this cross-user verification in CI.
 const mismatched = psql(`
   SELECT COUNT(*)::int
   FROM public.user_roles ur
   WHERE ur.role = 'admin'
-    AND NOT EXISTS (
-      SELECT 1 FROM public.user_roles x
-      WHERE x.user_id = ur.user_id AND x.role = 'admin'
-    );
+    AND NOT public.has_role(ur.user_id, 'admin');
 `);
 if (mismatched !== "0") {
   failures.push(`user_roles admin rows inconsistent: ${mismatched}`);
@@ -61,15 +124,7 @@ const def = psql(`
   WHERE n.nspname = 'public' AND p.proname = 'has_role'
   LIMIT 1;
 `);
-if (!def.includes("user_roles")) {
-  failures.push("public.has_role() no longer references user_roles table.");
-}
-if (/tier|access_level|corporate/i.test(def)) {
-  failures.push(
-    "public.has_role() appears to reference tier/access_level/corporate — " +
-      "admin must come from user_roles ONLY.",
-  );
-}
+validateHasRoleDefinition(def, "Deployed public.has_role()");
 
 if (failures.length > 0) {
   console.error("❌ Role invariant check FAILED:\n");

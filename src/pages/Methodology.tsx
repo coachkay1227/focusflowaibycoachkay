@@ -22,7 +22,7 @@ const Methodology = () => {
       .replace(/^### (.*)$/gm, '<h3 class="font-heading text-xl mt-6 mb-2 text-foreground">$1</h3>')
       .replace(/^## (.*)$/gm, '<h2 class="font-heading text-2xl mt-8 mb-3 text-foreground">$1</h2>')
       .replace(/^# (.*)$/gm, '<h1 class="font-heading text-3xl mt-4 mb-4 text-foreground">$1</h1>')
-      .replace(/^\- (.*)$/gm, '<li class="ml-5 list-disc text-muted-foreground">$1</li>')
+      .replace(/^- (.*)$/gm, '<li class="ml-5 list-disc text-muted-foreground">$1</li>')
       .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-muted/30 text-xs">$1</code>')
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\n\n/g, '</p><p class="my-3 text-muted-foreground leading-relaxed">');

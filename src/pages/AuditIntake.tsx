@@ -93,13 +93,17 @@ const RadioRow = ({ label, value, options, onChange }: {
 
 const AuditIntake = () => {
   const navigate = useNavigate();
-  // Attach mode: buyer already paid (arrived via magic link) but their intake
-  // was never captured, /audit/intake/:id?token=aud_... skips payment and
-  // attaches the intake to the existing paid audit.
-  const { id: attachAuditId } = useParams();
+  // Attach mode: buyer already paid but their intake was never captured.
+  // Email links use /audit/intake/:id?token=aud_...; the signed-in dashboard
+  // uses /audit/intake?audit_id=.... Both skip payment and attach in place.
+  const { id: pathAuditId } = useParams();
   const [searchParams] = useSearchParams();
+  const queryAuditId = searchParams.get("audit_id") ?? "";
+  const targetAuditId = pathAuditId ?? queryAuditId;
   const attachToken = searchParams.get("token") ?? "";
-  const attachMode = !!(attachAuditId && attachToken.startsWith("aud_"));
+  // Paid buyers can resume from an emailed token or their authenticated
+  // dashboard. Both paths attach to the existing order; neither can checkout.
+  const attachMode = !!targetAuditId;
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [data, setData] = useState<IntakeState>(defaultState);
@@ -136,13 +140,19 @@ const AuditIntake = () => {
       if (attachMode) {
         // Already paid, attach intake to the existing audit and kick off generation.
         const { data: res, error } = await supabase.functions.invoke("complete-audit-intake", {
-          body: { audit_id: attachAuditId, token: attachToken, intake: payloadIntake },
+          body: {
+            audit_id: targetAuditId,
+            ...(attachToken ? { token: attachToken } : {}),
+            intake: payloadIntake,
+          },
         });
         if (error) throw error;
         const payload = res as { ok?: boolean } | null;
         if (!payload?.ok) throw new Error("Could not attach your intake. Check your magic link and retry.");
         toast.success("Intake saved, generating your audit now.");
-        navigate(`/audit/report/${attachAuditId}?token=${encodeURIComponent(attachToken)}`);
+        navigate(
+          `/audit/report/${targetAuditId}${attachToken ? `?token=${encodeURIComponent(attachToken)}` : ""}`,
+        );
         return;
       }
 

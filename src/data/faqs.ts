@@ -138,7 +138,7 @@ export const FAQ_LANES: FAQLane[] = [
     key: "audit",
     label: "AI Business Audit",
     blurb: "$47 diagnostic with a personalized F.O.C.U.S. action plan, delivered in 5 minutes.",
-    path: "/audit/landing",
+    path: "/audit",
     items: [
       {
         q: "What do I get for $47?",

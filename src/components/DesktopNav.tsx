@@ -38,7 +38,7 @@ const workGroup: NavGroup = {
     { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase, desc: "Fractional AI strategy for leaders" },
     { label: "Cbus AI Task Force", path: "/ai-task-force", icon: Layers, desc: "A shared table for Columbus and AI" },
     { label: "Collective AI", path: "/collective", icon: Users, desc: "A separate enterprise and partner ecosystem" },
-    { label: "Business Audit", path: "/audit/landing", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
+    { label: "Business Audit", path: "/audit", icon: FileSearch, desc: "Where AI fits in your business, in 24 hours" },
   ],
 };
 

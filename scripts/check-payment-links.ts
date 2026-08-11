@@ -21,7 +21,7 @@
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, sep } from "node:path";
 
 const ROOT = process.cwd();
 const SRC_DIR = join(ROOT, "src");
@@ -32,7 +32,7 @@ const REPORTS_DIR = join(ROOT, "reports");
 
 const PRICE_ID_RE = /price_1[A-Za-z0-9]{20,}/g;
 const BUY_LINK_RE = /https?:\/\/buy\.stripe\.com\/[A-Za-z0-9_-]+/g;
-const AUDIT_FUNNEL_ROUTES = ["/audit/intake", "/audit/landing", "/audit/report", "/auth"];
+const AUDIT_FUNNEL_ROUTES = ["/audit", "/audit/intake", "/audit/landing", "/audit/report", "/auth"];
 
 type Failure = { rule: string; detail: string };
 const failures: Failure[] = [];
@@ -50,7 +50,7 @@ type LinkRecord = {
 const records: LinkRecord[] = [];
 
 function walk(dir: string, out: string[] = []): string[] {
-  for (const entry of readdirSync(dir)) {
+  for (const entry of readdirSync(dir).sort()) {
     const full = join(dir, entry);
     const s = statSync(full);
     if (s.isDirectory()) {
@@ -63,6 +63,10 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+function projectPath(path: string): string {
+  return relative(ROOT, path).split(sep).join("/");
+}
+
 function readSafe(path: string): string {
   try { return readFileSync(path, "utf8"); } catch { return ""; }
 }
@@ -70,7 +74,7 @@ function readSafe(path: string): string {
 // ─── 1. Every priceId is registered in PRICE_MODE_MAP ──────────────────────
 const stripeConfigSrc = readSafe(STRIPE_CONFIG);
 if (!stripeConfigSrc) {
-  fail("stripe-config", `Cannot read ${relative(ROOT, STRIPE_CONFIG)}`);
+  fail("stripe-config", `Cannot read ${projectPath(STRIPE_CONFIG)}`);
 }
 const registeredPrices = new Set(stripeConfigSrc.match(PRICE_ID_RE) ?? []);
 
@@ -92,12 +96,12 @@ for (const file of files) {
     if (!matches) continue;
     for (const id of matches) {
       if (!referencedPrices.has(id)) referencedPrices.set(id, []);
-      referencedPrices.get(id)!.push(relative(ROOT, file));
+      referencedPrices.get(id)!.push(projectPath(file));
       const meta = priceMeta.get(id);
       records.push({
         type: "priceId",
         value: id,
-        file: relative(ROOT, file),
+        file: projectPath(file),
         line: i + 1,
         resolvedTarget: meta ? `${meta.mode}${meta.label ? " — " + meta.label : ""}` : undefined,
         label: meta?.label,
@@ -124,13 +128,13 @@ for (const file of walk(SRC_DIR)) {
     if (!hits) continue;
     fail(
       "direct-buy-link",
-      `${relative(ROOT, file)}:${i + 1} contains direct payment link(s): ${hits.join(", ")}`,
+      `${projectPath(file)}:${i + 1} contains direct payment link(s): ${hits.join(", ")}`,
     );
     for (const h of hits) {
       records.push({
         type: "stripe_url",
         value: h,
-        file: relative(ROOT, file),
+        file: projectPath(file),
         line: i + 1,
         resolvedTarget: "external Stripe checkout (BLOCKED)",
         status: "direct_stripe_url",
@@ -173,8 +177,48 @@ for (const rel of AUDIT_ENTRY_FILES) {
   }
 }
 
+// Public discovery links must enter the intake route. /audit/landing is the
+// Stripe return target and may only render after a verified session id.
+const PUBLIC_AUDIT_START_FILES = [
+  "src/components/DesktopNav.tsx",
+  "src/components/MobileNav.tsx",
+  "src/components/ChatWidget.tsx",
+  "src/pages/AiToolsDirectory.tsx",
+  "src/data/faqs.ts",
+  "src/pages/Sitemap.tsx",
+];
+const publicLandingLink = /(?:route|path|to|href)\s*(?:=|:)\s*["']\/audit\/landing["']/;
+for (const rel of PUBLIC_AUDIT_START_FILES) {
+  const src = readSafe(join(ROOT, rel));
+  if (publicLandingLink.test(src)) {
+    fail("audit-post-payment-entry", `${rel} sends an unpaid visitor to /audit/landing`);
+  }
+}
+
+const auditLandingSrc = readSafe(join(ROOT, "src/pages/AuditLanding.tsx"));
+if (!auditLandingSrc.includes('if (!sessionId) return <Navigate to="/audit/intake" replace />;')) {
+  fail("audit-fake-confirmation", "AuditLanding must redirect direct visitors to /audit/intake");
+}
+
+const createCheckoutSrc = readSafe(join(ROOT, "supabase/functions/create-checkout/index.ts"));
+if (!createCheckoutSrc.includes("idempotencyKey: `audit-checkout-${safeAuditId}`")) {
+  fail("audit-double-checkout", "Audit checkout must use the saved audit id as Stripe's idempotency key");
+}
+
+const auditIntakeSrc = readSafe(join(ROOT, "src/pages/AuditIntake.tsx"));
+const completeAuditSrc = readSafe(join(ROOT, "supabase/functions/complete-audit-intake/index.ts"));
+if (!auditIntakeSrc.includes("const attachMode = !!targetAuditId;")) {
+  fail("audit-resume-checkout", "An existing audit id must always use attach mode, never checkout");
+}
+if (!completeAuditSrc.includes('.eq("user_id", ownerId)') || !completeAuditSrc.includes('.neq("status", "pending_payment")')) {
+  fail("audit-resume-authorization", "Dashboard recovery must require the authenticated owner of a paid audit");
+}
+
 // ─── 4. Audit funnel routes exist in App.tsx ───────────────────────────────
 const appSrc = readSafe(APP_TSX);
+if (!/path=["']\/audit["']/.test(appSrc)) {
+  fail("missing-route", "App.tsx has no exact /audit entry route");
+}
 for (const route of AUDIT_FUNNEL_ROUTES) {
   // Route defined as path="/audit/intake" etc. — allow trailing slash or param.
   const re = new RegExp(`path=["']${route.replace(/\//g, "\\/")}(\\/|["'])`);

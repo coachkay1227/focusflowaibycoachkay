@@ -3,11 +3,10 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
-/** Attach the pre-payment intake JSON to a paid business_audits row
- *  (looked up by stripe_session_id), kick off generation, and return
- *  the audit id + magic-link token so the frontend can route the buyer
- *  to /auth?next=/audit/report/<id>?token=<token>. Public — relies on
- *  the unguessable Stripe session id as the capability. */
+/** Attach intake to an existing paid business_audits row, kick off generation,
+ *  and return its access details. Stripe returns use the unguessable session
+ *  id, email links use the unguessable audit token, and dashboard recovery
+ *  requires an authenticated user who owns the paid audit. */
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -26,7 +25,8 @@ serve(async (req: Request) => {
 
     const bySession = sessionId.startsWith("cs_") && sessionId.length <= 200;
     const byToken = auditId.length > 0 && auditId.length <= 100 && magicToken.startsWith("aud_") && magicToken.length <= 200;
-    if (!bySession && !byToken) {
+    const byOwnedUser = auditId.length > 0 && auditId.length <= 100 && !byToken;
+    if (!bySession && !byToken && !byOwnedUser) {
       return new Response(JSON.stringify({ error: "invalid session_id" }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
@@ -35,16 +35,23 @@ serve(async (req: Request) => {
 
     // Find the paid audit row: by Stripe session id (post-checkout return),
     // or by audit_id + magic-link token (buyer arrived via email on another device).
-    let audit: { id: string; guest_email: string | null; intake: unknown; report: unknown } | null = null;
+    let audit: {
+      id: string;
+      guest_email: string | null;
+      intake: unknown;
+      report: unknown;
+      status: string | null;
+      user_id: string | null;
+    } | null = null;
     if (bySession) {
       const { data, error: lookupErr } = await supabase
         .from("business_audits")
-        .select("id, guest_email, intake, report")
+        .select("id, guest_email, intake, report, status, user_id")
         .eq("stripe_session_id", sessionId)
         .maybeSingle();
       if (lookupErr) throw lookupErr;
       audit = data;
-    } else {
+    } else if (byToken) {
       const { data: tokenMatch, error: tokenErr } = await supabase
         .from("audit_tokens")
         .select("audit_id, expires_at")
@@ -56,16 +63,48 @@ serve(async (req: Request) => {
       if (tokenMatch && !expired) {
         const { data, error: lookupErr } = await supabase
           .from("business_audits")
-          .select("id, guest_email, intake, report")
+          .select("id, guest_email, intake, report, status, user_id")
           .eq("id", auditId)
           .maybeSingle();
         if (lookupErr) throw lookupErr;
         audit = data;
       }
+    } else {
+      const authHeader = req.headers.get("Authorization") ?? "";
+      const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+      if (!jwt) {
+        return new Response(JSON.stringify({ error: "Sign in to resume this paid audit" }), {
+          status: 401,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      const { data: authData, error: authErr } = await supabase.auth.getUser(jwt);
+      const ownerId = authData?.user?.id ?? null;
+      if (authErr || !ownerId) {
+        return new Response(JSON.stringify({ error: "Sign in to resume this paid audit" }), {
+          status: 401,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      const { data, error: lookupErr } = await supabase
+        .from("business_audits")
+        .select("id, guest_email, intake, report, status, user_id")
+        .eq("id", auditId)
+        .eq("user_id", ownerId)
+        .neq("status", "pending_payment")
+        .maybeSingle();
+      if (lookupErr) throw lookupErr;
+      audit = data;
     }
     if (!audit) {
       return new Response(JSON.stringify({ error: "audit not found yet", retry: bySession }), {
         status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    if (audit.status === "pending_payment") {
+      return new Response(JSON.stringify({ error: "payment not confirmed" }), {
+        status: 409,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }

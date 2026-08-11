@@ -38,7 +38,7 @@ const navGroups: NavGroup[] = [
       { label: "Advisory & Partnership", path: "/advisory", icon: Briefcase },
       { label: "Cbus AI Task Force", path: "/ai-task-force", icon: Layers },
       { label: "Collective AI", path: "/collective", icon: Users },
-      { label: "Business Audit", path: "/audit/landing", icon: FileSearch },
+      { label: "Business Audit", path: "/audit", icon: FileSearch },
     ],
   },
   {

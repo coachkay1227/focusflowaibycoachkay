@@ -176,7 +176,7 @@ export async function readFulfillmentStages(
   });
 
   const isAudit = fulfilledIn === "business_audits";
-  let auditId: string | null = isAudit ? recordId : null;
+  const auditId: string | null = isAudit ? recordId : null;
   let reportReady = false;
   let linkState: StageState = "not_applicable";
   let linkDetail = "Not needed for this purchase.";

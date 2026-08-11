@@ -213,7 +213,7 @@ const Index = () => {
                 decoding="async"
                 width={1200}
                 height={1500}
-                className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[1200ms] ease-in-out"
+                className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all [transition-duration:1200ms] ease-in-out"
                 style={{
                   opacity: phase >= 2 ? 1 : 0,
                   objectPosition: "center 20%",
@@ -223,7 +223,7 @@ const Index = () => {
 
               {/* Gold frame */}
               <div
-                className="absolute inset-6 md:inset-8 border z-20 pointer-events-none transition-all duration-[1200ms] ease-in-out group-hover:inset-7 md:group-hover:inset-10"
+                className="absolute inset-6 md:inset-8 border z-20 pointer-events-none transition-all [transition-duration:1200ms] ease-in-out group-hover:inset-7 md:group-hover:inset-10"
                 style={{ borderColor: "hsl(var(--primary) / 0.25)" }}
                 aria-hidden="true"
               />
