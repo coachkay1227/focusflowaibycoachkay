@@ -8,6 +8,11 @@ jobs:
   seo-check:
     name: Run SEO Regression Checks
     runs-on: ubuntu-latest
+    env:
+      # Tests instantiate the browser client but never call this placeholder.
+      # Production values remain managed by Lovable Cloud and are not exposed to CI.
+      VITE_SUPABASE_URL: https://example.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: ci-placeholder-key
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
