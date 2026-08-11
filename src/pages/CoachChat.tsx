@@ -10,11 +10,12 @@ import { ArrowLeft, Send, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MobileNav from "@/components/MobileNav";
 import { supabase } from "@/integrations/supabase/client";
+import { SUPABASE_URL } from "@/integrations/supabase/config";
 import { useAuth } from "@/contexts/AuthContext";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coach-chat`;
+const CHAT_URL = `${SUPABASE_URL}/functions/v1/coach-chat`;
 
 const starterPrompts = [
   "I feel stuck but I can't explain why.",

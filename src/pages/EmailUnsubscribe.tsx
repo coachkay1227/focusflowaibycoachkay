@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/integrations/supabase/config";
 
 type Status = "loading" | "valid" | "already" | "invalid" | "success" | "error";
 
@@ -15,9 +16,9 @@ const EmailUnsubscribe = () => {
 
     const validate = async () => {
       try {
-        const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/handle-email-unsubscribe?token=${token}`;
+        const url = `${SUPABASE_URL}/functions/v1/handle-email-unsubscribe?token=${token}`;
         const res = await fetch(url, {
-          headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+          headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
         });
         if (!res.ok) { setStatus("invalid"); return; }
         const data = await res.json();
