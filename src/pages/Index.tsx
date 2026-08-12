@@ -338,7 +338,7 @@ const Index = () => {
               label: "02 · ASSESSMENT",
               title: "Business Clarity Assessment",
               focus: "Best for growth-stage owners",
-              desc: "18 questions · ~5 min. Discover your Mind · Action · Character archetype.",
+              desc: "6 questions · ~3 min. Discover your Mind · Action · Character archetype and primary bottleneck.",
               cta: "Take the Assessment",
               to: "/assessment",
               primary: false,

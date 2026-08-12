@@ -31,11 +31,11 @@ const STATIC_OFFERS: ShareableOffer[] = [
   { slug: "community_hub", label: "Focus Flow Elevation Hub", group: "Front doors", path: "/community", directPurchase: false },
 
   // Rent-an-Agent.
-  { slug: "rent_agent_starter", label: "Rent-an-Agent · Starter", group: "Rent-an-Agent", path: "/rent-an-agent#starter", directPurchase: true },
-  { slug: "rent_agent_pro", label: "Rent-an-Agent · Pro", group: "Rent-an-Agent", path: "/rent-an-agent#pro", directPurchase: true },
-  { slug: "rent_agent_dreamteam", label: "Rent-an-Agent · Dream Team", group: "Rent-an-Agent", path: "/rent-an-agent#dreamteam", directPurchase: true },
+  { slug: "rent_agent_starter", label: "Rent-an-Agent · Starter", group: "Rent-an-Agent", path: "/rent-an-agent#starter", directPurchase: false },
+  { slug: "rent_agent_pro", label: "Rent-an-Agent · Pro", group: "Rent-an-Agent", path: "/rent-an-agent#pro", directPurchase: false },
+  { slug: "rent_agent_dreamteam", label: "Rent-an-Agent · Dream Team", group: "Rent-an-Agent", path: "/rent-an-agent#dreamteam", directPurchase: false },
   { slug: "rent_agent_enterprise", label: "Rent-an-Agent · Enterprise", group: "Rent-an-Agent", path: "/rent-an-agent#enterprise", directPurchase: false },
-  { slug: "lead_engine", label: "AI Lead Engine", group: "Rent-an-Agent", path: "/rent-an-agent#lead-engine", directPurchase: false },
+  { slug: "lead_engine", label: "AI Lead Engine", group: "Rent-an-Agent", path: "/agents/lead-engine", directPurchase: false },
 
   // Advisory and training.
   { slug: "advisory_strategy_intensive", label: "AI Strategy Intensive", group: "Advisory", path: "/advisory#strategy-intensive", directPurchase: true },

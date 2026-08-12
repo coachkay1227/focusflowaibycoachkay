@@ -32,9 +32,9 @@ export default function AccessGate({ requiredTier, children, fallback }: AccessG
   if (fallback) return <>{fallback}</>;
 
   return (
-    <div className="relative rounded-lg border border-border bg-card/20 backdrop-blur-sm overflow-hidden">
+    <div className="relative h-full rounded-lg border border-border bg-card/20 backdrop-blur-sm overflow-hidden">
       {/* Blurred preview of children */}
-      <div className="pointer-events-none select-none blur-[6px] opacity-40" aria-hidden>
+      <div className="h-full pointer-events-none select-none blur-[6px] opacity-40" aria-hidden>
         {children}
       </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   Sparkles,
@@ -79,10 +79,23 @@ const BUYERS: { type: string; why: string }[] = [
 ];
 
 export default function Store() {
+  const [searchParams] = useSearchParams();
   const [category, setCategory] = useState<BookCategory>("storybooks");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Audit recommendations and printed links can open the exact package,
+  // rather than dropping a buyer at the top of a generic store page.
+  useEffect(() => {
+    const requested = searchParams.get("package");
+    if (!requested) return;
+    const pkg = PACKAGES.find((item) => item.slug === requested);
+    if (!pkg || pkg.category === "autism") return;
+    setCategory(pkg.category);
+    setSelectedSlug(pkg.slug);
+    setModalOpen(true);
+  }, [searchParams]);
 
   const onOrder = (slug: string) => {
     const pkg = PACKAGES.find((p) => p.slug === slug);

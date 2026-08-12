@@ -25,7 +25,7 @@ interface SitemapEntry {
 const staticEntries: SitemapEntry[] = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/start", priority: "0.8", changefreq: "weekly" },
-  { path: "/events/claude-ai-business-accelerator-june-2026", priority: "0.9", changefreq: "weekly" },
+  { path: "/events/claude-ai-business-accelerator-june-2026", priority: "0.4", changefreq: "yearly" },
   { path: "/modules", priority: "0.9", changefreq: "weekly" },
   { path: "/coach-kay", priority: "0.8", changefreq: "monthly" },
   { path: "/community", priority: "0.7", changefreq: "monthly" },

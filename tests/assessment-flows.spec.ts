@@ -16,7 +16,7 @@ import { test, expect } from "../playwright-fixture";
 test.describe("Personal Clarity Check (/clarity)", () => {
   test("renders the Personal Clarity Check header (not a fallback)", async ({ page }) => {
     await page.goto("/clarity");
-    await expect(page.getByText("Personal Clarity Check", { exact: false })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Clarity Check/i })).toBeVisible();
     // Must NOT show the Business assessment header
     await expect(page.getByText("BUSINESS CLARITY ASSESSMENT")).toHaveCount(0);
     // Must NOT show the Starter Kit header
@@ -38,16 +38,28 @@ test.describe("Business Clarity Assessment (/assessment)", () => {
     await page.goto("/assessment");
     await expect(page.getByText("BUSINESS CLARITY ASSESSMENT")).toBeVisible();
 
-    // The flow is 18 questions × 4 options each. Always pick the first option
-    // and advance. The final Continue button reads "Reveal My Clarity Profile".
-    for (let i = 0; i < 18; i++) {
+    // The Operator × Bottleneck Map is 6 questions × 4 options. Always pick
+    // the first option and advance. The first three answers determine the
+    // operator code; the last three determine the primary bottleneck.
+    const stepLabels = [
+      "OPERATOR · 01 / 03",
+      "OPERATOR · 02 / 03",
+      "OPERATOR · 03 / 03",
+      "BOTTLENECK · 01 / 03",
+      "BOTTLENECK · 02 / 03",
+      "BOTTLENECK · 03 / 03",
+    ];
+    for (let i = 0; i < stepLabels.length; i++) {
+      // Waiting for the next label makes the test follow the same 250 ms
+      // animated transition a visitor sees instead of clicking the old step.
+      await expect(page.getByText(stepLabels[i], { exact: true })).toBeVisible();
       // Pick first option for the current step
       const firstOption = page.locator("button.text-left.rounded-lg.border").first();
       await firstOption.click();
 
-      const isLast = i === 17;
+      const isLast = i === stepLabels.length - 1;
       const cta = isLast
-        ? page.getByRole("button", { name: /Reveal My Clarity Profile/i })
+        ? page.getByRole("button", { name: /Reveal My Map/i })
         : page.getByRole("button", { name: /^Continue$/i });
       await cta.click();
     }
@@ -68,9 +80,9 @@ test.describe("Business Clarity Assessment (/assessment)", () => {
 test.describe("AI Transformation Starter Kit (/starter-kit)", () => {
   test("renders the starter-kit landing, not a clarity quiz", async ({ page }) => {
     await page.goto("/starter-kit");
-    await expect(page.getByText("AI TRANSFORMATION · STARTER KIT")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Get Your Free AI-Powered Quick Start Report/i })).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /Send Me the Starter Kit/i })
+      page.getByRole("button", { name: /Generate My Quick Start Report/i })
     ).toBeVisible();
     // No quiz UI from the clarity flow should appear
     await expect(page.getByText("Personal Clarity Check")).toHaveCount(0);
@@ -80,7 +92,7 @@ test.describe("AI Transformation Starter Kit (/starter-kit)", () => {
   test("/ai-starter-kit redirects to /starter-kit", async ({ page }) => {
     await page.goto("/ai-starter-kit");
     await expect(page).toHaveURL(/\/starter-kit$/);
-    await expect(page.getByText("AI TRANSFORMATION · STARTER KIT")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Get Your Free AI-Powered Quick Start Report/i })).toBeVisible();
   });
 });
 
@@ -101,7 +113,7 @@ test.describe("Clarity route guards", () => {
     await page.goto("/clarity/kpi-roi-tracker");
     await expect(page.getByText(/has evolved/i)).toBeVisible();
     await expect(page).toHaveURL(/\/starter-kit$/);
-    await expect(page.getByText("AI TRANSFORMATION · STARTER KIT")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Get Your Free AI-Powered Quick Start Report/i })).toBeVisible();
   });
 
   test("unknown moduleId redirects to canonical /clarity (no silent fallback)", async ({ page }) => {
@@ -109,7 +121,7 @@ test.describe("Clarity route guards", () => {
     // Shows the unified retired screen, not a silent rerender of the default quiz.
     await expect(page.getByText(/no longer part of the public catalog/i)).toBeVisible();
     await expect(page).toHaveURL(/\/clarity$/);
-    await expect(page.getByText("Personal Clarity Check", { exact: false })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Clarity Check/i })).toBeVisible();
   });
 
   test("/result without state redirects to /clarity (never renders empty result)", async ({ page }) => {

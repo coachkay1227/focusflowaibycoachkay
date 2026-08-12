@@ -240,7 +240,7 @@ const Modules = () => {
                   const adminBypass = isAdmin && !userView;
                   const needsGate = !adminBypass && program.isGated && program.accessTier !== "free" && (!user || TIER_RANK[tier] < TIER_RANK[program.accessTier]);
                   return (
-                    <AnimatedSection key={program.id} delay={Math.min(i * 60, 400)}>
+                    <AnimatedSection key={program.id} delay={Math.min(i * 60, 400)} className="flex">
                       {needsGate ? (
                         <AccessGate requiredTier={program.accessTier}>
                           <ProgramCard

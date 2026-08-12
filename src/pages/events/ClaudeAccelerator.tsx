@@ -1,6 +1,7 @@
 // src/pages/events/ClaudeAccelerator.tsx
 
 import SEOHead from "@/components/SEOHead";
+import { Link } from "react-router-dom";
 
 // ─── EVENT SCHEMA ─── The special note for Google
 const eventSchema = {
@@ -10,7 +11,7 @@ const eventSchema = {
   "description": "Free, in-person AI training for Columbus small business owners. Open to all with emphasis on Black entrepreneurs. Build real AI workflows for salons, real estate, coaching, and notary businesses.",
   "startDate": "2026-06-04T18:00:00-04:00",
   "endDate": "2026-06-04T21:00:00-04:00",
-  "eventStatus": "https://schema.org/EventScheduled",
+  "eventStatus": "https://schema.org/EventCompleted",
   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
   "location": {
     "@type": "Place",
@@ -25,18 +26,10 @@ const eventSchema = {
     }
   },
   "isAccessibleForFree": true,
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock",
-    "validFrom": "2026-05-01T00:00:00-04:00",
-    "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com"
-  },
   "organizer": {
     "@type": "Organization",
     "name": "Coach Kay Elevates",
-    "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com"
+    "url": "https://coachkayai.life"
   },
   "performer": {
     "@type": "Person",
@@ -47,44 +40,7 @@ const eventSchema = {
     "https://coachkayai.life/images/event-june-4-2026.jpg",
     "https://coachkayai.life/og-image.png"
   ],
-  "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com"
-};
-
-// ─── HOWTO SCHEMA ─── Steps to register
-const howToSchema = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  "name": "How to Register for the Free AI Business Accelerator",
-  "description": "3 simple steps to reserve your seat at the June 4, 2026 event in Columbus.",
-  "totalTime": "PT2M",
-  "estimatedCost": {
-    "@type": "MonetaryAmount",
-    "currency": "USD",
-    "value": "0"
-  },
-  "step": [
-    {
-      "@type": "HowToStep",
-      "position": 1,
-      "name": "Visit the Eventbrite page",
-      "text": "Go to TheClaudeAIBusinessAccelerator.eventbrite.com",
-      "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com"
-    },
-    {
-      "@type": "HowToStep",
-      "position": 2,
-      "name": "Click 'Register for Free'",
-      "text": "Select the green Register button and choose 'Free Ticket'",
-      "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com#tickets"
-    },
-    {
-      "@type": "HowToStep",
-      "position": 3,
-      "name": "Add to your calendar",
-      "text": "Download the .ics file or connect Google Calendar automatically",
-      "url": "https://TheClaudeAIBusinessAccelerator.eventbrite.com#calendar"
-    }
-  ]
+  "url": "https://coachkayai.life/events/claude-ai-business-accelerator-june-2026"
 };
 
 // ─── FAQ SCHEMA ─── Common questions
@@ -113,7 +69,7 @@ const faqSchema = {
       "name": "Will this be recorded if I can't attend live?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. All registered attendees receive lifetime access to the recording, templates, and AI prompt library within 24 hours of the event."
+        "text": "This event has concluded. Explore Coach Kay's current programs and resources for the latest training options."
       }
     }
   ]
@@ -154,7 +110,7 @@ const courseSchema = {
 };
 
 // ─── COMBINE ALL SCHEMAS ───
-const allSchemas = [eventSchema, howToSchema, faqSchema, courseSchema];
+const allSchemas = [eventSchema, faqSchema, courseSchema];
 
 // ═══════════════════════════════════════════════════════
 // PAGE COMPONENT
@@ -165,8 +121,8 @@ export default function ClaudeAcceleratorPage() {
     <>
       {/* HIDDEN SEO HEAD. Google reads this */}
       <SEOHead
-        title="Claude AI Business Accelerator: Free Training"
-        description="Free, in-person AI training for Columbus small business owners. Open to all with emphasis on Black entrepreneurs. Build real AI workflows live. 150 seats."
+        title="Claude AI Business Accelerator: Event Archive"
+        description="Archive of Coach Kay's June 2026 Claude AI Business Accelerator for Columbus small business owners. Explore current AI programs and resources."
         path="/events/claude-ai-business-accelerator-june-2026"
         ogImage="https://coachkayai.life/images/event-june-4-2026.jpg"
         keywords={[
@@ -190,14 +146,13 @@ export default function ClaudeAcceleratorPage() {
         <section className="relative py-20 px-6 text-center">
           <div className="max-w-4xl mx-auto">
             <span className="inline-block px-4 py-2 bg-purple-600 rounded-full text-sm font-medium mb-6">
-              FREE LIVE TRAINING • JUNE 4, 2026
+              PAST EVENT • JUNE 4, 2026
             </span>
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
               The Claude AI<br />Business Accelerator
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Build real AI workflows for your small business in 3 hours. 
-              No coding. No fluff. Just results.
+              This live workshop has concluded. Explore the training topics below, then choose a current FocusFlow program for your next step.
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               <span className="flex items-center gap-2 text-gray-400">
@@ -213,12 +168,12 @@ export default function ClaudeAcceleratorPage() {
                 🆓 FREE
               </span>
             </div>
-            <a 
-              href="https://TheClaudeAIBusinessAccelerator.eventbrite.com"
+            <Link
+              to="/modules"
               className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg text-lg font-bold hover:scale-105 transition-transform"
             >
-              Register Free. 150 Seats
-            </a>
+              Explore Current Programs
+            </Link>
           </div>
         </section>
 
@@ -278,8 +233,8 @@ export default function ClaudeAcceleratorPage() {
             <h2 className="text-3xl font-bold mb-6">Where</h2>
             <p className="text-xl mb-4">COED Columbus</p>
             <p className="text-gray-400 mb-8">1890 E. Main Street, Columbus, OH 43205</p>
-            <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
-              [Google Map Embed Here]
+            <div className="bg-gray-800 rounded-lg p-8 text-gray-300">
+              This in-person Columbus session concluded on June 4, 2026.
             </div>
           </div>
         </section>
@@ -312,8 +267,7 @@ export default function ClaudeAcceleratorPage() {
                   <h4 className="inline">Will this be recorded?</h4>
                 </summary>
                 <p className="mt-4 text-gray-300">
-                  Yes, all registered attendees get lifetime access to the recording, templates, 
-                  and AI prompt library within 24 hours.
+                  This event has concluded. Visit the current programs page to see available training and resources.
                 </p>
               </details>
             </div>
@@ -324,18 +278,17 @@ export default function ClaudeAcceleratorPage() {
         <section className="py-20 px-6 text-center bg-gradient-to-b from-purple-900 to-black">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl font-bold mb-6">
-              Only 150 Seats. Free.
+              Ready for Your Next Step?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Join Columbus small business owners who are replacing 10+ hours of busywork 
-              with AI automation.
+              Take the business clarity assessment or explore current programs built to turn AI ideas into practical systems.
             </p>
-            <a 
-              href="https://TheClaudeAIBusinessAccelerator.eventbrite.com"
+            <Link
+              to="/assessment"
               className="inline-block px-10 py-5 bg-primary text-primary-foreground rounded-lg text-xl font-bold hover:scale-105 transition-transform"
             >
-              Register Free on Eventbrite →
-            </a>
+              Start the Business Assessment →
+            </Link>
             <p className="mt-6 text-gray-500">
               June 4, 2026 • 6:00 PM - 9:00 PM • COED Columbus
             </p>

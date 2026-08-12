@@ -397,6 +397,12 @@ export const ADVISORY_LANES = [
       "Wellness-aligned AI learning for organizations, built around real workforce readiness and reported back to your executive sponsor.",
   },
   {
+    key: "university",
+    name: "AI University roadmap tracks",
+    description:
+      "Curriculum and readiness tracks for higher education, public-sector learning, and institutions building practical AI fluency.",
+  },
+  {
     key: "cohorts",
     name: "Transformation cohorts and the Summit",
     description:

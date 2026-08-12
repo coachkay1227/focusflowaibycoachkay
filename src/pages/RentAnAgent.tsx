@@ -249,6 +249,7 @@ const RentAnAgent = () => {
             return (
               <div
                 key={tier.key}
+                id={tier.key === "dream_team" ? "dreamteam" : tier.key}
                 className={`flex flex-col rounded-xl border bg-card/40 backdrop-blur-sm p-6 transition-colors ${
                   tier.highlighted ? "border-primary/60 ring-1 ring-primary/30" : "border-border/60 hover:border-primary/40"
                 }`}
@@ -291,7 +292,7 @@ const RentAnAgent = () => {
         </div>
 
         {/* Enterprise, centered banner, set apart from the tier grid */}
-        <div className="mt-10 max-w-3xl mx-auto">
+        <div id="enterprise" className="mt-10 max-w-3xl mx-auto scroll-mt-24">
           <div className="relative overflow-hidden rounded-2xl border border-primary/40 ring-1 ring-primary/15 bg-gradient-to-br from-card/60 via-card/40 to-primary/5 backdrop-blur-sm p-8 md:p-10">
             <div className="grid md:grid-cols-[1.4fr_1fr] gap-8 md:gap-10 items-center">
               <div>

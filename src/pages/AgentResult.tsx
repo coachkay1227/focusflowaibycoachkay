@@ -38,7 +38,6 @@ const AgentResult = () => {
   const recommendation = state?.recommendation;
   const answers = state?.answers;
 
-  const [kbAddon, setKbAddon] = useState<'none' | 'basic' | 'full'>('none');
   const [applyOpen, setApplyOpen] = useState(false);
 
   useMouseGlow(containerRef);
@@ -58,7 +57,6 @@ const AgentResult = () => {
   }
 
   // Build the apply dialog pre-fill message
-  const kbText = kbAddon !== 'none' ? ` Knowledge Base: ${kbAddon === 'basic' ? 'Basic ($197)' : 'Full ($397)'}.` : '';
   const totalText = recommendation.isCustomQuote
     ? 'Custom Quote'
     : recommendation.totalMonthly > 0 && recommendation.totalOneTime > 0
@@ -66,21 +64,11 @@ const AgentResult = () => {
     : recommendation.totalMonthly > 0
     ? `$${recommendation.totalMonthly}/mo`
     : `$${recommendation.totalOneTime} one-time`;
-  const kbAddAmount = kbAddon === 'basic' ? 197 : kbAddon === 'full' ? 397 : 0;
-  const finalOneTime = recommendation.totalOneTime + kbAddAmount;
-
-  const applyMessage = recommendation.isCustomQuote
-    ? `Requesting a custom quote for a GoHighLevel (GHL) agent. Agents needed: ${answers.agentCount}. Ownership: ${answers.ownershipPref}.${kbText} I need real-time / phone / SMS capability.`
-    : `Agent Type: ${pathLabel(recommendation.path)}. Agents needed: ${answers.agentCount}. Ownership: ${answers.ownershipPref}.${kbText} Total: ${totalText}`;
+  const scopeLabel = `${pathLabel(recommendation.path)} · ${answers.agentCount} agent${answers.agentCount === '1' ? '' : 's'} · ${answers.ownershipPref}`;
 
   const primaryButtonLabel = recommendation.isCustomQuote
-    ? 'Request My Custom Quote'
+    ? 'Start My Agent Intake'
     : 'Secure My Agent →';
-
-  // Knowledge base addon toggle handler
-  const toggleKb = (tier: 'basic' | 'full') => {
-    setKbAddon((prev) => prev === tier ? 'none' : tier);
-  };
 
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
@@ -136,10 +124,10 @@ const AgentResult = () => {
             {recommendation.isCustomQuote ? (
               <div className="mt-4">
                 <p className="font-heading text-2xl font-light text-primary">
-                  Custom Quote, based on your scope
+                  Scoped before payment
                 </p>
                 <p className="text-muted-foreground text-sm mt-2">
-                  GHL agents are priced based on your call volume, integrations, and workflows. Request a quote and we'll scope it together.
+                  {recommendation.priceNote}
                 </p>
               </div>
             ) : (
@@ -153,25 +141,13 @@ const AgentResult = () => {
                   </div>
                 ))}
 
-                {/* KB addon if selected */}
-                {kbAddon !== 'none' && (
-                  <div className="flex items-center justify-between gap-4 text-sm border-t border-border/50 pt-3">
-                    <span className="text-amber-400/90">
-                      Knowledge Base ({kbAddon === 'basic' ? 'Basic' : 'Full'})
-                    </span>
-                    <span className="text-amber-400 font-medium">
-                      {formatCurrency(kbAddon === 'basic' ? 197 : 397)}
-                    </span>
-                  </div>
-                )}
-
                 <div className="border-t border-border/50 pt-4 mt-4">
                   <div className="flex items-center justify-between gap-4">
                     <span className="font-medium text-foreground">Your investment</span>
                     <div className="text-right">
                       {recommendation.totalOneTime > 0 && (
                         <div className="text-primary font-heading text-xl">
-                          {formatCurrency(finalOneTime)} one-time
+                          {formatCurrency(recommendation.totalOneTime)} one-time
                         </div>
                       )}
                       {recommendation.totalMonthly > 0 && (
@@ -206,64 +182,19 @@ const AgentResult = () => {
           </div>
         </AnimatedSection>
 
-        {/* Knowledge base callout */}
-        {recommendation.knowledgeBaseFlag && !recommendation.isCustomQuote && (
+        {/* Existing documents strengthen the required AI Brain foundation. */}
+        {recommendation.knowledgeBaseFlag && (
           <AnimatedSection delay={500} className="mb-8">
             <div className="rounded-xl border border-amber-500/40 bg-amber-500/5 backdrop-blur-sm p-8">
               <span className="font-mono-label text-amber-400/80 tracking-[0.15em] text-xs">
-                KNOWLEDGE BASE ADD-ON
+                YOUR DOCUMENTS ARE AN ADVANTAGE
               </span>
               <h3 className="font-heading text-xl font-light text-amber-300 mt-3 mb-2">
-                Add a Knowledge Base
+                They go into your AI Brain
               </h3>
-              <p className="text-foreground/80 text-sm leading-relaxed mb-6">
-                Since you have existing documents, we recommend training your agent on your business. This is what makes it actually sound like you.
+              <p className="text-foreground/80 text-sm leading-relaxed">
+                Every agent build starts with the $197 AI Brain. Your SOPs, guides, and brand material become the shared foundation so each agent sounds like you and follows the same rules. This is part of the scope, not a surprise add-on after you apply.
               </p>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {/* Basic */}
-                <button
-                  type="button"
-                  onClick={() => toggleKb('basic')}
-                  className={`text-left rounded-lg border p-5 transition-all ${
-                    kbAddon === 'basic'
-                      ? 'border-amber-400 bg-amber-500/10'
-                      : 'border-border/60 bg-card/20 hover:border-amber-400/50'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <span className="font-medium text-foreground">Knowledge Base Basic</span>
-                    {kbAddon === 'basic' && (
-                      <div className="shrink-0 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center">
-                        <Check className="h-3 w-3 text-background" />
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-amber-400 font-medium text-sm">$197</span>
-                  <p className="text-muted-foreground text-xs mt-1">Up to 10 documents</p>
-                </button>
-
-                {/* Full */}
-                <button
-                  type="button"
-                  onClick={() => toggleKb('full')}
-                  className={`text-left rounded-lg border p-5 transition-all ${
-                    kbAddon === 'full'
-                      ? 'border-amber-400 bg-amber-500/10'
-                      : 'border-border/60 bg-card/20 hover:border-amber-400/50'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <span className="font-medium text-foreground">Knowledge Base Full</span>
-                    {kbAddon === 'full' && (
-                      <div className="shrink-0 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center">
-                        <Check className="h-3 w-3 text-background" />
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-amber-400 font-medium text-sm">$397</span>
-                  <p className="text-muted-foreground text-xs mt-1">Up to 30 docs + custom system prompt</p>
-                </button>
-              </div>
             </div>
           </AnimatedSection>
         )}
@@ -327,7 +258,7 @@ const AgentResult = () => {
         open={applyOpen}
         onOpenChange={setApplyOpen}
         mode="application"
-        programName={`${pathLabel(recommendation.path)}, ${recommendation.isCustomQuote ? 'Custom Quote' : totalText}${kbText}`}
+        programName={recommendation.isCustomQuote ? scopeLabel : `${scopeLabel} · ${totalText}`}
       />
     </div>
   );
