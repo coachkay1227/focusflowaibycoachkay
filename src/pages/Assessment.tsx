@@ -17,6 +17,12 @@ import ReportView from "@/components/reports/ReportView";
 import PillarStrip from "@/components/PillarStrip";
 import PillarBadge from "@/components/PillarBadge";
 import { readFunctionError } from "@/lib/function-error";
+import {
+  BUSINESS_PATHS,
+  computeBusinessAssessment,
+  type BusinessAssessmentResult,
+  type BusinessBucket as Bucket,
+} from "@/lib/business-assessment";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Operator × Bottleneck Map
@@ -74,48 +80,6 @@ const BUCKET_PLAIN: Record<Bucket, string> = {
   FOCUS: "You know what to do. You just can't get it done.",
   UPLEVEL: "The work is good. No one is seeing it.",
   OWNERSHIP: "Money, systems, and time are leaking.",
-};
-
-// Deterministic combo → primary path map.
-type PathKey = "clarity" | "reset30" | "uplevel60" | "rentAgent" | "advisory";
-const PATHS: Record<PathKey, { name: string; tagline: string; route: string; ctaLabel: string }> = {
-  clarity: {
-    name: "Free Clarity Check",
-    tagline: "One question. Sharper than a week of journaling. Free.",
-    route: "/clarity",
-    ctaLabel: "Start the Clarity Check",
-  },
-  reset30: {
-    name: "30-Day Business Reset",
-    tagline: "Cohort. 30 days. You ship what you've been stalling on.",
-    route: "/programs/30-day-business-reset",
-    ctaLabel: "Apply for the Reset",
-  },
-  uplevel60: {
-    name: "Uplevel 60 · 1:1 with Coach Kay",
-    tagline: "60 days, direct line, custom build. For operators ready to be seen.",
-    route: "/advisory",
-    ctaLabel: "See Advisory options",
-  },
-  rentAgent: {
-    name: "Rent-an-Agent",
-    tagline: "Borrow a fractional operator. Plug the leaks. Keep the receipts.",
-    route: "/rent-an-agent",
-    ctaLabel: "Explore Rent-an-Agent",
-  },
-  advisory: {
-    name: "Advisory",
-    tagline: "Quarterly advisory for founders running real revenue.",
-    route: "/advisory",
-    ctaLabel: "See Advisory",
-  },
-};
-
-const COMBO_TO_PATH: Record<Bucket, { primary: PathKey; alternates: PathKey[] }> = {
-  CLARITY: { primary: "clarity", alternates: ["reset30", "uplevel60"] },
-  FOCUS: { primary: "reset30", alternates: ["clarity", "uplevel60"] },
-  UPLEVEL: { primary: "uplevel60", alternates: ["reset30", "advisory"] },
-  OWNERSHIP: { primary: "rentAgent", alternates: ["advisory", "reset30"] },
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -212,22 +176,6 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-function topCode<T extends string>(counts: Record<string, number>, fallback: T): T {
-  let best: T = fallback;
-  let bestN = -1;
-  for (const [k, v] of Object.entries(counts)) {
-    if (v > bestN) {
-      bestN = v;
-      best = k as T;
-    }
-  }
-  return best;
-}
-function rankBuckets(counts: Record<string, number>): Bucket[] {
-  const order: Bucket[] = ["CLARITY", "FOCUS", "UPLEVEL", "OWNERSHIP"];
-  return [...order].sort((a, b) => (counts[b] ?? 0) - (counts[a] ?? 0));
-}
-
 const Assessment = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -280,24 +228,6 @@ const Assessment = () => {
   const progress = done ? 100 : ((step + 1) / total) * 100;
   const selected = current ? answers[current.id] : undefined;
 
-  const tallies = () => {
-    const m: Record<string, number> = {};
-    const a: Record<string, number> = {};
-    const c: Record<string, number> = {};
-    const b: Record<string, number> = {};
-    questions.forEach((q) => {
-      const v = answers[q.id];
-      if (!v) return;
-      if (q.axis === "operator") {
-        const bucket = q.dimension === "M" ? m : q.dimension === "A" ? a : c;
-        bucket[v] = (bucket[v] || 0) + 1;
-      } else {
-        b[v] = (b[v] || 0) + 1;
-      }
-    });
-    return { m, a, c, b };
-  };
-
   const goNext = () => {
     if (!selected) return;
     if (step === total - 1) {
@@ -335,37 +265,9 @@ const Assessment = () => {
     setAnimState("enter");
   };
 
-  let result:
-    | {
-        mind: string;
-        action: string;
-        character: string;
-        code: string;
-        primaryBucket: Bucket;
-        secondaryBucket: Bucket;
-        primaryPath: PathKey;
-        alternatePaths: PathKey[];
-      }
-    | null = null;
+  let result: BusinessAssessmentResult | null = null;
   if (done) {
-    const { m, a, c, b } = tallies();
-    const mind = topCode(m, "V");
-    const action = topCode(a, "B");
-    const character = topCode(c, "N");
-    const ranked = rankBuckets(b);
-    const primaryBucket = ranked[0] ?? "CLARITY";
-    const secondaryBucket = ranked[1] ?? primaryBucket;
-    const map = COMBO_TO_PATH[primaryBucket];
-    result = {
-      mind,
-      action,
-      character,
-      code: `${mind}-${action}-${character}`,
-      primaryBucket,
-      secondaryBucket,
-      primaryPath: map.primary,
-      alternatePaths: map.alternates,
-    };
+    result = computeBusinessAssessment(answers);
   }
 
   // Fire completion event once.
@@ -488,8 +390,8 @@ const Assessment = () => {
       ? `You're a ${archetypeName} stuck at ${result.primaryBucket}.`
       : "");
 
-  const primaryPath = result ? PATHS[result.primaryPath] : null;
-  const alternatePaths = result ? result.alternatePaths.map((k) => PATHS[k]) : [];
+  const primaryPath = result ? BUSINESS_PATHS[result.primaryPath] : null;
+  const alternatePaths = result ? result.alternatePaths.map((k) => BUSINESS_PATHS[k]) : [];
 
   return (
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay grid-overlay">

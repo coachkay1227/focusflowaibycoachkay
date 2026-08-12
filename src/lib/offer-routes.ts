@@ -31,13 +31,13 @@ export interface OfferRoute {
 const ROUTES: Record<string, OfferRoute> = {
   // Door 1. Transformation lane. Short resets are self-serve; the long
   // programs and the private partnership start with a conversation.
-  transform_30_personal: { href: "/modules", contact: "self_serve" },
-  transform_30_business: { href: "/modules", contact: "self_serve" },
-  transform_30_ai: { href: "/modules", contact: "self_serve" },
-  transform_90_personal: { href: "/modules", contact: "application" },
-  transform_90_business: { href: "/modules", contact: "application" },
-  transform_90_ai: { href: "/modules", contact: "application" },
-  transform_6mo_partnership: { href: "/modules", contact: "application" },
+  transform_30_personal: { href: "/programs/30-day-personal-reset", contact: "self_serve" },
+  transform_30_business: { href: "/programs/30-day-business-reset", contact: "self_serve" },
+  transform_30_ai: { href: "/programs/30-day-ai-reset", contact: "self_serve" },
+  transform_90_personal: { href: "/programs/90-day-personal-transformation", contact: "application" },
+  transform_90_business: { href: "/programs/90-day-business-transformation", contact: "application" },
+  transform_90_ai: { href: "/programs/90-day-full-ai-transformation", contact: "application" },
+  transform_6mo_partnership: { href: "/programs/6-month-private-partnership", contact: "application" },
 
   // Door 2. Rent-an-Agent. Managed builds, always scoped on a call.
   rent_agent_starter: { href: "/rent-an-agent#starter", contact: "application" },
@@ -45,12 +45,12 @@ const ROUTES: Record<string, OfferRoute> = {
   rent_agent_dreamteam: { href: "/rent-an-agent#dreamteam", contact: "application" },
   rent_agent_enterprise: { href: "/rent-an-agent#enterprise", contact: "application" },
 
-  // Door 2. Lead Engine (lives inside /rent-an-agent).
-  lead_engine_essentials: { href: "/rent-an-agent#lead-engine-essentials", contact: "application" },
-  lead_engine_pro: { href: "/rent-an-agent#lead-engine-pro", contact: "application" },
-  lead_engine_growth: { href: "/rent-an-agent#lead-engine-growth", contact: "application" },
-  lead_engine_scale: { href: "/rent-an-agent#lead-engine-scale", contact: "application" },
-  lead_engine_enterprise: { href: "/rent-an-agent#lead-engine-enterprise", contact: "application" },
+  // Door 2. Lead Engine has its own live tier page.
+  lead_engine_essentials: { href: "/agents/lead-engine#lead-engine-essentials", contact: "application" },
+  lead_engine_pro: { href: "/agents/lead-engine#lead-engine-pro", contact: "application" },
+  lead_engine_growth: { href: "/agents/lead-engine#lead-engine-growth", contact: "application" },
+  lead_engine_scale: { href: "/agents/lead-engine#lead-engine-scale", contact: "application" },
+  lead_engine_enterprise: { href: "/agents/lead-engine#lead-engine-enterprise", contact: "application" },
 
   // Door 3. Advisory, speaking, corporate. Proposal or call first.
   advisory_strategy_intensive: { href: "/advisory#strategy-intensive", contact: "application" },
@@ -58,17 +58,18 @@ const ROUTES: Record<string, OfferRoute> = {
   advisory_speaking: { href: "/advisory#speaking", contact: "application" },
   advisory_corporate: { href: "/advisory#corporate", contact: "application" },
   advisory_university: { href: "/advisory#university", contact: "application" },
-  group_programs: { href: "/advisory#group-programs", contact: "application" },
+  group_programs: { href: "/advisory#cohorts", contact: "application" },
 
   // Door 4. Publishing studio, bought in the store.
-  studio_mini_story: { href: "/store#mini-story", contact: "self_serve" },
-  studio_storybook_pro: { href: "/store#storybook-pro", contact: "self_serve" },
-  studio_other: { href: "/store", contact: "self_serve" },
+  studio_mini_story: { href: "/store?package=children-mini-story-starter", contact: "self_serve" },
+  studio_storybook_pro: { href: "/store?package=children-storybook-pro", contact: "self_serve" },
+  studio_other: { href: "/store#packages", contact: "self_serve" },
 
-  // Build Studio, announced, not open. Callers render waitlist UI.
-  build_studio_landing: { href: "#", opening_soon: true, label: "Opening soon, get notified", contact: "application" },
-  build_studio_site: { href: "#", opening_soon: true, label: "Opening soon, get notified", contact: "application" },
-  build_studio_dashboard: { href: "#", opening_soon: true, label: "Opening soon, get notified", contact: "application" },
+  // Build Studio is live. The landing-page package has direct checkout;
+  // larger builds start with scope and approval before payment.
+  build_studio_landing: { href: "/build-studio?offer=landing_page", contact: "self_serve" },
+  build_studio_site: { href: "/build-studio?offer=marketing_site", contact: "application" },
+  build_studio_dashboard: { href: "/build-studio?offer=ops_dashboard", contact: "application" },
 
   // Community door, free, fiscally sponsored lane.
   focus_flow_elevation_hub: {
@@ -78,6 +79,9 @@ const ROUTES: Record<string, OfferRoute> = {
     contact: "community",
   },
 };
+
+/** Every model-allowed offer slug in the live catalog. */
+export const KNOWN_OFFER_SLUGS = Object.freeze(Object.keys(ROUTES));
 
 /** Fallback for a slug this build does not know. Never a dead link. */
 const FALLBACK: OfferRoute = { href: "/store", contact: "self_serve" };

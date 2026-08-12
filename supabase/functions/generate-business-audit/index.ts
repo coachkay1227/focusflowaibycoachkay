@@ -40,7 +40,7 @@ DOOR 2 — BUILD FOR ME (Done-for-you AI + lead systems):
 - rent_agent_starter ($297/mo): Rent-an-Agent Starter. One managed agent. Best for solos who want AI in business without DIY.
 - rent_agent_pro ($697/mo): Rent-an-Agent Pro. Multi-agent. Best for $5–25K/mo with growing ops.
 - rent_agent_dreamteam ($997/mo): Rent-an-Agent Dream Team. Coordinated agent team for cross-function work.
-- rent_agent_enterprise ($1,997+/mo): Rent-an-Agent Enterprise. Custom-scoped agent ops for $25K+/mo or team-led businesses.
+- rent_agent_enterprise (custom, by application): Rent-an-Agent Enterprise. Custom-scoped agent ops for $25K+/mo or team-led businesses.
 - lead_engine_essentials ($697/mo + setup): Lead Engine Essentials. Inbound funnel + nurture basics. Best for "no leads" + budget under $1.5K/mo.
 - lead_engine_pro ($1,497/mo + setup): Lead Engine Pro. Multi-channel lead system.
 - lead_engine_growth ($2,497/mo + setup): Lead Engine Growth. Pipeline + analytics. Best for $25K+/mo scaling.
@@ -49,8 +49,8 @@ DOOR 2 — BUILD FOR ME (Done-for-you AI + lead systems):
 
 DOOR 3 — TRAIN MY TEAM (Advisory + B2B):
 - advisory_strategy_intensive ($497 / 90-min): AI Strategy Intensive. One-shot expert session.
-- advisory_executive ($500/hr retainer): Executive Advisory. Ongoing 1:1 advisory for execs/founders.
-- advisory_speaking (from $750): Speaking & Workshops. Best for keynote/speaking signals.
+- advisory_executive (scoped from $500): Executive Advisory. Ongoing 1:1 advisory for execs/founders.
+- advisory_speaking (scoped from $500): Speaking & Workshops. Best for keynote/speaking signals.
 - advisory_corporate (custom): Corporate, EAP & Workforce Learning. Best for corporate, EAP, workforce-development, B2B-team signals.
 - advisory_university (custom): AI University Roadmap Tracks. Best for higher-ed / curriculum signals.
 - group_programs (custom): Group Programs / Collective AI Summit. Cohort-based group offerings.
@@ -60,10 +60,10 @@ DOOR 4 — TELL MY STORY (Studio: books, story, authority):
 - studio_storybook_pro ($1,250): The Storybook Pro. Full storybook production.
 - studio_other (custom): Other Studio lanes — Legacy & Family books, Expert/Authority books, Creator/Seller coloring books, Autism & Social Stories. Use this when the operator wants story/authority/book work that doesn't fit the two named tiers.
 
-BUILD STUDIO (Phase 3.5 — opening soon, MUST be flagged "Opening soon — Phase 3.5" inside why_this_one if chosen):
+BUILD STUDIO (live; quick wins can be bought directly and larger builds are scoped before payment):
 - build_studio_landing ($497): Landing page build.
-- build_studio_site ($1,997): Full business site.
-- build_studio_dashboard ($2,997+): Custom dashboard / internal tool.
+- build_studio_site ($2K–$4K scoped band): Full business site.
+- build_studio_dashboard ($3K–$5K scoped band): Custom dashboard / internal tool.
 
 COMMUNITY / FREE PATHWAY:
 - focus_flow_elevation_hub: Focus Flow Elevation Hub (free Skool community). Frame as a free community access point through Forward Focus Elevation (the nonprofit lane). NOT a paid offer. NOT a 501c3.
@@ -135,7 +135,7 @@ const OFFER_SLUGS = [
   "studio_mini_story",
   "studio_storybook_pro",
   "studio_other",
-  // Build Studio (Phase 3.5 — opening soon)
+  // Build Studio (live)
   "build_studio_landing",
   "build_studio_site",
   "build_studio_dashboard",

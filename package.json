@@ -14,6 +14,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "prerender": "tsx scripts/prerender-blog.ts",
     "prebuild": "tsx scripts/generate-sitemap.ts && tsx scripts/check-seo-regressions.ts",
     "postbuild": "tsx scripts/prerender-blog.ts"

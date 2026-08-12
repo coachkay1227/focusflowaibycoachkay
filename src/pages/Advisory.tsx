@@ -238,7 +238,7 @@ const Advisory = () => {
       </section>
 
       {/* 3. THE OFFER */}
-      <section className="relative z-10 px-6 sm:px-10 pb-14 max-w-4xl mx-auto">
+      <section id="strategy-intensive" className="relative z-10 px-6 sm:px-10 pb-14 max-w-4xl mx-auto scroll-mt-24">
         <AnimatedSection>
           <div className="rounded-2xl border border-primary/40 bg-primary/5 backdrop-blur-sm p-8 sm:p-10">
             <div className="flex flex-col sm:flex-row items-start justify-between gap-6">
@@ -284,7 +284,7 @@ const Advisory = () => {
           <h2 className="font-heading text-2xl sm:text-3xl mt-3">What larger engagements look like</h2>
           <ul className="mt-6 divide-y divide-border/50 rounded-xl border border-border/60 bg-card/30 backdrop-blur-sm">
             {ADVISORY_LANES.map((lane) => (
-              <li key={lane.key} className="p-5 sm:p-6">
+              <li key={lane.key} id={lane.key} className="p-5 sm:p-6 scroll-mt-24">
                 <h3 className="font-heading text-lg text-foreground">
                   {"route" in lane && lane.route ? (
                     <Link to={lane.route} className="text-primary hover:text-primary/80 inline-flex items-center gap-2">

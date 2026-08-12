@@ -34,18 +34,42 @@ If you change scoring code, update this file in the same commit.
   buyers; bound to `user_id` once buyer signs in via `claim_audit_token`.
 - **Disclaimer:** Informational, not financial / legal advice.
 
-## 3. MAC Assessment (`mac_assessments`)
+## 3. Business Clarity Assessment (`/assessment`)
 
-- **Status:** Schema present; submission UI not yet exposed in the active
-  navigation. Treat as **draft** — do not market until result page ships
-  and this section is updated with the scoring rubric.
+- **Product name:** Operator × Bottleneck Map. It is live in the public
+  navigation; this is not a draft or hidden schema.
+- **Input:** Six forced-choice questions. Three select one Mind, Action, and
+  Character code; three select one of Clarity, Focus, Uplevel, or Ownership.
+- **Processing:** `computeBusinessAssessment()` in
+  `src/lib/business-assessment.ts`. The rule engine rejects missing or invalid
+  answer values instead of fabricating a result.
+- **Output:** A three-letter operator code, primary and secondary bottlenecks,
+  one primary path, and two alternate paths.
+- **Tie rule:** Bottlenecks are ranked by count. A tie resolves explicitly in
+  F.O.C.U.S. order: Clarity, Focus, Uplevel, Ownership.
+- **Path map:** Clarity → Free Clarity Check; Focus → 30-Day Business Reset;
+  Uplevel → Advisory; Ownership → Rent-an-Agent.
+- **AI elaboration:** The deterministic result is optionally expanded by the
+  `mac-elaborate` edge function. AI changes the explanatory copy, never the
+  code, bottleneck, or destination.
+- **Coverage:** Unit tests enumerate all 4,096 valid answer combinations.
 
 ## 4. Agent Recommendation (`/agent-builder` → `/agent-result`)
 
-- **Input:** Use-case selection + optional knowledge-base sizing.
-- **Processing:** Pure rule-based (`src/lib/agent-recommendation.ts`). No
-  AI in the recommendation path — price calculation and path labelling only.
+- **Input:** Use-case, agent count, real-time requirements, available business
+  documents, and ownership preference.
+- **Processing:** Pure rule-based (`src/lib/agent-router.ts`). Real-time or
+  phone work routes to GHL; strategic async work routes to Claude; other async
+  work routes to GPT.
 - **Determinism:** Fully deterministic.
+- **Commercial rule:** Every build is scoped after intake and before payment.
+  The result shows the same public starting bands as `/agents/builds`; it does
+  not invent an exact browser-calculated price or call a paid dashboard free.
+- **Foundation:** Every build includes the required $197 AI Brain. Existing
+  documents strengthen that foundation; they are not presented as a surprise
+  optional add-on.
+- **Coverage:** Unit tests cover all 36 path × scale × ownership × document
+  combinations plus route-precedence rules.
 - **Disclaimer:** Pricing-disclosure variant.
 
 ---

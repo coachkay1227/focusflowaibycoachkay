@@ -6,13 +6,12 @@ import { test, expect } from "../playwright-fixture";
  * on both mobile and desktop viewports.
  *
  * Cards are tagged with `data-offer-card` in src/components/offers/OfferCard.tsx.
- * Pages migrated to OfferCard: PricingSection (Index), CollectiveAIBuildStudio,
- * Store (PackageCard + AddonCard), Modules (ProgramCard).
+ * Pages migrated to OfferCard: CollectiveAIBuildStudio, Store
+ * (PackageCard + AddonCard), and Modules (ProgramCard).
  */
 
 const ROUTES = [
-  { path: "/", label: "Pricing (Index)" },
-  { path: "/collective-ai-build-studio", label: "Build Studio" },
+  { path: "/build-studio", label: "Build Studio" },
   { path: "/store", label: "Book Store" },
   { path: "/modules", label: "Modules / Programs" },
 ];
@@ -81,10 +80,7 @@ for (const route of ROUTES) {
         await page.waitForTimeout(400);
 
         const cards = await readCardRects(page);
-        if (cards.length === 0) {
-          test.skip(true, `No offer cards found on ${route.path}`);
-          return;
-        }
+        expect(cards.length, `${route.label}: expected OfferCards on ${route.path}`).toBeGreaterThan(0);
 
         const rows = groupByRow(cards);
 

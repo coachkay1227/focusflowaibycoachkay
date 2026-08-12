@@ -41,7 +41,7 @@ const QUESTIONS = [
     options: [
       { value: '1', label: 'Just one', desc: 'One focused agent for my biggest bottleneck' },
       { value: '2-3', label: '2 to 3 agents', desc: 'A small team, bundle pricing applies' },
-      { value: '4+', label: '4 or more', desc: 'A full agency build, includes branded dashboard' },
+      { value: '4+', label: '4 or more', desc: 'A coordinated system that needs a full scope' },
     ] as SingleOption[],
   },
   {
@@ -177,7 +177,7 @@ const AgentBuilder = () => {
     <div ref={containerRef} className="relative min-h-dvh overflow-hidden grain-overlay">
       <SEOHead
         title="Build My Agent: Coach Kay Elevates"
-        description="Take the 5-minute AI agent assessment and get an exact recommendation for what to build, which platform fits your use case, and how much it costs."
+        description="Take the 5-minute AI agent assessment and get a clear recommendation for what to build, which platform fits, and what needs to be scoped."
         path="/agent-builder"
       />
       <div className="mouse-glow" />

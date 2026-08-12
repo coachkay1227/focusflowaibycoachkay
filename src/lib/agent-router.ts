@@ -24,6 +24,7 @@ export interface AgentRecommendation {
   priceLines: PriceLine[];
   totalOneTime: number;
   totalMonthly: number;
+  priceNote: string;
   knowledgeBaseFlag: boolean;
   isCustomQuote: boolean;
 }
@@ -42,19 +43,30 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
     answers.agentCount === '2-3' ? 'bundle' :
     'single';
 
-  const hosted = answers.ownershipPref === 'hosted';
   const agentCountNum = answers.agentCount === '4+' ? 4 : answers.agentCount === '2-3' ? 2 : 1;
   const knowledgeBaseFlag = answers.hasDocuments === 'yes';
+
+  const base = {
+    tier,
+    priceLines: [] as PriceLine[],
+    totalOneTime: 0,
+    totalMonthly: 0,
+    knowledgeBaseFlag,
+    // Public agent builds are scoped before payment. The only fixed-price
+    // exception is the standalone AI Brain on /agents/builds.
+    isCustomQuote: true,
+  };
 
   // GHL, always custom quote
   if (path === 'ghl') {
     return {
       path: 'ghl',
-      tier,
+      ...base,
       headline: 'GoHighLevel AI Agent. Human-Like Conversations',
       description:
         'Your use case requires real-time, human-like communication, calls, texts, or live chat. GHL agents are custom-scoped and quoted based on your specific workflows, integrations, and call volume.',
       includes: [
+        'Required AI Brain foundation',
         'Custom GoHighLevel agent configuration',
         'Phone call and SMS automation',
         'CRM pipeline integration',
@@ -62,63 +74,31 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
         'Ongoing maintenance and tuning',
         'Scope call with Coach Kay',
       ],
-      priceLines: [],
-      totalOneTime: 0,
-      totalMonthly: 0,
-      knowledgeBaseFlag,
-      isCustomQuote: true,
+      priceNote:
+        'Full-System Agent builds start at $750, plus the required $197 AI Brain. Managed service starts at $297/mo. Your final scope and price come back before you pay.',
     };
   }
 
-  // Claude path pricing
+  // Claude is the best implementation path when the work needs deeper
+  // reasoning. It maps to the public Knowledge Agent offer, which is scoped
+  // after intake rather than calculated in the browser.
   if (path === 'claude') {
-    const priceLines: PriceLine[] = [];
-    let totalOneTime = 0;
-    let totalMonthly = 0;
-
-    if (hosted) {
-      // Claude hosted: $147/mo per agent
-      const monthlyPerAgent = 147;
-      priceLines.push({
-        label: agentCountNum > 1
-          ? `Claude Project Agent × ${agentCountNum} (hosted)`
-          : 'Claude Project Agent (hosted)',
-        amount: monthlyPerAgent * agentCountNum,
-        isMonthly: true,
-      });
-      totalMonthly = monthlyPerAgent * agentCountNum;
-    } else {
-      // Claude owned: $397 first / $247 each additional
-      if (tier === 'single') {
-        priceLines.push({ label: 'Claude Project Agent', amount: 397 });
-        totalOneTime = 397;
-      } else {
-        const firstAgent = 397;
-        const additionalAgents = agentCountNum - 1;
-        const additionalCost = additionalAgents * 247;
-        priceLines.push({ label: 'Claude Project Agent (first)', amount: firstAgent });
-        if (additionalAgents > 0) {
-          priceLines.push({ label: `Additional Claude Agent × ${additionalAgents} ($247 each)`, amount: additionalCost });
-        }
-        totalOneTime = firstAgent + additionalCost;
-      }
-    }
-
     const includes = [
-      'Fully configured Claude Project agent',
+      'Required AI Brain foundation',
+      'A scoped Knowledge Agent build',
       'Custom system prompt and instructions',
       'Trained on your brand voice and context',
       'Strategic reasoning and long-form thinking',
       'Document analysis and summarization',
-      'Delivery within 3–7 business days',
+      'Scope and price approved before payment',
     ];
-    if (tier === 'agency') {
-      includes.push('Branded GPT Dashboard ($297 value, included for 4+ builds)');
+    if (agentCountNum > 1) {
+      includes.push(`${agentCountNum} specialized agents included in the initial scope`);
     }
 
     return {
       path: 'claude',
-      tier,
+      ...base,
       headline:
         tier === 'single'
           ? 'Claude Project Agent. Strategic Thinking, Built for You'
@@ -128,62 +108,26 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
       description:
         'Claude agents excel at deep reasoning, strategic analysis, and nuanced decision support. Perfect for business owners who need an AI that thinks before it acts.',
       includes,
-      priceLines,
-      totalOneTime,
-      totalMonthly,
-      knowledgeBaseFlag,
-      isCustomQuote: false,
+      priceNote:
+        `Knowledge Agent builds start at $397, plus the required $197 AI Brain.${answers.ownershipPref === 'hosted' ? ' Managed service is scoped from $97–$197/mo.' : ''} Your ${agentCountNum === 1 ? 'build' : `${agentCountNum}-agent build`} is priced after intake, before you pay.`,
     };
   }
 
-  // GPT path pricing
-  const priceLines: PriceLine[] = [];
-  let totalOneTime = 0;
-  let totalMonthly = 0;
-
-  if (hosted) {
-    // GPT hosted: $97/mo single, $47/agent/mo for agency/bundle
-    if (tier === 'single') {
-      priceLines.push({ label: 'Custom GPT Agent (hosted)', amount: 97, isMonthly: true });
-      totalMonthly = 97;
-    } else {
-      // bundle or agency, $47/agent/mo
-      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} @ $47/agent (hosted)`, amount: 47 * agentCountNum, isMonthly: true });
-      totalMonthly = 47 * agentCountNum;
-    }
-  } else {
-    // GPT owned: $297 single, $97/agent for bundle (2-3) or agency (4+)
-    if (tier === 'single') {
-      priceLines.push({ label: 'Custom GPT Agent', amount: 297 });
-      totalOneTime = 297;
-    } else if (tier === 'bundle') {
-      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} ($97 each, bundle rate)`, amount: 97 * agentCountNum });
-      totalOneTime = 97 * agentCountNum;
-    } else {
-      // agency 4+
-      priceLines.push({ label: `Custom GPT Agent × ${agentCountNum} ($97 each, agency rate)`, amount: 97 * agentCountNum });
-      priceLines.push({ label: 'Branded GPT Dashboard (included for 4+ builds)', amount: 297 });
-      totalOneTime = 97 * agentCountNum + 297;
-    }
-  }
-
   const includes = [
-    'Fully configured Custom GPT agent',
+    'Required AI Brain foundation',
+    'A scoped Instant Agent build',
     'Custom instructions and persona',
     'Trained on your brand voice',
     'Ready to deploy in ChatGPT',
-    'Delivery within 3–7 business days',
+    'Scope and price approved before payment',
   ];
-  if (tier === 'agency') {
-    includes.push('Branded GPT Dashboard, your own white-label AI hub');
-    includes.push('Agency-level onboarding and setup support');
-  } else if (tier === 'bundle') {
-    includes.push('Bundle pricing, save vs. individual builds');
+  if (agentCountNum > 1) {
+    includes.push(`${agentCountNum} specialized agents included in the initial scope`);
   }
 
   return {
     path: 'gpt',
-    tier,
+    ...base,
     headline:
       tier === 'single'
         ? 'Custom GPT Agent. Built for Your Business'
@@ -195,12 +139,9 @@ export function computeAgentRecommendation(answers: AgentAnswers): AgentRecommen
         ? 'A custom-configured GPT agent trained on your business, brand voice, and workflows. Handles the tasks that eat your time, so you can focus on what moves the needle.'
         : tier === 'bundle'
         ? 'Multiple GPT agents, each specialized for a different function in your business. Bundle pricing applies, you save vs. individual builds.'
-        : 'A full suite of specialized GPT agents for your agency or team, plus a branded dashboard so your clients see your brand, not ChatGPT.',
+        : 'A scoped suite of specialized GPT agents for your agency or team, built around one shared AI Brain so the system stays in your voice.',
     includes,
-    priceLines,
-    totalOneTime,
-    totalMonthly,
-    knowledgeBaseFlag,
-    isCustomQuote: false,
+    priceNote:
+      `Instant Agent builds start at $297, plus the required $197 AI Brain.${answers.ownershipPref === 'hosted' ? ' Ongoing management is scoped during intake.' : ''} Your ${agentCountNum === 1 ? 'build' : `${agentCountNum}-agent build`} is priced after intake, before you pay.`,
   };
 }
