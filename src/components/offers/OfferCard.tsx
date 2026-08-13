@@ -46,7 +46,7 @@ export default function OfferCard({
 }: OfferCardProps) {
   const ring =
     variant === "featured"
-      ? "border-primary/50 shadow-[0_0_40px_-12px_hsl(43_75%_52%/0.35)]"
+      ? "border-primary/50 shadow-[0_0_40px_-12px_hsl(46_65%_52%/0.35)]"
       : variant === "premium"
       ? "border-primary/40 bg-gradient-to-b from-primary/[0.04] to-transparent"
       : "border-border/40";
@@ -63,7 +63,7 @@ export default function OfferCard({
   return (
     <article
       data-offer-card
-      className={`group relative h-full flex flex-col rounded-2xl border ${ring} bg-card/40 backdrop-blur-sm ${padding} transition-all hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-20px_hsl(43_75%_52%/0.25)]`}
+      className={`group relative h-full flex flex-col rounded-2xl border ${ring} bg-card/40 backdrop-blur-sm ${padding} transition-all hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_-20px_hsl(46_65%_52%/0.25)]`}
     >
       {/* Zone 1, eyebrow + badge */}
       <div className={`flex items-start justify-between gap-3 ${compact ? "mb-3" : "mb-4"} min-h-[20px]`}>

@@ -471,7 +471,7 @@ const Assessment = () => {
                     onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); select(value); } }}
                     className={`text-left rounded-lg border p-4 transition-all backdrop-blur-sm ${
                       isSel
-                        ? "border-primary/70 bg-primary/10 shadow-[0_0_30px_hsl(43_75%_52%/0.15)]"
+                        ? "border-primary/70 bg-primary/10 shadow-[0_0_30px_hsl(46_65%_52%/0.15)]"
                         : "border-border bg-card/40 hover:border-primary/40"
                     }`}
                   >
@@ -560,7 +560,7 @@ const Assessment = () => {
                   });
                   navigate(primaryPath.route);
                 }}
-                className="mt-3 w-full text-left rounded-xl border border-primary/60 bg-gradient-to-br from-primary/15 to-primary/5 backdrop-blur-sm p-6 md:p-8 transition-all hover:border-primary hover:shadow-[0_0_40px_hsl(43_75%_52%/0.25)] group"
+                className="mt-3 w-full text-left rounded-xl border border-primary/60 bg-gradient-to-br from-primary/15 to-primary/5 backdrop-blur-sm p-6 md:p-8 transition-all hover:border-primary hover:shadow-[0_0_40px_hsl(46_65%_52%/0.25)] group"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>

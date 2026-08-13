@@ -15,7 +15,7 @@
     --popover: 210 45% 16%;
     --popover-foreground: 45 65% 90%;
 
-    --primary: 43 53% 54%;
+    --primary: 46 65% 52%;
     --primary-foreground: 210 52% 11%;
 
     --secondary: 210 40% 20%;
@@ -24,7 +24,7 @@
     --muted: 210 35% 22%;
     --muted-foreground: 45 25% 70%;
 
-    --accent: 43 48% 60%;
+    --accent: 46 58% 61%;
     --accent-foreground: 210 52% 11%;
 
     --destructive: 0 84.2% 60.2%;
@@ -32,12 +32,12 @@
 
     --border: 210 30% 24%;
     --input: 210 30% 24%;
-    --ring: 43 53% 54%;
+    --ring: 46 65% 52%;
 
     --radius: 0.5rem;
 
-    --gold: 43 53% 54%;
-    --gold-light: 43 50% 70%;
+    --gold: 46 65% 52%;
+    --gold-light: 45 58% 70%;
     --cream: 45 65% 90%;
     --navy-deep: 210 55% 8%;
     --navy: 210 52% 11%;
@@ -45,16 +45,16 @@
 
     --sidebar-background: 210 55% 8%;
     --sidebar-foreground: 45 65% 90%;
-    --sidebar-primary: 43 53% 54%;
+    --sidebar-primary: 46 65% 52%;
     --sidebar-primary-foreground: 210 52% 11%;
     --sidebar-accent: 210 45% 16%;
     --sidebar-accent-foreground: 45 65% 90%;
     --sidebar-border: 210 30% 24%;
-    --sidebar-ring: 43 53% 54%;
+    --sidebar-ring: 46 65% 52%;
 
     /* F.O.C.U.S. Pillar tokens (HSL) — used by PillarBadge, PillarStrip,
        Modules grouping, and any program-card pillar accents. Single source. */
-    --pillar-f: 43 53% 54%;   /* Foundation — brand gold */
+    --pillar-f: 46 65% 52%;   /* Foundation — brand gold */
     --pillar-o: 213 49% 53%;  /* Opportunity — blue */
     --pillar-c: 269 30% 51%;  /* Create — violet */
     --pillar-u: 156 56% 40%;  /* Uplift — green */
@@ -135,8 +135,8 @@
   100% { transform: scaleX(1); }
 }
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px hsl(43 75% 52% / 0.15); }
-  50% { box-shadow: 0 0 30px hsl(43 75% 52% / 0.3); }
+  0%, 100% { box-shadow: 0 0 20px hsl(46 65% 52% / 0.15); }
+  50% { box-shadow: 0 0 30px hsl(46 65% 52% / 0.3); }
 }
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
@@ -242,7 +242,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), hsl(43 75% 52% / 0.06), transparent 40%);
+  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), hsl(46 65% 52% / 0.06), transparent 40%);
 }
 
 /* Mono labels */
@@ -266,12 +266,12 @@
   left: -100%;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, hsl(43 75% 52% / 0.6), transparent);
+  background: linear-gradient(90deg, transparent, hsl(46 65% 52% / 0.6), transparent);
   transition: none;
 }
 .clarity-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 8px 30px hsl(43 75% 52% / 0.12);
+  box-shadow: 0 8px 30px hsl(46 65% 52% / 0.12);
 }
 .clarity-card:hover::before {
   animation: card-line-sweep 0.6s ease-out;
@@ -283,13 +283,13 @@
   cursor: pointer;
 }
 .option-card:hover {
-  border-color: hsl(43 75% 52% / 0.4);
-  background: hsl(43 75% 52% / 0.05);
+  border-color: hsl(46 65% 52% / 0.4);
+  background: hsl(46 65% 52% / 0.05);
 }
 .option-card.selected {
-  border-color: hsl(43 75% 52% / 0.7);
-  background: hsl(43 75% 52% / 0.1);
-  box-shadow: 0 0 20px hsl(43 75% 52% / 0.1);
+  border-color: hsl(46 65% 52% / 0.7);
+  background: hsl(46 65% 52% / 0.1);
+  box-shadow: 0 0 20px hsl(46 65% 52% / 0.1);
 }
 
 /* Prose overrides for Coach Chat */
