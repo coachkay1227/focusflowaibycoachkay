@@ -145,7 +145,7 @@ const ReportView = ({
       <header className="mb-8">
         <h1
           className="font-heading text-4xl md:text-5xl font-light text-primary"
-          style={{ textShadow: "0 0 30px hsl(43 75% 52% / 0.15)" }}
+          style={{ textShadow: "0 0 30px hsl(46 65% 52% / 0.15)" }}
         >
           {title}
         </h1>

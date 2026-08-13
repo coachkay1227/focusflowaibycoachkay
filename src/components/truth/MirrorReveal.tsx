@@ -58,7 +58,7 @@ export default function MirrorReveal() {
     >
       {/* ambient glow */}
       <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full bg-primary/[0.06] blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:radial-gradient(hsl(43_75%_52%)_1px,transparent_1px)] [background-size:24px_24px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:radial-gradient(hsl(46_65%_52%)_1px,transparent_1px)] [background-size:24px_24px]" />
 
       <p className="relative text-[10px] tracking-[0.28em] uppercase text-primary font-medium mb-6">
         The Mirror

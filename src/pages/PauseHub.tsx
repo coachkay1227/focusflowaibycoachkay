@@ -376,7 +376,7 @@ export default function PauseHub() {
                     key={a.id}
                     className={`rounded-xl border bg-card/40 p-5 sm:p-6 transition-all hover:border-primary/30 ring-1 ${meta.ring} ${
                       isFlashing
-                        ? "border-primary/80 shadow-[0_0_24px_hsl(43_75%_52%/0.35)] animate-pulse"
+                        ? "border-primary/80 shadow-[0_0_24px_hsl(46_65%_52%/0.35)] animate-pulse"
                         : "border-border/40"
                     }`}
                   >
